@@ -592,15 +592,40 @@ function onPointerMove(event) {
 function onPointerDown(event) {
     const x = (0, _util.snapToGrid)(state.pointer.x);
     const y = (0, _util.snapToGrid)(state.pointer.y);
-    const vertex = new _three.Vector3(x, y, 1.0);
-    (0, _modelDefault.default)(test_quad, vertex);
+    if (state.selected) {
+        const vertex = new _three.Vector3(x, y, 1.0);
+        (0, _modelDefault.default)(state.selected, vertex, state);
+    }
+}
+function initCanvas() {
+    // Get a reference to the canvas element and its rendering context
+    const canvas = document.getElementById("canvas");
+    const context = canvas?.getContext("2d");
+    state.context = context;
+    if (context) {
+        // Get the device pixel ratio
+        const devicePixelRatio = window.devicePixelRatio || 1;
+        // Set the canvas size to match its container and scale for retina screens
+        canvas.width = window.innerWidth / devicePixelRatio - 10;
+        canvas.height = canvas.parentElement.clientHeight / devicePixelRatio;
+        // Scale the canvas drawing context to match the device pixel ratio
+        context.scale(devicePixelRatio, devicePixelRatio);
+        // You can now use the 'context' variable to draw on the canvas
+        context.fillStyle = "blue";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        // Example: Draw a red rectangle on the canvas
+        context.fillStyle = "red";
+        context.fillRect(canvas.width / 4, canvas.height / 4, canvas.width / 2, canvas.height / 2);
+    }
 }
 function initScene() {
     const scene = new _three.Scene();
     const camera = new _three.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new _three.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    renderer.setSize(window.innerWidth / 2 - 10, window.innerHeight);
+    renderer.domElement.style += " display: inline; ";
+    document.getElementById("main")?.appendChild(renderer.domElement);
+    scene.background = new _three.Color(0xF5CF36);
     const raycaster = new _three.Raycaster();
     const pointer = new _three.Vector2();
     // register event listeners
@@ -614,6 +639,8 @@ function initScene() {
         pointer,
         raycaster
     };
+    // test scene
+    drawTestGeometry();
     update();
 }
 const drawTestGeometry = ()=>{
@@ -622,10 +649,11 @@ const drawTestGeometry = ()=>{
     const test_geometry = new _three.BufferGeometry();
     const ARRAY_MAX = 1500;
     const vertices = new Float32Array(ARRAY_MAX);
-    const test_quad1 = {
+    const test_quad = {
         geometry: test_geometry,
         n_vertices: 0
     };
+    state.selected = test_quad;
     test_geometry.setAttribute("position", new _three.BufferAttribute(vertices, 3));
     test_geometry.setDrawRange(0, 0);
     const material = new _three.MeshBasicMaterial({
@@ -634,7 +662,7 @@ const drawTestGeometry = ()=>{
     const mesh = new _three.Mesh(test_geometry, material);
     const line = new _three.Line(test_geometry, material);
     state.scene.add(line);
-    const positionAttribute1 = mesh.geometry.getAttribute("position");
+    const positionAttribute = mesh.geometry.getAttribute("position");
     state.scene.add(mesh);
     console.log(test_geometry.index);
     state.camera.position.z = 5;
@@ -646,10 +674,11 @@ function update() {
     const { pointer, camera, scene, renderer } = state;
     // update the picking ray with the camera and pointer position 
     state.raycaster.setFromCamera(pointer, camera);
-    positionAttribute.needsUpdate = true;
+    state.selected.geometry.getAttribute("position").needsUpdate = true;
     renderer.render(scene, camera);
 }
 initScene();
+initCanvas();
 
 },{"three":"ktPTu","./util":"7wzGb","./model":"1hsjm","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 /**
@@ -30691,7 +30720,7 @@ const snapToGrid = (n)=>{
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>addVertexToQuad);
-function addVertexToQuad(quad, vertex) {
+function addVertexToQuad(quad, vertex, state) {
     // the draw range will always be the number of vertices
     quad.geometry.getAttribute("position").setXYZ(quad.n_vertices, vertex.x, vertex.y, vertex.z);
     quad.n_vertices += 1;
@@ -30706,6 +30735,18 @@ function addVertexToQuad(quad, vertex) {
         ];
         quad.geometry.setIndex(index);
         quad.geometry.setDrawRange(0, quad.n_vertices * 3);
+        drawFlat({
+            pieces: [
+                {
+                    quads: [
+                        quad
+                    ],
+                    vertices: [],
+                    edges: []
+                }
+            ],
+            seams: []
+        }, state);
     }
 }
 // TODO move to util
@@ -30715,6 +30756,42 @@ const updateIndices = (n, geometry)=>{
     // TODO: check and correct winding order when vertices are added CW
     // build array of vertex indices for two tris (CCW)
     const index = n / 2 * 3 - 6;
+};
+const drawFlat = (pattern, state)=>{
+    const ctx = state.context;
+    for (let piece of pattern.pieces){
+        let x = 0;
+        ctx?.beginPath();
+        let start_flag = true;
+        for(let i = 0; i <= piece.quads.length; i++){
+            const quad = piece.quads[i % piece.quads.length];
+            const points = projectQuad(quad);
+            ctx.lineWidth = 10;
+            for (let xy of points){
+                const x = 100 + 100 * xy[0];
+                const y = 100 + 100 * xy[1];
+                if (start_flag) {
+                    ctx?.moveTo(x, y);
+                    start_flag = false;
+                }
+                ctx?.lineTo(x, y);
+            }
+        }
+        ctx?.closePath();
+        ctx?.stroke();
+    }
+};
+const projectQuad = (quad)=>{
+    let result = new Array;
+    for(let i = 0; i < 4; i++){
+        const x = quad.geometry.getAttribute("position").getX(i);
+        const y = quad.geometry.getAttribute("position").getY(i);
+        result.push([
+            x,
+            y
+        ]);
+    }
+    return result;
 };
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["fUTXd","jeorp"], "jeorp", "parcelRequire716c")

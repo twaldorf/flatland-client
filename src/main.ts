@@ -2,7 +2,7 @@
 import * as THREE from 'three'
 import { snapToGrid } from './util'
 import addVertexToQuad from './model'
-import { State } from './types';
+import { Pattern, State } from './types';
 
 var state:State;
 
@@ -18,12 +18,41 @@ function onPointerMove( event ) {
 function onPointerDown( event ) {
   const x = snapToGrid(state.pointer.x);
   const y = snapToGrid(state.pointer.y);
-  const vertex = new THREE.Vector3( 
-    x,
-    y,
-    1.0
-  );
-  addVertexToQuad( test_quad, vertex );
+  if ( state.selected ) {
+    const vertex = new THREE.Vector3( 
+      x,
+      y,
+      1.0
+    );
+    addVertexToQuad( state.selected , vertex, state );
+  }
+}
+
+function initCanvas() {
+  // Get a reference to the canvas element and its rendering context
+  const canvas = document.getElementById( "canvas" ) as HTMLCanvasElement;
+  const context = canvas?.getContext( "2d" );
+  state.context = context;
+
+  if (context) {
+    // Get the device pixel ratio
+    const devicePixelRatio = window.devicePixelRatio || 1;
+
+    // Set the canvas size to match its container and scale for retina screens
+    canvas.width = window.innerWidth / devicePixelRatio - 10;
+    canvas.height = canvas.parentElement.clientHeight / devicePixelRatio;
+
+    // Scale the canvas drawing context to match the device pixel ratio
+    context.scale(devicePixelRatio, devicePixelRatio);
+
+    // You can now use the 'context' variable to draw on the canvas
+    context.fillStyle = 'blue';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Example: Draw a red rectangle on the canvas
+    context.fillStyle = 'red';
+    context.fillRect(canvas.width / 4, canvas.height / 4, canvas.width / 2, canvas.height / 2);
+  }
 }
 
 function initScene() {
@@ -32,8 +61,11 @@ function initScene() {
   const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
   const renderer = new THREE.WebGLRenderer();
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  document.body.appendChild( renderer.domElement );
+  renderer.setSize( window.innerWidth / 2 - 10, window.innerHeight );
+  renderer.domElement.style += " display: inline; ";
+  document.getElementById( 'main' )?.appendChild( renderer.domElement );
+
+  scene.background = new THREE.Color( 0xF5CF36 );
 
   const raycaster = new THREE.Raycaster()
   const pointer = new THREE.Vector2()
@@ -43,6 +75,9 @@ function initScene() {
   window.addEventListener( 'pointerdown', onPointerDown );
 
   state = { ...state, scene, camera, renderer, pointer, raycaster };
+
+  // test scene
+  drawTestGeometry();
 
   update();
 
@@ -57,6 +92,7 @@ const drawTestGeometry = () => {
   const vertices = new Float32Array( ARRAY_MAX );
 
   const test_quad = { geometry: test_geometry, n_vertices: 0 };
+  state.selected = test_quad;
 
   test_geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
   test_geometry.setDrawRange( 0, 0 );
@@ -86,8 +122,9 @@ function update() {
   // update the picking ray with the camera and pointer position 
   state.raycaster.setFromCamera( pointer, camera ); 
 
-  positionAttribute.needsUpdate = true;
+  state.selected.geometry.getAttribute( 'position' ).needsUpdate = true;
 	renderer.render( scene, camera );
 }
 
 initScene();
+initCanvas();
