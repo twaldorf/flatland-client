@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@types/three": "^0.155.0",
+    "node": "^20.18.1",
     "three": "^0.155.0"
   }
 }

@@ -1,113 +1,123 @@
 // Controller module
 import * as THREE from 'three'
-import { snapToGrid } from './util'
-import addVertexToQuad from './model'
-import { Pattern, State } from './types';
-
-var state:State;
-
-// localize pointer position
-function onPointerMove( event ) { 
-  // calculate pointer position in normalized device coordinates 
-  // (-1 to +1) for both components 
-  state.pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1; 
-  state.pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-}
-
-// click to add points
-function onPointerDown( event ) {
-  const x = snapToGrid(state.pointer.x);
-  const y = snapToGrid(state.pointer.y);
-  if ( state.selected ) {
-    const vertex = new THREE.Vector3( 
-      x,
-      y,
-      1.0
-    );
-    addVertexToQuad( state.selected , vertex, state );
-  }
-}
+import { mouseOverCanvas } from './util'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { state } from './State';
+import { executeCommands } from './Command';
+import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './events/pointer';
+import { createRectangularPrism } from './geometry/primitives';
 
 function initCanvas() {
   // Get a reference to the canvas element and its rendering context
-  const canvas = document.getElementById( "canvas" ) as HTMLCanvasElement;
-  const context = canvas?.getContext( "2d" );
+  const canvas = document.getElementById( "canvas2d" ) as HTMLCanvasElement;
+  state.canvas = canvas;
+
+  const context = canvas.getContext( "2d" );
   state.context = context;
 
   if (context) {
-    // Get the device pixel ratio
     const devicePixelRatio = window.devicePixelRatio || 1;
 
-    // Set the canvas size to match its container and scale for retina screens
-    canvas.width = window.innerWidth / devicePixelRatio - 10;
+    canvas.width = canvas.parentElement.clientWidth / devicePixelRatio - 10;
     canvas.height = canvas.parentElement.clientHeight / devicePixelRatio;
 
-    // Scale the canvas drawing context to match the device pixel ratio
     context.scale(devicePixelRatio, devicePixelRatio);
 
-    // You can now use the 'context' variable to draw on the canvas
-    context.fillStyle = 'blue';
+    context.fillStyle = 'white';
     context.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Example: Draw a red rectangle on the canvas
-    context.fillStyle = 'red';
-    context.fillRect(canvas.width / 4, canvas.height / 4, canvas.width / 2, canvas.height / 2);
   }
 }
 
 function initScene() {
-
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+  state.scene = scene;
+  const camera_group = new THREE.Group();
 
-  const renderer = new THREE.WebGLRenderer();
-  renderer.setSize( window.innerWidth / 2 - 10, window.innerHeight );
+  const frustumSize = 25;
+  const aspect = window.innerWidth / window.innerHeight;
+  const camera = new THREE.OrthographicCamera( frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 0.001, 1000 );
+  state.camera = camera;
+  camera.position.z = 100;
+  camera.lookAt(0,0,0);
+  camera_group.add(camera);
+  
+  state.renderer = new THREE.WebGLRenderer();
+  const renderer = state.renderer;
+  const controls = new OrbitControls(camera, renderer.domElement);
   renderer.domElement.style += " display: inline; ";
-  document.getElementById( 'main' )?.appendChild( renderer.domElement );
+  const parent = document.getElementById( 'canvas3d-container' );
+  parent?.appendChild( renderer.domElement );
+  if (parent) {
+    renderer.setSize( window.innerWidth / 2 - 10, window.innerWidth / 2 - 10 );
+  }
 
   scene.background = new THREE.Color( 0xF5CF36 );
 
-  const raycaster = new THREE.Raycaster()
-  const pointer = new THREE.Vector2()
+  const gridHelper = new THREE.GridHelper( 500, 40, new THREE.Color(1, 1, 1), new THREE.Color(0.8, 0.4, .3));
+	scene.add( gridHelper );
+
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  state.raycaster = raycaster;
+  state.pointer = pointer;
+  
 
   // register event listeners
   window.addEventListener( 'pointermove', onPointerMove );
   window.addEventListener( 'pointerdown', onPointerDown );
-
-  state = { ...state, scene, camera, renderer, pointer, raycaster };
-
+  window.addEventListener( 'pointerup', onPointerUp );
+  window.addEventListener( 'dblclick', onDoubleClick );
+  state.pointerDown = false;
+  
   // test scene
-  drawTestGeometry();
-
+  // drawTestGeometry();
+  drawTestPrimitive();
+  
+  // kick off update
   update();
+}
 
+const drawTestPrimitive = () => {
+  const prismPair = createRectangularPrism(new THREE.Vector3(0,0,0), 10, 5, 2);
+  state.scene.add( prismPair.mesh );
+  state.scene.add( prismPair.line );
+  state.objects = [ prismPair.mesh, prismPair.line ];
 }
 
 const drawTestGeometry = () => {
-  // BEGIN BUFFER GEOMETRY INIT SPACE
   // initialize buffer geometry
   const test_geometry = new THREE.BufferGeometry(  );
 
   const ARRAY_MAX = 500 * 3;
-  const vertices = new Float32Array( ARRAY_MAX );
+  // const vertices = new Float32Array( ARRAY_MAX );
+  // test vertices, two tris forming a quad:
+  const vertices = new Float32Array( [
+    -1.0, -1.0,  1.0, // v0
+     1.0, -1.0,  1.0, // v1
+     1.0,  1.0,  1.0, // v2
+  
+     1.0,  1.0,  1.0, // v3
+    -1.0,  1.0,  1.0, // v4
+    -1.0, -1.0,  1.0  // v5
+  ] );
 
-  const test_quad = { geometry: test_geometry, n_vertices: 0 };
-  state.selected = test_quad;
-
+  const test_quad = { geometry: test_geometry, n_vertices: 4 };
+  
   test_geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-  test_geometry.setDrawRange( 0, 0 );
-
+  test_geometry.setDrawRange( 0, 12 );
+  
   const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+  const line_material = new THREE.MeshBasicMaterial( { color: "#ffffff"} );
   const mesh = new THREE.Mesh( test_geometry, material );
-  const line = new THREE.Line( test_geometry, material );
-  state.scene.add( line );
-  const positionAttribute = mesh.geometry.getAttribute( 'position' );
+  const line = new THREE.Line( test_geometry, line_material );
+
   state.scene.add( mesh );
+  state.scene.add( line );
+  state.objects = [ mesh, line];
 
-  console.log( test_geometry.index )
-
-  state.camera.position.z = 5;
-
+  test_geometry.computeBoundingSphere();
+  
+  // console.log( test_geometry.index )
   // END BUFFER GEOMETRY INIT SPACE
 }
 
@@ -116,15 +126,50 @@ function drawQuad(geometry:THREE.BufferGeometry) {
 }
 
 function update() {
-	requestAnimationFrame( update );
-  const { pointer, camera, scene, renderer } = state;
+  const { pointer, camera, scene, renderer, raycaster } = state;
+  const [ mesh, line ] = state.objects;
+  executeCommands();
 
-  // update the picking ray with the camera and pointer position 
-  state.raycaster.setFromCamera( pointer, camera ); 
+  requestAnimationFrame( update );
+  if (mouseOverCanvas(state) == true) {
 
-  state.selected.geometry.getAttribute( 'position' ).needsUpdate = true;
-	renderer.render( scene, camera );
+    // update the picking ray with the camera and pointer position 
+    camera.updateMatrixWorld();
+    raycaster.setFromCamera( pointer, camera );
+    
+    const intersects = raycaster.intersectObjects( state.objects );
+    state.intersects = intersects;
+    
+    if ( intersects.length > 0 ) {
+      const intersect = intersects[ 0 ];
+      // const face = intersect.face;
+      
+      // const linePosition = line.geometry.attributes.position;
+      // const meshPosition = mesh.geometry.attributes.position;
+      
+      // linePosition.copyAt( 0, meshPosition, face.a );
+      // linePosition.copyAt( 1, meshPosition, face.b );
+      // linePosition.copyAt( 2, meshPosition, face.c );
+      // linePosition.copyAt( 3, meshPosition, face.a );
+      
+      // mesh.updateMatrix(); 
+      
+      // line.geometry.applyMatrix4( mesh.matrix );
+      
+      line.visible = true;
+      
+    } else {
+      
+      line.visible = false;
+      
+    }
+    
+  }
+
+  renderer.render( scene, camera );
+
 }
 
 initScene();
+
 initCanvas();

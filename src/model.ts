@@ -27,7 +27,6 @@ const updateIndices = (n:number, geometry:THREE.BufferGeometry) => {
   const index = ( n / 2 ) * 3 - 6;
 }
 
-
 const drawFlat = ( pattern:Pattern, state:State ) => {
   const ctx = state.context;
 
@@ -36,34 +35,98 @@ const drawFlat = ( pattern:Pattern, state:State ) => {
     ctx?.beginPath();
     let start_flag = true;
 
-    for (let i = 0; i <= piece.quads.length; i++) {
-      const quad = piece.quads[i % piece.quads.length];
-      const points = projectQuad( quad );
-      ctx.lineWidth = 10;
+    // for (let i = 0; i <= piece.quads.length; i++) {
+    //   const quad = piece.quads[i % piece.quads.length];
+    //   const points = flattenQuad( quad );
+    //   ctx.lineWidth = 1;
 
-      for (let xy of points) {
-        const x = 100 + 100 * xy[0];
-        const y = 100 + 100 * xy[1];
-        if (start_flag) {
-          ctx?.moveTo( x, y );
-          start_flag = false;
-        }
-        ctx?.lineTo( x, y );
-      }
+    //   for (let xy of points) {
+    //     const x = 100 + 100 * xy[0];
+    //     const y = 100 + 100 * xy[1];
+    //     if (start_flag) {
+    //       ctx?.moveTo( x, y );
+    //       start_flag = false;
+    //     }
+    //     ctx?.lineTo( x, y );
+    //   }
 
-    }
+    // }
     ctx?.closePath();
     ctx?.stroke();
   }
 }
 
-const projectQuad = ( quad:Quads ) => {
+const projectGeometry = ( geometry:THREE.BufferGeometry ) => {
   let result = new Array<Array<number>>;
   for (let i = 0; i < 4; i++) {
-    const x = quad.geometry.getAttribute( 'position' ).getX( i );
-    const y = quad.geometry.getAttribute( 'position' ).getY( i ); 
+    const x = geometry.getAttribute( 'position' ).getX( i );
+    const y = geometry.getAttribute( 'position' ).getY( i ); 
     result.push( [ x, y ] );
   }
   return result;
 }
 
+const flattenQuad = ( quad:Quads ):number[][] => {
+  const position_attribute = quad.geometry.getAttribute( 'position' );
+  const v1 = new THREE.Vector3(
+    position_attribute.getX( 0 ), 
+    position_attribute.getY( 0 ), 
+    position_attribute.getZ( 0 ) );
+
+  const v2 = new THREE.Vector3(
+    position_attribute.getX( 1 ), 
+    position_attribute.getY( 1 ), 
+    position_attribute.getZ( 1 ) ); 
+
+  const v3 = new THREE.Vector3(
+    position_attribute.getX( 2 ), 
+    position_attribute.getY( 2 ), 
+    position_attribute.getZ( 2 ) ); 
+
+  const normal = v1.cross( v2 );
+
+  const matrix = new THREE.Matrix4().fromArray( [
+    v1.x, v1.y, v1.z, 0,
+    v2.x, v2.y, v2.z, 0,
+    normal.x, normal.y, normal.z, 0,
+    0, 0, 0, 1
+  ] );
+
+  // set target to 0
+  const vt = new THREE.Vector3( 0, 0, 0 ).normalize();
+  const target = new THREE.Matrix4();
+  target.setPosition( new THREE.Vector3( 0, 0, 0 ).normalize() );
+
+  // rotation axis
+  const x = new THREE.Vector3().copy( v1 ).cross(vt).normalize();
+  // start vector
+  const y = new THREE.Vector3().copy( v1 ).normalize();
+  // z perpendicular to x, y
+  const z = new THREE.Vector3().copy( x ).cross( y ).normalize();
+
+  // end vector
+  const y2 = new THREE.Vector3().copy( vt ).normalize();
+
+  // z perp to x, c
+  const z2 = new THREE.Vector3().copy( x ).cross( y2 ).normalize();
+
+  const matrixA = new THREE.Matrix4().fromArray( [
+    x.x, x.y, x.z, 0,
+    y.x, y.y, y.z, 0,
+    z.x, z.y, z.z, 0,
+    0, 0, 0, 1
+  ] );
+
+  const matrixB = new THREE.Matrix4().fromArray( [
+    x.x, x.y, x.z, 0,
+    y2.x, y2.y, y2.z, 0,
+    z2.x, z2.y, z2.z, 0,
+    0, 0, 0, 1
+  ] );
+
+  const final_matrix = matrixB.multiply( matrixA.invert() );
+
+  console.log(x, y, z)
+
+  return projectGeometry( quad.geometry.applyMatrix4( final_matrix ) );
+}
