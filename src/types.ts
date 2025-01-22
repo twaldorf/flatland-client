@@ -1,4 +1,5 @@
 import { Face, Object3D } from "three";
+import { FaceId } from "./commands/SelectFaceCommand";
 
 export interface State {
   canvas: HTMLCanvasElement;
@@ -9,7 +10,7 @@ export interface State {
   pointer: THREE.Vector2;
   raycaster: THREE.Raycaster;
   selected: Set<Object3D>;
-  selected_faces: Set<Face>;
+  selected_faces: Set<string>;
   pointerDown: Boolean;
   context: CanvasRenderingContext2D | null;
   pattern: Pattern;

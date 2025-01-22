@@ -9,20 +9,35 @@ export interface FaceSelectionBundle {
   object:Mesh,
 }
 
+interface FaceIdSelectionBundle {
+  faceIndex:number,
+  face:FaceId,
+  object:Mesh,
+}
+
+export interface FaceId {
+  face:Face,
+  uuid:string,
+}
+
+export const tagFace = (face:Face, uuid:string):FaceId => {
+  const generic_face = { ...face, materialIndex: 0 };
+  return { face: generic_face, uuid };
+}
+
 export class SelectFaceCommand implements Command {
-  private __selected:Set<THREE.Face>;
-  private __bundle:FaceSelectionBundle
+  private __selected:Set<string>;
+  private __bundle:FaceIdSelectionBundle
   
   constructor(bundle:FaceSelectionBundle) {
     this.__selected = state.selected_faces;
-    this.__bundle = bundle;
+    this.__bundle = {...bundle, face: tagFace(bundle.face, bundle.object.uuid)};
   }
 
   do() {
-    if (!this.__selected.has(this.__bundle.face)) {
-      state.selected_faces.add(this.__bundle.face);
+    if (!this.__selected.has(JSON.stringify(this.__bundle.face))) {
+      state.selected_faces.add(JSON.stringify(this.__bundle.face));
       this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
-      console.log(state.objects)
     }
   }
 
@@ -33,21 +48,21 @@ export class SelectFaceCommand implements Command {
 }
 
 export class DeselectFaceCommand implements Command {
-  private __selected:Set<THREE.Face>;
-  private __bundle:FaceSelectionBundle;
+  private __bundle:FaceIdSelectionBundle;
 
-  constructor(face) {
-    this.__selected = state.selected_faces;
-    this.__bundle.face = face;
+  constructor(bundle:FaceSelectionBundle) {
+    this.__bundle = {...bundle, face: tagFace(bundle.face, bundle.object.uuid)};
   }
+
   do() {
-    if (state.selected_faces.has(this.__bundle.face)) {
-      state.selected_faces.delete(this.__bundle.face);
+    if (state.selected_faces.has(JSON.stringify(this.__bundle.face))) {
+      state.selected_faces.delete(JSON.stringify(this.__bundle.face));
       this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
     }
   }
+
   undo() {
-    state.selected_faces.add(this.__bundle.face);
+    state.selected_faces.add(JSON.stringify(this.__bundle.face));
     this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
   }
   

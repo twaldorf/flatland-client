@@ -31709,7 +31709,7 @@ parcelHelpers.export(exports, "onPointerMove", ()=>onPointerMove);
 parcelHelpers.export(exports, "onPointerDown", ()=>onPointerDown);
 parcelHelpers.export(exports, "onPointerUp", ()=>onPointerUp);
 var _command = require("../Command");
-var _selection = require("../commands/selection");
+var _selectObjectCommand = require("../commands/SelectObjectCommand");
 var _state = require("../State");
 var _util = require("../util");
 var _selectFaceCommand = require("../commands/SelectFaceCommand");
@@ -31721,7 +31721,7 @@ function onDoubleClick(event) {
     if ((0, _util.intersecting)((0, _state.state))) {
         const bundle = (0, _util.first_intersecting_face)((0, _state.state));
         if (bundle && bundle.faceIndex) {
-            if (!(0, _state.state).selected_faces.has(bundle.face)) (0, _command.pushCommand)(new (0, _selectFaceCommand.SelectFaceCommand)(bundle));
+            if (!(0, _state.state).selected_faces.has(JSON.stringify((0, _selectFaceCommand.tagFace)(bundle.face, bundle.object.uuid)))) (0, _command.pushCommand)(new (0, _selectFaceCommand.SelectFaceCommand)(bundle));
             else (0, _command.pushCommand)(new (0, _selectFaceCommand.DeselectFaceCommand)(bundle));
         }
     }
@@ -31742,13 +31742,68 @@ function onPointerDown(event) {
     if ((0, _util.intersecting)((0, _state.state))) {
         const selected_mesh = (0, _util.first_intersecting_object)((0, _state.state));
         selected_mesh;
-    } else (0, _command.pushCommand)(new (0, _selection.DeselectObjectCommand)());
+    } else (0, _command.pushCommand)(new (0, _selectObjectCommand.DeselectObjectCommand)());
 }
 function onPointerUp(event) {
     (0, _state.state).pointerDown = false;
 }
 
-},{"../Command":"efiIE","../commands/selection":"hoSV1","../State":"83rpN","../util":"7wzGb","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/SelectFaceCommand":"2g5NI"}],"hoSV1":[function(require,module,exports,__globalThis) {
+},{"../Command":"efiIE","../State":"83rpN","../util":"7wzGb","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/SelectFaceCommand":"2g5NI","../commands/SelectObjectCommand":"5QLZA"}],"2g5NI":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "tagFace", ()=>tagFace);
+parcelHelpers.export(exports, "SelectFaceCommand", ()=>SelectFaceCommand);
+parcelHelpers.export(exports, "DeselectFaceCommand", ()=>DeselectFaceCommand);
+var _state = require("../State");
+const tagFace = (face, uuid)=>{
+    const generic_face = {
+        ...face,
+        materialIndex: 0
+    };
+    return {
+        face: generic_face,
+        uuid
+    };
+};
+class SelectFaceCommand {
+    constructor(bundle){
+        this.__selected = (0, _state.state).selected_faces;
+        this.__bundle = {
+            ...bundle,
+            face: tagFace(bundle.face, bundle.object.uuid)
+        };
+    }
+    do() {
+        if (!this.__selected.has(JSON.stringify(this.__bundle.face))) {
+            (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
+            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
+        }
+    }
+    undo() {
+        (0, _state.state).selected_faces = this.__selected;
+        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
+    }
+}
+class DeselectFaceCommand {
+    constructor(bundle){
+        this.__bundle = {
+            ...bundle,
+            face: tagFace(bundle.face, bundle.object.uuid)
+        };
+    }
+    do() {
+        if ((0, _state.state).selected_faces.has(JSON.stringify(this.__bundle.face))) {
+            (0, _state.state).selected_faces.delete(JSON.stringify(this.__bundle.face));
+            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
+        }
+    }
+    undo() {
+        (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
+        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
+    }
+}
+
+},{"../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5QLZA":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectObjectCommand", ()=>SelectObjectCommand);
@@ -31804,47 +31859,7 @@ const material_default = new _three.MeshBasicMaterial({
     color: "#ff0000"
 });
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2g5NI":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectFaceCommand", ()=>SelectFaceCommand);
-parcelHelpers.export(exports, "DeselectFaceCommand", ()=>DeselectFaceCommand);
-var _state = require("../State");
-class SelectFaceCommand {
-    constructor(bundle){
-        this.__selected = (0, _state.state).selected_faces;
-        this.__bundle = bundle;
-    }
-    do() {
-        if (!this.__selected.has(this.__bundle.face)) {
-            (0, _state.state).selected_faces.add(this.__bundle.face);
-            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
-            console.log((0, _state.state).objects);
-        }
-    }
-    undo() {
-        (0, _state.state).selected_faces = this.__selected;
-        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
-    }
-}
-class DeselectFaceCommand {
-    constructor(face){
-        this.__selected = (0, _state.state).selected_faces;
-        this.__bundle.face = face;
-    }
-    do() {
-        if ((0, _state.state).selected_faces.has(this.__bundle.face)) {
-            (0, _state.state).selected_faces.delete(this.__bundle.face);
-            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
-        }
-    }
-    undo() {
-        (0, _state.state).selected_faces.add(this.__bundle.face);
-        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
-    }
-}
-
-},{"../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jq3Nj":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jq3Nj":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createRectangularPrism", ()=>createRectangularPrism);

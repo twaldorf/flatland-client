@@ -1,9 +1,9 @@
 import { Intersection, Mesh, Object3D } from "three";
 import { pushCommand } from "../Command";
-import { SelectObjectCommand, DeselectObjectCommand } from "../commands/selection";
+import { SelectObjectCommand, DeselectObjectCommand } from "../commands/SelectObjectCommand";
 import { state } from "../State";
 import { first_intersecting_face, first_intersecting_object, intersecting } from "../util";
-import { DeselectFaceCommand, SelectFaceCommand } from "../commands/SelectFaceCommand";
+import { DeselectFaceCommand, SelectFaceCommand, tagFace } from "../commands/SelectFaceCommand";
 
 export function onDoubleClick(event: MouseEvent) {
   state.intersects = [];
@@ -14,13 +14,13 @@ export function onDoubleClick(event: MouseEvent) {
   if (intersecting(state)) {
    const bundle = first_intersecting_face(state);
    if (bundle && bundle.faceIndex) {
-    if (!state.selected_faces.has(bundle.face)) {
+    if (!state.selected_faces.has(JSON.stringify(tagFace(bundle.face, bundle.object.uuid)))) {
       pushCommand(new SelectFaceCommand(bundle));
     } else {
       pushCommand(new DeselectFaceCommand(bundle));
     }
    }
-  }
+  } 
 }
 
 // localize pointer position
