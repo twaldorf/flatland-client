@@ -2,8 +2,9 @@ import { Intersection, Mesh, Object3D } from "three";
 import { pushCommand } from "../Command";
 import { SelectObjectCommand, DeselectObjectCommand } from "../commands/SelectObjectCommand";
 import { state } from "../State";
-import { first_intersecting_face, first_intersecting_object, intersecting } from "../util";
+import { first_intersecting_face, first_intersecting_object, intersecting, localizePointer } from "../util";
 import { DeselectFaceCommand, SelectFaceCommand, tagFace } from "../commands/SelectFaceCommand";
+import { State } from "../types";
 
 export function onDoubleClick(event: MouseEvent) {
   state.intersects = [];
@@ -24,17 +25,13 @@ export function onDoubleClick(event: MouseEvent) {
 }
 
 // localize pointer position
+
 export function onPointerMove( event: MouseEvent ) {
-  state.rawPointer.rx = event.clientX;
-  state.rawPointer.ry = event.clientY;
+  localizePointer(event, state)
+  if (state.pointerDown && state.selected_faces.size > 0) {
+    
+  }
 
-  state.pointer.x = 2 * (window.innerWidth / state.renderer.domElement.offsetWidth) * 
-  ( event.clientX - state.renderer.domElement.getBoundingClientRect().x ) 
-  / ( window.innerWidth ) - 1;
-
-	state.pointer.y = -2 * (window.innerHeight / state.renderer.domElement.offsetHeight) * 
-  ( event.clientY - state.renderer.domElement.getBoundingClientRect().y ) 
-  / ( window.innerHeight ) + 1;
 }
 
 // click to add points
@@ -50,7 +47,7 @@ export function onPointerDown( event ) {
   if (intersecting(state)) {
     const selected_mesh = first_intersecting_object(state);
     if (selected_mesh) {
-      // pushCommand(new SelectObjectCommand(selected_mesh));
+      pushCommand(new SelectObjectCommand(selected_mesh));
     }
   } else {
     pushCommand(new DeselectObjectCommand());

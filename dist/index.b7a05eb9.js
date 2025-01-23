@@ -608,8 +608,18 @@ function initCanvas() {
     // Get a reference to the canvas element and its rendering context
     const canvas = document.getElementById("canvas2d");
     (0, _state.state).canvas = canvas;
+    canvas.width = 800;
     const context = canvas.getContext("2d");
     (0, _state.state).context = context;
+    context?.clearRect(0, 0, canvas.width, canvas.height);
+    var lastPoint = {
+        x: 0,
+        y: 0
+    };
+    const cOnMouseClick = (event)=>{
+        lastPoint.x = event.clientX;
+    };
+    canvas.addEventListener('mousedown', cOnMouseClick);
     if (context) {
         const devicePixelRatio = window.devicePixelRatio || 1;
         canvas.width = canvas.parentElement.clientWidth / devicePixelRatio - 10;
@@ -30777,6 +30787,7 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "mouseOverCanvas", ()=>mouseOverCanvas);
+parcelHelpers.export(exports, "localizePointer", ()=>localizePointer);
 parcelHelpers.export(exports, "intersecting", ()=>intersecting);
 parcelHelpers.export(exports, "first_intersecting_object", ()=>first_intersecting_object);
 parcelHelpers.export(exports, "first_intersecting_face", ()=>first_intersecting_face);
@@ -30784,6 +30795,12 @@ const mouseOverCanvas = (state)=>{
     const bounds = state.renderer.domElement.getBoundingClientRect();
     if (state.rawPointer) return state.rawPointer.rx >= bounds.left && state.rawPointer.rx <= bounds.right && state.rawPointer.ry >= bounds.top && state.rawPointer.ry <= bounds.bottom;
     return false;
+};
+const localizePointer = (event, state)=>{
+    state.rawPointer.rx = event.clientX;
+    state.rawPointer.ry = event.clientY;
+    state.pointer.x = 2 * (window.innerWidth / state.renderer.domElement.offsetWidth) * (event.clientX - state.renderer.domElement.getBoundingClientRect().x) / window.innerWidth - 1;
+    state.pointer.y = -2 * (window.innerHeight / state.renderer.domElement.offsetHeight) * (event.clientY - state.renderer.domElement.getBoundingClientRect().y) / window.innerHeight + 1;
 };
 const intersecting = (state)=>{
     return state.intersects != null && state.intersects.length > 0;
@@ -31583,32 +31600,7 @@ const state = {
         waitForDoubleClick: false,
         doubleClick: false
     }
-}; // class State {
- //   canvas: HTMLCanvasElement;
- //   scene: THREE.Scene;
- //   camera: THREE.Camera;
- //   camera_group: THREE.Group;
- //   renderer: THREE.Renderer;
- //   pointer: THREE.Vector2;
- //   raycaster: THREE.Raycaster;
- //   selected: Array<THREE.Object3D>;
- //   pointerDown: Boolean;
- //   context: CanvasRenderingContext2D | null;
- //   pattern: Pattern;
- //   intersects: THREE.Intersection[] | null;
- //   rawPointer: ;
- //   objects: THREE.Object3D[];
- //   constructor() {
- //   }
- //   update(key:string, newState:State[keyof State]) {
- //     this[key] = newState;
- //   }
- //   updateRawPointer(value:)
- //   get(key:string):State[keyof State] | null {
- //     return this[key];
- //   }
- // }
- // export const state = new State();
+};
 
 },{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"efiIE":[function(require,module,exports,__globalThis) {
 // The Command interface and class is responsible for managing incoming user commands that affect state, with some exception (camera position)
@@ -31727,10 +31719,8 @@ function onDoubleClick(event) {
     }
 }
 function onPointerMove(event) {
-    (0, _state.state).rawPointer.rx = event.clientX;
-    (0, _state.state).rawPointer.ry = event.clientY;
-    (0, _state.state).pointer.x = 2 * (window.innerWidth / (0, _state.state).renderer.domElement.offsetWidth) * (event.clientX - (0, _state.state).renderer.domElement.getBoundingClientRect().x) / window.innerWidth - 1;
-    (0, _state.state).pointer.y = -2 * (window.innerHeight / (0, _state.state).renderer.domElement.offsetHeight) * (event.clientY - (0, _state.state).renderer.domElement.getBoundingClientRect().y) / window.innerHeight + 1;
+    (0, _util.localizePointer)(event, (0, _state.state));
+    (0, _state.state).pointerDown && (0, _state.state).selected_faces.size;
 }
 function onPointerDown(event) {
     (0, _state.state).pointerDown = true;
@@ -31741,7 +31731,7 @@ function onPointerDown(event) {
     // TODO: Track dragging and account for camera movement clicks
     if ((0, _util.intersecting)((0, _state.state))) {
         const selected_mesh = (0, _util.first_intersecting_object)((0, _state.state));
-        selected_mesh;
+        if (selected_mesh) (0, _command.pushCommand)(new (0, _selectObjectCommand.SelectObjectCommand)(selected_mesh));
     } else (0, _command.pushCommand)(new (0, _selectObjectCommand.DeselectObjectCommand)());
 }
 function onPointerUp(event) {

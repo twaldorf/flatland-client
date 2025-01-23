@@ -11,9 +11,21 @@ function initCanvas() {
   // Get a reference to the canvas element and its rendering context
   const canvas = document.getElementById( "canvas2d" ) as HTMLCanvasElement;
   state.canvas = canvas;
+  canvas.width = 800;
 
   const context = canvas.getContext( "2d" );
   state.context = context;
+
+  context?.clearRect(0, 0, canvas.width, canvas.height);
+
+  var lastPoint = {x: 0, y: 0};
+
+  const cOnMouseClick = (event:MouseEvent):void => {
+    lastPoint.x = event.clientX;
+    
+  }
+
+  canvas.addEventListener('mousedown', cOnMouseClick);
 
   if (context) {
     const devicePixelRatio = window.devicePixelRatio || 1;

@@ -23,32 +23,3 @@ export const state:State = {
     doubleClick: false,
   },
 };
-
-
-// class State {
-//   canvas: HTMLCanvasElement;
-//   scene: THREE.Scene;
-//   camera: THREE.Camera;
-//   camera_group: THREE.Group;
-//   renderer: THREE.Renderer;
-//   pointer: THREE.Vector2;
-//   raycaster: THREE.Raycaster;
-//   selected: Array<THREE.Object3D>;
-//   pointerDown: Boolean;
-//   context: CanvasRenderingContext2D | null;
-//   pattern: Pattern;
-//   intersects: THREE.Intersection[] | null;
-//   rawPointer: ;
-//   objects: THREE.Object3D[];
-//   constructor() {
-//   }
-//   update(key:string, newState:State[keyof State]) {
-//     this[key] = newState;
-//   }
-//   updateRawPointer(value:)
-//   get(key:string):State[keyof State] | null {
-//     return this[key];
-//   }
-// }
-
-// export const state = new State();

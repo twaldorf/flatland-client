@@ -10,6 +10,19 @@ export const mouseOverCanvas = (state:State):boolean => {
   return false;
 }
 
+export const localizePointer = (event:MouseEvent, state:State):void => {
+  state.rawPointer.rx = event.clientX;
+  state.rawPointer.ry = event.clientY;
+
+  state.pointer.x = 2 * (window.innerWidth / state.renderer.domElement.offsetWidth) * 
+  ( event.clientX - state.renderer.domElement.getBoundingClientRect().x ) 
+  / ( window.innerWidth ) - 1;
+
+  state.pointer.y = -2 * (window.innerHeight / state.renderer.domElement.offsetHeight) * 
+  ( event.clientY - state.renderer.domElement.getBoundingClientRect().y ) 
+  / ( window.innerHeight ) + 1;
+}
+
 export const intersecting = (state:State):boolean => {
   return state.intersects != null && state.intersects.length > 0;
 }
