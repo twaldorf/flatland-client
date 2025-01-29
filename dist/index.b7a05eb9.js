@@ -31687,8 +31687,9 @@ class PathTool {
         switch(this.__state.type){
             case "selecting":
                 if ((0, _state.state).c_selected.length == 0) (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
-                else if ((0, _state.state).c_selected.length > 0 && (0, _state.state).shiftDown) {
-                    console.log('shfit select');
+                else if ((0, _state.state).c_selected.length > 0 && (0, _state.state).shiftDown) (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
+                else if (this.__indexIsNotSelected(this.__state.hitIndex)) {
+                    (0, _command.pushCommand)(new (0, _pathToolDeselectCommand.PathToolDeselectCommand)());
                     (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
                 }
                 break;
@@ -31760,6 +31761,12 @@ class PathTool {
     }
     getPointByIndex(index) {
         return (0, _state.state).c_points[index];
+    }
+    __indexIsNotSelected(index) {
+        const result = (0, _state.state).c_selected.findIndex((i)=>{
+            return i == index;
+        });
+        return result === -1;
     }
     checkPointOverlap(v) {
         for(let i = 0; i < (0, _state.state).c_points.length; ++i){

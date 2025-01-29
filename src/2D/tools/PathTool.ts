@@ -103,8 +103,10 @@ export class PathTool implements ToolBase {
         if (state.c_selected.length == 0) {
           pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
         } else if (state.c_selected.length > 0 && state.shiftDown ) {
-          console.log('shfit select')
-          pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) ); 
+          pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
+        } else if (this.__indexIsNotSelected( this.__state.hitIndex )) {
+          pushCommand( new PathToolDeselectCommand() );
+          pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
         }
         break;
 
@@ -195,6 +197,11 @@ export class PathTool implements ToolBase {
 
   public getPointByIndex(index:number):Vector2 {
     return state.c_points[ index ];
+  }
+
+  private __indexIsNotSelected(index:number):boolean {
+    const result = state.c_selected.findIndex((i) => { return i == index });
+    return result === -1;
   }
 
   public checkPointOverlap(v:Vector2):number | undefined {
