@@ -1,30 +1,64 @@
-import { Face, Object3D } from "three";
+import { Face, Object3D, Vector2 } from "three";
 import { FaceId } from "./commands/SelectFaceCommand";
+import { PathTool } from "./2D/tools/PathTool";
 
+// State interface for global state singleton
 export interface State {
-  canvas: HTMLCanvasElement;
+  // ## State shared between editor and canvas
+  pattern: Pattern;
+  pointerDown: Boolean;
+  pointer: THREE.Vector2;
+
+  // ## Editor state properties, not prepended
   scene: THREE.Scene;
   camera: THREE.Camera;
   camera_group: THREE.Group;
   renderer: THREE.Renderer;
-  pointer: THREE.Vector2;
   raycaster: THREE.Raycaster;
   selected: Set<Object3D>;
   selected_faces: Set<string>;
-  pointerDown: Boolean;
-  context: CanvasRenderingContext2D | null;
-  pattern: Pattern;
+  context: CanvasRenderingContext2D;
   intersects: THREE.Intersection[] | null;
   rawPointer: RawPointer;
   objects: THREE.Object3D[];
   mode: Mode;
   controls: Controls;
-  // mesh: THREE.Mesh;
-  // line: THREE.Line;
+
+  // ## Canvas state properties, prepended with c
+  canvas: HTMLCanvasElement;
+
+  // Canvas is current active object, defined by mouse loc
+  cActive: boolean;
+
+  
+  // Current canvas tool
+  tool: Tool;
+
+  // A selected point is being moved
+  cMovingPoint: boolean;
+  // from its previous position at:
+  c_move_from: Vector2;
+
+  // Making a selection (as opposed to creating a new mark)
+  cSelecting: boolean;
+
+  // All points on the canvas
+  c_points: Array<Vector2>;
+
+  // All selected points on the canvas
+  c_selected: Array<number>;
 }
 
 type Mode = 'default' | 
             'group-select';
+
+export interface ToolBase {
+  name: string;
+}
+
+export type Tool = PathTool | SelectTool;
+
+export type DrawableEntity = Vector2 | Vector2[];
 
 interface RawPointer {
   rx: number,

@@ -1,5 +1,6 @@
 import { Camera, Face, Group, Raycaster, Scene, Vector2 } from "three";
-import { Pattern, State } from "./types";
+import { State } from "./types";
+import { PathTool } from "./2D/tools/PathTool";
 
 export const state:State = {
   canvas: undefined,
@@ -22,4 +23,11 @@ export const state:State = {
     waitForDoubleClick: false,
     doubleClick: false,
   },
+  tool: new PathTool(),
+  c_points: [],
+  c_selected: [],
+  cActive: false,
+  cSelecting: false,
+  cMovingPoint: false,
+  c_move_from: undefined,
 };

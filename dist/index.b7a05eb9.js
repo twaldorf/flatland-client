@@ -604,49 +604,54 @@ var _state = require("./State");
 var _command = require("./Command");
 var _pointer = require("./events/pointer");
 var _primitives = require("./geometry/primitives");
+var _cOnMouseDown = require("./2D/pointer/cOnMouseDown");
+var _cOnMouseMove = require("./2D/pointer/cOnMouseMove");
+var _cOnMouseUp = require("./2D/pointer/cOnMouseUp");
+var _cOnMouseEnter = require("./2D/pointer/cOnMouseEnter");
+var _cOnMouseLeave = require("./2D/pointer/cOnMouseLeave");
 function initCanvas() {
     // Get a reference to the canvas element and its rendering context
     const canvas = document.getElementById("canvas2d");
     (0, _state.state).canvas = canvas;
-    canvas.width = 800;
     const context = canvas.getContext("2d");
+    if (!context) throw new Error('No such 2D context when initializing page elements');
     (0, _state.state).context = context;
     context?.clearRect(0, 0, canvas.width, canvas.height);
     var lastPoint = {
         x: 0,
         y: 0
     };
-    const cOnMouseClick = (event)=>{
-        lastPoint.x = event.clientX;
-    };
-    canvas.addEventListener('mousedown', cOnMouseClick);
+    canvas.addEventListener('mousedown', (0, _cOnMouseDown.cOnMouseDown));
+    canvas.addEventListener('mousemove', (0, _cOnMouseMove.cOnMouseMove));
+    canvas.addEventListener('mouseup', (0, _cOnMouseUp.cOnMouseUp));
+    canvas.addEventListener('mouseenter', (0, _cOnMouseEnter.cOnMouseEnter));
+    canvas.addEventListener('mouseleave', (0, _cOnMouseLeave.cOnMouseLeave));
     if (context) {
         const devicePixelRatio = window.devicePixelRatio || 1;
-        canvas.width = canvas.parentElement.clientWidth / devicePixelRatio - 10;
-        canvas.height = canvas.parentElement.clientHeight / devicePixelRatio;
+        canvas.width = canvas.clientWidth * devicePixelRatio;
+        canvas.height = canvas.clientHeight * devicePixelRatio;
         context.scale(devicePixelRatio, devicePixelRatio);
         context.fillStyle = 'white';
         context.fillRect(0, 0, canvas.width, canvas.height);
     }
 }
 function initScene() {
+    (0, _state.state).renderer = new _three.WebGLRenderer();
+    const renderer = (0, _state.state).renderer;
+    const parent = document.getElementById('canvas3d-container');
+    parent?.appendChild(renderer.domElement);
+    if (parent) renderer.setSize(window.innerWidth / 2 - 10, window.innerWidth / 2 - 10);
     const scene = new _three.Scene();
     (0, _state.state).scene = scene;
     const camera_group = new _three.Group();
     const frustumSize = 25;
-    const aspect = window.innerWidth / window.innerHeight;
-    const camera = new _three.OrthographicCamera(frustumSize * aspect / -2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / -2, 0.001, 1000);
+    const aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight;
+    const camera = new _three.OrthographicCamera(frustumSize * aspect / -2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / -2, 0.1, 1000);
     (0, _state.state).camera = camera;
     camera.position.z = 100;
     camera.lookAt(0, 0, 0);
     camera_group.add(camera);
-    (0, _state.state).renderer = new _three.WebGLRenderer();
-    const renderer = (0, _state.state).renderer;
     const controls = new (0, _orbitControlsJs.OrbitControls)(camera, renderer.domElement);
-    renderer.domElement.style += " display: inline; ";
-    const parent = document.getElementById('canvas3d-container');
-    parent?.appendChild(renderer.domElement);
-    if (parent) renderer.setSize(window.innerWidth / 2 - 10, window.innerWidth / 2 - 10);
     scene.background = new _three.Color(0xF5CF36);
     const gridHelper = new _three.GridHelper(500, 40, new _three.Color(1, 1, 1), new _three.Color(0.8, 0.4, .3));
     scene.add(gridHelper);
@@ -655,10 +660,10 @@ function initScene() {
     (0, _state.state).raycaster = raycaster;
     (0, _state.state).pointer = pointer;
     // register event listeners
-    window.addEventListener('pointermove', (0, _pointer.onPointerMove));
-    window.addEventListener('pointerdown', (0, _pointer.onPointerDown));
-    window.addEventListener('pointerup', (0, _pointer.onPointerUp));
-    window.addEventListener('dblclick', (0, _pointer.onDoubleClick));
+    renderer.domElement.addEventListener('pointermove', (0, _pointer.onPointerMove));
+    renderer.domElement.addEventListener('pointerdown', (0, _pointer.onPointerDown));
+    renderer.domElement.addEventListener('pointerup', (0, _pointer.onPointerUp));
+    renderer.domElement.addEventListener('dblclick', (0, _pointer.onDoubleClick));
     (0, _state.state).pointerDown = false;
     // test scene
     // drawTestGeometry();
@@ -756,7 +761,7 @@ function update() {
 initScene();
 initCanvas();
 
-},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./events/pointer":"bFv4z","./geometry/primitives":"jq3Nj"}],"ktPTu":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./events/pointer":"bFv4z","./geometry/primitives":"jq3Nj","./2D/pointer/cOnMouseDown":"axAUO","./2D/pointer/cOnMouseMove":"6kSJ1","./2D/pointer/cOnMouseUp":"9V478","./2D/pointer/cOnMouseEnter":"gK6it","./2D/pointer/cOnMouseLeave":"hoBK0"}],"ktPTu":[function(require,module,exports,__globalThis) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -30787,7 +30792,6 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "mouseOverCanvas", ()=>mouseOverCanvas);
-parcelHelpers.export(exports, "localizePointer", ()=>localizePointer);
 parcelHelpers.export(exports, "intersecting", ()=>intersecting);
 parcelHelpers.export(exports, "first_intersecting_object", ()=>first_intersecting_object);
 parcelHelpers.export(exports, "first_intersecting_face", ()=>first_intersecting_face);
@@ -30795,12 +30799,6 @@ const mouseOverCanvas = (state)=>{
     const bounds = state.renderer.domElement.getBoundingClientRect();
     if (state.rawPointer) return state.rawPointer.rx >= bounds.left && state.rawPointer.rx <= bounds.right && state.rawPointer.ry >= bounds.top && state.rawPointer.ry <= bounds.bottom;
     return false;
-};
-const localizePointer = (event, state)=>{
-    state.rawPointer.rx = event.clientX;
-    state.rawPointer.ry = event.clientY;
-    state.pointer.x = 2 * (window.innerWidth / state.renderer.domElement.offsetWidth) * (event.clientX - state.renderer.domElement.getBoundingClientRect().x) / window.innerWidth - 1;
-    state.pointer.y = -2 * (window.innerHeight / state.renderer.domElement.offsetHeight) * (event.clientY - state.renderer.domElement.getBoundingClientRect().y) / window.innerHeight + 1;
 };
 const intersecting = (state)=>{
     return state.intersects != null && state.intersects.length > 0;
@@ -31576,6 +31574,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
 var _three = require("three");
+var _pathTool = require("./2D/tools/PathTool");
 const state = {
     canvas: undefined,
     scene: new (0, _three.Scene),
@@ -31599,10 +31598,122 @@ const state = {
     controls: {
         waitForDoubleClick: false,
         doubleClick: false
-    }
+    },
+    tool: new (0, _pathTool.PathTool)(),
+    c_points: [],
+    c_selected: [],
+    cActive: false,
+    cSelecting: false,
+    cMovingPoint: false,
+    c_move_from: undefined
 };
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"efiIE":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathTool", ()=>PathTool);
+var _interface = require("../settings/interface");
+var _state = require("../../State");
+var _canvas = require("../canvas");
+class PathTool {
+    constructor(){
+        this.name = 'path';
+        this.__currentPath = [];
+        this.__length = 0;
+    }
+    push(v) {
+        this.__currentPath.push(v);
+        (0, _state.state).c_points.push(v);
+        this.__length++;
+        return this.__currentPath;
+    }
+    pop() {
+        const result = this.__currentPath.pop();
+        if (result) {
+            this.__length--;
+            return result;
+        } else return undefined;
+    }
+    selectPoint(i) {
+        // if (state.hotkeys.shift) {
+        // }
+        (0, _state.state).c_selected = [];
+        (0, _state.state).c_selected.push(i);
+        (0, _state.state).cSelecting = true;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    moveSelectedPoint() {}
+    getPointByIndex(index) {
+        return this.__currentPath[index];
+    }
+    checkPointOverlap(v) {
+        for(let i = 0; i < (0, _state.state).c_points.length; ++i){
+            console.log((0, _state.state).c_points[i].distanceTo(v), (0, _state.state).c_points.length);
+            if ((0, _state.state).c_points[i].distanceTo(v) < (0, _interface.selectionRadius)) return i;
+        }
+        return undefined;
+    }
+    checkPathOverlap(v) {
+        return true;
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN","../settings/interface":"dci9b","../canvas":"4a7yB"}],"dci9b":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "rad", ()=>rad);
+parcelHelpers.export(exports, "selectionRadius", ()=>selectionRadius);
+const rad = 4;
+const selectionRadius = 10;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4a7yB":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawCanvasFromState", ()=>drawCanvasFromState);
+var _interface = require("./settings/interface");
+function drawCanvasFromState(state) {
+    clearCanvas(state);
+    drawPoints(state);
+    drawPaths(state);
+    drawSelections(state);
+}
+const clearCanvas = (state)=>{
+    state.context.fillStyle = 'white';
+    state.context.fillRect(0, 0, state.canvas.width, state.canvas.height);
+};
+// Assuming only one active object, draw it
+const drawPoints = (state)=>{
+    state.c_points.map((e)=>{
+        state.context.fillStyle = 'black';
+        state.context.strokeStyle = 'black';
+        state.context.fillRect(e.x - (0, _interface.rad) / 2 - (0, _interface.rad) / 4, e.y - (0, _interface.rad) / 2 - (0, _interface.rad) / 4, (0, _interface.rad), (0, _interface.rad));
+    });
+};
+// Assuming only a single connected path, draw it
+const drawPaths = (state)=>{
+    const _ = state.context;
+    // Make sure this is not a copy op
+    const p = state.c_points;
+    if (p.length > 0) {
+        _.beginPath();
+        _.strokeStyle = 'black';
+        _.moveTo(p[0].x, p[0].y);
+        for(let i = 1; i < state.c_points.length; ++i){
+            _.lineTo(p[i].x, p[i].y);
+            _.moveTo(p[i].x, p[i].y);
+        }
+        _.stroke();
+    }
+};
+const drawSelections = (state)=>{
+    const _ = state;
+    _.c_selected.map((index)=>{
+        _.context.fillStyle = 'blue';
+        _.context.fillRect(_.c_points[index].x, _.c_points[index].y, 10, 10);
+    });
+};
+
+},{"./settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"efiIE":[function(require,module,exports,__globalThis) {
 // The Command interface and class is responsible for managing incoming user commands that affect state, with some exception (camera position)
 // The Command Queue is a list of all incoming commands yet to be executed
 // The command History is a list of all previously executed commands
@@ -31705,6 +31816,7 @@ var _selectObjectCommand = require("../commands/SelectObjectCommand");
 var _state = require("../State");
 var _util = require("../util");
 var _selectFaceCommand = require("../commands/SelectFaceCommand");
+var _localizePointerTo = require("../pointer/LocalizePointerTo");
 function onDoubleClick(event) {
     (0, _state.state).intersects = [];
     (0, _state.state).raycaster.setFromCamera((0, _state.state).pointer, (0, _state.state).camera);
@@ -31719,7 +31831,11 @@ function onDoubleClick(event) {
     }
 }
 function onPointerMove(event) {
-    (0, _util.localizePointer)(event, (0, _state.state));
+    (0, _localizePointerTo.localizePointerTo)({
+        event,
+        state: (0, _state.state),
+        domElement: (0, _state.state).renderer.domElement
+    });
     (0, _state.state).pointerDown && (0, _state.state).selected_faces.size;
 }
 function onPointerDown(event) {
@@ -31738,62 +31854,7 @@ function onPointerUp(event) {
     (0, _state.state).pointerDown = false;
 }
 
-},{"../Command":"efiIE","../State":"83rpN","../util":"7wzGb","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/SelectFaceCommand":"2g5NI","../commands/SelectObjectCommand":"5QLZA"}],"2g5NI":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "tagFace", ()=>tagFace);
-parcelHelpers.export(exports, "SelectFaceCommand", ()=>SelectFaceCommand);
-parcelHelpers.export(exports, "DeselectFaceCommand", ()=>DeselectFaceCommand);
-var _state = require("../State");
-const tagFace = (face, uuid)=>{
-    const generic_face = {
-        ...face,
-        materialIndex: 0
-    };
-    return {
-        face: generic_face,
-        uuid
-    };
-};
-class SelectFaceCommand {
-    constructor(bundle){
-        this.__selected = (0, _state.state).selected_faces;
-        this.__bundle = {
-            ...bundle,
-            face: tagFace(bundle.face, bundle.object.uuid)
-        };
-    }
-    do() {
-        if (!this.__selected.has(JSON.stringify(this.__bundle.face))) {
-            (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
-            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
-        }
-    }
-    undo() {
-        (0, _state.state).selected_faces = this.__selected;
-        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
-    }
-}
-class DeselectFaceCommand {
-    constructor(bundle){
-        this.__bundle = {
-            ...bundle,
-            face: tagFace(bundle.face, bundle.object.uuid)
-        };
-    }
-    do() {
-        if ((0, _state.state).selected_faces.has(JSON.stringify(this.__bundle.face))) {
-            (0, _state.state).selected_faces.delete(JSON.stringify(this.__bundle.face));
-            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
-        }
-    }
-    undo() {
-        (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
-        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
-    }
-}
-
-},{"../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5QLZA":[function(require,module,exports,__globalThis) {
+},{"../Command":"efiIE","../commands/SelectObjectCommand":"5QLZA","../State":"83rpN","../util":"7wzGb","../commands/SelectFaceCommand":"2g5NI","../pointer/LocalizePointerTo":"dLwIR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5QLZA":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectObjectCommand", ()=>SelectObjectCommand);
@@ -31849,7 +31910,73 @@ const material_default = new _three.MeshBasicMaterial({
     color: "#ff0000"
 });
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jq3Nj":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2g5NI":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "tagFace", ()=>tagFace);
+parcelHelpers.export(exports, "SelectFaceCommand", ()=>SelectFaceCommand);
+parcelHelpers.export(exports, "DeselectFaceCommand", ()=>DeselectFaceCommand);
+var _state = require("../State");
+const tagFace = (face, uuid)=>{
+    const generic_face = {
+        ...face,
+        materialIndex: 0
+    };
+    return {
+        face: generic_face,
+        uuid
+    };
+};
+class SelectFaceCommand {
+    constructor(bundle){
+        this.__selected = (0, _state.state).selected_faces;
+        this.__bundle = {
+            ...bundle,
+            face: tagFace(bundle.face, bundle.object.uuid)
+        };
+    }
+    do() {
+        if (!this.__selected.has(JSON.stringify(this.__bundle.face))) {
+            (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
+            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
+        }
+    }
+    undo() {
+        (0, _state.state).selected_faces = this.__selected;
+        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
+    }
+}
+class DeselectFaceCommand {
+    constructor(bundle){
+        this.__bundle = {
+            ...bundle,
+            face: tagFace(bundle.face, bundle.object.uuid)
+        };
+    }
+    do() {
+        if ((0, _state.state).selected_faces.has(JSON.stringify(this.__bundle.face))) {
+            (0, _state.state).selected_faces.delete(JSON.stringify(this.__bundle.face));
+            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
+        }
+    }
+    undo() {
+        (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
+        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
+    }
+}
+
+},{"../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dLwIR":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "localizePointerTo", ()=>localizePointerTo);
+const localizePointerTo = ({ event, state, domElement })=>{
+    state.rawPointer.rx = event.clientX;
+    state.rawPointer.ry = event.clientY;
+    state.pointer.x = 2 * (window.innerWidth / domElement.offsetWidth) * (event.clientX - state.renderer.domElement.getBoundingClientRect().x) / window.innerWidth - 1;
+    state.pointer.y = -2 * (window.innerHeight / domElement.offsetHeight) * (event.clientY - state.renderer.domElement.getBoundingClientRect().y) / window.innerHeight + 1;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jq3Nj":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createRectangularPrism", ()=>createRectangularPrism);
@@ -32012,6 +32139,171 @@ const createRectangularPrism = (origin, width = 1, height = 1, depth = 1)=>{
     };
 };
 
-},{"three":"ktPTu","../Materials":"UNzMx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["cAPdp","jeorp"], "jeorp", "parcelRequire94c2")
+},{"three":"ktPTu","../Materials":"UNzMx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"axAUO":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseDown", ()=>cOnMouseDown);
+var _command = require("../../Command");
+var _state = require("../../State");
+var _pathToolCommand = require("../commands/PathToolCommand");
+var _pathToolSelectCommand = require("../commands/PathToolSelectCommand");
+var _cLocalizePoint = require("./cLocalizePoint");
+const cOnMouseDown = (event)=>{
+    (0, _state.state).pointer = (0, _cLocalizePoint.cLocalizePoint)(event.clientX, event.clientY);
+    (0, _state.state).pointerDown = true;
+    switch((0, _state.state).tool.name){
+        case "path":
+            const pathTool = (0, _state.state).tool;
+            const closePointIndex = pathTool.checkPointOverlap((0, _state.state).pointer);
+            if (typeof closePointIndex == 'number' && closePointIndex >= 0) {
+                (0, _state.state).c_move_from = (0, _state.state).pointer.clone();
+                (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(closePointIndex));
+                (0, _state.state).cMovingPoint = true;
+            } else {
+                (0, _state.state).cSelecting = false;
+                console.log((0, _state.state).cMovingPoint);
+                (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(pathTool, (0, _state.state).pointer));
+            }
+    }
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../../State":"83rpN","../commands/PathToolCommand":"bGlHe","./cLocalizePoint":"3rhkZ","../commands/PathToolSelectCommand":"jtaot"}],"bGlHe":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathToolCommand", ()=>PathToolCommand);
+var _stateTs = require("../../State.ts");
+var _interfaceTs = require("../settings/interface.ts");
+class PathToolCommand {
+    // Dangerous misuse of Command pattern here
+    constructor(tool, point){
+        this.tool = tool;
+        this.__point = point;
+    }
+    do() {
+        (0, _stateTs.state).context.fillStyle = 'black';
+        (0, _stateTs.state).context.strokeStyle = 'black';
+        (0, _stateTs.state).context?.fillRect((0, _stateTs.state).pointer.x - (0, _interfaceTs.rad) / 2 - (0, _interfaceTs.rad) / 4, (0, _stateTs.state).pointer.y - (0, _interfaceTs.rad) / 2 - (0, _interfaceTs.rad) / 4, (0, _interfaceTs.rad), (0, _interfaceTs.rad));
+        if (this.tool.drawing == true) {
+            this.tool.push(this.__point);
+            (0, _stateTs.state).context?.lineTo(this.__point.x, this.__point.y);
+            (0, _stateTs.state).context?.stroke();
+        } else {
+            this.tool.drawing = true;
+            console.log('begin path');
+            (0, _stateTs.state).context?.beginPath();
+            (0, _stateTs.state).context?.moveTo(this.__point.x, this.__point.y);
+            this.tool.push(this.__point);
+        }
+    }
+    undo() {
+    // TODO: Implement draw Undo
+    }
+}
+
+},{"../../State.ts":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../settings/interface.ts":"dci9b"}],"3rhkZ":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cLocalizePoint", ()=>cLocalizePoint);
+var _three = require("three");
+var _state = require("../../State");
+const cLocalizePoint = (sx, sy)=>{
+    // sx, sy in [-1, 1];
+    // x, y in [0, width, height resp.];
+    const x = sx - (0, _state.state).canvas.getBoundingClientRect().x;
+    const y = sy - (0, _state.state).canvas.getBoundingClientRect().y;
+    return new (0, _three.Vector2)(x, y);
+};
+
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jtaot":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathToolSelectCommand", ()=>PathToolSelectCommand);
+var _state = require("../../State");
+var _canvas = require("../canvas");
+class PathToolSelectCommand {
+    constructor(index){
+        this.__index = index;
+        this.__point = (0, _state.state).tool.getPointByIndex(index);
+    }
+    do() {
+        (0, _state.state).context.fillStyle = 'blue';
+        (0, _state.state).context.fillRect(this.__point.x, this.__point.y, 10, 10);
+        // In PathTool.ts
+        (0, _state.state).tool.selectPoint(this.__index);
+    }
+    undo() {
+        (0, _state.state).tool.removeSelected(this.__point);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../canvas":"4a7yB"}],"6kSJ1":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseMove", ()=>cOnMouseMove);
+var _state = require("../../State");
+const cOnMouseMove = (e)=>{
+    if ((0, _state.state).cActive && (0, _state.state).pointerDown) (0, _state.state).cSelecting;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN"}],"9V478":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseUp", ()=>cOnMouseUp);
+var _command = require("../../Command");
+var _state = require("../../State");
+var _pathToolMovePointCommand = require("../commands/PathToolMovePointCommand");
+var _cLocalizePoint = require("./cLocalizePoint");
+const cOnMouseUp = (e)=>{
+    if ((0, _state.state).cMovingPoint) (0, _command.pushCommand)(new (0, _pathToolMovePointCommand.PathToolMovePointCommand)((0, _state.state).c_selected, (0, _state.state).c_move_from, (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)));
+    (0, _state.state).pointerDown = false;
+    (0, _state.state).cSelecting = false;
+    (0, _state.state).cMovingPoint = false;
+// There should be a function for doing all these no-op ops–ending selection, ending drag, hints, etc
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","./cLocalizePoint":"3rhkZ"}],"5n0lO":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathToolMovePointCommand", ()=>PathToolMovePointCommand);
+var _state = require("../../State");
+var _canvas = require("../canvas");
+class PathToolMovePointCommand {
+    constructor(indices, from, to){
+        console.log(to, from);
+        this.indices = indices;
+        this.__from = from.clone();
+        this.__to = to.clone();
+    }
+    do() {
+        const sum = this.__to.sub(this.__from);
+        this.indices.map((i)=>{
+            console.log(sum);
+            (0, _state.state).c_points[i].add(sum);
+        });
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {}
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN","../canvas":"4a7yB"}],"gK6it":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseEnter", ()=>cOnMouseEnter);
+var _state = require("../../State");
+const cOnMouseEnter = (e)=>{
+    (0, _state.state).cActive = true;
+};
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hoBK0":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseLeave", ()=>cOnMouseLeave);
+var _state = require("../../State");
+const cOnMouseLeave = (e)=>{
+    (0, _state.state).cActive = false;
+};
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["cAPdp","jeorp"], "jeorp", "parcelRequire94c2")
 
 //# sourceMappingURL=index.b7a05eb9.js.map

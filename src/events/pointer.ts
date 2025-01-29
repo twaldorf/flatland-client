@@ -2,9 +2,10 @@ import { Intersection, Mesh, Object3D } from "three";
 import { pushCommand } from "../Command";
 import { SelectObjectCommand, DeselectObjectCommand } from "../commands/SelectObjectCommand";
 import { state } from "../State";
-import { first_intersecting_face, first_intersecting_object, intersecting, localizePointer } from "../util";
+import { first_intersecting_face, first_intersecting_object, intersecting } from "../util";
 import { DeselectFaceCommand, SelectFaceCommand, tagFace } from "../commands/SelectFaceCommand";
 import { State } from "../types";
+import { localizePointerTo } from "../pointer/LocalizePointerTo";
 
 export function onDoubleClick(event: MouseEvent) {
   state.intersects = [];
@@ -27,7 +28,7 @@ export function onDoubleClick(event: MouseEvent) {
 // localize pointer position
 
 export function onPointerMove( event: MouseEvent ) {
-  localizePointer(event, state)
+  localizePointerTo( { event, state, domElement: state.renderer.domElement } )
   if (state.pointerDown && state.selected_faces.size > 0) {
     
   }

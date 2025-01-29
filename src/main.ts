@@ -3,35 +3,41 @@ import * as THREE from 'three'
 import { mouseOverCanvas } from './util'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { state } from './State';
-import { executeCommands } from './Command';
+import { executeCommands, pushCommand } from './Command';
 import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './events/pointer';
 import { createRectangularPrism } from './geometry/primitives';
+import { cOnMouseDown } from './2D/pointer/cOnMouseDown';
+import { cOnMouseMove } from './2D/pointer/cOnMouseMove';
+import { cOnMouseUp } from './2D/pointer/cOnMouseUp';
+import { cOnMouseEnter } from './2D/pointer/cOnMouseEnter';
+import { cOnMouseLeave } from './2D/pointer/cOnMouseLeave';
 
 function initCanvas() {
   // Get a reference to the canvas element and its rendering context
   const canvas = document.getElementById( "canvas2d" ) as HTMLCanvasElement;
   state.canvas = canvas;
-  canvas.width = 800;
 
   const context = canvas.getContext( "2d" );
+  if (!context) {
+    throw new Error('No such 2D context when initializing page elements');
+  }
   state.context = context;
 
   context?.clearRect(0, 0, canvas.width, canvas.height);
 
   var lastPoint = {x: 0, y: 0};
 
-  const cOnMouseClick = (event:MouseEvent):void => {
-    lastPoint.x = event.clientX;
-    
-  }
-
-  canvas.addEventListener('mousedown', cOnMouseClick);
+  canvas.addEventListener('mousedown', cOnMouseDown);
+  canvas.addEventListener('mousemove', cOnMouseMove);
+  canvas.addEventListener('mouseup', cOnMouseUp);
+  canvas.addEventListener('mouseenter', cOnMouseEnter);
+  canvas.addEventListener('mouseleave', cOnMouseLeave);
 
   if (context) {
     const devicePixelRatio = window.devicePixelRatio || 1;
 
-    canvas.width = canvas.parentElement.clientWidth / devicePixelRatio - 10;
-    canvas.height = canvas.parentElement.clientHeight / devicePixelRatio;
+    canvas.width = canvas.clientWidth * devicePixelRatio;
+    canvas.height = canvas.clientHeight * devicePixelRatio;
 
     context.scale(devicePixelRatio, devicePixelRatio);
 
@@ -41,27 +47,27 @@ function initCanvas() {
 }
 
 function initScene() {
-  const scene = new THREE.Scene();
-  state.scene = scene;
-  const camera_group = new THREE.Group();
-
-  const frustumSize = 25;
-  const aspect = window.innerWidth / window.innerHeight;
-  const camera = new THREE.OrthographicCamera( frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 0.001, 1000 );
-  state.camera = camera;
-  camera.position.z = 100;
-  camera.lookAt(0,0,0);
-  camera_group.add(camera);
-  
   state.renderer = new THREE.WebGLRenderer();
   const renderer = state.renderer;
-  const controls = new OrbitControls(camera, renderer.domElement);
-  renderer.domElement.style += " display: inline; ";
   const parent = document.getElementById( 'canvas3d-container' );
   parent?.appendChild( renderer.domElement );
   if (parent) {
     renderer.setSize( window.innerWidth / 2 - 10, window.innerWidth / 2 - 10 );
   }
+
+  const scene = new THREE.Scene();
+  state.scene = scene;
+  const camera_group = new THREE.Group();
+
+  const frustumSize = 25;
+  const aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight;
+  const camera = new THREE.OrthographicCamera( frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 0.1, 1000 );
+  state.camera = camera;
+  camera.position.z = 100;
+  camera.lookAt(0,0,0);
+  camera_group.add(camera);
+  
+  const controls = new OrbitControls(camera, renderer.domElement);
 
   scene.background = new THREE.Color( 0xF5CF36 );
 
@@ -75,10 +81,10 @@ function initScene() {
   
 
   // register event listeners
-  window.addEventListener( 'pointermove', onPointerMove );
-  window.addEventListener( 'pointerdown', onPointerDown );
-  window.addEventListener( 'pointerup', onPointerUp );
-  window.addEventListener( 'dblclick', onDoubleClick );
+  renderer.domElement.addEventListener( 'pointermove', onPointerMove );
+  renderer.domElement.addEventListener( 'pointerdown', onPointerDown );
+  renderer.domElement.addEventListener( 'pointerup', onPointerUp );
+  renderer.domElement.addEventListener( 'dblclick', onDoubleClick );
   state.pointerDown = false;
   
   // test scene
