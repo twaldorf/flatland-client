@@ -20,8 +20,7 @@ export class PathToolSelectCommand implements Command {
   }
 
   undo() {
-    state.tool.removeSelected(this.__point);
-    drawCanvasFromState(state);
+    state.tool.removePointFromSelection(this.__point);
   }
 
 }

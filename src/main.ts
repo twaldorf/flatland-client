@@ -6,11 +6,8 @@ import { state } from './State';
 import { executeCommands, pushCommand } from './Command';
 import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './events/pointer';
 import { createRectangularPrism } from './geometry/primitives';
-import { cOnMouseDown } from './2D/pointer/cOnMouseDown';
-import { cOnMouseMove } from './2D/pointer/cOnMouseMove';
-import { cOnMouseUp } from './2D/pointer/cOnMouseUp';
-import { cOnMouseEnter } from './2D/pointer/cOnMouseEnter';
-import { cOnMouseLeave } from './2D/pointer/cOnMouseLeave';
+import { initializeHotkeys } from './2D/hotkeys/hotkeys';
+import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
 
 function initCanvas() {
   // Get a reference to the canvas element and its rendering context
@@ -27,11 +24,9 @@ function initCanvas() {
 
   var lastPoint = {x: 0, y: 0};
 
-  canvas.addEventListener('mousedown', cOnMouseDown);
-  canvas.addEventListener('mousemove', cOnMouseMove);
-  canvas.addEventListener('mouseup', cOnMouseUp);
-  canvas.addEventListener('mouseenter', cOnMouseEnter);
-  canvas.addEventListener('mouseleave', cOnMouseLeave);
+  initializeHotkeys();
+  state.tool.initializeEvents();
+  initializeCanvasEvents(canvas);
 
   if (context) {
     const devicePixelRatio = window.devicePixelRatio || 1;

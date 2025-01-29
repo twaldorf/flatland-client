@@ -6,11 +6,11 @@ import { PathTool } from "../tools/PathTool.ts";
 import { rad } from "../settings/interface.ts";
 
 export class PathToolCommand implements Command {
-  __points:THREE.Vector2[];
   __point:Vector2;
+  __index:number;
+  __pathIndex:number;
   tool:PathTool;
 
-  // Dangerous misuse of Command pattern here
   constructor(tool:PathTool, point:Vector2) {
     this.tool = tool;
     this.__point = point;
@@ -19,22 +19,14 @@ export class PathToolCommand implements Command {
   do() {
     state.context.fillStyle = 'black';
     state.context.strokeStyle = 'black';
-    state.context?.fillRect(state.pointer.x - rad / 2 - rad / 4, state.pointer.y - rad / 2 - rad / 4, rad, rad);
-    if (this.tool.drawing == true) {
-      this.tool.push( this.__point );
-      state.context?.lineTo(this.__point.x, this.__point.y);
-      state.context?.stroke();
-    } else {
-      this.tool.drawing = true;
-      console.log('begin path');
-      state.context?.beginPath();
-      state.context?.moveTo(this.__point.x, this.__point.y);
-      this.tool.push( this.__point ); 
-    }
+    state.context.fillRect(this.__point.x - rad / 2 - rad / 4, this.__point.y - rad / 2 - rad / 4, rad, rad);
+    const indices = this.tool.addPointToCurrentPath( this.__point );
+    this.__index = indices.pointIndex;
+    this.__pathIndex = indices.pathIndex;
   }
 
   undo() {
-    // TODO: Implement draw Undo
+    this.tool.removePointFromPath( this.__index, this.__pathIndex );
   }
 
 }

@@ -1,6 +1,7 @@
 import { Vector2 } from "three";
 import { DrawableEntity, State } from "../types";
 import { rad } from "./settings/interface";
+import { state } from "../State";
 
 export function drawCanvasFromState(state:State):void {
   clearCanvas(state);
@@ -15,6 +16,7 @@ const clearCanvas = (state:State) => {
 }
 
 // Assuming only one active object, draw it
+// TODO: draw a tree of paths, or rather a 2d array of paths
 const drawPoints = (state:State) => {
   state.c_points.map((e:Vector2) => {
     state.context.fillStyle = 'black';
@@ -24,6 +26,7 @@ const drawPoints = (state:State) => {
 }
 
 // Assuming only a single connected path, draw it
+// TODO: draw a tree of such paths
 const drawPaths = (state:State)  => {
   const _ = state.context;
   // Make sure this is not a copy op
@@ -40,10 +43,9 @@ const drawPaths = (state:State)  => {
   }
 }
 
-const drawSelections = (state:State) => {
-  const _ = state;
-  _.c_selected.map((index:number) => {
-    _.context.fillStyle = 'blue';
-    _.context.fillRect(_.c_points[index].x, _.c_points[index].y, 10, 10);
+const drawSelections = () => {
+ state.c_selected.map((index:number) => {
+   state.context.fillStyle = 'blue';
+   state.context.fillRect(state.c_points[index].x - 5, state.c_points[index].y - 5, 10, 10);
   })
 }
