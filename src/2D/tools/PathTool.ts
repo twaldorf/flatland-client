@@ -2,7 +2,7 @@ import { Vector2 } from "three";
 import { Tool, ToolBase } from "../../types";
 import { selectionRadius } from "../settings/interface";
 import { state } from "../../State";
-import { drawCanvasFromState } from "../canvas";
+import { drawCanvasFromState, drawSelectionMovePreview, drawSelections } from "../canvas";
 import { pushCommand } from "../../Command";
 import { PathToolMovePointCommand } from "../commands/PathToolMovePointCommand";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
@@ -25,14 +25,15 @@ export class PathTool implements ToolBase {
   // Tool name
   readonly name:string = 'path';
 
-  // Vector of indices used in the current path
-  // private __currentPath: number[];
+  // Index of current path within c_paths
+  private __currentPathIndex: number;
 
   // Number of points in the current path
   private __length: number;
 
   constructor() {
     this.__length = 0;
+    this.__currentPathIndex = 0;
   }
 
   public initializeEvents() {
@@ -86,25 +87,43 @@ export class PathTool implements ToolBase {
     const pos = cLocalizePoint(e.clientX, e.clientY);
     const hitIndex = findNearestPoint(pos, state.c_points);
     
-    if (hitIndex !== null) {
+    if (hitIndex !== null && hitIndex > 0) {
+      // Case: hit a point which is not the first point
       this.transition({
         type: 'selecting',
         selectedIndices: state.c_selected,
         hitIndex
       });
-    } else {
+    } else if ( hitIndex == 0 ) {
+      // Case: Close the path and connect to the first point in the shape
+      // TODO: this does not work lol
+      pushCommand( new PathToolCommand( this, 
+        state.c_points[ 
+          state.c_paths[ 
+            this.__currentPathIndex ][ 0 ]
+           ] 
+          ) 
+        );
       this.transition({
         type: 'idle'
-      })
+      }); 
+    } else {
+      // Case: did not hit anything
+      this.transition({
+        type: 'idle'
+      });
     }
 
     switch (this.__state.type) {
       case "selecting":
         if (state.c_selected.length == 0) {
+          // Case: no points are selected
           pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
         } else if (state.c_selected.length > 0 && state.shiftDown ) {
+          // Case: Points are selected, the user selects additional points
           pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
         } else if (this.__indexIsNotSelected( this.__state.hitIndex )) {
+          // Case: Points are selected but the user is clicking exclusively on an unselected point
           pushCommand( new PathToolDeselectCommand() );
           pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
         }
@@ -117,9 +136,6 @@ export class PathTool implements ToolBase {
           pushCommand( new PathToolDeselectCommand() );
         }
         break;
-        // case "drawing":
-        // case "hovering":
-        // case "moving":
     }
     drawCanvasFromState(state);
   }
@@ -129,6 +145,7 @@ export class PathTool implements ToolBase {
     
     switch (this.__state.type) {
       case "moving":
+        drawSelectionMovePreview(pos);
         break;
 
       case "selecting":
@@ -148,7 +165,7 @@ export class PathTool implements ToolBase {
         }
         break;
     }
-    drawCanvasFromState(state);
+    // drawCanvasFromState(state);
   }
 
   private onMouseUp(e: MouseEvent) {
@@ -176,6 +193,7 @@ export class PathTool implements ToolBase {
   }
 
   // Protected, only to be used by Command
+  // Moved to common.ts
   public selectPoint(index: number) {
     if (!state.c_selected.includes(index)) {
       state.c_selected.push(index);
@@ -184,26 +202,31 @@ export class PathTool implements ToolBase {
   }
 
   // Protected, only to be used by Command
+  // Moved to common.ts
   public deselect() {
     state.c_selected = [];
     drawCanvasFromState(state);
   }
 
   // Protected, only to be used by Command
+  // Moved to common.ts
   public removePointFromSelection( v: Vector2 ) {
     const i = state.c_selected.findIndex(( index ) => v.equals(state.c_points[ index ]));
     state.c_selected.splice( i, 1 );
   }
 
+  // Moved to common.ts
   public getPointByIndex(index:number):Vector2 {
     return state.c_points[ index ];
   }
 
+  // Moved to common.ts
   private __indexIsNotSelected(index:number):boolean {
     const result = state.c_selected.findIndex((i) => { return i == index });
     return result === -1;
   }
 
+  // Moved to common.ts
   public checkPointOverlap(v:Vector2):number | undefined {
     for (let i = 0; i < state.c_points.length; ++i) {
       console.log(state.c_points[i].distanceTo(v), state.c_points.length)
@@ -214,6 +237,7 @@ export class PathTool implements ToolBase {
     return undefined;
   }
 
+  // Moved to common.ts
   public checkPathOverlap(v:Vector2): boolean {
     return true;
   }

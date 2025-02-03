@@ -2,6 +2,7 @@ import { Face, Object3D, Vector2 } from "three";
 import { FaceId } from "./commands/SelectFaceCommand";
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
+import { SelectTool } from "./2D/tools/SelectTool";
 
 // State interface for global state singleton
 export interface State {
@@ -62,9 +63,11 @@ type Mode = 'default' |
 
 export interface ToolBase {
   name: string;
+  initializeEvents: Function;
 }
 
-export type Tool = PathTool;
+export type Tool = PathTool | SelectTool;
+export type ToolName = "path" | "select";
 
 export type DrawableEntity = Vector2 | Vector2[];
 

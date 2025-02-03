@@ -7,7 +7,8 @@ export function drawCanvasFromState(state:State):void {
   clearCanvas(state);
   drawPoints(state);
   drawPaths(state);
-  drawSelections(state);
+  drawSelections();
+  // drawShapes();
 }
 
 const clearCanvas = (state:State) => {
@@ -40,6 +41,9 @@ const drawPaths = (state:State)  => {
       _.moveTo(p[i].x, p[i].y);
     }
     _.stroke();
+    if (state.c_paths[0] == state.c_paths[state.c_paths[0].length -1 ]) {
+      _.fill();
+    }
   }
 }
 
@@ -48,4 +52,10 @@ const drawSelections = () => {
    state.context.fillStyle = 'blue';
    state.context.fillRect(state.c_points[index].x - 5, state.c_points[index].y - 5, 10, 10);
   })
+}
+
+export function drawSelectionMovePreview(pos: Vector2): void {
+  drawCanvasFromState(state);
+  state.context.fillStyle = 'pink';
+  state.context.fillRect(pos.x - 5, pos.y - 5, 10, 10); 
 }

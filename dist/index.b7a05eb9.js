@@ -31629,6 +31629,7 @@ class PathTool {
         // Tool name
         this.name = 'path';
         this.__length = 0;
+        this.__currentPathIndex = 0;
     }
     initializeEvents() {
         const canvas = (0, _state.state).canvas;
@@ -31676,19 +31677,31 @@ class PathTool {
     onMouseDown(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
-        if (hitIndex !== null) this.transition({
+        if (hitIndex !== null && hitIndex > 0) // Case: hit a point which is not the first point
+        this.transition({
             type: 'selecting',
             selectedIndices: (0, _state.state).c_selected,
             hitIndex
         });
-        else this.transition({
+        else if (hitIndex == 0) {
+            // Case: Close the path and connect to the first point in the shape
+            // TODO: this does not work lol
+            (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, (0, _state.state).c_points[(0, _state.state).c_paths[this.__currentPathIndex][0]]));
+            this.transition({
+                type: 'idle'
+            });
+        } else // Case: did not hit anything
+        this.transition({
             type: 'idle'
         });
         switch(this.__state.type){
             case "selecting":
-                if ((0, _state.state).c_selected.length == 0) (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
-                else if ((0, _state.state).c_selected.length > 0 && (0, _state.state).shiftDown) (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
+                if ((0, _state.state).c_selected.length == 0) // Case: no points are selected
+                (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
+                else if ((0, _state.state).c_selected.length > 0 && (0, _state.state).shiftDown) // Case: Points are selected, the user selects additional points
+                (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
                 else if (this.__indexIsNotSelected(this.__state.hitIndex)) {
+                    // Case: Points are selected but the user is clicking exclusively on an unselected point
                     (0, _command.pushCommand)(new (0, _pathToolDeselectCommand.PathToolDeselectCommand)());
                     (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
                 }
@@ -31704,6 +31717,7 @@ class PathTool {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         switch(this.__state.type){
             case "moving":
+                (0, _canvas.drawSelectionMovePreview)(pos);
                 break;
             case "selecting":
                 this.transition({
@@ -31722,7 +31736,7 @@ class PathTool {
                 }
                 break;
         }
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    // drawCanvasFromState(state);
     }
     onMouseUp(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
@@ -31743,6 +31757,7 @@ class PathTool {
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     // Protected, only to be used by Command
+    // Moved to common.ts
     selectPoint(index) {
         if (!(0, _state.state).c_selected.includes(index)) {
             (0, _state.state).c_selected.push(index);
@@ -31750,24 +31765,29 @@ class PathTool {
         }
     }
     // Protected, only to be used by Command
+    // Moved to common.ts
     deselect() {
         (0, _state.state).c_selected = [];
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     // Protected, only to be used by Command
+    // Moved to common.ts
     removePointFromSelection(v) {
         const i = (0, _state.state).c_selected.findIndex((index)=>v.equals((0, _state.state).c_points[index]));
         (0, _state.state).c_selected.splice(i, 1);
     }
+    // Moved to common.ts
     getPointByIndex(index) {
         return (0, _state.state).c_points[index];
     }
+    // Moved to common.ts
     __indexIsNotSelected(index) {
         const result = (0, _state.state).c_selected.findIndex((i)=>{
             return i == index;
         });
         return result === -1;
     }
+    // Moved to common.ts
     checkPointOverlap(v) {
         for(let i = 0; i < (0, _state.state).c_points.length; ++i){
             console.log((0, _state.state).c_points[i].distanceTo(v), (0, _state.state).c_points.length);
@@ -31775,6 +31795,7 @@ class PathTool {
         }
         return undefined;
     }
+    // Moved to common.ts
     checkPathOverlap(v) {
         return true;
     }
@@ -31908,13 +31929,15 @@ class PathToolMovePointCommand {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawCanvasFromState", ()=>drawCanvasFromState);
+parcelHelpers.export(exports, "drawSelectionMovePreview", ()=>drawSelectionMovePreview);
 var _interface = require("./settings/interface");
 var _state = require("../State");
 function drawCanvasFromState(state) {
     clearCanvas(state);
     drawPoints(state);
     drawPaths(state);
-    drawSelections(state);
+    drawSelections();
+// drawShapes();
 }
 const clearCanvas = (state)=>{
     state.context.fillStyle = 'white';
@@ -31944,6 +31967,7 @@ const drawPaths = (state)=>{
             _.moveTo(p[i].x, p[i].y);
         }
         _.stroke();
+        if (state.c_paths[0] == state.c_paths[state.c_paths[0].length - 1]) _.fill();
     }
 };
 const drawSelections = ()=>{
@@ -31952,6 +31976,11 @@ const drawSelections = ()=>{
         (0, _state.state).context.fillRect((0, _state.state).c_points[index].x - 5, (0, _state.state).c_points[index].y - 5, 10, 10);
     });
 };
+function drawSelectionMovePreview(pos) {
+    drawCanvasFromState((0, _state.state));
+    (0, _state.state).context.fillStyle = 'pink';
+    (0, _state.state).context.fillRect(pos.x - 5, pos.y - 5, 10, 10);
+}
 
 },{"./settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../State":"83rpN"}],"3rhkZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
