@@ -9,9 +9,9 @@ import { createRectangularPrism } from './geometry/primitives';
 import { initializeHotkeys } from './2D/hotkeys/hotkeys';
 import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
 
-function initCanvas() {
+export function initCanvas(ref:HTMLCanvasElement) {
   // Get a reference to the canvas element and its rendering context
-  const canvas = document.getElementById( "canvas2d" ) as HTMLCanvasElement;
+  const canvas = ref;
   state.canvas = canvas;
 
   const context = canvas.getContext( "2d" );
@@ -39,16 +39,14 @@ function initCanvas() {
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvas.width, canvas.height);
   }
+
+  return { canvasRef: state.canvas };
 }
 
-function initScene() {
-  state.renderer = new THREE.WebGLRenderer();
+export function initScene(canvas:HTMLCanvasElement) {
+  state.renderer = new THREE.WebGLRenderer( { canvas } );
   const renderer = state.renderer;
-  const parent = document.getElementById( 'canvas3d-container' );
-  parent?.appendChild( renderer.domElement );
-  if (parent) {
-    renderer.setSize( window.innerWidth / 2 - 10, window.innerWidth / 2 - 10 );
-  }
+  renderer.setSize( window.innerWidth / 2 - 10, window.innerWidth / 2 - 10 );
 
   const scene = new THREE.Scene();
   state.scene = scene;
@@ -88,6 +86,7 @@ function initScene() {
   
   // kick off update
   update();
+  return { threeRef: parent };
 }
 
 const drawTestPrimitive = () => {
@@ -183,6 +182,3 @@ function update() {
 
 }
 
-initScene();
-
-initCanvas();

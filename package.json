@@ -7,11 +7,16 @@
     "build": "parcel build"
   },
   "devDependencies": {
-    "parcel": "latest"
+    "parcel": "latest",
+    "process": "^0.11.10"
   },
   "dependencies": {
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
     "@types/three": "^0.155.0",
     "node": "^20.18.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "three": "^0.155.0"
   }
 }
