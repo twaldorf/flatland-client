@@ -744,6 +744,10 @@
     resize: both;
   }
 
+  .columns-2 {
+    columns: 2;
+  }
+
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
@@ -751,6 +755,16 @@
 
   .font-mono {
     font-family: var(--font-mono);
+  }
+
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+
+  .text-base {
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
   }
 
   .lowercase {

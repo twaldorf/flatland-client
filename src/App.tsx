@@ -2,11 +2,8 @@ import React, { useEffect, useRef } from "react";
 // import "./styles.css";
 import { initScene, initCanvas } from "./main";
 import { Toolbar } from "./UI/tools/Toolbar";
+import { Header } from "./UI/sections/Header";
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
-
-const canvasStyle = {
-  width: "50%"
-}
 
 const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,23 +17,18 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="app-container container font-mono">
-      <h1>Design Pattern Systems</h1>
-  		<div>
-        <Toolbar></Toolbar>
-  			<div>
-  				<h3>Flat pattern</h3>
-  				<canvas ref={canvasRef} id="canvas2d" style={canvasStyle}></canvas>
+    <main className="app-container font-mono w-full h-full no-scroll">
+      <Header></Header>
+      <Toolbar></Toolbar>
+      <div className="grid grid-cols-2">
+  			<div className="h-svh">
+  				<canvas ref={canvasRef} id="canvas2d" className="w-full h-full col-1"></canvas>
   			</div>
-  			<div id="main">
-  				<h3>Volume editor</h3>
-  				<canvas ref={threeRef} id="canvas3d-container" style={canvasStyle}></canvas>
+  			<div id="main" className="h-svh">
+  				<canvas ref={threeRef} id="canvas3d-container" className="w-full h-full col-2"></canvas>
   			</div>
-  		</div>
-      <div className="ui-panel">
-        <button onClick={() => alert("Clicked!")}>Click Me</button>
-      </div>
-    </div>
+		  </div>
+    </main>
   );
 };
 
