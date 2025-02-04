@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 // import "./styles.css";
 import { initScene, initCanvas } from "./main";
+import { Toolbar } from "./UI/tools/Toolbar";
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 
 const canvasStyle = {
@@ -19,9 +20,10 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="app-container">
+    <div className="app-container container font-mono">
       <h1>Design Pattern Systems</h1>
   		<div>
+        <Toolbar></Toolbar>
   			<div>
   				<h3>Flat pattern</h3>
   				<canvas ref={canvasRef} id="canvas2d" style={canvasStyle}></canvas>

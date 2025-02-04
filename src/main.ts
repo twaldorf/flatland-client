@@ -4,8 +4,8 @@ import { mouseOverCanvas } from './util'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { state } from './State';
 import { executeCommands, pushCommand } from './Command';
-import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './events/pointer';
-import { createRectangularPrism } from './geometry/primitives';
+import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './3D/events/pointer';
+import { createRectangularPrism } from './3D/geometry/primitives';
 import { initializeHotkeys } from './2D/hotkeys/hotkeys';
 import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
 

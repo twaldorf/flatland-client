@@ -18575,6 +18575,7 @@ var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 // import "./styles.css";
 var _main = require("./main");
+var _toolbar = require("./UI/tools/Toolbar");
 var _s = $RefreshSig$();
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 const canvasStyle = {
@@ -18591,24 +18592,29 @@ const App = ()=>{
         }
     }, []);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "app-container",
+        className: "app-container container font-mono",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
                 children: "Design Pattern Systems"
             }, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 23,
+                lineNumber: 24,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
+                        fileName: "src/App.tsx",
+                        lineNumber: 26,
+                        columnNumber: 9
+                    }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h3", {
                                 children: "Flat pattern"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 26,
+                                lineNumber: 28,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18617,13 +18623,13 @@ const App = ()=>{
                                 style: canvasStyle
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 27,
+                                lineNumber: 29,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 25,
+                        lineNumber: 27,
                         columnNumber: 6
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18633,7 +18639,7 @@ const App = ()=>{
                                 children: "Volume editor"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 30,
+                                lineNumber: 32,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18642,19 +18648,19 @@ const App = ()=>{
                                 style: canvasStyle
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 31,
+                                lineNumber: 33,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 29,
+                        lineNumber: 31,
                         columnNumber: 6
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 24,
+                lineNumber: 25,
                 columnNumber: 5
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18664,18 +18670,18 @@ const App = ()=>{
                     children: "Click Me"
                 }, void 0, false, {
                     fileName: "src/App.tsx",
-                    lineNumber: 35,
+                    lineNumber: 37,
                     columnNumber: 9
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 34,
+                lineNumber: 36,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 22,
+        lineNumber: 23,
         columnNumber: 5
     }, undefined);
 };
@@ -18690,7 +18696,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"jeorp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/tools/Toolbar":"2W72B"}],"jeorp":[function(require,module,exports,__globalThis) {
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -18701,8 +18707,8 @@ var _util = require("./util");
 var _orbitControlsJs = require("three/examples/jsm/controls/OrbitControls.js");
 var _state = require("./State");
 var _command = require("./Command");
-var _pointer = require("./events/pointer");
-var _primitives = require("./geometry/primitives");
+var _pointer = require("./3D/events/pointer");
+var _primitives = require("./3D/geometry/primitives");
 var _hotkeys = require("./2D/hotkeys/hotkeys");
 var _pointerEvents = require("./2D/pointer/pointerEvents");
 function initCanvas(ref) {
@@ -18859,7 +18865,7 @@ function update() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./events/pointer":"bFv4z","./geometry/primitives":"jq3Nj","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K"}],"ktPTu":[function(require,module,exports,__globalThis) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -50181,7 +50187,112 @@ class PathToolDeselectCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bFv4z":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdjjs":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handleKeyDown", ()=>handleKeyDown);
+parcelHelpers.export(exports, "handleKeyUp", ()=>handleKeyUp);
+parcelHelpers.export(exports, "initializeHotkeys", ()=>initializeHotkeys);
+var _command = require("../../Command");
+var _state = require("../../State");
+var _deleteCommand = require("../commands/DeleteCommand");
+const handleKeyDown = (e)=>{
+    if (e.repeat) return; // Ignore repeated keydown events
+    switch(e.key){
+        case "Backspace":
+        case "Delete":
+            e.preventDefault();
+            handleDelete();
+            break;
+        case "Shift":
+            (0, _state.state).shiftDown = true; // Track shift for multi-selection
+            break;
+        default:
+            break;
+    }
+};
+const handleKeyUp = (e)=>{
+    if (e.key === "Shift") (0, _state.state).shiftDown = false;
+};
+const handleDelete = ()=>{
+    if ((0, _state.state).c_selected.length > 0) (0, _command.pushCommand)(new (0, _deleteCommand.DeleteCommand)());
+};
+const initializeHotkeys = ()=>{
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+}; // Call this function in your app startup logic
+
+},{"../../Command":"efiIE","../../State":"83rpN","../commands/DeleteCommand":"jrnPc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jrnPc":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DeleteCommand", ()=>DeleteCommand);
+var _state = require("../../State");
+var _canvas = require("../canvas");
+class DeleteCommand {
+    constructor(){
+        this.deletedPoints = (0, _state.state).c_selected.map((index)=>({
+                index,
+                point: (0, _state.state).c_points[index]
+            }));
+    }
+    do() {
+        // Remove selected points from the state
+        (0, _state.state).c_selected.forEach((index)=>{
+            // Mark for removal
+            (0, _state.state).c_points[index] = null;
+        });
+        (0, _state.state).c_points = (0, _state.state).c_points.filter((p)=>p !== null);
+        (0, _state.state).c_selected = [];
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // Restore deleted points
+        this.deletedPoints.forEach(({ index, point })=>{
+            (0, _state.state).c_points.splice(index, 0, point);
+        });
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
+var _cOnMouseEnter = require("./cOnMouseEnter");
+var _cOnMouseLeave = require("./cOnMouseLeave");
+const initializeCanvasEvents = (canvas)=>{
+    if (!canvas) {
+        console.error("Canvas element not found");
+        return;
+    }
+    canvas.addEventListener("mouseenter", (0, _cOnMouseEnter.cOnMouseEnter));
+    canvas.addEventListener("mouseleave", (0, _cOnMouseLeave.cOnMouseLeave));
+// canvas.addEventListener("mousedown", debugEvent);
+};
+const debugEvent = (e)=>{
+    console.log(e);
+};
+
+},{"./cOnMouseEnter":"gK6it","./cOnMouseLeave":"hoBK0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gK6it":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseEnter", ()=>cOnMouseEnter);
+var _state = require("../../State");
+const cOnMouseEnter = (e)=>{
+    console.log('active');
+    (0, _state.state).cActive = true;
+};
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hoBK0":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseLeave", ()=>cOnMouseLeave);
+var _state = require("../../State");
+const cOnMouseLeave = (e)=>{
+    (0, _state.state).cActive = false;
+};
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "onDoubleClick", ()=>onDoubleClick);
@@ -50190,12 +50301,12 @@ parcelHelpers.export(exports, "onPointerMove", ()=>onPointerMove);
 // click to add points
 parcelHelpers.export(exports, "onPointerDown", ()=>onPointerDown);
 parcelHelpers.export(exports, "onPointerUp", ()=>onPointerUp);
-var _command = require("../Command");
+var _command = require("../../Command");
 var _selectObjectCommand = require("../commands/SelectObjectCommand");
-var _state = require("../State");
-var _util = require("../util");
+var _state = require("../../State");
+var _util = require("../../util");
 var _selectFaceCommand = require("../commands/SelectFaceCommand");
-var _localizePointerTo = require("../pointer/LocalizePointerTo");
+var _localizePointerTo = require("../../pointer/LocalizePointerTo");
 function onDoubleClick(event) {
     (0, _state.state).intersects = [];
     (0, _state.state).raycaster.setFromCamera((0, _state.state).pointer, (0, _state.state).camera);
@@ -50233,13 +50344,13 @@ function onPointerUp(event) {
     (0, _state.state).pointerDown = false;
 }
 
-},{"../Command":"efiIE","../commands/SelectObjectCommand":"5QLZA","../State":"83rpN","../util":"7wzGb","../commands/SelectFaceCommand":"2g5NI","../pointer/LocalizePointerTo":"dLwIR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5QLZA":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../commands/SelectObjectCommand":"9u1vs","../../State":"83rpN","../../util":"7wzGb","../commands/SelectFaceCommand":"32QS8","../../pointer/LocalizePointerTo":"dLwIR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9u1vs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectObjectCommand", ()=>SelectObjectCommand);
 parcelHelpers.export(exports, "DeselectObjectCommand", ()=>DeselectObjectCommand);
-var _materials = require("../Materials");
-var _state = require("../State");
+var _materials = require("../../Materials");
+var _state = require("../../State");
 class SelectObjectCommand {
     constructor(object){
         this.__selected = (0, _state.state).selected;
@@ -50276,7 +50387,7 @@ class DeselectObjectCommand {
     }
 }
 
-},{"../Materials":"UNzMx","../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"UNzMx":[function(require,module,exports,__globalThis) {
+},{"../../Materials":"UNzMx","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"UNzMx":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "material_selected", ()=>material_selected);
@@ -50289,13 +50400,13 @@ const material_default = new _three.MeshBasicMaterial({
     color: "#ff0000"
 });
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2g5NI":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"32QS8":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "tagFace", ()=>tagFace);
 parcelHelpers.export(exports, "SelectFaceCommand", ()=>SelectFaceCommand);
 parcelHelpers.export(exports, "DeselectFaceCommand", ()=>DeselectFaceCommand);
-var _state = require("../State");
+var _state = require("../../State");
 const tagFace = (face, uuid)=>{
     const generic_face = {
         ...face,
@@ -50344,7 +50455,7 @@ class DeselectFaceCommand {
     }
 }
 
-},{"../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dLwIR":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dLwIR":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "localizePointerTo", ()=>localizePointerTo);
@@ -50355,12 +50466,12 @@ const localizePointerTo = ({ event, state, domElement })=>{
     state.pointer.y = -2 * (window.innerHeight / domElement.offsetHeight) * (event.clientY - state.renderer.domElement.getBoundingClientRect().y) / window.innerHeight + 1;
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jq3Nj":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"21R6K":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createRectangularPrism", ()=>createRectangularPrism);
 var _three = require("three");
-var _materials = require("../Materials");
+var _materials = require("../../Materials");
 const createRectangularPrism = (origin, width = 1, height = 1, depth = 1)=>{
     const geometry = new _three.BufferGeometry();
     const halfWidth = width / 2;
@@ -50518,112 +50629,7 @@ const createRectangularPrism = (origin, width = 1, height = 1, depth = 1)=>{
     };
 };
 
-},{"three":"ktPTu","../Materials":"UNzMx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdjjs":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "handleKeyDown", ()=>handleKeyDown);
-parcelHelpers.export(exports, "handleKeyUp", ()=>handleKeyUp);
-parcelHelpers.export(exports, "initializeHotkeys", ()=>initializeHotkeys);
-var _command = require("../../Command");
-var _state = require("../../State");
-var _deleteCommand = require("../commands/DeleteCommand");
-const handleKeyDown = (e)=>{
-    if (e.repeat) return; // Ignore repeated keydown events
-    switch(e.key){
-        case "Backspace":
-        case "Delete":
-            e.preventDefault();
-            handleDelete();
-            break;
-        case "Shift":
-            (0, _state.state).shiftDown = true; // Track shift for multi-selection
-            break;
-        default:
-            break;
-    }
-};
-const handleKeyUp = (e)=>{
-    if (e.key === "Shift") (0, _state.state).shiftDown = false;
-};
-const handleDelete = ()=>{
-    if ((0, _state.state).c_selected.length > 0) (0, _command.pushCommand)(new (0, _deleteCommand.DeleteCommand)());
-};
-const initializeHotkeys = ()=>{
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("keyup", handleKeyUp);
-}; // Call this function in your app startup logic
-
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/DeleteCommand":"jrnPc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jrnPc":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DeleteCommand", ()=>DeleteCommand);
-var _state = require("../../State");
-var _canvas = require("../canvas");
-class DeleteCommand {
-    constructor(){
-        this.deletedPoints = (0, _state.state).c_selected.map((index)=>({
-                index,
-                point: (0, _state.state).c_points[index]
-            }));
-    }
-    do() {
-        // Remove selected points from the state
-        (0, _state.state).c_selected.forEach((index)=>{
-            // Mark for removal
-            (0, _state.state).c_points[index] = null;
-        });
-        (0, _state.state).c_points = (0, _state.state).c_points.filter((p)=>p !== null);
-        (0, _state.state).c_selected = [];
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        // Restore deleted points
-        this.deletedPoints.forEach(({ index, point })=>{
-            (0, _state.state).c_points.splice(index, 0, point);
-        });
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-}
-
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
-var _cOnMouseEnter = require("./cOnMouseEnter");
-var _cOnMouseLeave = require("./cOnMouseLeave");
-const initializeCanvasEvents = (canvas)=>{
-    if (!canvas) {
-        console.error("Canvas element not found");
-        return;
-    }
-    canvas.addEventListener("mouseenter", (0, _cOnMouseEnter.cOnMouseEnter));
-    canvas.addEventListener("mouseleave", (0, _cOnMouseLeave.cOnMouseLeave));
-// canvas.addEventListener("mousedown", debugEvent);
-};
-const debugEvent = (e)=>{
-    console.log(e);
-};
-
-},{"./cOnMouseEnter":"gK6it","./cOnMouseLeave":"hoBK0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gK6it":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "cOnMouseEnter", ()=>cOnMouseEnter);
-var _state = require("../../State");
-const cOnMouseEnter = (e)=>{
-    console.log('active');
-    (0, _state.state).cActive = true;
-};
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hoBK0":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "cOnMouseLeave", ()=>cOnMouseLeave);
-var _state = require("../../State");
-const cOnMouseLeave = (e)=>{
-    (0, _state.state).cActive = false;
-};
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"km3Ru":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","../../Materials":"UNzMx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"km3Ru":[function(require,module,exports,__globalThis) {
 "use strict";
 var Refresh = require("7422ead32dcc1e6b");
 var { version } = require("630b62916b1ae0e7");
@@ -50768,6 +50774,35 @@ function registerExportsForReactRefresh(module1) {
 },{"7422ead32dcc1e6b":"786KC","630b62916b1ae0e7":"4SQxb"}],"4SQxb":[function(require,module,exports,__globalThis) {
 module.exports = JSON.parse("{\"name\":\"react-refresh\",\"description\":\"React is a JavaScript library for building user interfaces.\",\"keywords\":[\"react\"],\"version\":\"0.14.2\",\"homepage\":\"https://reactjs.org/\",\"bugs\":\"https://github.com/facebook/react/issues\",\"license\":\"MIT\",\"files\":[\"LICENSE\",\"README.md\",\"babel.js\",\"runtime.js\",\"cjs/\",\"umd/\"],\"main\":\"runtime.js\",\"exports\":{\".\":\"./runtime.js\",\"./runtime\":\"./runtime.js\",\"./babel\":\"./babel.js\",\"./package.json\":\"./package.json\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/facebook/react.git\",\"directory\":\"packages/react\"},\"engines\":{\"node\":\">=0.10.0\"},\"devDependencies\":{\"react-16-8\":\"npm:react@16.8.0\",\"react-dom-16-8\":\"npm:react-dom@16.8.0\",\"scheduler-0-13\":\"npm:scheduler@0.13.0\"}}");
 
-},{}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{}],"2W72B":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$3517 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$3517.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Toolbar", ()=>Toolbar);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+const Toolbar = ({})=>{
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        children: "path tool!"
+    }, void 0, false, {
+        fileName: "src/UI/tools/Toolbar.tsx",
+        lineNumber: 3,
+        columnNumber: 5
+    }, undefined);
+};
+_c = Toolbar;
+var _c;
+$RefreshReg$(_c, "Toolbar");
+
+  $parcel$ReactRefreshHelpers$3517.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map
