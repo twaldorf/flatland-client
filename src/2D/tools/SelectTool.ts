@@ -2,23 +2,16 @@ import { Vector2 } from "three";
 import { pushCommand } from "../../Command";
 import { state } from "../../State";
 import { ToolBase, ToolName } from "../../types";
-import { drawCanvasFromState, drawSelectionMovePreview } from "../canvas";
-import { PathToolCommand } from "../commands/PathToolCommand";
-import { PathToolDeselectCommand } from "../commands/PathToolDeselectCommand";
-import { PathToolMovePointCommand } from "../commands/PathToolMovePointCommand";
-import { PathToolSelectCommand } from "../commands/PathToolSelectCommand";
-import { findNearestPoint } from "../geometry/findNearestPoint";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
-import { selectionRadius } from "../settings/interface";
-import { PathToolState } from "./PathTool";
-import { CommonTool } from "./CommonTool";
-import { localizePointerTo } from "../../pointer/LocalizePointerTo";
+import { SelectShapeCommand } from "../commands/SelectShapeCommand";
+import { isPointInPolygon } from "../geometry/isPointInPolygon";
+import { SelectToolMoveShapeCommand } from "../commands/SelectToolMoveShapeCommand"
 
 export type SelectToolState = 
   | { type: "idle" }
   | { type: "hovering"; hoveredIndex: number }
-  | { type: "moving"; selectedIndices: number[]; startPos: Vector2 }
-  | { type: "selecting"; selectedIndices: number[], hitIndex: number; }
+  | { type: "moving"; selectedShapeIndex: number; startPos: Vector2 }
+  | { type: "selecting"; selectedShapeIndex: number }
 
 export class SelectTool implements ToolBase {
   // Tool state object stores tool mechanical state
@@ -26,9 +19,6 @@ export class SelectTool implements ToolBase {
 
   // Tool name
   readonly name:ToolName = 'select';
-
-  // Index of currently selected object
-  private __currentObjectIndex: number;
 
   constructor() {
   }
@@ -54,20 +44,71 @@ export class SelectTool implements ToolBase {
 
   // Tool state replacer
   private transition(newState: SelectToolState) {
-    console.log(`PathTool state: ${this.__state.type} → ${newState.type}`);
+    console.log(`SelectTool state: ${this.__state.type} → ${newState.type}`);
     this.__state = newState;
   }
 
   // Path tool event management
   private onMouseDown(e: MouseEvent) {
-    const pos = localizePointerTo
+    const clickPos = cLocalizePoint(e.clientX, e.clientY);
+    const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
+
+    switch (this.__state.type) {
+      case "idle":
+        console.log(selectedShapeIndex)
+        if ( selectedShapeIndex > -1 ) {
+          pushCommand( new SelectShapeCommand( selectedShapeIndex ) );
+          this.transition({
+            type: "selecting",
+            selectedShapeIndex
+          })
+        }
+        break;
+      
+      case "selecting":
+        if (state.shiftDown) {
+          if ( selectedShapeIndex > -1 ) {
+            pushCommand( new SelectShapeCommand( selectedShapeIndex ) );
+          } 
+        }
+    }
+  }
+
+  public checkForShapeOverlap(pos:Vector2):number {
+    let value = -1;
+    state.c_shapes.forEach((shape, index) => {
+      const shapePoints = shape.map((pointIndex) => state.c_points[pointIndex]);
+      if (isPointInPolygon(pos, shapePoints)) {
+        value = index;
+      }
+    });
+    return value;
   }
 
   private onMouseMove(e: MouseEvent) {
+    switch (this.__state.type) {
+      
+      case 'selecting':
+        this.transition({
+          type: 'moving',
+          selectedShapeIndex: this.__state.selectedShapeIndex,
+          startPos: cLocalizePoint(e.clientX, e.clientY)
+        });
+        break;
 
+    }
   }
 
   private onMouseUp(e: MouseEvent) {
-
+    switch (this.__state.type) {
+      case "moving":
+        const endPos = cLocalizePoint(e.clientX, e.clientY);
+        const shapeIndex = this.__state.selectedShapeIndex;
+        const startPos = this.__state.startPos;
+        pushCommand( new SelectToolMoveShapeCommand( shapeIndex, startPos, endPos ));
+        this.transition({
+          type: 'idle'
+        });
+    }
   }
 }

@@ -32,7 +32,6 @@ const drawPaths = (state:State)  => {
   const _ = state.context;
 
   // Make sure this is not a copy op
-  const p = state.c_points;
   const paths = state.c_paths;
 
   paths.forEach( ( points, i ) => {
@@ -79,7 +78,6 @@ function drawArrayOfPointIndices( points: number[] ):void {
       _.moveTo(firstPoint.x, firstPoint.y);
       
       for (let i = 1; i < points.length; ++i) {
-        console.log(point(points[i]))
         _.lineTo(point(points[i]).x, point(points[i]).y);
         _.moveTo(point(points[i]).x, point(points[i]).y);
       }

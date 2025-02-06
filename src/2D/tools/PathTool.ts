@@ -2,7 +2,7 @@ import { Vector2 } from "three";
 import { State, Tool, ToolBase } from "../../types";
 import { selectionRadius } from "../settings/interface";
 import { state } from "../../State";
-import { drawCanvasFromState, drawSelectionMovePreview, drawSelections } from "../canvas";
+import { drawCanvasFromState, drawSelectionMovePreview } from "../canvas";
 import { pushCommand } from "../../Command";
 import { PathToolMovePointCommand } from "../commands/PathToolMovePointCommand";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
@@ -11,11 +11,12 @@ import { PathToolCommand } from "../commands/PathToolCommand";
 import { PathToolSelectCommand } from "../commands/PathToolSelectCommand";
 import { PathToolDeselectCommand } from "../commands/PathToolDeselectCommand";
 import { PathToolClosePathCommand } from "../commands/PathToolClosePathCommand";
+import { PathToolRemovePointCommand } from "../commands/PathToolRemovePointCommand";
 
 export type PathToolState = 
   | { type: "idle" }
   | { type: "drawing"; currentPathIndex: number }
-  | { type: "hovering"; hoveredIndex: number }
+  // | { type: "hovering"; hoveredIndex: number } // hovering will have to be handled elsewhere
   | { type: "moving"; selectedIndices: number[]; startPos: Vector2 }
   | { type: "selecting"; selectedIndices: number[], hitIndex: number; }
 
@@ -40,7 +41,7 @@ export class PathTool implements ToolBase {
 
   constructor() {
     this.__length = 0;
-    this.__currentPathIndex = undefined;
+    this.__currentPathIndex = -1;
   }
 
   public initializeEvents() {
@@ -64,7 +65,7 @@ export class PathTool implements ToolBase {
 
     // Set active path
     state.c_activePath = this.__currentPathIndex;
-    
+
     // Index of point in global point array
     const pointIndex = state.c_points.push( v ) - 1;
     
@@ -106,7 +107,9 @@ export class PathTool implements ToolBase {
 
   // Path tool state management
   private transition(newState: PathToolState) {
-    // console.log(`PathTool state: ${this.__state.type} → ${newState.type}`);
+    console.log(`PathTool state: ${this.__state.type} → ${newState.type}`);
+    // this.__currentPathIndex = -1;
+    // this.__length = -1;
     this.__state = newState;
   }
 
@@ -114,29 +117,29 @@ export class PathTool implements ToolBase {
   private onMouseDown(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
     const hitIndex = findNearestPoint(pos, state.c_points);
-    
-    if (hitIndex !== null && hitIndex > 0) {
-      // Case: hit a point which is not the first point
-      this.transition({
-        type: 'selecting',
-        selectedIndices: state.c_selected,
-        hitIndex
-      });
-    } else if ( hitIndex == 0) {
-      console.log(state.c_paths)
-      // Case: Close the path and connect to the first point in the shape if there three or more points
-      pushCommand( new PathToolClosePathCommand( state.c_paths[this.__currentPathIndex] ) );
-      this.transition({
-        type: 'idle'
-      }); 
-    } else {
-      // Case: did not hit anything
-      this.transition({
-        type: 'idle'
-      });
-    }
 
     switch (this.__state.type) {
+      case "drawing":
+        // Case: Close the path and connect to the first point in the shape if there three or more points
+        if (hitIndex == 0) { 
+          pushCommand( new PathToolClosePathCommand( state.c_paths[this.__currentPathIndex] ) );
+          this.transition({
+            type: 'idle'
+          }); 
+        } else if ( hitIndex != null && state.c_paths[ this.__currentPathIndex ].indexOf( hitIndex ) > -1 ) {
+          pushCommand( new PathToolRemovePointCommand( this.__currentPathIndex, hitIndex ));
+          // pushCommand( new PathToolSelectCommand( hitIndex ) );
+          // this.transition({
+          //   type: 'selecting',
+          //   selectedIndices: [ hitIndex ],
+          //   hitIndex
+          // })
+        } else {
+          pushCommand( new PathToolCommand(this, pos) );
+        }
+
+        break;
+
       case "selecting":
         if (state.c_selected.length == 0) {
           // Case: no points are selected
@@ -149,20 +152,29 @@ export class PathTool implements ToolBase {
           pushCommand( new PathToolDeselectCommand() );
           pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
         }
+
         break;
 
       case "idle":
-        if (state.c_selected.length == 0) {
+        if (hitIndex != null) {
+          // Select the point
+          this.transition( {
+            type: 'selecting', 
+            selectedIndices: [ hitIndex ],
+            hitIndex
+          });
+        } else {
+          // Begin drawing
           pushCommand( new PathToolCommand(this, pos) );
           this.transition( {
             type: 'drawing', 
             currentPathIndex: this.__currentPathIndex 
           });
-        } else {
-          pushCommand( new PathToolDeselectCommand() );
         }
+
         break;
     }
+
     drawCanvasFromState(state);
   }
 
@@ -180,14 +192,14 @@ export class PathTool implements ToolBase {
           selectedIndices: state.c_selected,
           startPos: pos,
         });
-        break;
+      break;
 
       case "idle":
         if (Math.random() < .1) {
           const hitIndex = findNearestPoint(pos, state.c_points);
-          if (hitIndex !== null) {
-            this.transition({ type: "hovering", hoveredIndex: hitIndex });
-          }
+          // if (hitIndex !== null) {
+          //   this.transition({ type: "hovering", hoveredIndex: hitIndex });
+          // }
         }
         break;
     }
@@ -205,6 +217,7 @@ export class PathTool implements ToolBase {
             pos
           )
         );
+        this.transition({ type: "idle" });
         break;
 
       case "selecting":
@@ -212,9 +225,10 @@ export class PathTool implements ToolBase {
         if (nearPoint != null && !state.shiftDown) {
           state.c_selected = [ nearPoint ];
         }
+        this.transition({ type: "idle" });
         break;
     }
-    this.transition({ type: "idle" });
+
     drawCanvasFromState(state);
   }
 
@@ -231,6 +245,8 @@ export class PathTool implements ToolBase {
   // Moved to common.ts
   public deselect() {
     state.c_selected = [];
+    this.__currentPathIndex = -1;
+    this.__length = -1;
     drawCanvasFromState(state);
   }
 

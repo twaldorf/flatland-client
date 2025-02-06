@@ -14,6 +14,8 @@ export class PathToolCommand implements Command {
   constructor(tool:PathTool, point:Vector2) {
     this.tool = tool;
     this.__point = point;
+    this.__index = -1;
+    this.__pathIndex = -1;
   }
 
   do() {

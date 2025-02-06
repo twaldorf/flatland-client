@@ -2,6 +2,7 @@ import { Vector2, Vector2Tuple } from "three";
 import { Command } from "../../Command";
 import { state } from "../../State";
 import { drawCanvasFromState } from "../canvas";
+import { changeTool } from "../tools/changeTool";
 
 export class PathToolClosePathCommand implements Command {
   private path: number[]; // This is the path without the closing point
@@ -31,7 +32,10 @@ export class PathToolClosePathCommand implements Command {
 
     // Clear active path
     state.c_activePath = -1;
-    drawCanvasFromState(state);
+
+    changeTool( { type: 'select' } );
+
+    drawCanvasFromState( state );
   }
 
   undo() {
