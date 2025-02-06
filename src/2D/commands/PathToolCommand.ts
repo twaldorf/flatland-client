@@ -1,9 +1,9 @@
 import { Path, Vector2 } from "three";
 import { Command } from "../../Command";
-import { state } from '../../State.ts';
-import { cLocalizePoint } from "../pointer/cLocalizePoint.ts";
-import { PathTool } from "../tools/PathTool.ts";
-import { rad } from "../settings/interface.ts";
+import { state } from '../../State';
+import { cLocalizePoint } from "../pointer/cLocalizePoint";
+import { PathTool } from "../tools/PathTool";
+import { rad } from "../settings/interface";
 
 export class PathToolCommand implements Command {
   __point:Vector2;

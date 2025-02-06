@@ -11,6 +11,8 @@ import { findNearestPoint } from "../geometry/findNearestPoint";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { selectionRadius } from "../settings/interface";
 import { PathToolState } from "./PathTool";
+import { CommonTool } from "./CommonTool";
+import { localizePointerTo } from "../../pointer/LocalizePointerTo";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -31,11 +33,23 @@ export class SelectTool implements ToolBase {
   constructor() {
   }
 
-  public initializeEvents():void {
+  private __listeners = {
+    down: this.onMouseDown.bind(this),
+    move: this.onMouseMove.bind(this),
+    up: this.onMouseUp.bind(this)
+  }
+
+  public initializeEvents() {
     const canvas = state.canvas;
-    canvas.addEventListener("mousedown", this.onMouseDown.bind(this));
-    canvas.addEventListener("mousemove", this.onMouseMove.bind(this));
-    canvas.addEventListener("mouseup", this.onMouseUp.bind(this));
+    canvas.addEventListener("mousedown", this.__listeners.down);
+    canvas.addEventListener("mousemove", this.__listeners.move);
+    canvas.addEventListener("mouseup", this.__listeners.up);
+  }
+
+  public dismountEvents() {
+    state.canvas.removeEventListener('mousedown', this.__listeners.down);
+    state.canvas.removeEventListener("mousemove", this.__listeners.move);
+    state.canvas.removeEventListener("mouseup", this.__listeners.up);
   }
 
   // Tool state replacer
@@ -46,7 +60,7 @@ export class SelectTool implements ToolBase {
 
   // Path tool event management
   private onMouseDown(e: MouseEvent) {
-
+    const pos = localizePointerTo
   }
 
   private onMouseMove(e: MouseEvent) {

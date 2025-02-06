@@ -4,23 +4,43 @@ import { state } from "../../State";
 import { drawCanvasFromState } from "../canvas";
 
 export class PathToolClosePathCommand implements Command {
-  constructor(indices:Array<number>, from:Vector2, to:Vector2) {
-    this.indices = indices;
-    this.__from = from.clone();
-    this.__to = to.clone();
-    this.__diff = this.__to.clone().sub(this.__from);
+  private path: number[]; // This is the path without the closing point
+  private pathIndex: number;
+  private shapeIndex: number;
+
+  constructor(path: number[]) {
+    this.path = [...path];
+    this.pathIndex = -1;
+    this.shapeIndex = -1;
   }
 
+  // Close the path and move its points from c_paths to c_shapes
   do() {
-    changeTool( { type:"select" } )
-    // drawCanvasFromState(state);
+    if (this.path.length < 3) return;
+
+    // c_activePath is the path index of the currently drawing/selected path
+
+    // Close path
+    state.c_paths[ state.c_activePath ].push(this.path[0]);
+
+    // Save shape and remove shape from paths list
+    this.shapeIndex = state.c_shapes.push( state.c_paths.splice( state.c_activePath, 1 )[0] );
+
+    // Store index
+    this.pathIndex = state.c_activePath;
+
+    // Clear active path
+    state.c_activePath = -1;
+    drawCanvasFromState(state);
   }
 
   undo() {
-    // this.indices.forEach((i: number) => {
-    //   state.c_points[i].sub(this.__diff); // Reverse the movement
-    // });
-    changeTool( { type:"path" } )
+    // Remove shape from shapes
+    state.c_shapes.splice(this.shapeIndex, 1);
+
+    // Send path without closing point to paths, set active index
+    state.c_activePath = state.c_paths.push( this.path ) - 1;
+
     drawCanvasFromState(state);
   }
 }

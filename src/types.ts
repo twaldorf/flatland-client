@@ -1,5 +1,4 @@
 import { Face, Object3D, Vector2 } from "three";
-import { FaceId } from "./commands/SelectFaceCommand";
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
 import { SelectTool } from "./2D/tools/SelectTool";
@@ -56,6 +55,14 @@ export interface State {
 
   // All selected points on the canvas
   c_selected: Array<number>;
+
+  // Array of closed paths (shapes)
+  // Shapes are moved from the paths array into the shapes array
+  c_shapes: Array<Array<number>>;
+
+  // Index of the active path within the c_paths array
+  // -1 when it is inactive
+  c_activePath: number;
 }
 
 type Mode = 'default' | 
@@ -64,6 +71,7 @@ type Mode = 'default' |
 export interface ToolBase {
   name: string;
   initializeEvents: Function;
+  dismountEvents: Function;
 }
 
 export type Tool = PathTool | SelectTool;

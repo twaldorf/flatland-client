@@ -30,21 +30,65 @@ const drawPoints = (state:State) => {
 // TODO: draw a tree of such paths
 const drawPaths = (state:State)  => {
   const _ = state.context;
+
   // Make sure this is not a copy op
   const p = state.c_points;
-  if (p.length > 0) {
-    _.beginPath();
-    _.strokeStyle = 'black';
-    _.moveTo(p[0].x, p[0].y);
-    for (let i = 1; i < state.c_points.length; ++i) {
-      _.lineTo(p[i].x, p[i].y);
-      _.moveTo(p[i].x, p[i].y);
-    }
-    _.stroke();
-    if (state.c_paths[0] == state.c_paths[state.c_paths[0].length -1 ]) {
-      _.fill();
-    }
+  const paths = state.c_paths;
+
+  paths.forEach( ( points, i ) => {
+    // points is the array of point indices within state.c_points, i is the path index, not important
+    drawArrayOfPointIndices(points)
+  });
+
+  if (state.c_shapes.length > 0) {
+    // draw shapes
+    state.c_shapes.forEach( ( shapeArr ) => {
+      drawArrayOfPointIndices( shapeArr );
+      drawPolygonFromPointIndices( shapeArr );
+    })
   }
+}
+
+function drawPolygonFromPointIndices( points: number[] ) {
+  const _ = state.context;
+  if (points.length > 0) {
+    _.beginPath();
+    _.fillStyle = '#eee';
+    _.strokeStyle = 'black';
+
+    const firstPoint = point(points[0]);
+    _.moveTo(firstPoint.x, firstPoint.y);
+
+    for (let i = 1; i < points.length; ++i) {
+      const p = point(points[i]);
+      _.lineTo(p.x, p.y);
+    }
+
+    _.lineTo(firstPoint.x, firstPoint.y);
+    _.fill();
+    _.stroke();
+  } 
+}
+
+function drawArrayOfPointIndices( points: number[] ):void {
+  const _ = state.context;
+    if (points.length > 0) {
+      _.beginPath();
+      _.strokeStyle = 'black';
+      const firstPoint = point(points[0]);
+      _.moveTo(firstPoint.x, firstPoint.y);
+      
+      for (let i = 1; i < points.length; ++i) {
+        console.log(point(points[i]))
+        _.lineTo(point(points[i]).x, point(points[i]).y);
+        _.moveTo(point(points[i]).x, point(points[i]).y);
+      }
+    } 
+    _.stroke();
+}
+
+function point(index:number):Vector2 {
+  return state.c_points[index];
 }
 
 const drawSelections = () => {

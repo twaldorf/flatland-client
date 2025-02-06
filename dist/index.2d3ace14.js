@@ -18590,7 +18590,7 @@ const App = ()=>{
         }
     }, []);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
-        className: "app-container font-mono w-full h-full no-scroll",
+        className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                 fileName: "src/App.tsx",
@@ -18610,7 +18610,7 @@ const App = ()=>{
                         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
                             ref: canvasRef,
                             id: "canvas2d",
-                            className: "w-full h-full col-1"
+                            className: "w-full h-full col-1 block"
                         }, void 0, false, {
                             fileName: "src/App.tsx",
                             lineNumber: 25,
@@ -18627,7 +18627,7 @@ const App = ()=>{
                         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
                             ref: threeRef,
                             id: "canvas3d-container",
-                            className: "w-full h-full col-2"
+                            className: "w-1/1 h-100 col-2 block"
                         }, void 0, false, {
                             fileName: "src/App.tsx",
                             lineNumber: 28,
@@ -18709,7 +18709,7 @@ function initScene(canvas) {
         canvas
     });
     const renderer = (0, _state.state).renderer;
-    renderer.setSize(window.innerWidth / 2 - 10, window.innerWidth / 2 - 10);
+    renderer.setSize(window.innerWidth / 2, window.innerWidth / 2);
     const scene = new _three.Scene();
     (0, _state.state).scene = scene;
     const camera_group = new _three.Group();
@@ -49674,6 +49674,7 @@ const state = {
     c_points: [],
     c_paths: [],
     c_selected: [],
+    c_shapes: [],
     cActive: false,
     cSelecting: false,
     pendingSelection: undefined,
@@ -49695,6 +49696,7 @@ var _findNearestPoint = require("../geometry/findNearestPoint");
 var _pathToolCommand = require("../commands/PathToolCommand");
 var _pathToolSelectCommand = require("../commands/PathToolSelectCommand");
 var _pathToolDeselectCommand = require("../commands/PathToolDeselectCommand");
+var _pathToolClosePathCommand = require("../commands/PathToolClosePathCommand");
 class PathTool {
     constructor(){
         // Path tool state object stores tool mechanical state, no data
@@ -49703,37 +49705,57 @@ class PathTool {
         };
         // Tool name
         this.name = 'path';
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
         this.__length = 0;
-        this.__currentPathIndex = 0;
+        this.__currentPathIndex = undefined;
     }
     initializeEvents() {
         const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.onMouseDown.bind(this));
-        canvas.addEventListener("mousemove", this.onMouseMove.bind(this));
-        canvas.addEventListener("mouseup", this.onMouseUp.bind(this));
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
     }
     // ## Path drawing command interface
     // Add a point to the current path being drawn
     // Return the index of the point in the c_points array
     // Protected, this is only to be used by a Command do() member!
     addPointToCurrentPath(v) {
+        // Set active path
+        (0, _state.state).c_activePath = this.__currentPathIndex;
+        // Index of point in global point array
         const pointIndex = (0, _state.state).c_points.push(v) - 1;
+        // Index of current path in global path array
+        const pathIndex = this.__currentPathIndex;
+        if ((0, _state.state).c_paths[pathIndex]) // Add the point to the path
+        (0, _state.state).c_paths[pathIndex].push(pointIndex);
+        else this.__currentPathIndex = (0, _state.state).c_paths.push([
+            pointIndex
+        ]) - 1;
         // Already drawing, continue adding points to the current path
-        if (this.__state.type == 'drawing') (0, _state.state).c_paths[this.__state.currentPathIndex].push(pointIndex);
-        if (this.__state.type == 'idle') {
-            const path = [
-                pointIndex
-            ];
-            const pathIndex = (0, _state.state).c_paths.push(path) - 1;
-            this.transition({
-                type: "drawing",
-                currentPathIndex: pathIndex
-            });
-        }
+        // if (this.__state.type == 'drawing') {
+        //   state.c_paths[ this.__state.currentPathIndex ].push( pointIndex );
+        // }
+        // if (this.__state.type == 'idle') {
+        //   const path = [ pointIndex ];
+        //   const pathIndex = state.c_paths.push( path ) - 1;
+        //   this.transition({
+        //     type: "drawing",
+        //     currentPathIndex: pathIndex
+        //   })
+        // }
         (0, _canvas.drawCanvasFromState)((0, _state.state));
         return {
             pointIndex,
-            pathIndex: this.__state.currentPathIndex
+            pathIndex
         };
     }
     // Protected, to be used by a Command
@@ -49745,7 +49767,7 @@ class PathTool {
     }
     // Path tool state management
     transition(newState) {
-        console.log(`PathTool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        // console.log(`PathTool state: ${this.__state.type} → ${newState.type}`);
         this.__state = newState;
     }
     // Path tool event management
@@ -49759,9 +49781,9 @@ class PathTool {
             hitIndex
         });
         else if (hitIndex == 0) {
-            // Case: Close the path and connect to the first point in the shape
-            // TODO: this does not work lol
-            (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, (0, _state.state).c_points[(0, _state.state).c_paths[this.__currentPathIndex][0]]));
+            console.log((0, _state.state).c_paths);
+            // Case: Close the path and connect to the first point in the shape if there three or more points
+            (0, _command.pushCommand)(new (0, _pathToolClosePathCommand.PathToolClosePathCommand)((0, _state.state).c_paths[this.__currentPathIndex]));
             this.transition({
                 type: 'idle'
             });
@@ -49782,8 +49804,13 @@ class PathTool {
                 }
                 break;
             case "idle":
-                if ((0, _state.state).c_selected.length == 0) (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, pos));
-                else (0, _command.pushCommand)(new (0, _pathToolDeselectCommand.PathToolDeselectCommand)());
+                if ((0, _state.state).c_selected.length == 0) {
+                    (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, pos));
+                    this.transition({
+                        type: 'drawing',
+                        currentPathIndex: this.__currentPathIndex
+                    });
+                } else (0, _command.pushCommand)(new (0, _pathToolDeselectCommand.PathToolDeselectCommand)());
                 break;
         }
         (0, _canvas.drawCanvasFromState)((0, _state.state));
@@ -49876,7 +49903,7 @@ class PathTool {
     }
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../canvas":"4a7yB","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dci9b":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../canvas":"4a7yB","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/PathToolClosePathCommand":"4pXyd"}],"dci9b":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "rad", ()=>rad);
@@ -49917,18 +49944,52 @@ const drawPaths = (state)=>{
     const _ = state.context;
     // Make sure this is not a copy op
     const p = state.c_points;
-    if (p.length > 0) {
+    const paths = state.c_paths;
+    paths.forEach((points, i)=>{
+        // points is the array of point indices within state.c_points, i is the path index, not important
+        drawArrayOfPointIndices(points);
+    });
+    if (state.c_shapes.length > 0) // draw shapes
+    state.c_shapes.forEach((shapeArr)=>{
+        drawArrayOfPointIndices(shapeArr);
+        drawPolygonFromPointIndices(shapeArr);
+    });
+};
+function drawPolygonFromPointIndices(points) {
+    const _ = (0, _state.state).context;
+    if (points.length > 0) {
+        _.beginPath();
+        _.fillStyle = '#eee';
+        _.strokeStyle = 'black';
+        const firstPoint = point(points[0]);
+        _.moveTo(firstPoint.x, firstPoint.y);
+        for(let i = 1; i < points.length; ++i){
+            const p = point(points[i]);
+            _.lineTo(p.x, p.y);
+        }
+        _.lineTo(firstPoint.x, firstPoint.y);
+        _.fill();
+        _.stroke();
+    }
+}
+function drawArrayOfPointIndices(points) {
+    const _ = (0, _state.state).context;
+    if (points.length > 0) {
         _.beginPath();
         _.strokeStyle = 'black';
-        _.moveTo(p[0].x, p[0].y);
-        for(let i = 1; i < state.c_points.length; ++i){
-            _.lineTo(p[i].x, p[i].y);
-            _.moveTo(p[i].x, p[i].y);
+        const firstPoint = point(points[0]);
+        _.moveTo(firstPoint.x, firstPoint.y);
+        for(let i = 1; i < points.length; ++i){
+            console.log(point(points[i]));
+            _.lineTo(point(points[i]).x, point(points[i]).y);
+            _.moveTo(point(points[i]).x, point(points[i]).y);
         }
-        _.stroke();
-        if (state.c_paths[0] == state.c_paths[state.c_paths[0].length - 1]) _.fill();
     }
-};
+    _.stroke();
+}
+function point(index) {
+    return (0, _state.state).c_points[index];
+}
 const drawSelections = ()=>{
     (0, _state.state).c_selected.map((index)=>{
         (0, _state.state).context.fillStyle = 'blue';
@@ -50093,17 +50154,17 @@ function findNearestPoint(pos, points) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolCommand", ()=>PathToolCommand);
-var _stateTs = require("../../State.ts");
-var _interfaceTs = require("../settings/interface.ts");
+var _state = require("../../State");
+var _interface = require("../settings/interface");
 class PathToolCommand {
     constructor(tool, point){
         this.tool = tool;
         this.__point = point;
     }
     do() {
-        (0, _stateTs.state).context.fillStyle = 'black';
-        (0, _stateTs.state).context.strokeStyle = 'black';
-        (0, _stateTs.state).context.fillRect(this.__point.x - (0, _interfaceTs.rad) / 2 - (0, _interfaceTs.rad) / 4, this.__point.y - (0, _interfaceTs.rad) / 2 - (0, _interfaceTs.rad) / 4, (0, _interfaceTs.rad), (0, _interfaceTs.rad));
+        (0, _state.state).context.fillStyle = 'black';
+        (0, _state.state).context.strokeStyle = 'black';
+        (0, _state.state).context.fillRect(this.__point.x - (0, _interface.rad) / 2 - (0, _interface.rad) / 4, this.__point.y - (0, _interface.rad) / 2 - (0, _interface.rad) / 4, (0, _interface.rad), (0, _interface.rad));
         const indices = this.tool.addPointToCurrentPath(this.__point);
         this.__index = indices.pointIndex;
         this.__pathIndex = indices.pathIndex;
@@ -50113,7 +50174,7 @@ class PathToolCommand {
     }
 }
 
-},{"../../State.ts":"83rpN","../settings/interface.ts":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jtaot":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN","../settings/interface":"dci9b"}],"jtaot":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolSelectCommand", ()=>PathToolSelectCommand);
@@ -50153,7 +50214,44 @@ class PathToolDeselectCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4pXyd":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathToolClosePathCommand", ()=>PathToolClosePathCommand);
+var _state = require("../../State");
+var _canvas = require("../canvas");
+class PathToolClosePathCommand {
+    constructor(path){
+        this.path = [
+            ...path
+        ];
+        this.pathIndex = -1;
+        this.shapeIndex = -1;
+    }
+    // Close the path and move its points from c_paths to c_shapes
+    do() {
+        if (this.path.length < 3) return;
+        // c_activePath is the path index of the currently drawing/selected path
+        // Close path
+        (0, _state.state).c_paths[(0, _state.state).c_activePath].push(this.path[0]);
+        // Save shape and remove shape from paths list
+        this.shapeIndex = (0, _state.state).c_shapes.push((0, _state.state).c_paths.splice((0, _state.state).c_activePath, 1)[0]);
+        // Store index
+        this.pathIndex = (0, _state.state).c_activePath;
+        // Clear active path
+        (0, _state.state).c_activePath = -1;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // Remove shape from shapes
+        (0, _state.state).c_shapes.splice(this.shapeIndex, 1);
+        // Send path without closing point to paths, set active index
+        (0, _state.state).c_activePath = (0, _state.state).c_paths.push(this.path) - 1;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "onDoubleClick", ()=>onDoubleClick);
@@ -50661,16 +50759,22 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ToolIcon", ()=>ToolIcon);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _ci = require("react-icons/ci");
+var _changeToolCommand = require("../../../2D/commands/ChangeToolCommand");
+var _command = require("../../../Command");
+const handleClick = ()=>{
+    (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("select"));
+};
 const ToolIcon = ()=>{
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+        onClick: handleClick,
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiLocationArrow1), {}, void 0, false, {
             fileName: "src/UI/tools/toolbar/ToolIcon.tsx",
-            lineNumber: 6,
+            lineNumber: 12,
             columnNumber: 7
         }, undefined)
     }, void 0, false, {
         fileName: "src/UI/tools/toolbar/ToolIcon.tsx",
-        lineNumber: 5,
+        lineNumber: 11,
         columnNumber: 5
     }, undefined);
 };
@@ -50683,7 +50787,7 @@ $RefreshReg$(_c, "ToolIcon");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"7bNnY":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE"}],"7bNnY":[function(require,module,exports,__globalThis) {
 // THIS FILE IS AUTO GENERATED
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -62483,7 +62587,95 @@ function registerExportsForReactRefresh(module1) {
 },{"7422ead32dcc1e6b":"786KC","630b62916b1ae0e7":"4SQxb"}],"4SQxb":[function(require,module,exports,__globalThis) {
 module.exports = JSON.parse("{\"name\":\"react-refresh\",\"description\":\"React is a JavaScript library for building user interfaces.\",\"keywords\":[\"react\"],\"version\":\"0.14.2\",\"homepage\":\"https://reactjs.org/\",\"bugs\":\"https://github.com/facebook/react/issues\",\"license\":\"MIT\",\"files\":[\"LICENSE\",\"README.md\",\"babel.js\",\"runtime.js\",\"cjs/\",\"umd/\"],\"main\":\"runtime.js\",\"exports\":{\".\":\"./runtime.js\",\"./runtime\":\"./runtime.js\",\"./babel\":\"./babel.js\",\"./package.json\":\"./package.json\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/facebook/react.git\",\"directory\":\"packages/react\"},\"engines\":{\"node\":\">=0.10.0\"},\"devDependencies\":{\"react-16-8\":\"npm:react@16.8.0\",\"react-dom-16-8\":\"npm:react-dom@16.8.0\",\"scheduler-0-13\":\"npm:scheduler@0.13.0\"}}");
 
-},{}],"6ni0Q":[function(require,module,exports,__globalThis) {
+},{}],"i5Ou7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
+var _changeTool = require("../tools/changeTool");
+class ChangeToolCommand {
+    constructor(type){
+        this.__type = type;
+    }
+    do() {
+        (0, _changeTool.changeTool)({
+            type: this.__type
+        });
+    }
+    undo() {
+        // TODO
+        console.log('Undo not yet implemented for ChangeToolCommand');
+    }
+}
+
+},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kXHtP":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "changeTool", ()=>changeTool);
+var _state = require("../../State");
+var _pathTool = require("./PathTool");
+var _selectTool = require("./SelectTool");
+function changeTool(newState) {
+    console.log('Change Tool');
+    (0, _state.state).tool.dismountEvents();
+    switch(newState.type){
+        case "path":
+            (0, _state.state).tool = new (0, _pathTool.PathTool)();
+            break;
+        case "select":
+            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            break;
+        default:
+            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            break;
+    }
+    (0, _state.state).tool.initializeEvents();
+}
+
+},{"../../State":"83rpN","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jISwe":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectTool", ()=>SelectTool);
+var _state = require("../../State");
+var _localizePointerTo = require("../../pointer/LocalizePointerTo");
+class SelectTool {
+    constructor(){
+        // Tool state object stores tool mechanical state
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = 'select';
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    }
+    // Tool state replacer
+    transition(newState) {
+        console.log(`PathTool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+    }
+    // Path tool event management
+    onMouseDown(e) {
+        const pos = (0, _localizePointerTo.localizePointerTo);
+    }
+    onMouseMove(e) {}
+    onMouseUp(e) {}
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../pointer/LocalizePointerTo":"dLwIR"}],"6ni0Q":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$d584 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -62496,7 +62688,7 @@ parcelHelpers.export(exports, "Header", ()=>Header);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 const Header = ()=>{
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
-        className: "text-2xl",
+        className: "text-2xl border-b",
         children: "flatland editor"
     }, void 0, false, {
         fileName: "src/UI/sections/Header.tsx",

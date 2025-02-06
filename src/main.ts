@@ -46,7 +46,7 @@ export function initCanvas(ref:HTMLCanvasElement) {
 export function initScene(canvas:HTMLCanvasElement) {
   state.renderer = new THREE.WebGLRenderer( { canvas } );
   const renderer = state.renderer;
-  renderer.setSize( window.innerWidth / 2 - 10, window.innerWidth / 2 - 10 );
+  renderer.setSize( window.innerWidth / 2, window.innerWidth / 2 );
 
   const scene = new THREE.Scene();
   state.scene = scene;

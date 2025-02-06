@@ -3,12 +3,13 @@ import { ToolName } from "../../types";
 import { PathTool } from "./PathTool";
 import { SelectTool } from "./SelectTool";
 
-export type ToolState {
+export type ToolState = {
   type: ToolName;
 }
 
 export function changeTool(newState:ToolState) {
   console.log('Change Tool');
+  state.tool.dismountEvents();
   switch (newState.type) {
     case "path":
         state.tool = new PathTool();
