@@ -3,9 +3,10 @@ import { pushCommand } from "../../Command";
 import { state } from "../../State";
 import { ToolBase, ToolName } from "../../types";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
-import { SelectShapeCommand } from "../commands/SelectShapeCommand";
+import { SelectToolShapeCommand } from "../commands/SelectToolShapeCommand";
 import { isPointInPolygon } from "../geometry/isPointInPolygon";
 import { SelectToolMoveShapeCommand } from "../commands/SelectToolMoveShapeCommand"
+import { checkPointOverlap } from "./common";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -52,23 +53,30 @@ export class SelectTool implements ToolBase {
   private onMouseDown(e: MouseEvent) {
     const clickPos = cLocalizePoint(e.clientX, e.clientY);
     const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
+    const hitIndex = checkPointOverlap(clickPos);
 
     switch (this.__state.type) {
       case "idle":
-        console.log(selectedShapeIndex)
         if ( selectedShapeIndex > -1 ) {
-          pushCommand( new SelectShapeCommand( selectedShapeIndex ) );
+          pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
           this.transition({
             type: "selecting",
             selectedShapeIndex
-          })
+          });
+        } else if ( hitIndex && hitIndex > -1 ) {
+          pushCommand( new SelectToolPointCommand( hitIndex ) );
+          this.transition({
+            type: "selecting",
+            selectedShapeIndex
+          });
         }
+
         break;
       
       case "selecting":
         if (state.shiftDown) {
           if ( selectedShapeIndex > -1 ) {
-            pushCommand( new SelectShapeCommand( selectedShapeIndex ) );
+            pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
           } 
         }
     }

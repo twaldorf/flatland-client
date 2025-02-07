@@ -17,11 +17,15 @@ export class SelectToolMoveShapeCommand implements Command {
   }
 
   do() {
-    state.c_shapes[ this.shapeIndex ].forEach((i:number):void => {
+    const cloneShape = [ ...state.c_shapes[ this.shapeIndex ]];
+
+    // Remove the last element (which is also the first element) to prevent double translation
+    cloneShape.pop(); 
+
+    cloneShape.forEach((i:number):void => {
       const before = state.c_points[i].clone();
       state.c_points[i] = state.c_points[i].clone().add(this.__diff);
       const after = state.c_points[i];
-      console.log(before.x - after.x, before.y - after.y)
     });
     drawCanvasFromState(state);
   }

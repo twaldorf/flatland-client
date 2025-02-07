@@ -50295,9 +50295,10 @@ parcelHelpers.export(exports, "SelectTool", ()=>SelectTool);
 var _command = require("../../Command");
 var _state = require("../../State");
 var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _selectShapeCommand = require("../commands/SelectShapeCommand");
+var _selectToolShapeCommand = require("../commands/SelectToolShapeCommand");
 var _isPointInPolygon = require("../geometry/isPointInPolygon");
 var _selectToolMoveShapeCommand = require("../commands/SelectToolMoveShapeCommand");
+var _common = require("./common");
 class SelectTool {
     constructor(){
         // Tool state object stores tool mechanical state
@@ -50332,11 +50333,17 @@ class SelectTool {
     onMouseDown(e) {
         const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
+        const hitIndex = (0, _common.checkPointOverlap)(clickPos);
         switch(this.__state.type){
             case "idle":
-                console.log(selectedShapeIndex);
                 if (selectedShapeIndex > -1) {
-                    (0, _command.pushCommand)(new (0, _selectShapeCommand.SelectShapeCommand)(selectedShapeIndex));
+                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
+                    this.transition({
+                        type: "selecting",
+                        selectedShapeIndex
+                    });
+                } else if (hitIndex && hitIndex > -1) {
+                    (0, _command.pushCommand)(new SelectToolPointCommand(hitIndex));
                     this.transition({
                         type: "selecting",
                         selectedShapeIndex
@@ -50345,7 +50352,7 @@ class SelectTool {
                 break;
             case "selecting":
                 if ((0, _state.state).shiftDown) {
-                    if (selectedShapeIndex > -1) (0, _command.pushCommand)(new (0, _selectShapeCommand.SelectShapeCommand)(selectedShapeIndex));
+                    if (selectedShapeIndex > -1) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
                 }
         }
     }
@@ -50382,27 +50389,7 @@ class SelectTool {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectShapeCommand":"dc6qO","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe"}],"dc6qO":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectShapeCommand", ()=>SelectShapeCommand);
-var _state = require("../../State");
-class SelectShapeCommand {
-    constructor(shapeIndex){
-        this.shapeIndex = shapeIndex;
-        this.previousSelection = (0, _state.state).selectedShape;
-    }
-    do() {
-        (0, _state.state).selectedShape = this.shapeIndex;
-        console.log(`Shape ${this.shapeIndex} selected.`);
-    }
-    undo() {
-        (0, _state.state).selectedShape = this.previousSelection;
-        console.log(`Selection reverted to shape ${this.previousSelection}`);
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT"}],"aOEKs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -50438,11 +50425,15 @@ class SelectToolMoveShapeCommand {
         this.__diff = this.__to.clone().sub(this.__from);
     }
     do() {
-        (0, _state.state).c_shapes[this.shapeIndex].forEach((i)=>{
+        const cloneShape = [
+            ...(0, _state.state).c_shapes[this.shapeIndex]
+        ];
+        // Remove the last element (which is also the first element) to prevent double translation
+        cloneShape.pop();
+        cloneShape.forEach((i)=>{
             const before = (0, _state.state).c_points[i].clone();
             (0, _state.state).c_points[i] = (0, _state.state).c_points[i].clone().add(this.__diff);
             const after = (0, _state.state).c_points[i];
-            console.log(before.x - after.x, before.y - after.y);
         });
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
@@ -50454,7 +50445,77 @@ class SelectToolMoveShapeCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lpYSP":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// Protected, only to be used by Command
+parcelHelpers.export(exports, "selectPoint", ()=>selectPoint);
+// Protected, only to be used by Command
+parcelHelpers.export(exports, "deselect", ()=>deselect);
+// Protected, only to be used by Command
+parcelHelpers.export(exports, "removePointFromSelection", ()=>removePointFromSelection);
+parcelHelpers.export(exports, "getPointByIndex", ()=>getPointByIndex);
+parcelHelpers.export(exports, "__indexIsNotSelected", ()=>__indexIsNotSelected);
+parcelHelpers.export(exports, "checkPointOverlap", ()=>checkPointOverlap);
+parcelHelpers.export(exports, "checkPathOverlap", ()=>checkPathOverlap);
+var _state = require("../../State");
+var _canvas = require("../canvas");
+var _interface = require("../settings/interface");
+function selectPoint(index) {
+    if (!(0, _state.state).c_selected.includes(index)) {
+        (0, _state.state).c_selected.push(index);
+        console.log((0, _state.state).c_selected);
+    }
+}
+function deselect() {
+    (0, _state.state).c_selected = [];
+    (0, _canvas.drawCanvasFromState)((0, _state.state));
+}
+function removePointFromSelection(v) {
+    const i = (0, _state.state).c_selected.findIndex((index)=>v.equals((0, _state.state).c_points[index]));
+    (0, _state.state).c_selected.splice(i, 1);
+}
+function getPointByIndex(index) {
+    return (0, _state.state).c_points[index];
+}
+function __indexIsNotSelected(index) {
+    const result = (0, _state.state).c_selected.findIndex((i)=>{
+        return i == index;
+    });
+    return result === -1;
+}
+function checkPointOverlap(v) {
+    for(let i = 0; i < (0, _state.state).c_points.length; ++i){
+        console.log((0, _state.state).c_points[i].distanceTo(v), (0, _state.state).c_points.length);
+        if ((0, _state.state).c_points[i].distanceTo(v) < (0, _interface.selectionRadius)) return i;
+    }
+    return undefined;
+}
+function checkPathOverlap(v) {
+    return true;
+}
+
+},{"../../State":"83rpN","../canvas":"4a7yB","../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
+var _state = require("../../State");
+class SelectToolShapeCommand {
+    constructor(shapeIndex){
+        this.shapeIndex = shapeIndex;
+        this.previousSelection = (0, _state.state).selectedShape;
+    }
+    do() {
+        (0, _state.state).selectedShape = this.shapeIndex;
+        console.log(`Shape ${this.shapeIndex} selected.`);
+    }
+    undo() {
+        (0, _state.state).selectedShape = this.previousSelection;
+        console.log(`Selection reverted to shape ${this.previousSelection}`);
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);
