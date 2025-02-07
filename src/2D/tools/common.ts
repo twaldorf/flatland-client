@@ -34,7 +34,6 @@ export function __indexIsNotSelected(index:number):boolean {
 
 export function checkPointOverlap(v:Vector2):number | undefined {
   for (let i = 0; i < state.c_points.length; ++i) {
-    console.log(state.c_points[i].distanceTo(v), state.c_points.length)
     if (state.c_points[i].distanceTo(v) < selectionRadius) {
       return i;
     }

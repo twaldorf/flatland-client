@@ -56,6 +56,10 @@ export interface State {
   // All selected points on the canvas
   c_selected: Array<number>;
 
+  // All selected shapes on the canvas
+  // Indices of elements in c_shapes
+  c_selected_shapes: Array<number>;
+
   // Array of closed paths (shapes)
   // Shapes are moved from the paths array into the shapes array
   c_shapes: Array<Array<number>>;

@@ -5,18 +5,18 @@ import { drawCanvasFromState } from "../canvas";
 
 export class SelectToolPointCommand implements Command {
   private __index:number;
-  private __point:Vector2;
 
   constructor(index:number) {
     this.__index = index;
   }
 
   do() {
-    // todo implement
+    state.c_selected.push(this.__index);
+    drawCanvasFromState(state);
   }
 
   undo() {
-    // todo implement
+    state.c_selected.pop();
   }
 
 }

@@ -7,12 +7,15 @@ import { SelectToolShapeCommand } from "../commands/SelectToolShapeCommand";
 import { isPointInPolygon } from "../geometry/isPointInPolygon";
 import { SelectToolMoveShapeCommand } from "../commands/SelectToolMoveShapeCommand"
 import { checkPointOverlap } from "./common";
+import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
+import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
 
 export type SelectToolState = 
   | { type: "idle" }
   | { type: "hovering"; hoveredIndex: number }
   | { type: "moving"; selectedShapeIndex: number; startPos: Vector2 }
   | { type: "selecting"; selectedShapeIndex: number }
+  | { type: "selecting_points"; selectedPointIndices: number[] }
 
 export class SelectTool implements ToolBase {
   // Tool state object stores tool mechanical state
@@ -43,13 +46,13 @@ export class SelectTool implements ToolBase {
     state.canvas.removeEventListener("mouseup", this.__listeners.up);
   }
 
-  // Tool state replacer
+  // Tool state updater
   private transition(newState: SelectToolState) {
     console.log(`SelectTool state: ${this.__state.type} → ${newState.type}`);
     this.__state = newState;
   }
 
-  // Path tool event management
+  // Select tool event management
   private onMouseDown(e: MouseEvent) {
     const clickPos = cLocalizePoint(e.clientX, e.clientY);
     const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
@@ -66,8 +69,8 @@ export class SelectTool implements ToolBase {
         } else if ( hitIndex && hitIndex > -1 ) {
           pushCommand( new SelectToolPointCommand( hitIndex ) );
           this.transition({
-            type: "selecting",
-            selectedShapeIndex
+            type: "selecting_points",
+            selectedPointIndices: [ hitIndex ]
           });
         }
 
@@ -78,6 +81,25 @@ export class SelectTool implements ToolBase {
           if ( selectedShapeIndex > -1 ) {
             pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
           } 
+        }
+        break;
+      
+      case "selecting_points":
+        if ( hitIndex && hitIndex > -1) {
+          if (state.shiftDown ) {
+            if (state.c_selected.indexOf(hitIndex) === -1) {
+              pushCommand( new SelectToolPointCommand( hitIndex ) );
+            }
+          } else {
+            if (state.c_selected.indexOf(hitIndex) === -1) {
+              pushCommand( new SelectToolPointCommand( hitIndex ) );
+            } 
+          }
+        } else if ( !state.shiftDown ) {
+          pushCommand( new SelectToolDeselectAllCommand() );
+          this.transition({
+            type: "idle"
+          });
         }
     }
   }

@@ -36,6 +36,7 @@ export const state:State = {
   c_paths: [],
   c_selected: [],
   c_shapes: [],
+  c_selected_shapes: [],
   cActive: false,
   cSelecting: false,
   pendingSelection: undefined as unknown as Command,

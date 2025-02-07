@@ -49675,6 +49675,7 @@ const state = {
     c_paths: [],
     c_selected: [],
     c_shapes: [],
+    c_selected_shapes: [],
     cActive: false,
     cSelecting: false,
     pendingSelection: undefined,
@@ -50299,6 +50300,8 @@ var _selectToolShapeCommand = require("../commands/SelectToolShapeCommand");
 var _isPointInPolygon = require("../geometry/isPointInPolygon");
 var _selectToolMoveShapeCommand = require("../commands/SelectToolMoveShapeCommand");
 var _common = require("./common");
+var _selectToolPointCommand = require("../commands/SelectToolPointCommand");
+var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
 class SelectTool {
     constructor(){
         // Tool state object stores tool mechanical state
@@ -50324,12 +50327,12 @@ class SelectTool {
         (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
         (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
     }
-    // Tool state replacer
+    // Tool state updater
     transition(newState) {
         console.log(`SelectTool state: ${this.__state.type} \u{2192} ${newState.type}`);
         this.__state = newState;
     }
-    // Path tool event management
+    // Select tool event management
     onMouseDown(e) {
         const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
@@ -50343,16 +50346,30 @@ class SelectTool {
                         selectedShapeIndex
                     });
                 } else if (hitIndex && hitIndex > -1) {
-                    (0, _command.pushCommand)(new SelectToolPointCommand(hitIndex));
+                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
                     this.transition({
-                        type: "selecting",
-                        selectedShapeIndex
+                        type: "selecting_points",
+                        selectedPointIndices: [
+                            hitIndex
+                        ]
                     });
                 }
                 break;
             case "selecting":
                 if ((0, _state.state).shiftDown) {
                     if (selectedShapeIndex > -1) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
+                }
+                break;
+            case "selecting_points":
+                if (hitIndex && hitIndex > -1) {
+                    if ((0, _state.state).shiftDown) {
+                        if ((0, _state.state).c_selected.indexOf(hitIndex) === -1) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
+                    } else if ((0, _state.state).c_selected.indexOf(hitIndex) === -1) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
+                } else if (!(0, _state.state).shiftDown) {
+                    (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
+                    this.transition({
+                        type: "idle"
+                    });
                 }
         }
     }
@@ -50389,7 +50406,7 @@ class SelectTool {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT"}],"aOEKs":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL"}],"aOEKs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -50486,7 +50503,6 @@ function __indexIsNotSelected(index) {
 }
 function checkPointOverlap(v) {
     for(let i = 0; i < (0, _state.state).c_points.length; ++i){
-        console.log((0, _state.state).c_points[i].distanceTo(v), (0, _state.state).c_points.length);
         if ((0, _state.state).c_points[i].distanceTo(v) < (0, _interface.selectionRadius)) return i;
     }
     return undefined;
@@ -50503,19 +50519,59 @@ var _state = require("../../State");
 class SelectToolShapeCommand {
     constructor(shapeIndex){
         this.shapeIndex = shapeIndex;
-        this.previousSelection = (0, _state.state).selectedShape;
+        this.previousSelection = (0, _state.state).c_selected_shapes;
     }
     do() {
-        (0, _state.state).selectedShape = this.shapeIndex;
+        (0, _state.state).c_selected_shapes = [
+            this.shapeIndex
+        ];
         console.log(`Shape ${this.shapeIndex} selected.`);
     }
     undo() {
-        (0, _state.state).selectedShape = this.previousSelection;
+        (0, _state.state).c_selected_shapes = this.previousSelection;
         console.log(`Selection reverted to shape ${this.previousSelection}`);
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"97SwH":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolPointCommand", ()=>SelectToolPointCommand);
+var _state = require("../../State");
+var _canvas = require("../canvas");
+class SelectToolPointCommand {
+    constructor(index){
+        this.__index = index;
+    }
+    do() {
+        (0, _state.state).c_selected.push(this.__index);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_selected.pop();
+    }
+}
+
+},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"35eIL":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolDeselectAllCommand", ()=>SelectToolDeselectAllCommand);
+var _state = require("../../State");
+var _canvas = require("../canvas");
+class SelectToolDeselectAllCommand {
+    constructor(){
+        this.old_selected = (0, _state.state).c_selected;
+    }
+    do() {
+        (0, _state.state).c_selected = [];
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_selected = this.old_selected;
+    }
+}
+
+},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);

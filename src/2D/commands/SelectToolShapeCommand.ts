@@ -3,20 +3,20 @@ import { state } from "../../State";
 
 export class SelectToolShapeCommand implements Command {
   private shapeIndex: number;
-  private previousSelection: number | null;
+  private previousSelection: number[];
 
   constructor(shapeIndex: number) {
     this.shapeIndex = shapeIndex;
-    this.previousSelection = state.selectedShape;
+    this.previousSelection = state.c_selected_shapes;
   }
 
   do() {
-    state.selectedShape = this.shapeIndex;
+    state.c_selected_shapes = [ this.shapeIndex ];
     console.log(`Shape ${this.shapeIndex} selected.`);
   }
 
   undo() {
-    state.selectedShape = this.previousSelection;
+    state.c_selected_shapes = this.previousSelection;
     console.log(`Selection reverted to shape ${this.previousSelection}`);
   }
 }
