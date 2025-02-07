@@ -82,7 +82,7 @@ export function initScene(canvas:HTMLCanvasElement) {
   
   // test scene
   // drawTestGeometry();
-  drawTestPrimitive();
+  // drawTestPrimitive();
   
   // kick off update
   update();
@@ -168,11 +168,11 @@ function update() {
       
       // line.geometry.applyMatrix4( mesh.matrix );
       
-      line.visible = true;
+      // line.visible = true;
       
     } else {
       
-      line.visible = false;
+      // line.visible = false;
       
     }
     

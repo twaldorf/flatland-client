@@ -3,6 +3,7 @@ import { Command } from "../../Command";
 import { state } from "../../State";
 import { drawCanvasFromState } from "../canvas";
 import { changeTool } from "../tools/changeTool";
+import { createPolygonPlane } from "../../3D/geometry/polygon";
 
 export class PathToolClosePathCommand implements Command {
   private path: number[]; // This is the path without the closing point
@@ -34,6 +35,10 @@ export class PathToolClosePathCommand implements Command {
     state.c_activePath = -1;
 
     changeTool( { type: 'select' } );
+
+    // Demo: create polygon
+    const shape = createPolygonPlane(this.path);
+    console.log(shape)
 
     drawCanvasFromState( state );
   }

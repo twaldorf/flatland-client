@@ -18736,7 +18736,7 @@ function initScene(canvas) {
     (0, _state.state).pointerDown = false;
     // test scene
     // drawTestGeometry();
-    drawTestPrimitive();
+    // drawTestPrimitive();
     // kick off update
     update();
     return {
@@ -18816,17 +18816,17 @@ function update() {
         (0, _state.state).intersects = intersects;
         if (intersects.length > 0) {
             const intersect = intersects[0];
-            // const face = intersect.face;
-            // const linePosition = line.geometry.attributes.position;
-            // const meshPosition = mesh.geometry.attributes.position;
-            // linePosition.copyAt( 0, meshPosition, face.a );
-            // linePosition.copyAt( 1, meshPosition, face.b );
-            // linePosition.copyAt( 2, meshPosition, face.c );
-            // linePosition.copyAt( 3, meshPosition, face.a );
-            // mesh.updateMatrix(); 
-            // line.geometry.applyMatrix4( mesh.matrix );
-            line.visible = true;
-        } else line.visible = false;
+        // const face = intersect.face;
+        // const linePosition = line.geometry.attributes.position;
+        // const meshPosition = mesh.geometry.attributes.position;
+        // linePosition.copyAt( 0, meshPosition, face.a );
+        // linePosition.copyAt( 1, meshPosition, face.b );
+        // linePosition.copyAt( 2, meshPosition, face.c );
+        // linePosition.copyAt( 3, meshPosition, face.a );
+        // mesh.updateMatrix(); 
+        // line.geometry.applyMatrix4( mesh.matrix );
+        // line.visible = true;
+        }
     }
     renderer.render(scene, camera);
 }
@@ -50231,6 +50231,7 @@ parcelHelpers.export(exports, "PathToolClosePathCommand", ()=>PathToolClosePathC
 var _state = require("../../State");
 var _canvas = require("../canvas");
 var _changeTool = require("../tools/changeTool");
+var _polygon = require("../../3D/geometry/polygon");
 class PathToolClosePathCommand {
     constructor(path){
         this.path = [
@@ -50254,6 +50255,9 @@ class PathToolClosePathCommand {
         (0, _changeTool.changeTool)({
             type: 'select'
         });
+        // Demo: create polygon
+        const shape = (0, _polygon.createPolygonPlane)(this.path);
+        console.log(shape);
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
@@ -50265,31 +50269,34 @@ class PathToolClosePathCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../tools/changeTool":"kXHtP"}],"kXHtP":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../tools/changeTool":"kXHtP","../../3D/geometry/polygon":"9OqtZ"}],"kXHtP":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "changeTool", ()=>changeTool);
 var _state = require("../../State");
+var _store = require("../../UI/store");
 var _pathTool = require("./PathTool");
 var _selectTool = require("./SelectTool");
 function changeTool(newState) {
-    console.log('Change Tool');
     (0, _state.state).tool.dismountEvents();
     switch(newState.type){
         case "path":
             (0, _state.state).tool = new (0, _pathTool.PathTool)();
+            (0, _store.useAppState).getState().setSelectedTool("path");
             break;
         case "select":
             (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            (0, _store.useAppState).getState().setSelectedTool("select");
             break;
         default:
             (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            (0, _store.useAppState).getState().setSelectedTool("select");
             break;
     }
     (0, _state.state).tool.initializeEvents();
 }
 
-},{"../../State":"83rpN","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jISwe":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../UI/store":"l1Ff7"}],"jISwe":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectTool", ()=>SelectTool);
@@ -50571,7 +50578,112 @@ class SelectToolDeselectAllCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "useAppState", ()=>useAppState);
+var _zustand = require("zustand");
+const useAppState = (0, _zustand.create)((set)=>({
+        selectedTool: 'select',
+        setSelectedTool: (tool)=>set({
+                selectedTool: tool
+            })
+    }));
+
+},{"zustand":"cPNyt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cPNyt":[function(require,module,exports,__globalThis) {
+'use strict';
+var vanilla = require("a19f4edd89926025");
+var react = require("a0cacd268d6bf882");
+Object.keys(vanilla).forEach(function(k) {
+    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
+        enumerable: true,
+        get: function() {
+            return vanilla[k];
+        }
+    });
+});
+Object.keys(react).forEach(function(k) {
+    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
+        enumerable: true,
+        get: function() {
+            return react[k];
+        }
+    });
+});
+
+},{"a19f4edd89926025":"2SLIN","a0cacd268d6bf882":"fhDSt"}],"2SLIN":[function(require,module,exports,__globalThis) {
+'use strict';
+const createStoreImpl = (createState)=>{
+    let state;
+    const listeners = /* @__PURE__ */ new Set();
+    const setState = (partial, replace)=>{
+        const nextState = typeof partial === "function" ? partial(state) : partial;
+        if (!Object.is(nextState, state)) {
+            const previousState = state;
+            state = (replace != null ? replace : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
+            listeners.forEach((listener)=>listener(state, previousState));
+        }
+    };
+    const getState = ()=>state;
+    const getInitialState = ()=>initialState;
+    const subscribe = (listener)=>{
+        listeners.add(listener);
+        return ()=>listeners.delete(listener);
+    };
+    const api = {
+        setState,
+        getState,
+        getInitialState,
+        subscribe
+    };
+    const initialState = state = createState(setState, getState, api);
+    return api;
+};
+const createStore = (createState)=>createState ? createStoreImpl(createState) : createStoreImpl;
+exports.createStore = createStore;
+
+},{}],"fhDSt":[function(require,module,exports,__globalThis) {
+'use strict';
+var React = require("6a69048f974f8971");
+var vanilla = require("985957b117977eb9");
+const identity = (arg)=>arg;
+function useStore(api, selector = identity) {
+    const slice = React.useSyncExternalStore(api.subscribe, ()=>selector(api.getState()), ()=>selector(api.getInitialState()));
+    React.useDebugValue(slice);
+    return slice;
+}
+const createImpl = (createState)=>{
+    const api = vanilla.createStore(createState);
+    const useBoundStore = (selector)=>useStore(api, selector);
+    Object.assign(useBoundStore, api);
+    return useBoundStore;
+};
+const create = (createState)=>createState ? createImpl(createState) : createImpl;
+exports.create = create;
+exports.useStore = useStore;
+
+},{"6a69048f974f8971":"21dqq","985957b117977eb9":"2SLIN"}],"9OqtZ":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
+var _three = require("three");
+var _state = require("../../State");
+const createPolygonPlane = (path)=>{
+    const points = path.map((index)=>{
+        return (0, _state.state).c_points[index].clone().divideScalar(100);
+    });
+    const shape = new _three.Shape(points);
+    const geometry = new _three.ShapeGeometry(shape);
+    const material = new _three.MeshBasicMaterial({
+        color: 0x00ff00
+    });
+    const mesh = new _three.Mesh(geometry, material);
+    (0, _state.state).scene.add(mesh);
+    // mesh.translateZ(10)
+    return mesh;
+};
+
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);
@@ -51055,29 +51167,50 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Toolbar", ()=>Toolbar);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _store = require("../store");
 var _common = require("../styles/common");
+var _pathicon = require("./toolbar/Pathicon");
 var _toolIcon = require("./toolbar/ToolIcon");
+var _s = $RefreshSig$();
 const Toolbar = ({})=>{
+    _s();
+    const selectedTool = (0, _store.useAppState)((state)=>state.selectedTool);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "absolute m-4 my-auto h-50/100 bg-blue-400 p-4 rounded-xl white top-1/2 bottom-1/2",
+        className: "absolute m-4 my-auto h-50/100 bg-blue-400 p-2 rounded-md white top-1/2 bottom-1/2",
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
             style: listStyle,
-            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolIcon.ToolIcon), {}, void 0, false, {
-                fileName: "src/UI/tools/Toolbar.tsx",
-                lineNumber: 8,
-                columnNumber: 9
-            }, undefined)
-        }, void 0, false, {
+            children: [
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolIcon.ToolIcon), {
+                    active: selectedTool == 'select' ? true : false
+                }, void 0, false, {
+                    fileName: "src/UI/tools/Toolbar.tsx",
+                    lineNumber: 13,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pathicon.PathIcon), {
+                    active: selectedTool == 'path' ? true : false
+                }, void 0, false, {
+                    fileName: "src/UI/tools/Toolbar.tsx",
+                    lineNumber: 14,
+                    columnNumber: 9
+                }, undefined)
+            ]
+        }, void 0, true, {
             fileName: "src/UI/tools/Toolbar.tsx",
-            lineNumber: 7,
+            lineNumber: 12,
             columnNumber: 7
         }, undefined)
     }, void 0, false, {
         fileName: "src/UI/tools/Toolbar.tsx",
-        lineNumber: 6,
+        lineNumber: 11,
         columnNumber: 5
     }, undefined);
 };
+_s(Toolbar, "kliuGdCi4rt7Zt2qrCy+JSvuIkU=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
 _c = Toolbar;
 const listStyle = {
     ...(0, _common.listStyleNone)
@@ -51090,7 +51223,7 @@ $RefreshReg$(_c, "Toolbar");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../styles/common":"3qACI","./toolbar/ToolIcon":"01aU3","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"3qACI":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","../styles/common":"3qACI","./toolbar/ToolIcon":"01aU3","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./toolbar/Pathicon":"6jY9U","../store":"l1Ff7"}],"3qACI":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "listStyleNone", ()=>listStyleNone);
@@ -51115,12 +51248,15 @@ var _command = require("../../../Command");
 const handleClick = ()=>{
     (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("select"));
 };
-const ToolIcon = ()=>{
+const ToolIcon = ({ active })=>{
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
         onClick: handleClick,
-        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiLocationArrow1), {}, void 0, false, {
+        className: `p-2 rounded text-3xl ${active ? 'bg-blue-700 text-white' : 'text-white'}`,
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiLocationArrow1), {
+            strokeWidth: active ? 1.5 : 0
+        }, void 0, false, {
             fileName: "src/UI/tools/toolbar/ToolIcon.tsx",
-            lineNumber: 12,
+            lineNumber: 15,
             columnNumber: 7
         }, undefined)
     }, void 0, false, {
@@ -62958,7 +63094,50 @@ class ChangeToolCommand {
     }
 }
 
-},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6ni0Q":[function(require,module,exports,__globalThis) {
+},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6jY9U":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$b418 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$b418.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathIcon", ()=>PathIcon);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _ci = require("react-icons/ci");
+var _changeToolCommand = require("../../../2D/commands/ChangeToolCommand");
+var _command = require("../../../Command");
+const handleClick = ()=>{
+    (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("path"));
+};
+const PathIcon = ({ active })=>{
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+        onClick: handleClick,
+        className: `p-2 rounded text-3xl ${active ? 'bg-blue-700 text-white' : 'text-white'}`,
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiPen), {
+            strokeWidth: active ? 1 : 0
+        }, void 0, false, {
+            fileName: "src/UI/tools/toolbar/Pathicon.tsx",
+            lineNumber: 15,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "src/UI/tools/toolbar/Pathicon.tsx",
+        lineNumber: 11,
+        columnNumber: 5
+    }, undefined);
+};
+_c = PathIcon;
+var _c;
+$RefreshReg$(_c, "PathIcon");
+
+  $parcel$ReactRefreshHelpers$b418.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6ni0Q":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$d584 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
