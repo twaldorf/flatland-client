@@ -117,11 +117,12 @@ export class PathTool implements ToolBase {
   private onMouseDown(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
     const hitIndex = findNearestPoint(pos, state.c_points);
+    console.log(state)
 
     switch (this.__state.type) {
       case "drawing":
         // Case: Close the path and connect to the first point in the shape if there three or more points
-        if (hitIndex == 0) { 
+        if (hitIndex == state.c_paths[this.__currentPathIndex][0]) { 
           pushCommand( new PathToolClosePathCommand( state.c_paths[this.__currentPathIndex] ) );
           this.transition({
             type: 'idle'
@@ -165,6 +166,8 @@ export class PathTool implements ToolBase {
           });
         } else {
           // Begin drawing
+          this.__currentPathIndex = state.c_shapes.length;
+          console.log(this.__currentPathIndex)
           pushCommand( new PathToolCommand(this, pos) );
           this.transition( {
             type: 'drawing', 

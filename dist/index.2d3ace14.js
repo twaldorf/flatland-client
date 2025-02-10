@@ -49778,10 +49778,11 @@ class PathTool {
     onMouseDown(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
+        console.log((0, _state.state));
         switch(this.__state.type){
             case "drawing":
                 // Case: Close the path and connect to the first point in the shape if there three or more points
-                if (hitIndex == 0) {
+                if (hitIndex == (0, _state.state).c_paths[this.__currentPathIndex][0]) {
                     (0, _command.pushCommand)(new (0, _pathToolClosePathCommand.PathToolClosePathCommand)((0, _state.state).c_paths[this.__currentPathIndex]));
                     this.transition({
                         type: 'idle'
@@ -49811,6 +49812,8 @@ class PathTool {
                 });
                 else {
                     // Begin drawing
+                    this.__currentPathIndex = (0, _state.state).c_shapes.length;
+                    console.log(this.__currentPathIndex);
                     (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, pos));
                     this.transition({
                         type: 'drawing',
@@ -50679,7 +50682,6 @@ const createPolygonPlane = (path)=>{
     });
     const mesh = new _three.Mesh(geometry, material);
     (0, _state.state).scene.add(mesh);
-    // mesh.translateZ(10)
     return mesh;
 };
 

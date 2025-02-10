@@ -756,16 +756,8 @@
     border-radius: .25rem;
   }
 
-  .rounded-lg {
-    border-radius: var(--radius-lg);
-  }
-
   .rounded-md {
     border-radius: var(--radius-md);
-  }
-
-  .rounded-xl {
-    border-radius: var(--radius-xl);
   }
 
   .border-b {
@@ -785,10 +777,6 @@
     padding: calc(var(--spacing) * 2);
   }
 
-  .p-4 {
-    padding: calc(var(--spacing) * 4);
-  }
-
   .font-mono {
     font-family: var(--font-mono);
   }
@@ -801,11 +789,6 @@
   .text-3xl {
     font-size: var(--text-3xl);
     line-height: var(--tw-leading, var(--text-3xl--line-height));
-  }
-
-  .font-bold {
-    --tw-font-weight: var(--font-weight-bold);
-    font-weight: var(--font-weight-bold);
   }
 
   .text-white {
@@ -863,11 +846,6 @@
   syntax: "*";
   inherits: false;
   initial-value: solid;
-}
-
-@property --tw-font-weight {
-  syntax: "*";
-  inherits: false
 }
 
 @property --tw-blur {
