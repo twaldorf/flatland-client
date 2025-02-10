@@ -49799,7 +49799,7 @@ class PathTool {
                     // Case: Points are selected but the user is clicking exclusively on an unselected point
                     (0, _command.pushCommand)(new (0, _pathToolDeselectCommand.PathToolDeselectCommand)());
                     (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
-                }
+                } else if ((0, _state.state).c_selected.length == 1 && (0, _state.state).c_selected[0] == hitIndex) (0, _command.pushCommand)(new (0, _pathToolRemovePointCommand.PathToolRemovePointCommand)(this.__currentPathIndex, hitIndex));
                 break;
             case "idle":
                 if (hitIndex != null) // Select the point
@@ -49862,9 +49862,6 @@ class PathTool {
                 if (nearPoint != null && !(0, _state.state).shiftDown) (0, _state.state).c_selected = [
                     nearPoint
                 ];
-                this.transition({
-                    type: "idle"
-                });
                 break;
         }
         (0, _canvas.drawCanvasFromState)((0, _state.state));
@@ -50671,6 +50668,7 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
 var _three = require("three");
 var _state = require("../../State");
+var _protoXPBD = require("../simulation/protoXPBD");
 const createPolygonPlane = (path)=>{
     const points = path.map((index)=>{
         return (0, _state.state).c_points[index].clone().divideScalar(100);
@@ -50682,10 +50680,102 @@ const createPolygonPlane = (path)=>{
     });
     const mesh = new _three.Mesh(geometry, material);
     (0, _state.state).scene.add(mesh);
+    const indices = geometry.index;
+    (0, _state.state).sim_array = points.map((point)=>{
+        return {
+            position: new _three.Vector3(point.x, point.y, 0),
+            invMass: 0,
+            previousPosition: new _three.Vector3(point.x, point.y, 0),
+            predicted: new _three.Vector3(point.x, point.y, 0),
+            velocity: new _three.Vector3(0, 0, 0)
+        };
+    });
+    let constraints_array = [];
+    for(let i = 0; i < points.length; ++i){
+        const constraint = new (0, _protoXPBD.DistanceConstraint)((0, _state.state).sim_array[indices[i]], (0, _state.state).sim_array[indices[(i + 1) % points.length]], (0, _state.state).sim_array[i].position.distanceTo((0, _state.state).sim_array[(i + 1) % points.length]) / 100, .1);
+        constraints_array.push(constraint);
+    }
+    (0, _state.state).constraints = constraints_array;
     return mesh;
 };
 
-},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../simulation/protoXPBD":"46Cm3"}],"46Cm3":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// A distance constraint between two particles using XPBD.
+parcelHelpers.export(exports, "DistanceConstraint", ()=>DistanceConstraint);
+parcelHelpers.export(exports, "particles", ()=>particles);
+parcelHelpers.export(exports, "constraints", ()=>constraints);
+var _three = require("three");
+var _state = require("../../State");
+class DistanceConstraint {
+    constructor(p1, p2, restLength, compliance){
+        this.p1 = p1;
+        this.p2 = p2;
+        this.restLength = restLength;
+        this.compliance = compliance;
+        this.lambda = 0;
+    }
+    // XPBD constraint solve method.
+    // deltaTime is the simulation time step.
+    solve(deltaTime, particles) {
+        const p_i = particles[this.p1].predicted;
+        const p_j = particles[this.p2].predicted;
+        const w_i = particles[this.p1].invMass;
+        const w_j = particles[this.p2].invMass;
+        const delta = new _three.Vector3().subVectors(p_i, p_j);
+        const currentDist = delta.length();
+        if (currentDist === 0) return;
+        const C = currentDist - this.restLength;
+        const wSum = w_i + w_j;
+        // XPBD uses a compliance term scaled by dt².
+        const alpha = this.compliance / (deltaTime * deltaTime);
+        // Compute the incremental Lagrange multiplier.
+        const dlambda = (-C - alpha * this.lambda) / (wSum + alpha);
+        this.lambda += dlambda;
+        // Apply the correction scaled by the normalized gradient.
+        const correction = delta.normalize().multiplyScalar(dlambda);
+        if (w_i > 0) p_i.addScaledVector(correction, w_i);
+        if (w_j > 0) p_j.addScaledVector(correction, -w_j);
+    }
+}
+var particles = []; // fill with your particle data
+var constraints = []; // fill with your constraint definitions
+particles = (0, _state.state).particles;
+constraints = (0, _state.state).constraints;
+// For collisions, we’ll resolve with a simple floor at y = 0.
+function resolveCollisions(particle, floorY) {
+    if (particle.predicted.y < floorY) // Push the particle back to the floor.
+    particle.predicted.y = floorY;
+}
+// The main update function where XPBD and collision handling occur.
+function update(deltaTime) {
+    // --- 1. Predict positions by applying external forces (e.g., gravity)
+    const gravity = new _three.Vector3(0, -9.81, 0);
+    for (const particle of particles)if (particle.invMass > 0) {
+        // Update velocity with gravity
+        particle.velocity.addScaledVector(gravity, deltaTime);
+        // Predict new position
+        particle.predicted.copy(particle.position).addScaledVector(particle.velocity, deltaTime);
+    }
+    // --- 2. Resolve collisions for each particle (e.g. against the floor at y = 0)
+    for (const particle of particles)resolveCollisions(particle, 0);
+    // --- 3. Iteratively solve constraints (XPBD)
+    const iterations = 10; // Number of solver iterations
+    for(let iter = 0; iter < iterations; iter++)for (const constraint of constraints)constraint.solve(deltaTime, particles);
+    // --- 4. Update velocities and positions using the predicted positions
+    for (const particle of particles){
+        // Compute new velocity based on the change in position
+        particle.velocity.copy(particle.predicted).sub(particle.position).divideScalar(deltaTime);
+        // Update actual position to the corrected predicted position
+        particle.position.copy(particle.predicted);
+    }
+// (Optional) Update your mesh geometry to reflect new particle positions.
+// For example, if using BufferGeometry, update the 'position' attribute.
+// geometry.attributes.position.needsUpdate = true;
+}
+
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN"}],"8Yd53":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);
@@ -63152,8 +63242,8 @@ parcelHelpers.export(exports, "Header", ()=>Header);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 const Header = ()=>{
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
-        className: "text-2xl border-b",
-        children: "flatland editor"
+        className: "text-2xl border-b p-3",
+        children: "flatland studio"
     }, void 0, false, {
         fileName: "src/UI/sections/Header.tsx",
         lineNumber: 3,

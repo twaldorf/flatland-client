@@ -1,7 +1,8 @@
 import * as THREE from 'three';
+import { state } from '../../State';
 
 // A simple particle representing a vertex in your mesh.
-interface Particle {
+export interface Particle {
   position: THREE.Vector3;      // current position
   previousPosition: THREE.Vector3; // for computing velocity
   velocity: THREE.Vector3;
@@ -10,7 +11,7 @@ interface Particle {
 }
 
 // A distance constraint between two particles using XPBD.
-class DistanceConstraint {
+export class DistanceConstraint {
   p1: number;         // index of the first particle
   p2: number;         // index of the second particle
   restLength: number; // desired length between particles
@@ -57,6 +58,8 @@ class DistanceConstraint {
 // In your application, you would extract the particles from your mesh vertices.
 export var particles: Particle[] = []; // fill with your particle data
 export var constraints: DistanceConstraint[] = []; // fill with your constraint definitions
+particles = state.particles;
+constraints = state.constraints;
 
 // For collisions, we’ll resolve with a simple floor at y = 0.
 function resolveCollisions(particle: Particle, floorY: number) {

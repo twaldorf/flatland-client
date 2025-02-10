@@ -152,6 +152,8 @@ export class PathTool implements ToolBase {
           // Case: Points are selected but the user is clicking exclusively on an unselected point
           pushCommand( new PathToolDeselectCommand() );
           pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
+        } else if (state.c_selected.length == 1 && state.c_selected[0] == hitIndex) {
+          pushCommand(new PathToolRemovePointCommand( this.__currentPathIndex, hitIndex ) );
         }
 
         break;
@@ -228,7 +230,7 @@ export class PathTool implements ToolBase {
         if (nearPoint != null && !state.shiftDown) {
           state.c_selected = [ nearPoint ];
         }
-        this.transition({ type: "idle" });
+        // this.transition({ type: "idle" }); // How important is this?
         break;
     }
 
