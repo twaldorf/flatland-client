@@ -692,16 +692,8 @@
     }
   }
 
-  .m-2 {
-    margin: calc(var(--spacing) * 2);
-  }
-
   .m-4 {
     margin: calc(var(--spacing) * 4);
-  }
-
-  .my-2 {
-    margin-block: calc(var(--spacing) * 2);
   }
 
   .my-auto {
@@ -787,18 +779,6 @@
 
   .p-3 {
     padding: calc(var(--spacing) * 3);
-  }
-
-  .px-2 {
-    padding-inline: calc(var(--spacing) * 2);
-  }
-
-  .py-2 {
-    padding-block: calc(var(--spacing) * 2);
-  }
-
-  .py-3 {
-    padding-block: calc(var(--spacing) * 3);
   }
 
   .font-mono {
