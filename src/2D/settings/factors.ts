@@ -1,0 +1,1 @@
+export const cf_canvas_to_inch = 25;

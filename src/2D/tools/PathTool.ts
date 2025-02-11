@@ -1,4 +1,4 @@
-import { Vector2 } from "three";
+import { Vector, Vector2 } from "three";
 import { State, Tool, ToolBase } from "../../types";
 import { selectionRadius } from "../settings/interface";
 import { state } from "../../State";
@@ -16,6 +16,8 @@ import { PathToolRemovePointCommand } from "../commands/PathToolRemovePointComma
 export type PathToolState = 
   | { type: "idle" }
   | { type: "drawing"; currentPathIndex: number }
+  | { type: "drawing new point"; currentPathIndex: number, newPointIndex: number }
+  | { type: "moving new point"; index: number, startPos: Vector2 }
   // | { type: "hovering"; hoveredIndex: number } // hovering will have to be handled elsewhere
   | { type: "moving"; selectedIndices: number[]; startPos: Vector2 }
   | { type: "selecting"; selectedIndices: number[], hitIndex: number; }
@@ -68,6 +70,9 @@ export class PathTool implements ToolBase {
 
     // Index of point in global point array
     const pointIndex = state.c_points.push( v ) - 1;
+
+    // Add the point to the active point array
+    state.c_pointmap.set(pointIndex, v);
     
     // Index of current path in global path array
     const pathIndex = this.__currentPathIndex;
@@ -100,8 +105,11 @@ export class PathTool implements ToolBase {
   // Protected, to be used by a Command
   public removePointFromPath( i:number, pi:number ):void {
     const pointInPathIndex = state.c_paths[ pi ].findIndex( (c) => c == i );
+
+    // TODO: Shouldn't be splicing from global point array
     state.c_points.splice( i, 1 );
     state.c_paths[ pi ].splice( pointInPathIndex, 1 );
+    console.log(state.c_pointmap.delete(i));
     drawCanvasFromState(state);
   }
 
@@ -137,6 +145,11 @@ export class PathTool implements ToolBase {
           // })
         } else {
           pushCommand( new PathToolCommand(this, pos) );
+          this.transition({
+            type: "drawing new point",
+            currentPathIndex: this.__currentPathIndex,
+            newPointIndex: state.c_points.length
+          });
         }
 
         break;
@@ -197,7 +210,15 @@ export class PathTool implements ToolBase {
           selectedIndices: state.c_selected,
           startPos: pos,
         });
-      break;
+        break;
+
+      case "drawing new point":
+        this.transition({
+          type: "moving new point",
+          index: this.__state.newPointIndex,
+          startPos: pos,
+        }); 
+        break;
 
       case "idle":
         if (Math.random() < .1) {
@@ -225,12 +246,30 @@ export class PathTool implements ToolBase {
         this.transition({ type: "idle" });
         break;
 
+      case "moving new point":
+        pushCommand(
+          new PathToolMovePointCommand(
+            [ this.__state.index ],
+            this.__state.startPos,
+            pos
+          )
+        );
+        this.transition({ type: "drawing", currentPathIndex: this.__currentPathIndex }); 
+        break;
+
       case "selecting":
         const nearPoint = findNearestPoint(pos, state.c_points);
         if (nearPoint != null && !state.shiftDown) {
           state.c_selected = [ nearPoint ];
         }
         // this.transition({ type: "idle" }); // How important is this?
+        break;
+
+      case "drawing new point":
+        this.transition({
+          type: "drawing",
+          currentPathIndex: this.__currentPathIndex
+        })
         break;
     }
 

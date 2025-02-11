@@ -26,6 +26,7 @@ export class SelectToolMoveShapeCommand implements Command {
       const before = state.c_points[i].clone();
       state.c_points[i] = state.c_points[i].clone().add(this.__diff);
       const after = state.c_points[i];
+      state.c_pointmap.set(i, after);
     });
     drawCanvasFromState(state);
   }

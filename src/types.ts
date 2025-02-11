@@ -50,6 +50,9 @@ export interface State {
   // All points on the canvas
   c_points: Array<Vector2>;
 
+  // Map of active points
+  c_pointmap: Map<number, Vector2>;
+
   // 2D Array of all paths composed by the indices of each path member vertices
   c_paths: Array<Array<number>>;
 
@@ -67,6 +70,9 @@ export interface State {
   // Index of the active path within the c_paths array
   // -1 when it is inactive
   c_activePath: number;
+
+  // Scale factor manipulated by the user through zoom functionality
+  c_zoomfactor: number;
 }
 
 type Mode = 'default' | 

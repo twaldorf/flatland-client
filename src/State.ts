@@ -33,6 +33,7 @@ export const state:State = {
   pointerDown: false,
   tool: new PathTool(),
   c_points: [],
+  c_pointmap: new Map(),
   c_paths: [],
   c_selected: [],
   c_shapes: [],
@@ -42,4 +43,6 @@ export const state:State = {
   pendingSelection: undefined as unknown as Command,
   cMovingPoint: false,
   c_move_from: undefined,
+
+  c_zoomfactor: 1,
 };

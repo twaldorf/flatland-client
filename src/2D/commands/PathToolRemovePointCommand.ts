@@ -22,6 +22,7 @@ export class PathToolRemovePointCommand implements Command {
 
     state.c_paths[this.pathIndex] = path.filter( ( value, index ) => value !== this.pointIndex );
     console.log(`Path index ${this.pathIndex} PointIndex ${this.pointIndex} Path: ${path}`)
+    state.c_pointmap.delete(this.pointIndex);
 
     drawCanvasFromState(state);
   }

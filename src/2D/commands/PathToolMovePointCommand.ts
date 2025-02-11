@@ -18,7 +18,8 @@ export class PathToolMovePointCommand implements Command {
 
   do() {
     this.indices.forEach((i:number):void => {
-      state.c_points[i].add(this.__diff);
+      const nv = state.c_points[i].add(this.__diff);
+      state.c_pointmap.set(i, nv);
     });
     drawCanvasFromState(state);
   }

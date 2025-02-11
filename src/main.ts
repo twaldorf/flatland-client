@@ -8,6 +8,7 @@ import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './3D/e
 import { createRectangularPrism } from './3D/geometry/primitives';
 import { initializeHotkeys } from './2D/hotkeys/hotkeys';
 import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
+import { drawYRuler } from './2D/canvas';
 
 export function initCanvas(ref:HTMLCanvasElement) {
   // Get a reference to the canvas element and its rendering context
@@ -39,6 +40,8 @@ export function initCanvas(ref:HTMLCanvasElement) {
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvas.width, canvas.height);
   }
+
+  drawYRuler();
 
   return { canvasRef: state.canvas };
 }

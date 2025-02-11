@@ -2,27 +2,31 @@ import { Vector2 } from "three";
 import { DrawableEntity, State } from "../types";
 import { rad } from "./settings/interface";
 import { state } from "../State";
+import { cf_canvas_to_inch } from "./settings/factors";
 
 export function drawCanvasFromState(state:State):void {
   clearCanvas(state);
-  drawPoints(state);
   drawPaths(state);
+  drawPoints(state);
   drawSelections();
   // drawShapes();
 }
 
 const clearCanvas = (state:State) => {
   state.context.fillStyle = 'white';
-  state.context.fillRect(0,0,state.canvas.width, state.canvas.height);
+  state.context.fillRect(10,0,state.canvas.width, state.canvas.height);
 }
 
 // Assuming only one active object, draw it
 // TODO: draw a tree of paths, or rather a 2d array of paths
 const drawPoints = (state:State) => {
-  state.c_points.map((e:Vector2) => {
-    state.context.fillStyle = 'black';
+  state.c_pointmap.forEach((e:Vector2) => {
+    state.context.fillStyle = 'white';
     state.context.strokeStyle = 'black';
-    state.context.fillRect(e.x - rad / 2 - rad / 4, e.y - rad / 2 - rad / 4, rad, rad);
+    state.context.beginPath();
+    state.context.arc(e.x - rad / 2 + 2, e.y - rad / 2 + 2, rad, 0, 2 * Math.PI);
+    state.context.fill();
+    state.context.stroke();
   })
 }
 
@@ -52,7 +56,7 @@ function drawPolygonFromPointIndices( points: number[] ) {
   const _ = state.context;
   if (points.length > 0) {
     _.beginPath();
-    _.fillStyle = '#eee';
+    _.fillStyle = '#B9C4EC';
     _.strokeStyle = 'black';
 
     const firstPoint = point(points[0]);
@@ -91,8 +95,12 @@ function point(index:number):Vector2 {
 
 const drawSelections = () => {
  state.c_selected.map((index:number) => {
-   state.context.fillStyle = 'blue';
-   state.context.fillRect(state.c_points[index].x - 5, state.c_points[index].y - 5, 10, 10);
+    state.context.fillStyle = 'black';
+    state.context.strokeStyle = 'black';
+    state.context.beginPath();
+    state.context.arc(state.c_points[index].x - rad / 2 + 2, state.c_points[index].y - rad / 2 + 2, rad, 0, 2 * Math.PI);
+    state.context.fill();
+    state.context.stroke();
   })
 }
 
@@ -100,4 +108,30 @@ export function drawSelectionMovePreview(pos: Vector2): void {
   drawCanvasFromState(state);
   state.context.fillStyle = 'pink';
   state.context.fillRect(pos.x - 5, pos.y - 5, 10, 10); 
+}
+
+export function drawYRuler() {
+    // Buffer
+  const bufferCanvas = document.createElement("canvas");
+  bufferCanvas.width = 10;
+  bufferCanvas.height = state.canvas.height;
+  const ctx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+  ctx.lineWidth = 1;
+
+  // Draw inches
+  for (let i = 1; i < bufferCanvas.height; ++i) {
+    ctx.moveTo(0, i * cf_canvas_to_inch * state.c_zoomfactor);
+    ctx.lineTo(10, i * cf_canvas_to_inch  * state.c_zoomfactor);
+    ctx.stroke();
+  }
+
+  // Draw inches
+  for (let i = 1; i < bufferCanvas.height; ++i) {
+    ctx.moveTo(0, i * cf_canvas_to_inch * .25 * state.c_zoomfactor);
+    ctx.lineTo(2.5, i * cf_canvas_to_inch * .25  * state.c_zoomfactor);
+    ctx.stroke();
+  }
+
+  state.context.drawImage(bufferCanvas, 0, 0);
 }

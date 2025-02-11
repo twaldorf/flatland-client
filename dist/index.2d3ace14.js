@@ -18677,6 +18677,7 @@ var _pointer = require("./3D/events/pointer");
 var _primitives = require("./3D/geometry/primitives");
 var _hotkeys = require("./2D/hotkeys/hotkeys");
 var _pointerEvents = require("./2D/pointer/pointerEvents");
+var _canvas = require("./2D/canvas");
 function initCanvas(ref) {
     // Get a reference to the canvas element and its rendering context
     const canvas = ref;
@@ -18700,6 +18701,7 @@ function initCanvas(ref) {
         context.fillStyle = 'white';
         context.fillRect(0, 0, canvas.width, canvas.height);
     }
+    (0, _canvas.drawYRuler)();
     return {
         canvasRef: (0, _state.state).canvas
     };
@@ -18831,7 +18833,7 @@ function update() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./2D/canvas":"4a7yB"}],"ktPTu":[function(require,module,exports,__globalThis) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -49672,6 +49674,7 @@ const state = {
     pointerDown: false,
     tool: new (0, _pathTool.PathTool)(),
     c_points: [],
+    c_pointmap: new Map(),
     c_paths: [],
     c_selected: [],
     c_shapes: [],
@@ -49680,7 +49683,8 @@ const state = {
     cSelecting: false,
     pendingSelection: undefined,
     cMovingPoint: false,
-    c_move_from: undefined
+    c_move_from: undefined,
+    c_zoomfactor: 1
 };
 
 },{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports,__globalThis) {
@@ -49735,6 +49739,8 @@ class PathTool {
         (0, _state.state).c_activePath = this.__currentPathIndex;
         // Index of point in global point array
         const pointIndex = (0, _state.state).c_points.push(v) - 1;
+        // Add the point to the active point array
+        (0, _state.state).c_pointmap.set(pointIndex, v);
         // Index of current path in global path array
         const pathIndex = this.__currentPathIndex;
         if ((0, _state.state).c_paths[pathIndex]) // Add the point to the path
@@ -49763,8 +49769,10 @@ class PathTool {
     // Protected, to be used by a Command
     removePointFromPath(i, pi) {
         const pointInPathIndex = (0, _state.state).c_paths[pi].findIndex((c)=>c == i);
+        // TODO: Shouldn't be splicing from global point array
         (0, _state.state).c_points.splice(i, 1);
         (0, _state.state).c_paths[pi].splice(pointInPathIndex, 1);
+        console.log((0, _state.state).c_pointmap.delete(i));
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     // Path tool state management
@@ -49788,7 +49796,14 @@ class PathTool {
                         type: 'idle'
                     });
                 } else if (hitIndex != null && (0, _state.state).c_paths[this.__currentPathIndex].indexOf(hitIndex) > -1) (0, _command.pushCommand)(new (0, _pathToolRemovePointCommand.PathToolRemovePointCommand)(this.__currentPathIndex, hitIndex));
-                else (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, pos));
+                else {
+                    (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, pos));
+                    this.transition({
+                        type: "drawing new point",
+                        currentPathIndex: this.__currentPathIndex,
+                        newPointIndex: (0, _state.state).c_points.length
+                    });
+                }
                 break;
             case "selecting":
                 if ((0, _state.state).c_selected.length == 0) // Case: no points are selected
@@ -49837,6 +49852,13 @@ class PathTool {
                     startPos: pos
                 });
                 break;
+            case "drawing new point":
+                this.transition({
+                    type: "moving new point",
+                    index: this.__state.newPointIndex,
+                    startPos: pos
+                });
+                break;
             case "idle":
                 if (Math.random() < .1) {
                     const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
@@ -49857,11 +49879,26 @@ class PathTool {
                     type: "idle"
                 });
                 break;
+            case "moving new point":
+                (0, _command.pushCommand)(new (0, _pathToolMovePointCommand.PathToolMovePointCommand)([
+                    this.__state.index
+                ], this.__state.startPos, pos));
+                this.transition({
+                    type: "drawing",
+                    currentPathIndex: this.__currentPathIndex
+                });
+                break;
             case "selecting":
                 const nearPoint = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
                 if (nearPoint != null && !(0, _state.state).shiftDown) (0, _state.state).c_selected = [
                     nearPoint
                 ];
+                break;
+            case "drawing new point":
+                this.transition({
+                    type: "drawing",
+                    currentPathIndex: this.__currentPathIndex
+                });
                 break;
         }
         (0, _canvas.drawCanvasFromState)((0, _state.state));
@@ -49926,26 +49963,31 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawCanvasFromState", ()=>drawCanvasFromState);
 parcelHelpers.export(exports, "drawSelectionMovePreview", ()=>drawSelectionMovePreview);
+parcelHelpers.export(exports, "drawYRuler", ()=>drawYRuler);
 var _interface = require("./settings/interface");
 var _state = require("../State");
+var _factors = require("./settings/factors");
 function drawCanvasFromState(state) {
     clearCanvas(state);
-    drawPoints(state);
     drawPaths(state);
+    drawPoints(state);
     drawSelections();
 // drawShapes();
 }
 const clearCanvas = (state)=>{
     state.context.fillStyle = 'white';
-    state.context.fillRect(0, 0, state.canvas.width, state.canvas.height);
+    state.context.fillRect(10, 0, state.canvas.width, state.canvas.height);
 };
 // Assuming only one active object, draw it
 // TODO: draw a tree of paths, or rather a 2d array of paths
 const drawPoints = (state)=>{
-    state.c_points.map((e)=>{
-        state.context.fillStyle = 'black';
+    state.c_pointmap.forEach((e)=>{
+        state.context.fillStyle = 'white';
         state.context.strokeStyle = 'black';
-        state.context.fillRect(e.x - (0, _interface.rad) / 2 - (0, _interface.rad) / 4, e.y - (0, _interface.rad) / 2 - (0, _interface.rad) / 4, (0, _interface.rad), (0, _interface.rad));
+        state.context.beginPath();
+        state.context.arc(e.x - (0, _interface.rad) / 2 + 2, e.y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
+        state.context.fill();
+        state.context.stroke();
     });
 };
 // Assuming only a single connected path, draw it
@@ -49968,7 +50010,7 @@ function drawPolygonFromPointIndices(points) {
     const _ = (0, _state.state).context;
     if (points.length > 0) {
         _.beginPath();
-        _.fillStyle = '#eee';
+        _.fillStyle = '#B9C4EC';
         _.strokeStyle = 'black';
         const firstPoint = point(points[0]);
         _.moveTo(firstPoint.x, firstPoint.y);
@@ -50000,8 +50042,12 @@ function point(index) {
 }
 const drawSelections = ()=>{
     (0, _state.state).c_selected.map((index)=>{
-        (0, _state.state).context.fillStyle = 'blue';
-        (0, _state.state).context.fillRect((0, _state.state).c_points[index].x - 5, (0, _state.state).c_points[index].y - 5, 10, 10);
+        (0, _state.state).context.fillStyle = 'black';
+        (0, _state.state).context.strokeStyle = 'black';
+        (0, _state.state).context.beginPath();
+        (0, _state.state).context.arc((0, _state.state).c_points[index].x - (0, _interface.rad) / 2 + 2, (0, _state.state).c_points[index].y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
+        (0, _state.state).context.fill();
+        (0, _state.state).context.stroke();
     });
 };
 function drawSelectionMovePreview(pos) {
@@ -50009,8 +50055,35 @@ function drawSelectionMovePreview(pos) {
     (0, _state.state).context.fillStyle = 'pink';
     (0, _state.state).context.fillRect(pos.x - 5, pos.y - 5, 10, 10);
 }
+function drawYRuler() {
+    // Buffer
+    const bufferCanvas = document.createElement("canvas");
+    bufferCanvas.width = 10;
+    bufferCanvas.height = (0, _state.state).canvas.height;
+    const ctx = bufferCanvas.getContext("2d");
+    ctx.lineWidth = 1;
+    // Draw inches
+    for(let i = 1; i < bufferCanvas.height; ++i){
+        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
+        ctx.lineTo(10, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
+        ctx.stroke();
+    }
+    // Draw inches
+    for(let i = 1; i < bufferCanvas.height; ++i){
+        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
+        ctx.lineTo(2.5, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
+        ctx.stroke();
+    }
+    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
+}
 
-},{"./settings/interface":"dci9b","../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"efiIE":[function(require,module,exports,__globalThis) {
+},{"./settings/interface":"dci9b","../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./settings/factors":"9qufK"}],"9qufK":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
+const cf_canvas_to_inch = 25;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"efiIE":[function(require,module,exports,__globalThis) {
 // The Command interface and class is responsible for managing incoming user commands that affect state, with some exception (camera position)
 // The Command Queue is a list of all incoming commands yet to be executed
 // The command History is a list of all previously executed commands
@@ -50114,7 +50187,8 @@ class PathToolMovePointCommand {
     }
     do() {
         this.indices.forEach((i)=>{
-            (0, _state.state).c_points[i].add(this.__diff);
+            const nv = (0, _state.state).c_points[i].add(this.__diff);
+            (0, _state.state).c_pointmap.set(i, nv);
         });
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
@@ -50458,6 +50532,7 @@ class SelectToolMoveShapeCommand {
             const before = (0, _state.state).c_points[i].clone();
             (0, _state.state).c_points[i] = (0, _state.state).c_points[i].clone().add(this.__diff);
             const after = (0, _state.state).c_points[i];
+            (0, _state.state).c_pointmap.set(i, after);
         });
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
@@ -50723,6 +50798,7 @@ class PathToolRemovePointCommand {
         console.log(`Path index ${this.pathIndex} PointIndex ${this.pointIndex} Path: ${path}`);
         (0, _state.state).c_paths[this.pathIndex] = path.filter((value, index)=>value !== this.pointIndex);
         console.log(`Path index ${this.pathIndex} PointIndex ${this.pointIndex} Path: ${path}`);
+        (0, _state.state).c_pointmap.delete(this.pointIndex);
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
