@@ -29,6 +29,8 @@ export const state:State = {
   },
   
   context: null,
+  c_preview_context: null,
+  c_preview_canvas: null,
   canvas: undefined,
   pointerDown: false,
   tool: new PathTool(),

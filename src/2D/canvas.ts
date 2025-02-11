@@ -110,6 +110,23 @@ export function drawSelectionMovePreview(pos: Vector2): void {
   state.context.fillRect(pos.x - 5, pos.y - 5, 10, 10); 
 }
 
+export function drawDrawPreview(from:Vector2, to:Vector2): void {
+  var ctx; var canvas;
+  if (state.c_preview_context && state.c_preview_canvas) {
+    ctx = state.c_preview_context;
+    canvas = state.c_preview_canvas;
+  } else {
+    canvas = document.createElement("canvas") as HTMLCanvasElement;
+    ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  } 
+  canvas.height = Math.abs(from.y - to.y);
+  canvas.width = Math.abs(from.x - to.x);
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.stroke();
+  state.context.drawImage(canvas, 0, 0); 
+}
+
 export function drawYRuler() {
     // Buffer
   const bufferCanvas = document.createElement("canvas");

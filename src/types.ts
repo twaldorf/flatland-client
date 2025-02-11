@@ -29,6 +29,10 @@ export interface State {
   // ## Canvas state properties, prepended with c
   canvas: HTMLCanvasElement;
 
+  // Preview buffer for tool effect previews
+  c_preview_context: CanvasRenderingContext2D;
+  c_preview_canvas: HTMLCanvasElement;
+
   // Canvas is current active object, defined by mouse loc
   cActive: boolean;
 

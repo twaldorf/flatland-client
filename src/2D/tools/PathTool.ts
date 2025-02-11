@@ -2,7 +2,7 @@ import { Vector, Vector2 } from "three";
 import { State, Tool, ToolBase } from "../../types";
 import { selectionRadius } from "../settings/interface";
 import { state } from "../../State";
-import { drawCanvasFromState, drawSelectionMovePreview } from "../canvas";
+import { drawCanvasFromState, drawDrawPreview, drawSelectionMovePreview } from "../canvas";
 import { pushCommand } from "../../Command";
 import { PathToolMovePointCommand } from "../commands/PathToolMovePointCommand";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
@@ -219,6 +219,10 @@ export class PathTool implements ToolBase {
           startPos: pos,
         }); 
         break;
+
+      case "drawing":
+        const index = state.c_paths[this.__currentPathIndex].length - 1;
+        drawDrawPreview(state.c_points[index], pos);
 
       case "idle":
         if (Math.random() < .1) {

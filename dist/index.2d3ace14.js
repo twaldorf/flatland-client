@@ -49670,6 +49670,8 @@ const state = {
         doubleClick: false
     },
     context: null,
+    c_preview_context: null,
+    c_preview_canvas: null,
     canvas: undefined,
     pointerDown: false,
     tool: new (0, _pathTool.PathTool)(),
@@ -49859,6 +49861,9 @@ class PathTool {
                     startPos: pos
                 });
                 break;
+            case "drawing":
+                const index = (0, _state.state).c_paths[this.__currentPathIndex].length - 1;
+                (0, _canvas.drawDrawPreview)((0, _state.state).c_points[index], pos);
             case "idle":
                 if (Math.random() < .1) {
                     const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
@@ -49963,6 +49968,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawCanvasFromState", ()=>drawCanvasFromState);
 parcelHelpers.export(exports, "drawSelectionMovePreview", ()=>drawSelectionMovePreview);
+parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
 parcelHelpers.export(exports, "drawYRuler", ()=>drawYRuler);
 var _interface = require("./settings/interface");
 var _state = require("../State");
@@ -50054,6 +50060,23 @@ function drawSelectionMovePreview(pos) {
     drawCanvasFromState((0, _state.state));
     (0, _state.state).context.fillStyle = 'pink';
     (0, _state.state).context.fillRect(pos.x - 5, pos.y - 5, 10, 10);
+}
+function drawDrawPreview(from, to) {
+    var ctx;
+    var canvas;
+    if ((0, _state.state).c_preview_context && (0, _state.state).c_preview_canvas) {
+        ctx = (0, _state.state).c_preview_context;
+        canvas = (0, _state.state).c_preview_canvas;
+    } else {
+        canvas = document.createElement("canvas");
+        ctx = canvas.getContext("2d");
+    }
+    canvas.height = Math.abs(from.y - to.y);
+    canvas.width = Math.abs(from.x - to.x);
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+    (0, _state.state).context.drawImage(canvas, 0, 0);
 }
 function drawYRuler() {
     // Buffer
