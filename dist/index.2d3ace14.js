@@ -49863,9 +49863,10 @@ class PathTool {
                 });
                 break;
             case "drawing":
-                const index = (0, _state.state).c_paths[this.__currentPathIndex]?.length - 1;
-                console.log((0, _state.state).c_points[index]);
-                if ((0, _state.state).c_points[index]) (0, _canvas.drawDrawPreview)((0, _state.state).c_points[index], pos);
+                const lastPointIndexWithinPath = (0, _state.state).c_paths[this.__currentPathIndex]?.length - 1;
+                const pointIndex = (0, _state.state).c_paths[this.__currentPathIndex][lastPointIndexWithinPath];
+                // console.log(lastPointIndexWithinPath, pointIndex);
+                if ((0, _state.state).c_points[pointIndex]) (0, _canvas.drawDrawPreview)((0, _state.state).c_points[pointIndex], pos);
             case "idle":
                 if (Math.random() < .1) {
                     const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);

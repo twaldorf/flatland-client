@@ -221,11 +221,11 @@ export class PathTool implements ToolBase {
         break;
 
       case "drawing":
-        const index = state.c_paths[this.__currentPathIndex]?.length - 1;
-        console.log(state.c_points[index]);
-        if (state.c_points[index]) {
-
-          drawDrawPreview(state.c_points[index], pos);
+        const lastPointIndexWithinPath = state.c_paths[this.__currentPathIndex]?.length - 1;
+        const pointIndex = state.c_paths[this.__currentPathIndex][lastPointIndexWithinPath];
+        // console.log(lastPointIndexWithinPath, pointIndex);
+        if (state.c_points[pointIndex]) {
+          drawDrawPreview(state.c_points[pointIndex], pos);
         }
 
       case "idle":
