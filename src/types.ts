@@ -89,7 +89,7 @@ export interface BufferBundle {
   context: OffscreenCanvasRenderingContext2D;
 }
 
-export type BufferType = "preview" | "points" | "lines" | "shapes" ;
+export type BufferType = "preview" | "points" | "paths" | "shapes" ;
 
 export interface ToolBase {
   name: string;

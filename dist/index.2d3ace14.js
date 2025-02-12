@@ -49984,16 +49984,18 @@ var _colors = require("../UI/colors/colors");
 function drawCanvasFromState(state) {
     erase();
     drawPaths(state);
-    drawPoints(state);
     drawSelections();
+    drawPoints(state);
 // drawShapes();
 }
 function redrawCanvas() {
     erase();
-    drawPoints((0, _state.state));
+    applyPoints();
+    applyPaths();
 }
 function erase() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
+    // Draw a background color rectangle from the start of the ruler to the bottom of the canvas
     (0, _state.state).context.fillRect((0, _interface.rulerWidth), (0, _interface.rulerHeight), (0, _state.state).canvas.width, (0, _state.state).canvas.height);
 }
 // Get or create and return a buffer bundle
@@ -50028,24 +50030,35 @@ const drawPoints = (state)=>{
     });
     state.context.drawImage(canvas, 0, 0);
 };
-// Assuming only a single connected path, draw it
-// TODO: draw a tree of such paths
+function applyPoints() {
+    const obj = (0, _state.state).c_buffers.get('points');
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
+}
+// Draw paths AND shapes
 const drawPaths = (state)=>{
-    const _ = state.context;
+    const { canvas, context } = getBuffer('paths');
+    canvas.width = state.canvas.width;
+    canvas.height = state.canvas.height;
+    const _ = context;
     // Make sure this is not a copy op
     const paths = state.c_paths;
     paths.forEach((points, i)=>{
         // points is the array of point indices within state.c_points, i is the path index, not important
-        drawArrayOfPointIndices(points);
+        drawArrayOfPointIndices(points, context);
     });
     if (state.c_shapes.length > 0) // draw shapes
     state.c_shapes.forEach((shapeArr)=>{
-        drawArrayOfPointIndices(shapeArr);
-        drawPolygonFromPointIndices(shapeArr);
+        drawArrayOfPointIndices(shapeArr, context);
+        drawPolygonFromPointIndices(shapeArr, context);
     });
+    state.context.drawImage(canvas, 0, 0);
 };
-function drawPolygonFromPointIndices(points) {
-    const _ = (0, _state.state).context;
+function applyPaths() {
+    const obj = (0, _state.state).c_buffers.get('paths');
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
+}
+function drawPolygonFromPointIndices(points, context) {
+    const _ = context;
     if (points.length > 0) {
         _.beginPath();
         _.fillStyle = '#B9C4EC';
@@ -50061,8 +50074,8 @@ function drawPolygonFromPointIndices(points) {
         _.stroke();
     }
 }
-function drawArrayOfPointIndices(points) {
-    const _ = (0, _state.state).context;
+function drawArrayOfPointIndices(points, context) {
+    const _ = context;
     if (points.length > 0) {
         _.beginPath();
         _.strokeStyle = 'black';
@@ -50113,16 +50126,17 @@ function drawDrawPreview(from, to) {
     ctx.beginPath();
     // 2nd and 4th quadrants
     if (from.x > to.x && from.y > to.y || from.x < to.x && from.y < to.y) {
-        ctx.fillStyle = (0, _colors.c_bgColor);
+        // ctx.fillStyle = c_bgColor;
         ctx.moveTo(0, 0);
         ctx.lineTo(w, h);
     } else {
         // 1st and 3rd quadrants
-        ctx.fillStyle = (0, _colors.c_bgColor);
+        // ctx.fillStyle = c_bgColor;
         ctx.moveTo(0, h);
         ctx.lineTo(w, 0);
     }
     ctx.stroke();
+    ctx.fillText(`${Math.round(from.distanceTo(to)) / (0, _factors.cf_canvas_to_inch)}in`, w / 2 - 5, h / 2 - 5);
     redrawCanvas();
     (0, _state.state).context.drawImage(canvas, originX, originY);
 }
