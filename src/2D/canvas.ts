@@ -111,20 +111,63 @@ export function drawSelectionMovePreview(pos: Vector2): void {
 }
 
 export function drawDrawPreview(from:Vector2, to:Vector2): void {
-  var ctx; var canvas;
+  // Find the vertical and horizontal distances between the points
+  const h = Math.abs(from.y - to.y);
+  const w = Math.abs(from.x - to.x);
+
+  // Bail if the cursor is within the point icon
+  if (h * w < rad) {
+    return;
+  }
+
+  // Get or create the canvas and context for the preview buffer
+  var ctx; 
+  var canvas;
+
   if (state.c_preview_context && state.c_preview_canvas) {
     ctx = state.c_preview_context;
     canvas = state.c_preview_canvas;
   } else {
-    canvas = document.createElement("canvas") as HTMLCanvasElement;
-    ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-  } 
-  canvas.height = Math.abs(from.y - to.y);
-  canvas.width = Math.abs(from.x - to.x);
-  ctx.moveTo(from.x, from.y);
-  ctx.lineTo(to.x, to.y);
+    // canvas = document.createElement("canvas") as HTMLCanvasElement;
+    canvas = new OffscreenCanvas(w, h)
+    // ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    ctx = canvas.getContext('2d');
+    state.c_preview_canvas = canvas;
+    state.c_preview_context = ctx;
+  }
+
+  // Prevent the canvas from getting smaller
+  canvas.height = canvas.height > h ? canvas.height : h;
+  canvas.width = canvas.width > w ? canvas.width : w;
+
+  console.log(w,h, canvas.width, canvas.height)
+
+  const originX = from.x > to.x ? to.x : from.x;
+  const originY = from.y > to.y ? to.y : from.y;
+
+  // Clear the canvas
+  
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  
+  // 2nd and 4th quadrants
+  if ( (from.x > to.x && from.y > to.y) || (from.x < to.x && from.y < to.y)) {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.moveTo(0, 0);
+    ctx.lineTo(w, h);
+  } else {
+  // 1st and 3rd quadrants
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, canvas.height, canvas.width, 0);
+    ctx.moveTo(0, h);
+    ctx.lineTo(w, 0);
+  }
   ctx.stroke();
-  state.context.drawImage(canvas, 0, 0); 
+
+  state.context.drawImage(canvas, originX, originY); 
 }
 
 export function drawYRuler() {
