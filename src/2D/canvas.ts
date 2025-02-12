@@ -1,33 +1,63 @@
 import { Vector2 } from "three";
-import { DrawableEntity, State } from "../types";
-import { rad } from "./settings/interface";
+import { BufferBundle, BufferType, DrawableEntity, State } from "../types";
+import { rad, rulerHeight, rulerWidth } from "./settings/interface";
 import { state } from "../State";
 import { cf_canvas_to_inch } from "./settings/factors";
+import { c_bgColor } from "../UI/colors/colors";
 
 export function drawCanvasFromState(state:State):void {
-  clearCanvas(state);
+  erase();
   drawPaths(state);
   drawPoints(state);
   drawSelections();
   // drawShapes();
 }
 
-const clearCanvas = (state:State) => {
-  state.context.fillStyle = 'white';
-  state.context.fillRect(10,0,state.canvas.width, state.canvas.height);
+export function redrawCanvas():void {
+  erase();
+  drawPoints(state);
+}
+
+function erase() {
+  state.context.fillStyle = c_bgColor;
+  state.context.fillRect(rulerWidth, rulerHeight, state.canvas.width, state.canvas.height);
+}
+
+
+// Get or create and return a buffer bundle
+// A created buffer bundle has a 0 area canvas
+function getBuffer(buffer:BufferType):BufferBundle {
+  // Get or create the canvas and context for the preview buffer
+  let bundle = state.c_buffers.get(buffer);
+  if ( !bundle || !bundle.context || !bundle.canvas ) {
+    const canvas = new OffscreenCanvas(0, 0);
+    const ctx = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
+    bundle = { canvas, context: ctx };
+    state.c_buffers.set( buffer, bundle );
+  }
+
+  return bundle;
 }
 
 // Assuming only one active object, draw it
 // TODO: draw a tree of paths, or rather a 2d array of paths
 const drawPoints = (state:State) => {
+
+  const { canvas, context } = getBuffer('points');
+
+  canvas.width = state.canvas.width;
+  canvas.height = state.canvas.height;
+
   state.c_pointmap.forEach((e:Vector2) => {
-    state.context.fillStyle = 'white';
-    state.context.strokeStyle = 'black';
-    state.context.beginPath();
-    state.context.arc(e.x - rad / 2 + 2, e.y - rad / 2 + 2, rad, 0, 2 * Math.PI);
-    state.context.fill();
-    state.context.stroke();
+    context.fillStyle = 'white';
+    context.strokeStyle = 'black';
+    context.beginPath();
+    context.arc(e.x - rad / 2 + 2, e.y - rad / 2 + 2, rad, 0, 2 * Math.PI);
+    context.fill();
+    context.stroke();
   })
+
+  state.context.drawImage(canvas, 0, 0);
 }
 
 // Assuming only a single connected path, draw it
@@ -120,54 +150,38 @@ export function drawDrawPreview(from:Vector2, to:Vector2): void {
     return;
   }
 
-  // Get or create the canvas and context for the preview buffer
-  var ctx; 
-  var canvas;
+  const bundle = getBuffer('preview');
 
-  if (state.c_preview_context && state.c_preview_canvas) {
-    ctx = state.c_preview_context;
-    canvas = state.c_preview_canvas;
-  } else {
-    // canvas = document.createElement("canvas") as HTMLCanvasElement;
-    canvas = new OffscreenCanvas(w, h)
-    // ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    ctx = canvas.getContext('2d');
-    state.c_preview_canvas = canvas;
-    state.c_preview_context = ctx;
-  }
+  const ctx = bundle.context;
+  const canvas = bundle.canvas;
 
   // Prevent the canvas from getting smaller
-  canvas.height = canvas.height > h ? canvas.height : h;
-  canvas.width = canvas.width > w ? canvas.width : w;
-
-  console.log(w,h, canvas.width, canvas.height)
+  canvas.height = canvas.height > h ? canvas.height : h + 10;
+  canvas.width = canvas.width > w ? canvas.width : w + 10;
 
   const originX = from.x > to.x ? to.x : from.x;
   const originY = from.y > to.y ? to.y : from.y;
 
   // Clear the canvas
-  
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 1;
   ctx.beginPath();
   
   // 2nd and 4th quadrants
   if ( (from.x > to.x && from.y > to.y) || (from.x < to.x && from.y < to.y)) {
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    ctx.fillStyle = c_bgColor;
     ctx.moveTo(0, 0);
     ctx.lineTo(w, h);
   } else {
   // 1st and 3rd quadrants
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, canvas.height, canvas.width, 0);
+    ctx.fillStyle = c_bgColor;
     ctx.moveTo(0, h);
     ctx.lineTo(w, 0);
   }
   ctx.stroke();
 
-  state.context.drawImage(canvas, originX, originY); 
+  redrawCanvas();
+  state.context.drawImage(canvas, originX, originY);
 }
 
 export function drawYRuler() {

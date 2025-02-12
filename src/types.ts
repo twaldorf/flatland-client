@@ -33,6 +33,8 @@ export interface State {
   c_preview_context: CanvasRenderingContext2D;
   c_preview_canvas: HTMLCanvasElement;
 
+  c_buffers: Map<BufferType, BufferBundle>;
+
   // Canvas is current active object, defined by mouse loc
   cActive: boolean;
 
@@ -81,6 +83,13 @@ export interface State {
 
 type Mode = 'default' | 
             'group-select';
+
+export interface BufferBundle {
+  canvas: OffscreenCanvas;
+  context: OffscreenCanvasRenderingContext2D;
+}
+
+export type BufferType = "preview" | "points" | "lines" | "shapes" ;
 
 export interface ToolBase {
   name: string;

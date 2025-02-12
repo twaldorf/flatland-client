@@ -1,5 +1,5 @@
 import { Camera, Face, Group, Raycaster, Scene, Vector2 } from "three";
-import { State } from "./types";
+import { BufferBundle, BufferType, BufferTypes, State } from "./types";
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
 
@@ -31,6 +31,7 @@ export const state:State = {
   context: null,
   c_preview_context: null,
   c_preview_canvas: null,
+  c_buffers: new Map<BufferType, BufferBundle>,
   canvas: undefined,
   pointerDown: false,
   tool: new PathTool(),

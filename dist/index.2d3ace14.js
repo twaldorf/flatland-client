@@ -49672,6 +49672,7 @@ const state = {
     context: null,
     c_preview_context: null,
     c_preview_canvas: null,
+    c_buffers: new Map,
     canvas: undefined,
     pointerDown: false,
     tool: new (0, _pathTool.PathTool)(),
@@ -49961,41 +49962,71 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "rad", ()=>rad);
 parcelHelpers.export(exports, "selectionRadius", ()=>selectionRadius);
+parcelHelpers.export(exports, "rulerWidth", ()=>rulerWidth);
+parcelHelpers.export(exports, "rulerHeight", ()=>rulerHeight);
 const rad = 4;
 const selectionRadius = 10;
+const rulerWidth = 10;
+const rulerHeight = 0;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4a7yB":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawCanvasFromState", ()=>drawCanvasFromState);
+parcelHelpers.export(exports, "redrawCanvas", ()=>redrawCanvas);
 parcelHelpers.export(exports, "drawSelectionMovePreview", ()=>drawSelectionMovePreview);
 parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
 parcelHelpers.export(exports, "drawYRuler", ()=>drawYRuler);
 var _interface = require("./settings/interface");
 var _state = require("../State");
 var _factors = require("./settings/factors");
+var _colors = require("../UI/colors/colors");
 function drawCanvasFromState(state) {
-    clearCanvas(state);
+    erase();
     drawPaths(state);
     drawPoints(state);
     drawSelections();
 // drawShapes();
 }
-const clearCanvas = (state)=>{
-    state.context.fillStyle = 'white';
-    state.context.fillRect(10, 0, state.canvas.width, state.canvas.height);
-};
+function redrawCanvas() {
+    erase();
+    drawPoints((0, _state.state));
+}
+function erase() {
+    (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
+    (0, _state.state).context.fillRect((0, _interface.rulerWidth), (0, _interface.rulerHeight), (0, _state.state).canvas.width, (0, _state.state).canvas.height);
+}
+// Get or create and return a buffer bundle
+// A created buffer bundle has a 0 area canvas
+function getBuffer(buffer) {
+    // Get or create the canvas and context for the preview buffer
+    let bundle = (0, _state.state).c_buffers.get(buffer);
+    if (!bundle || !bundle.context || !bundle.canvas) {
+        const canvas = new OffscreenCanvas(0, 0);
+        const ctx = canvas.getContext('2d');
+        bundle = {
+            canvas,
+            context: ctx
+        };
+        (0, _state.state).c_buffers.set(buffer, bundle);
+    }
+    return bundle;
+}
 // Assuming only one active object, draw it
 // TODO: draw a tree of paths, or rather a 2d array of paths
 const drawPoints = (state)=>{
+    const { canvas, context } = getBuffer('points');
+    canvas.width = state.canvas.width;
+    canvas.height = state.canvas.height;
     state.c_pointmap.forEach((e)=>{
-        state.context.fillStyle = 'white';
-        state.context.strokeStyle = 'black';
-        state.context.beginPath();
-        state.context.arc(e.x - (0, _interface.rad) / 2 + 2, e.y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
-        state.context.fill();
-        state.context.stroke();
+        context.fillStyle = 'white';
+        context.strokeStyle = 'black';
+        context.beginPath();
+        context.arc(e.x - (0, _interface.rad) / 2 + 2, e.y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
+        context.fill();
+        context.stroke();
     });
+    state.context.drawImage(canvas, 0, 0);
 };
 // Assuming only a single connected path, draw it
 // TODO: draw a tree of such paths
@@ -50068,24 +50099,12 @@ function drawDrawPreview(from, to) {
     const w = Math.abs(from.x - to.x);
     // Bail if the cursor is within the point icon
     if (h * w < (0, _interface.rad)) return;
-    // Get or create the canvas and context for the preview buffer
-    var ctx;
-    var canvas;
-    if ((0, _state.state).c_preview_context && (0, _state.state).c_preview_canvas) {
-        ctx = (0, _state.state).c_preview_context;
-        canvas = (0, _state.state).c_preview_canvas;
-    } else {
-        // canvas = document.createElement("canvas") as HTMLCanvasElement;
-        canvas = new OffscreenCanvas(w, h);
-        // ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-        ctx = canvas.getContext('2d');
-        (0, _state.state).c_preview_canvas = canvas;
-        (0, _state.state).c_preview_context = ctx;
-    }
+    const bundle = getBuffer('preview');
+    const ctx = bundle.context;
+    const canvas = bundle.canvas;
     // Prevent the canvas from getting smaller
-    canvas.height = canvas.height > h ? canvas.height : h;
-    canvas.width = canvas.width > w ? canvas.width : w;
-    console.log(w, h, canvas.width, canvas.height);
+    canvas.height = canvas.height > h ? canvas.height : h + 10;
+    canvas.width = canvas.width > w ? canvas.width : w + 10;
     const originX = from.x > to.x ? to.x : from.x;
     const originY = from.y > to.y ? to.y : from.y;
     // Clear the canvas
@@ -50094,18 +50113,17 @@ function drawDrawPreview(from, to) {
     ctx.beginPath();
     // 2nd and 4th quadrants
     if (from.x > to.x && from.y > to.y || from.x < to.x && from.y < to.y) {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = (0, _colors.c_bgColor);
         ctx.moveTo(0, 0);
         ctx.lineTo(w, h);
     } else {
         // 1st and 3rd quadrants
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, canvas.height, canvas.width, 0);
+        ctx.fillStyle = (0, _colors.c_bgColor);
         ctx.moveTo(0, h);
         ctx.lineTo(w, 0);
     }
     ctx.stroke();
+    redrawCanvas();
     (0, _state.state).context.drawImage(canvas, originX, originY);
 }
 function drawYRuler() {
@@ -50130,11 +50148,17 @@ function drawYRuler() {
     (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
 }
 
-},{"./settings/interface":"dci9b","../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./settings/factors":"9qufK"}],"9qufK":[function(require,module,exports,__globalThis) {
+},{"./settings/interface":"dci9b","../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./settings/factors":"9qufK","../UI/colors/colors":"eQ9g7"}],"9qufK":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
 const cf_canvas_to_inch = 25;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
+const c_bgColor = 'white';
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"efiIE":[function(require,module,exports,__globalThis) {
 // The Command interface and class is responsible for managing incoming user commands that affect state, with some exception (camera position)
