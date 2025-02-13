@@ -1,10 +1,14 @@
-import { Face, Object3D, Vector2 } from "three";
+import { Clock, Face, Object3D, Vector2 } from "three";
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
 import { SelectTool } from "./2D/tools/SelectTool";
+import { DistanceConstraint, Particle } from "./3D/simulation/xpbdTypes";
 
 // State interface for global state singleton
 export interface State {
+  // Test object for debugging
+  testObject: unknown;
+
   // ## State shared between editor and canvas
   pattern: Pattern;
   pointerDown: boolean;
@@ -25,6 +29,7 @@ export interface State {
   objects: THREE.Object3D[];
   mode: Mode;
   controls: Controls;
+  clock: Clock;
 
   // ## Canvas state properties, prepended with c
   canvas: HTMLCanvasElement;
@@ -79,6 +84,10 @@ export interface State {
 
   // Scale factor manipulated by the user through zoom functionality
   c_zoomfactor: number;
+
+  // XPBD & Simulations
+  constraints: DistanceConstraint[];
+  particles: Particle[];
 }
 
 type Mode = 'default' | 

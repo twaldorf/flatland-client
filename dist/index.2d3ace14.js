@@ -18678,6 +18678,7 @@ var _primitives = require("./3D/geometry/primitives");
 var _hotkeys = require("./2D/hotkeys/hotkeys");
 var _pointerEvents = require("./2D/pointer/pointerEvents");
 var _canvas = require("./2D/canvas");
+var _protoXPBD = require("./3D/simulation/protoXPBD");
 function initCanvas(ref) {
     // Get a reference to the canvas element and its rendering context
     const canvas = ref;
@@ -18740,6 +18741,7 @@ function initScene(canvas) {
     // drawTestGeometry();
     // drawTestPrimitive();
     // kick off update
+    renderer.render((0, _state.state).scene, (0, _state.state).camera);
     update();
     return {
         threeRef: parent
@@ -18805,12 +18807,17 @@ const drawTestGeometry = ()=>{
 // END BUFFER GEOMETRY INIT SPACE
 };
 function drawQuad(geometry) {}
+// Local deltatime, not tracked as state
+let dt = 0;
+const interval = 1 / 22;
 function update() {
     const { pointer, camera, scene, renderer, raycaster } = (0, _state.state);
     const [mesh, line] = (0, _state.state).objects;
     (0, _command.executeCommands)();
     requestAnimationFrame(update);
-    if ((0, _util.mouseOverCanvas)((0, _state.state)) == true) {
+    dt += (0, _state.state).clock.getDelta();
+    if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval) {
+        (0, _protoXPBD.updateXPBD)((0, _state.state).clock.getDelta());
         // update the picking ray with the camera and pointer position 
         camera.updateMatrixWorld();
         raycaster.setFromCamera(pointer, camera);
@@ -18829,11 +18836,11 @@ function update() {
         // line.geometry.applyMatrix4( mesh.matrix );
         // line.visible = true;
         }
+        renderer.render(scene, camera);
     }
-    renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./2D/canvas":"4a7yB"}],"ktPTu":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./2D/canvas":"4a7yB","./util":"7wzGb","./3D/simulation/protoXPBD":"46Cm3"}],"ktPTu":[function(require,module,exports,__globalThis) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -48860,45 +48867,7 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"7wzGb":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "mouseOverCanvas", ()=>mouseOverCanvas);
-parcelHelpers.export(exports, "intersecting", ()=>intersecting);
-parcelHelpers.export(exports, "first_intersecting_object", ()=>first_intersecting_object);
-parcelHelpers.export(exports, "first_intersecting_face", ()=>first_intersecting_face);
-const mouseOverCanvas = (state)=>{
-    const bounds = state.renderer.domElement.getBoundingClientRect();
-    if (state.rawPointer) return state.rawPointer.rx >= bounds.left && state.rawPointer.rx <= bounds.right && state.rawPointer.ry >= bounds.top && state.rawPointer.ry <= bounds.bottom;
-    return false;
-};
-const intersecting = (state)=>{
-    return state.intersects != null && state.intersects.length > 0;
-};
-const first_intersecting_object = (state)=>{
-    const selected_mesh = state.intersects.filter((obj)=>{
-        // Select only Mesh objects (for now)
-        if (obj.object.type == "Mesh") return true;
-        return false;
-    })[0];
-    if (selected_mesh) return selected_mesh.object;
-    else return undefined;
-};
-const first_intersecting_face = (state)=>{
-    const selected_mesh = state.intersects.filter((obj)=>{
-        // Select only Mesh objects (for now)
-        if (obj.object.type == "Mesh") return true;
-        return false;
-    })[0];
-    if (selected_mesh) return {
-        faceIndex: selected_mesh.faceIndex,
-        face: selected_mesh.face,
-        object: selected_mesh.object
-    };
-    else return undefined;
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7mqRv":[function(require,module,exports,__globalThis) {
+},{}],"7mqRv":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "OrbitControls", ()=>OrbitControls);
@@ -49664,11 +49633,13 @@ const state = {
         ry: 0
     },
     objects: [],
+    testObject: null,
     mode: 'default',
     controls: {
         waitForDoubleClick: false,
         doubleClick: false
     },
+    clock: new (0, _three.Clock)(true),
     context: null,
     c_preview_context: null,
     c_preview_canvas: null,
@@ -49687,6 +49658,8 @@ const state = {
     pendingSelection: undefined,
     cMovingPoint: false,
     c_move_from: undefined,
+    particles: [],
+    constraints: [],
     c_zoomfactor: 1
 };
 
@@ -50835,6 +50808,7 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
 var _three = require("three");
 var _state = require("../../State");
+var _xpbdTypes = require("../simulation/xpbdTypes");
 const createPolygonPlane = (path)=>{
     const points = path.map((index)=>{
         return (0, _state.state).c_points[index].clone().divideScalar(100);
@@ -50846,30 +50820,84 @@ const createPolygonPlane = (path)=>{
     });
     const mesh = new _three.Mesh(geometry, material);
     (0, _state.state).scene.add(mesh);
-    const indices = geometry.index;
-    // state.sim_array = points.map((point):Particle => {
-    //   return { 
-    //     position: new THREE.Vector3(point.x, point.y, 0),
-    //     invMass: 0,
-    //     previousPosition: new THREE.Vector3(point.x, point.y, 0),
-    //     predicted: new THREE.Vector3(point.x, point.y, 0),
-    //     velocity: new THREE.Vector3(0, 0, 0)
-    //   }
-    // });
-    // let constraints_array = [];
-    // for (let i = 0; i < points.length ; ++i) {
-    //    const constraint = new DistanceConstraint(
-    //     state.sim_array[indices[i]],
-    //     state.sim_array[indices[ (i + 1) % points.length] ],
-    //     state.sim_array[i].position.distanceTo(state.sim_array[ (i + 1) % points.length]) / 100,
-    //     .1);
-    //     constraints_array.push(constraint);
-    // }
-    // state.constraints = constraints_array;
+    // Array of floats, each position is three floats (x,y,z)
+    const positions = geometry.getAttribute('position').array;
+    // Position attribute, for position.setXYZ(i, x, y, z) updating
+    const position = geometry.getAttribute('position');
+    // Array of integers making up triangles, each triangle is three ints
+    const indices = geometry.getIndex().array;
+    console.log(indices);
+    const np = points.length * 3 - 3;
+    for(let i = 0; i < points.length; ++i){
+        let point = {
+            x: positions[i * 3 % np],
+            y: positions[(i * 3 + 1) % np],
+            z: positions[(i * 3 + 2) % np]
+        };
+        console.log(point);
+        const particle = {
+            position: new _three.Vector3(point.x, point.y, 0),
+            positionArray: position,
+            positionIndex: i,
+            invMass: 0,
+            previousPosition: new _three.Vector3(point.x, point.y, 0),
+            predicted: new _three.Vector3(point.x, point.y, 0),
+            velocity: new _three.Vector3(0, 0, 0),
+            geometry: geometry
+        };
+        (0, _state.state).particles.push(particle);
+    }
+    const constraints_array = [];
+    for(let i = 0; i < points.length; ++i){
+        const pointPosition = points[i];
+        const nextPointPosition = points[(i + 1) % (points.length - 1)];
+        const constraint = new (0, _xpbdTypes.DistanceConstraint)(i, (i + 1) % (points.length - 1), 3, pointPosition.distanceTo(nextPointPosition), .1);
+        (0, _state.state).constraints.push(constraint);
+    }
+    (0, _state.state).testObject = mesh;
     return mesh;
 };
 
-},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu","../../State":"83rpN","../simulation/xpbdTypes":"4aPO7"}],"4aPO7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// A distance constraint between two particles using XPBD.
+parcelHelpers.export(exports, "DistanceConstraint", ()=>DistanceConstraint);
+var _three = require("three");
+class DistanceConstraint {
+    constructor(p1, p2, stride, restLength, compliance){
+        this.p1 = p1;
+        this.p2 = p2;
+        this.stride = stride;
+        this.restLength = restLength;
+        this.compliance = compliance;
+        this.lambda = 0;
+    }
+    // XPBD constraint solve method.
+    // deltaTime is the simulation time step.
+    solve(deltaTime, particles) {
+        const p_i = particles[this.p1].predicted;
+        const p_j = particles[this.p2].predicted;
+        const w_i = particles[this.p1].invMass;
+        const w_j = particles[this.p2].invMass;
+        const delta = new _three.Vector3().subVectors(p_i, p_j);
+        const currentDist = delta.length();
+        if (currentDist === 0) return;
+        const C = currentDist - this.restLength;
+        const wSum = w_i + w_j;
+        // XPBD uses a compliance term scaled by dt².
+        const alpha = this.compliance / (deltaTime * deltaTime);
+        // Compute the incremental Lagrange multiplier.
+        const dlambda = (-C - alpha * this.lambda) / (wSum + alpha);
+        this.lambda += dlambda;
+        // Apply the correction scaled by the normalized gradient.
+        const correction = delta.normalize().multiplyScalar(dlambda);
+        if (w_i > 0) p_i.addScaledVector(correction, w_i);
+        if (w_j > 0) p_j.addScaledVector(correction, -w_j);
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu"}],"8Yd53":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);
@@ -51009,7 +51037,45 @@ const material_default = new _three.MeshBasicMaterial({
     color: "#ff0000"
 });
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"32QS8":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7wzGb":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "mouseOverCanvas", ()=>mouseOverCanvas);
+parcelHelpers.export(exports, "intersecting", ()=>intersecting);
+parcelHelpers.export(exports, "first_intersecting_object", ()=>first_intersecting_object);
+parcelHelpers.export(exports, "first_intersecting_face", ()=>first_intersecting_face);
+const mouseOverCanvas = (state)=>{
+    const bounds = state.renderer.domElement.getBoundingClientRect();
+    if (state.rawPointer) return state.rawPointer.rx >= bounds.left && state.rawPointer.rx <= bounds.right && state.rawPointer.ry >= bounds.top && state.rawPointer.ry <= bounds.bottom;
+    return false;
+};
+const intersecting = (state)=>{
+    return state.intersects != null && state.intersects.length > 0;
+};
+const first_intersecting_object = (state)=>{
+    const selected_mesh = state.intersects.filter((obj)=>{
+        // Select only Mesh objects (for now)
+        if (obj.object.type == "Mesh") return true;
+        return false;
+    })[0];
+    if (selected_mesh) return selected_mesh.object;
+    else return undefined;
+};
+const first_intersecting_face = (state)=>{
+    const selected_mesh = state.intersects.filter((obj)=>{
+        // Select only Mesh objects (for now)
+        if (obj.object.type == "Mesh") return true;
+        return false;
+    })[0];
+    if (selected_mesh) return {
+        faceIndex: selected_mesh.faceIndex,
+        face: selected_mesh.face,
+        object: selected_mesh.object
+    };
+    else return undefined;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"32QS8":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "tagFace", ()=>tagFace);
@@ -51343,7 +51409,68 @@ const cOnMouseLeave = (e)=>{
     (0, _state.state).cActive = false;
 };
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2W72B":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"46Cm3":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// The main update function where XPBD and collision handling occur.
+parcelHelpers.export(exports, "updateXPBD", ()=>updateXPBD);
+var _three = require("three");
+var _state = require("../../State");
+// export var particles: Particle[] = []; // fill with your particle data
+// export var constraints: DistanceConstraint[] = []; // fill with your constraint definitions
+// state.particles = particles;
+// state.constraints = constraints;
+// const particles = state.particles;
+// const constraints = state.constraints;
+// For collisions, we’ll resolve with a simple floor at y = 0.
+function resolveCollisions(particle, floorY) {
+    if (particle.predicted.y < floorY) // Push the particle back to the floor.
+    particle.predicted.y = floorY;
+}
+function updateXPBD(deltaTime) {
+    // --- 1. Predict positions by applying external forces (e.g., gravity)
+    const gravity = new _three.Vector3(0, -9.81, 0);
+    for (const particle of (0, _state.state).particles)if (particle.invMass > 0) {
+        // Update velocity with gravity
+        particle.velocity.addScaledVector(gravity, deltaTime);
+        // Predict new position
+        particle.predicted.copy(particle.position);
+        particle.predicted.addScaledVector(particle.velocity, deltaTime);
+    }
+    // // --- 2. Resolve collisions for each particle (e.g. against the floor at y = 0)
+    // for (const particle of particles) {
+    //   resolveCollisions(particle, 0);
+    // }
+    // // --- 3. Iteratively solve constraints (XPBD)
+    // const iterations = 10; // Number of solver iterations
+    // for (let iter = 0; iter < iterations; iter++) {
+    //   for (const constraint of constraints) {
+    //     constraint.solve(deltaTime, particles);
+    //   }
+    // }
+    // --- 4. Update velocities and positions using the predicted positions
+    for (const particle of (0, _state.state).particles){
+        particle.position.setComponent(0, particle.position.getComponent(0) + 1);
+        if (particle.positionIndex == 0) console.log(particle.position.x);
+        // for (let i = 0; i < particles.length; ++i) {
+        // console.log(i)
+        // const particle = particles[i];
+        // Compute new velocity based on the change in position
+        particle.velocity.copy(particle.predicted).sub(particle.position).divideScalar(deltaTime);
+        // Update actual position to the corrected predicted position
+        // particle.position.copy(particle.predicted);
+        if (particle.positionIndex == 0) console.log('after', particle.position.x);
+        const positionAttr = particle.geometry.getAttribute('position');
+        positionAttr.setXYZ(particle.positionIndex, particle.position.x, particle.position.y, particle.position.z);
+        positionAttr.needsUpdate = true;
+        particle.geometry.attributes.position.needsUpdate = true;
+        particle.geometry.computeBoundingSphere();
+    // state.testObject.geometry = particle.geometry;
+    // console.log(particles[i] === particle)
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu","../../State":"83rpN"}],"2W72B":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$3517 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;

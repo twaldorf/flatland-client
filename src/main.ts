@@ -9,6 +9,7 @@ import { createRectangularPrism } from './3D/geometry/primitives';
 import { initializeHotkeys } from './2D/hotkeys/hotkeys';
 import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
 import { drawYRuler } from './2D/canvas';
+import { updateXPBD } from './3D/simulation/protoXPBD';
 
 export function initCanvas(ref:HTMLCanvasElement) {
   // Get a reference to the canvas element and its rendering context
@@ -88,6 +89,7 @@ export function initScene(canvas:HTMLCanvasElement) {
   // drawTestPrimitive();
   
   // kick off update
+  renderer.render(state.scene, state.camera);
   update();
   return { threeRef: parent };
 }
@@ -140,13 +142,19 @@ function drawQuad(geometry:THREE.BufferGeometry) {
 
 }
 
+// Local deltatime, not tracked as state
+let dt = 0;
+const interval = 1 / 22;
+
 function update() {
   const { pointer, camera, scene, renderer, raycaster } = state;
   const [ mesh, line ] = state.objects;
   executeCommands();
-
   requestAnimationFrame( update );
-  if (mouseOverCanvas(state) == true) {
+  dt += state.clock.getDelta();
+  
+  if (mouseOverCanvas(state) === true && dt > interval) {
+    updateXPBD(state.clock.getDelta());
 
     // update the picking ray with the camera and pointer position 
     camera.updateMatrixWorld();
@@ -179,9 +187,9 @@ function update() {
       
     }
     
+    renderer.render( scene, camera );
   }
 
-  renderer.render( scene, camera );
 
 }
 

@@ -1,35 +1,61 @@
 import * as THREE from "three";
 import { state } from "../../State";
-import { DistanceConstraint, Particle } from "../simulation/protoXPBD";
+import { DistanceConstraint, Particle } from "../simulation/xpbdTypes";
 
 export const createPolygonPlane = (path:number[]) => {
   const points = path.map((index) => {
     return state.c_points[index].clone().divideScalar(100);
   })
+
   const shape = new THREE.Shape( points );
   const geometry = new THREE.ShapeGeometry( shape );
   const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
   const mesh = new THREE.Mesh( geometry, material );
   state.scene.add( mesh );
-  const indices = geometry.index;
-  // state.sim_array = points.map((point):Particle => {
-  //   return { 
-  //     position: new THREE.Vector3(point.x, point.y, 0),
-  //     invMass: 0,
-  //     previousPosition: new THREE.Vector3(point.x, point.y, 0),
-  //     predicted: new THREE.Vector3(point.x, point.y, 0),
-  //     velocity: new THREE.Vector3(0, 0, 0)
-  //   }
-  // });
-  // let constraints_array = [];
-  // for (let i = 0; i < points.length ; ++i) {
-  //    const constraint = new DistanceConstraint(
-  //     state.sim_array[indices[i]],
-  //     state.sim_array[indices[ (i + 1) % points.length] ],
-  //     state.sim_array[i].position.distanceTo(state.sim_array[ (i + 1) % points.length]) / 100,
-  //     .1);
-  //     constraints_array.push(constraint);
-  // }
-  // state.constraints = constraints_array;
+
+  // Array of floats, each position is three floats (x,y,z)
+  const positions = geometry.getAttribute('position').array;
+
+  // Position attribute, for position.setXYZ(i, x, y, z) updating
+  const position = geometry.getAttribute('position') as THREE.BufferAttribute;
+
+  // Array of integers making up triangles, each triangle is three ints
+  const indices = geometry.getIndex().array as THREE.TypedArray;
+
+  console.log(indices)
+
+  const np = points.length * 3 - 3;
+
+  for (let i = 0; i < points.length; ++i) {
+    let point = { x: positions[(i * 3) % np], y: positions[(i * 3 + 1) % np], z: positions[(i * 3 + 2) % np]};
+    console.log(point)
+    const particle = {
+      position: new THREE.Vector3(point.x, point.y, 0),
+      positionArray: position,
+      positionIndex: i,
+      invMass: 0,
+      previousPosition: new THREE.Vector3(point.x, point.y, 0),
+      predicted: new THREE.Vector3(point.x, point.y, 0),
+      velocity: new THREE.Vector3(0, 0, 0),
+      geometry: geometry,
+    }
+    state.particles.push(particle);
+  };
+
+  const constraints_array = [];
+  for (let i = 0; i < points.length ; ++i) {
+    const pointPosition = points[i];
+    const nextPointPosition = points[ (i + 1) % ( points.length - 1) ];
+
+    const constraint:DistanceConstraint = new DistanceConstraint(
+    i,
+    (i + 1) % (points.length - 1),
+    3,
+    pointPosition.distanceTo(nextPointPosition),
+    .1);
+    state.constraints.push(constraint);
+  }
+
+  state.testObject = mesh;
   return mesh;
 }

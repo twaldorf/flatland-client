@@ -1,7 +1,8 @@
-import { Camera, Face, Group, Raycaster, Scene, Vector2 } from "three";
+import { Camera, Clock, Face, Group, Raycaster, Scene, Vector2 } from "three";
 import { BufferBundle, BufferType, BufferTypes, State } from "./types";
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
+import { DistanceConstraint } from "./3D/simulation/xpbdTypes";
 
 export const state:State = {
   pointer: new Vector2,
@@ -20,6 +21,7 @@ export const state:State = {
   rawPointer: {rx:0, ry:0},
   
   objects: [],
+  testObject: null,
   
   mode: 'default',
   
@@ -27,6 +29,8 @@ export const state:State = {
     waitForDoubleClick: false,
     doubleClick: false,
   },
+  
+  clock: new Clock(true),
   
   context: null,
   c_preview_context: null,
@@ -46,6 +50,8 @@ export const state:State = {
   pendingSelection: undefined as unknown as Command,
   cMovingPoint: false,
   c_move_from: undefined,
+  particles: [],
+  constraints: [],
 
   c_zoomfactor: 1,
 };
