@@ -20,59 +20,58 @@ function resolveCollisions(particle: Particle, floorY: number) {
 
 // The main update function where XPBD and collision handling occur.
 export function updateXPBD(deltaTime: number) {
-
   // --- 1. Predict positions by applying external forces (e.g., gravity)
-  const gravity = new THREE.Vector3(0, -9.81, 0);
+  const gravity = new THREE.Vector3(0, -0.98, 0);
   for (const particle of state.particles) {
     if (particle.invMass > 0) {
-      // Update velocity with gravity
-      particle.velocity.addScaledVector(gravity, deltaTime);
-
       // Predict new position
       particle.predicted.copy(particle.position);
+
+      // Add scaled velocity to predicted pos
       particle.predicted.addScaledVector(particle.velocity, deltaTime);
+
+      // Add dt^2 * invMa*f_ext(x^n) to xpredicted
+      const dtsq = Math.pow(deltaTime, 2);
+
+      particle.predicted.addScaledVector(gravity, particle.invMass * dtsq);
     }
   }
 
   // // --- 2. Resolve collisions for each particle (e.g. against the floor at y = 0)
-  // for (const particle of particles) {
-  //   resolveCollisions(particle, 0);
-  // }
+  for (const particle of state.particles) {
+    // resolveCollisions(particle, 0);
+  }
 
   // // --- 3. Iteratively solve constraints (XPBD)
   // const iterations = 10; // Number of solver iterations
   // for (let iter = 0; iter < iterations; iter++) {
-  //   for (const constraint of constraints) {
-  //     constraint.solve(deltaTime, particles);
+  //   for (const constraint of state.constraints) {
+  //     constraint.solve(deltaTime, state.particles);
   //   }
   // }
 
   // --- 4. Update velocities and positions using the predicted positions
   for (const particle of state.particles) {
-    particle.position.setComponent(0, particle.position.getComponent(0) + 1)
-    if (particle.positionIndex == 0) {
-      console.log(particle.position.x)
-    }
-  // for (let i = 0; i < particles.length; ++i) {
-    // console.log(i)
-    // const particle = particles[i];
-    // Compute new velocity based on the change in position
-    particle.velocity.copy(particle.predicted).sub(particle.position).divideScalar(deltaTime);
-    // Update actual position to the corrected predicted position
-    // particle.position.copy(particle.predicted);
+    // Store previous position for later velocity calculation
+    particle.previousPosition.copy(particle.position);
 
-    if (particle.positionIndex == 0) {
-      console.log('after', particle.position.x)
-    }
+    // Update position
+    particle.position.copy(particle.predicted);
 
+    // Update geometry buffer
     const positionAttr = particle.geometry.getAttribute('position');
     positionAttr.setXYZ(particle.positionIndex, particle.position.x, particle.position.y, particle.position.z);
     positionAttr.needsUpdate = true;
-    particle.geometry.attributes.position.needsUpdate = true;
-    particle.geometry.computeBoundingSphere();
-    // state.testObject.geometry = particle.geometry;
-    // console.log(particles[i] === particle)
-    
+
+    // Update velocity with possible Number guards (-> damping)
+    particle.velocity.copy(particle.position);
+    particle.velocity.sub(particle.previousPosition);
+    particle.velocity.divideScalar(deltaTime);
+    // if (Math.abs(particle.velocity.x) < Number.MIN_VALUE || Number.isNaN(particle.velocity.x)) particle.velocity.x = 0;
+    // if (Math.abs(particle.velocity.y) < Number.MIN_VALUE || Number.isNaN(particle.velocity.y)) particle.velocity.y = 0;
+    // if (Math.abs(particle.velocity.z) < Number.MIN_VALUE || Number.isNaN(particle.velocity.z)) particle.velocity.z = 0;
   }
 
+  state.particles[0].geometry.attributes.position.needsUpdate = true;
+  state.particles[0].geometry.computeBoundingSphere();
 }

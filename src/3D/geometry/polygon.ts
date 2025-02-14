@@ -33,9 +33,9 @@ export const createPolygonPlane = (path:number[]) => {
       position: new THREE.Vector3(point.x, point.y, 0),
       positionArray: position,
       positionIndex: i,
-      invMass: 0,
-      previousPosition: new THREE.Vector3(point.x, point.y, 0),
-      predicted: new THREE.Vector3(point.x, point.y, 0),
+      invMass: .1,
+      previousPosition: new THREE.Vector3(0,0,0),
+      predicted: new THREE.Vector3(0,0,0),
       velocity: new THREE.Vector3(0, 0, 0),
       geometry: geometry,
     }

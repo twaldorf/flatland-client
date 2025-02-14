@@ -18808,8 +18808,8 @@ const drawTestGeometry = ()=>{
 };
 function drawQuad(geometry) {}
 // Local deltatime, not tracked as state
-let dt = 0;
-const interval = 1 / 22;
+let dt = 0.0;
+const interval = 1 / 30;
 function update() {
     const { pointer, camera, scene, renderer, raycaster } = (0, _state.state);
     const [mesh, line] = (0, _state.state).objects;
@@ -18817,7 +18817,8 @@ function update() {
     requestAnimationFrame(update);
     dt += (0, _state.state).clock.getDelta();
     if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval) {
-        (0, _protoXPBD.updateXPBD)((0, _state.state).clock.getDelta());
+        (0, _protoXPBD.updateXPBD)(dt);
+        dt = 0;
         // update the picking ray with the camera and pointer position 
         camera.updateMatrixWorld();
         raycaster.setFromCamera(pointer, camera);
@@ -50839,9 +50840,9 @@ const createPolygonPlane = (path)=>{
             position: new _three.Vector3(point.x, point.y, 0),
             positionArray: position,
             positionIndex: i,
-            invMass: 0,
-            previousPosition: new _three.Vector3(point.x, point.y, 0),
-            predicted: new _three.Vector3(point.x, point.y, 0),
+            invMass: .1,
+            previousPosition: new _three.Vector3(0, 0, 0),
+            predicted: new _three.Vector3(0, 0, 0),
             velocity: new _three.Vector3(0, 0, 0),
             geometry: geometry
         };
@@ -51429,48 +51430,48 @@ function resolveCollisions(particle, floorY) {
 }
 function updateXPBD(deltaTime) {
     // --- 1. Predict positions by applying external forces (e.g., gravity)
-    const gravity = new _three.Vector3(0, -9.81, 0);
+    const gravity = new _three.Vector3(0, -0.98, 0);
     for (const particle of (0, _state.state).particles)if (particle.invMass > 0) {
-        // Update velocity with gravity
-        particle.velocity.addScaledVector(gravity, deltaTime);
         // Predict new position
         particle.predicted.copy(particle.position);
+        // Add scaled velocity to predicted pos
         particle.predicted.addScaledVector(particle.velocity, deltaTime);
+        // Add dt^2 * invMa*f_ext(x^n) to xpredicted
+        const dtsq = Math.pow(deltaTime, 2);
+        particle.predicted.addScaledVector(gravity, particle.invMass * dtsq);
     }
     // // --- 2. Resolve collisions for each particle (e.g. against the floor at y = 0)
-    // for (const particle of particles) {
-    //   resolveCollisions(particle, 0);
-    // }
+    for (const particle of (0, _state.state).particles);
     // // --- 3. Iteratively solve constraints (XPBD)
     // const iterations = 10; // Number of solver iterations
     // for (let iter = 0; iter < iterations; iter++) {
-    //   for (const constraint of constraints) {
-    //     constraint.solve(deltaTime, particles);
+    //   for (const constraint of state.constraints) {
+    //     constraint.solve(deltaTime, state.particles);
     //   }
     // }
     // --- 4. Update velocities and positions using the predicted positions
     for (const particle of (0, _state.state).particles){
-        particle.position.setComponent(0, particle.position.getComponent(0) + 1);
-        if (particle.positionIndex == 0) console.log(particle.position.x);
-        // for (let i = 0; i < particles.length; ++i) {
-        // console.log(i)
-        // const particle = particles[i];
-        // Compute new velocity based on the change in position
-        particle.velocity.copy(particle.predicted).sub(particle.position).divideScalar(deltaTime);
-        // Update actual position to the corrected predicted position
-        // particle.position.copy(particle.predicted);
-        if (particle.positionIndex == 0) console.log('after', particle.position.x);
+        // Store previous position for later velocity calculation
+        particle.previousPosition.copy(particle.position);
+        // Update position
+        particle.position.copy(particle.predicted);
+        // Update geometry buffer
         const positionAttr = particle.geometry.getAttribute('position');
         positionAttr.setXYZ(particle.positionIndex, particle.position.x, particle.position.y, particle.position.z);
         positionAttr.needsUpdate = true;
-        particle.geometry.attributes.position.needsUpdate = true;
-        particle.geometry.computeBoundingSphere();
-    // state.testObject.geometry = particle.geometry;
-    // console.log(particles[i] === particle)
+        // Update velocity with possible Number guards (-> damping)
+        particle.velocity.copy(particle.position);
+        particle.velocity.sub(particle.previousPosition);
+        particle.velocity.divideScalar(deltaTime);
+    // if (Math.abs(particle.velocity.x) < Number.MIN_VALUE || Number.isNaN(particle.velocity.x)) particle.velocity.x = 0;
+    // if (Math.abs(particle.velocity.y) < Number.MIN_VALUE || Number.isNaN(particle.velocity.y)) particle.velocity.y = 0;
+    // if (Math.abs(particle.velocity.z) < Number.MIN_VALUE || Number.isNaN(particle.velocity.z)) particle.velocity.z = 0;
     }
+    (0, _state.state).particles[0].geometry.attributes.position.needsUpdate = true;
+    (0, _state.state).particles[0].geometry.computeBoundingSphere();
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu","../../State":"83rpN"}],"2W72B":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN","three":"ktPTu"}],"2W72B":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$3517 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;

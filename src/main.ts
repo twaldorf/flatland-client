@@ -143,8 +143,8 @@ function drawQuad(geometry:THREE.BufferGeometry) {
 }
 
 // Local deltatime, not tracked as state
-let dt = 0;
-const interval = 1 / 22;
+let dt = 0.0;
+const interval = 1/30;
 
 function update() {
   const { pointer, camera, scene, renderer, raycaster } = state;
@@ -154,7 +154,8 @@ function update() {
   dt += state.clock.getDelta();
   
   if (mouseOverCanvas(state) === true && dt > interval) {
-    updateXPBD(state.clock.getDelta());
+    updateXPBD(dt);
+    dt = 0;
 
     // update the picking ray with the camera and pointer position 
     camera.updateMatrixWorld();
