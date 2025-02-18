@@ -21,7 +21,7 @@ function resolveCollisions(particle: Particle, floorY: number) {
 // The main update function where XPBD and collision handling occur.
 export function updateXPBD(deltaTime: number) {
   // --- 1. Predict positions by applying external forces (e.g., gravity)
-  const gravity = new THREE.Vector3(0, -0.98, 0);
+  const gravity = new THREE.Vector3(0, -9.81, 0);
   for (const particle of state.particles) {
     if (particle.invMass > 0) {
       // Predict new position
@@ -39,16 +39,16 @@ export function updateXPBD(deltaTime: number) {
 
   // // --- 2. Resolve collisions for each particle (e.g. against the floor at y = 0)
   for (const particle of state.particles) {
-    // resolveCollisions(particle, 0);
+    resolveCollisions(particle, 0);
   }
 
-  // // --- 3. Iteratively solve constraints (XPBD)
-  // const iterations = 10; // Number of solver iterations
-  // for (let iter = 0; iter < iterations; iter++) {
-  //   for (const constraint of state.constraints) {
-  //     constraint.solve(deltaTime, state.particles);
-  //   }
-  // }
+  // --- 3. Iteratively solve constraints (XPBD)
+  const iterations = 10; // Number of solver iterations
+  for (let iter = 0; iter < iterations; iter++) {
+    for (const constraint of state.constraints) {
+      constraint.solve(deltaTime, { particles: state.particles });
+    }
+  }
 
   // --- 4. Update velocities and positions using the predicted positions
   for (const particle of state.particles) {

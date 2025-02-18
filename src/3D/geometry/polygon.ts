@@ -4,13 +4,14 @@ import { DistanceConstraint, Particle } from "../simulation/xpbdTypes";
 
 export const createPolygonPlane = (path:number[]) => {
   const points = path.map((index) => {
-    return state.c_points[index].clone().divideScalar(100);
+    return state.c_points[index].clone();
   })
 
   const shape = new THREE.Shape( points );
   const geometry = new THREE.ShapeGeometry( shape );
-  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
   const mesh = new THREE.Mesh( geometry, material );
+  mesh.scale.set(0.01, 0.01, 0.01);
   state.scene.add( mesh );
 
   // Array of floats, each position is three floats (x,y,z)
@@ -52,7 +53,7 @@ export const createPolygonPlane = (path:number[]) => {
     (i + 1) % (points.length - 1),
     3,
     pointPosition.distanceTo(nextPointPosition),
-    .1);
+    0.1);
     state.constraints.push(constraint);
   }
 

@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { sparseLog } from "../../utils/devutils";
 
 // A simple particle representing a vertex in your mesh.
 export interface Particle {
@@ -20,6 +21,8 @@ export class DistanceConstraint {
   restLength: number; // desired length between particles
   compliance: number; // softness parameter (0 for stiff constraints)
   lambda: number;     // Lagrange multiplier (per constraint, maintained over iterations)
+  delta: THREE.Vector3;
+
 
   constructor(p1: number, p2: number, stride:number, restLength: number, compliance: number) {
     this.p1 = p1;
@@ -28,27 +31,40 @@ export class DistanceConstraint {
     this.restLength = restLength;
     this.compliance = compliance;
     this.lambda = 0;
+    this.delta = new THREE.Vector3(0,0,0);
   }
 
   // XPBD constraint solve method.
   // deltaTime is the simulation time step.
-  solve(deltaTime: number, particles: Particle[]) {
+  solve(deltaTime: number, particleObject ) {
+    const { particles } = particleObject;
     const p_i = particles[this.p1].predicted;
     const p_j = particles[this.p2].predicted;
     const w_i = particles[this.p1].invMass;
     const w_j = particles[this.p2].invMass;
-    const delta = new THREE.Vector3().subVectors(p_i, p_j);
-    const currentDist = delta.length();
+    // This could be included in the constraint instead of creating a new vector!
+
+    this.delta.subVectors(p_i, p_j);
+    const currentDist = this.delta.length();
+    sparseLog(p_i);
+    sparseLog(p_j);
+    sparseLog(currentDist);
+
     if (currentDist === 0) return;
+
     const C = currentDist - this.restLength;
+
     const wSum = w_i + w_j;
-    // XPBD uses a compliance term scaled by dt².
+
+    // compliance term scaled by dt^2, should be almost infinite
     const alpha = this.compliance / (deltaTime * deltaTime);
-    // Compute the incremental Lagrange multiplier.
-    const dlambda = (-C - alpha * this.lambda) / (wSum + alpha);
-    this.lambda += dlambda;
+
+    // lambda
+    const dlambda = (-C) / (wSum + alpha);
+
     // Apply the correction scaled by the normalized gradient.
-    const correction = delta.normalize().multiplyScalar(dlambda);
+    const correction = this.delta.normalize().multiplyScalar(dlambda);
+
     if (w_i > 0) {
       p_i.addScaledVector(correction, w_i);
     }

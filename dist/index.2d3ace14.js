@@ -50812,14 +50812,16 @@ var _state = require("../../State");
 var _xpbdTypes = require("../simulation/xpbdTypes");
 const createPolygonPlane = (path)=>{
     const points = path.map((index)=>{
-        return (0, _state.state).c_points[index].clone().divideScalar(100);
+        return (0, _state.state).c_points[index].clone();
     });
     const shape = new _three.Shape(points);
     const geometry = new _three.ShapeGeometry(shape);
     const material = new _three.MeshBasicMaterial({
-        color: 0x00ff00
+        color: 0x00ff00,
+        side: _three.DoubleSide
     });
     const mesh = new _three.Mesh(geometry, material);
+    mesh.scale.set(0.01, 0.01, 0.01);
     (0, _state.state).scene.add(mesh);
     // Array of floats, each position is three floats (x,y,z)
     const positions = geometry.getAttribute('position').array;
@@ -50852,7 +50854,7 @@ const createPolygonPlane = (path)=>{
     for(let i = 0; i < points.length; ++i){
         const pointPosition = points[i];
         const nextPointPosition = points[(i + 1) % (points.length - 1)];
-        const constraint = new (0, _xpbdTypes.DistanceConstraint)(i, (i + 1) % (points.length - 1), 3, pointPosition.distanceTo(nextPointPosition), .1);
+        const constraint = new (0, _xpbdTypes.DistanceConstraint)(i, (i + 1) % (points.length - 1), 3, pointPosition.distanceTo(nextPointPosition), 0.1);
         (0, _state.state).constraints.push(constraint);
     }
     (0, _state.state).testObject = mesh;
@@ -50865,6 +50867,7 @@ parcelHelpers.defineInteropFlag(exports);
 // A distance constraint between two particles using XPBD.
 parcelHelpers.export(exports, "DistanceConstraint", ()=>DistanceConstraint);
 var _three = require("three");
+var _devutils = require("../../utils/devutils");
 class DistanceConstraint {
     constructor(p1, p2, stride, restLength, compliance){
         this.p1 = p1;
@@ -50873,32 +50876,45 @@ class DistanceConstraint {
         this.restLength = restLength;
         this.compliance = compliance;
         this.lambda = 0;
+        this.delta = new _three.Vector3(0, 0, 0);
     }
     // XPBD constraint solve method.
     // deltaTime is the simulation time step.
-    solve(deltaTime, particles) {
+    solve(deltaTime, particleObject) {
+        const { particles } = particleObject;
         const p_i = particles[this.p1].predicted;
         const p_j = particles[this.p2].predicted;
         const w_i = particles[this.p1].invMass;
         const w_j = particles[this.p2].invMass;
-        const delta = new _three.Vector3().subVectors(p_i, p_j);
-        const currentDist = delta.length();
+        // This could be included in the constraint instead of creating a new vector!
+        this.delta.subVectors(p_i, p_j);
+        const currentDist = this.delta.length();
+        (0, _devutils.sparseLog)(p_i);
+        (0, _devutils.sparseLog)(p_j);
+        (0, _devutils.sparseLog)(currentDist);
         if (currentDist === 0) return;
         const C = currentDist - this.restLength;
         const wSum = w_i + w_j;
-        // XPBD uses a compliance term scaled by dt².
+        // compliance term scaled by dt^2, should be almost infinite
         const alpha = this.compliance / (deltaTime * deltaTime);
-        // Compute the incremental Lagrange multiplier.
-        const dlambda = (-C - alpha * this.lambda) / (wSum + alpha);
-        this.lambda += dlambda;
+        // lambda
+        const dlambda = -C / (wSum + alpha);
         // Apply the correction scaled by the normalized gradient.
-        const correction = delta.normalize().multiplyScalar(dlambda);
+        const correction = this.delta.normalize().multiplyScalar(dlambda);
         if (w_i > 0) p_i.addScaledVector(correction, w_i);
         if (w_j > 0) p_j.addScaledVector(correction, -w_j);
     }
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu"}],"8Yd53":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu","../../utils/devutils":"6eBB3"}],"6eBB3":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "sparseLog", ()=>sparseLog);
+const sparseLog = (text)=>{
+    if (Math.random() > 0.999) console.log(text);
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);
@@ -51430,7 +51446,7 @@ function resolveCollisions(particle, floorY) {
 }
 function updateXPBD(deltaTime) {
     // --- 1. Predict positions by applying external forces (e.g., gravity)
-    const gravity = new _three.Vector3(0, -0.98, 0);
+    const gravity = new _three.Vector3(0, -9.81, 0);
     for (const particle of (0, _state.state).particles)if (particle.invMass > 0) {
         // Predict new position
         particle.predicted.copy(particle.position);
@@ -51441,14 +51457,12 @@ function updateXPBD(deltaTime) {
         particle.predicted.addScaledVector(gravity, particle.invMass * dtsq);
     }
     // // --- 2. Resolve collisions for each particle (e.g. against the floor at y = 0)
-    for (const particle of (0, _state.state).particles);
-    // // --- 3. Iteratively solve constraints (XPBD)
-    // const iterations = 10; // Number of solver iterations
-    // for (let iter = 0; iter < iterations; iter++) {
-    //   for (const constraint of state.constraints) {
-    //     constraint.solve(deltaTime, state.particles);
-    //   }
-    // }
+    for (const particle of (0, _state.state).particles)resolveCollisions(particle, 0);
+    // --- 3. Iteratively solve constraints (XPBD)
+    const iterations = 10; // Number of solver iterations
+    for(let iter = 0; iter < iterations; iter++)for (const constraint of (0, _state.state).constraints)constraint.solve(deltaTime, {
+        particles: (0, _state.state).particles
+    });
     // --- 4. Update velocities and positions using the predicted positions
     for (const particle of (0, _state.state).particles){
         // Store previous position for later velocity calculation
