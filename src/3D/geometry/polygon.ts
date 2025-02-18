@@ -35,12 +35,9 @@ export const createPolygonPlane = (path:number[]) => {
   points.pop();
   points.reverse();
 
-  // Track length of points
-  const np = (points.length - 1) * 3;
-
+  // Generate particles from real points
   for (let i = 0; i < points.length; ++i) {
     let point = { x: positions[(i * 3)], y: positions[(i * 3 + 1)], z: positions[(i * 3 + 2)]};
-    console.log(point)
     const particle = {
       position: new THREE.Vector3(point.x, point.y, 0),
       positionArray: position,
@@ -54,6 +51,8 @@ export const createPolygonPlane = (path:number[]) => {
     state.particles.push(particle);
   };
 
+
+  // Generate constraints from points
   const constraints_array = [];
   for (let i = 0; i < points.length ; ++i) {
     const pointPosition = points[i];
