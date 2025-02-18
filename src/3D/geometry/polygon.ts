@@ -7,6 +7,13 @@ export const createPolygonPlane = (path:number[]) => {
     return state.c_points[index].clone();
   })
 
+  // Add the offset point in the beginning of the array
+  const offsetPoint = points[0];
+  points.reverse();
+  points.push(offsetPoint);
+  points.reverse();
+  console.log(points)
+
   const shape = new THREE.Shape( points );
   const geometry = new THREE.ShapeGeometry( shape );
   const material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
@@ -23,12 +30,16 @@ export const createPolygonPlane = (path:number[]) => {
   // Array of integers making up triangles, each triangle is three ints
   const indices = geometry.getIndex().array as THREE.TypedArray;
 
-  console.log(indices)
+  // Remove offset element from points array
+  points.reverse();
+  points.pop();
+  points.reverse();
 
-  const np = points.length * 3 - 3;
+  // Track length of points
+  const np = (points.length - 1) * 3;
 
   for (let i = 0; i < points.length; ++i) {
-    let point = { x: positions[(i * 3) % np], y: positions[(i * 3 + 1) % np], z: positions[(i * 3 + 2) % np]};
+    let point = { x: positions[(i * 3)], y: positions[(i * 3 + 1)], z: positions[(i * 3 + 2)]};
     console.log(point)
     const particle = {
       position: new THREE.Vector3(point.x, point.y, 0),
@@ -53,7 +64,7 @@ export const createPolygonPlane = (path:number[]) => {
     (i + 1) % (points.length - 1),
     3,
     pointPosition.distanceTo(nextPointPosition),
-    0.1);
+    0.5);
     state.constraints.push(constraint);
   }
 

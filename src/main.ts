@@ -153,7 +153,7 @@ function update() {
   requestAnimationFrame( update );
   dt += state.clock.getDelta();
   
-  if (mouseOverCanvas(state) === true && dt > interval) {
+  if (mouseOverCanvas(state) === true && dt > interval && state.c_shapes.length > 0) {
     updateXPBD(dt);
     dt = 0;
 

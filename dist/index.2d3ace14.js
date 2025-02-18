@@ -18816,7 +18816,7 @@ function update() {
     (0, _command.executeCommands)();
     requestAnimationFrame(update);
     dt += (0, _state.state).clock.getDelta();
-    if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval) {
+    if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval && (0, _state.state).c_shapes.length > 0) {
         (0, _protoXPBD.updateXPBD)(dt);
         dt = 0;
         // update the picking ray with the camera and pointer position 
@@ -49837,10 +49837,12 @@ class PathTool {
                 });
                 break;
             case "drawing":
-                const lastPointIndexWithinPath = (0, _state.state).c_paths[this.__currentPathIndex]?.length - 1;
-                const pointIndex = (0, _state.state).c_paths[this.__currentPathIndex][lastPointIndexWithinPath];
-                // console.log(lastPointIndexWithinPath, pointIndex);
-                if ((0, _state.state).c_points[pointIndex]) (0, _canvas.drawDrawPreview)((0, _state.state).c_points[pointIndex], pos);
+                if ((0, _state.state).c_paths.length > 0) {
+                    const lastPointIndexWithinPath = (0, _state.state).c_paths[this.__currentPathIndex]?.length - 1;
+                    const pointIndex = (0, _state.state).c_paths[this.__currentPathIndex][lastPointIndexWithinPath];
+                    // console.log(lastPointIndexWithinPath, pointIndex);
+                    if ((0, _state.state).c_points[pointIndex]) (0, _canvas.drawDrawPreview)((0, _state.state).c_points[pointIndex], pos);
+                }
             case "idle":
                 if (Math.random() < .1) {
                     const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
@@ -50814,6 +50816,12 @@ const createPolygonPlane = (path)=>{
     const points = path.map((index)=>{
         return (0, _state.state).c_points[index].clone();
     });
+    // Add the offset point in the beginning of the array
+    const offsetPoint = points[0];
+    points.reverse();
+    points.push(offsetPoint);
+    points.reverse();
+    console.log(points);
     const shape = new _three.Shape(points);
     const geometry = new _three.ShapeGeometry(shape);
     const material = new _three.MeshBasicMaterial({
@@ -50829,13 +50837,17 @@ const createPolygonPlane = (path)=>{
     const position = geometry.getAttribute('position');
     // Array of integers making up triangles, each triangle is three ints
     const indices = geometry.getIndex().array;
-    console.log(indices);
-    const np = points.length * 3 - 3;
+    // Remove offset element from points array
+    points.reverse();
+    points.pop();
+    points.reverse();
+    // Track length of points
+    const np = (points.length - 1) * 3;
     for(let i = 0; i < points.length; ++i){
         let point = {
-            x: positions[i * 3 % np],
-            y: positions[(i * 3 + 1) % np],
-            z: positions[(i * 3 + 2) % np]
+            x: positions[i * 3],
+            y: positions[i * 3 + 1],
+            z: positions[i * 3 + 2]
         };
         console.log(point);
         const particle = {
@@ -50854,7 +50866,7 @@ const createPolygonPlane = (path)=>{
     for(let i = 0; i < points.length; ++i){
         const pointPosition = points[i];
         const nextPointPosition = points[(i + 1) % (points.length - 1)];
-        const constraint = new (0, _xpbdTypes.DistanceConstraint)(i, (i + 1) % (points.length - 1), 3, pointPosition.distanceTo(nextPointPosition), 0.1);
+        const constraint = new (0, _xpbdTypes.DistanceConstraint)(i, (i + 1) % (points.length - 1), 3, pointPosition.distanceTo(nextPointPosition), 0.5);
         (0, _state.state).constraints.push(constraint);
     }
     (0, _state.state).testObject = mesh;
