@@ -15,21 +15,21 @@ export const createPolygonPlane = (path:number[]) => {
   points.push(offsetPoint);
   points.reverse();
 
-  const iterations = 1;
+  const iterations = 2;
 
   const params = {
       split:          true,       // optional, default: true
       uvSmooth:       false,      // optional, default: false
       preserveEdges:  false,      // optional, default: false
       flatOnly:       true,      // optional, default: false
-      maxTriangles:   250,   // optional, default: Infinity
+      maxTriangles:   1024,   // optional, default: Infinity
   };
 
   const shape = new THREE.Shape( points );
   const geometry = new THREE.ShapeGeometry( shape );
   let subgeometry = LoopSubdivision.modify(geometry, iterations, params);
   subgeometry = BufferGeometryUtils.mergeVertices(subgeometry);
-  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
+  const material = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide, wireframe: true } );
   const mesh = new THREE.Mesh( subgeometry, material );
   mesh.scale.set( 0.01, 0.01, 0.01 );
   state.scene.add( mesh );
@@ -41,7 +41,7 @@ export const createPolygonPlane = (path:number[]) => {
   const position = subgeometry.getAttribute('position') as THREE.BufferAttribute;
 
   // Array of integers making up triangles, each triangle is three ints
-  // const indices = subgeometry.getIndex().array as THREE.TypedArray;
+  const indices = subgeometry.getIndex().array as THREE.TypedArray;
 
   // Remove offset element from points array
   points.reverse();
@@ -64,34 +64,85 @@ export const createPolygonPlane = (path:number[]) => {
     state.particles.push(particle);
   };
 
-  // state.particles[0].velocity = new THREE.Vector3(-100, 10000000, 1000);
+  state.particles[0].velocity = new THREE.Vector3(-10, 10, 100);
 
 
   // Generate constraints from points
-  for (let i = 0; i < (positions.length - 3) / 3; ++i) {
-
-    const pointPosition = new THREE.Vector3(
+  // Use adjacency instead of just next point
+  for (let i = 0; i < indices.length / 3; i++) {
+    const p1 = new THREE.Vector3(
       positions[i * 3], 
       positions[i * 3 + 1], 
       positions[i * 3 + 2]
     );
-
-    const nextPointPosition = new THREE.Vector3(
-      positions[( i + 1 ) * 3], 
-      positions[( i + 1 ) * 3 + 1], 
-      positions[( i + 1 ) * 3 + 2]
+    
+    const p2 = new THREE.Vector3(
+      positions[i * 3 + 3], 
+      positions[i * 3 + 4], 
+      positions[i * 3 + 5]
     );
 
-    const constraint:DistanceConstraint = new DistanceConstraint(
+    const p3 = new THREE.Vector3(
+      positions[i * 3 + 6], 
+      positions[i * 3 + 7], 
+      positions[i * 3 + 8]
+    );
+    
+    const constraint1:DistanceConstraint = new DistanceConstraint(
       i,
       i + 1,
       3,
-      pointPosition.distanceTo(nextPointPosition),
+      p1.distanceTo(p2),
       .1
     );
 
-    state.constraints.push(constraint);
+    const constraint2:DistanceConstraint = new DistanceConstraint(
+      i + 1,
+      i + 2,
+      3,
+      p2.distanceTo(p3),
+      .1
+    );
+
+    const constraint3:DistanceConstraint = new DistanceConstraint(
+      i + 2,
+      i,
+      3,
+      p3.distanceTo(p1),
+      .1
+    );
+
+    state.constraints.push(constraint1);
+    state.constraints.push(constraint2);
+    state.constraints.push(constraint3);
+
   }
+  console.log(state.particles, state.constraints)
+
+  // for (let i = 0; i < (positions.length - 3) / 3; ++i) {
+
+  //   const pointPosition = new THREE.Vector3(
+  //     positions[i * 3], 
+  //     positions[i * 3 + 1], 
+  //     positions[i * 3 + 2]
+  //   );
+
+  //   const nextPointPosition = new THREE.Vector3(
+  //     positions[( i + 1 ) * 3], 
+  //     positions[( i + 1 ) * 3 + 1], 
+  //     positions[( i + 1 ) * 3 + 2]
+  //   );
+
+  //   const constraint:DistanceConstraint = new DistanceConstraint(
+  //     i,
+  //     i + 1,
+  //     3,
+  //     pointPosition.distanceTo(nextPointPosition),
+  //     .1
+  //   );
+
+  //   state.constraints.push(constraint);
+  // }
 
   state.testObject = mesh;
   return mesh;

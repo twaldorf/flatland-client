@@ -18679,6 +18679,7 @@ var _hotkeys = require("./2D/hotkeys/hotkeys");
 var _pointerEvents = require("./2D/pointer/pointerEvents");
 var _canvas = require("./2D/canvas");
 var _protoXPBD = require("./3D/simulation/protoXPBD");
+var _factors = require("./2D/settings/factors");
 function initCanvas(ref) {
     // Get a reference to the canvas element and its rendering context
     const canvas = ref;
@@ -18817,7 +18818,7 @@ function update() {
     requestAnimationFrame(update);
     dt += (0, _state.state).clock.getDelta();
     if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval && (0, _state.state).c_shapes.length > 0) {
-        (0, _protoXPBD.updateXPBD)(dt);
+        (0, _protoXPBD.updateXPBD)(dt * (0, _factors.SPEED));
         dt = 0;
         // update the picking ray with the camera and pointer position 
         camera.updateMatrixWorld();
@@ -18841,7 +18842,7 @@ function update() {
     }
 }
 
-},{"three":"ktPTu","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./2D/canvas":"4a7yB","./util":"7wzGb","./3D/simulation/protoXPBD":"46Cm3"}],"ktPTu":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./2D/canvas":"4a7yB","./util":"7wzGb","./3D/simulation/protoXPBD":"46Cm3","./2D/settings/factors":"9qufK"}],"ktPTu":[function(require,module,exports,__globalThis) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -50143,7 +50144,9 @@ function drawYRuler() {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
+parcelHelpers.export(exports, "SPEED", ()=>SPEED);
 const cf_canvas_to_inch = 25;
+const SPEED = 1;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -50823,21 +50826,22 @@ const createPolygonPlane = (path)=>{
     points.reverse();
     points.push(offsetPoint);
     points.reverse();
-    const iterations = 1;
+    const iterations = 2;
     const params = {
         split: true,
         uvSmooth: false,
         preserveEdges: false,
         flatOnly: true,
-        maxTriangles: 250
+        maxTriangles: 1024
     };
     const shape = new _three.Shape(points);
     const geometry = new _three.ShapeGeometry(shape);
     let subgeometry = (0, _threeSubdivide.LoopSubdivision).modify(geometry, iterations, params);
     subgeometry = _bufferGeometryUtils.mergeVertices(subgeometry);
     const material = new _three.MeshBasicMaterial({
-        color: 0x00ff00,
-        side: _three.DoubleSide
+        color: 0x000000,
+        side: _three.DoubleSide,
+        wireframe: true
     });
     const mesh = new _three.Mesh(subgeometry, material);
     mesh.scale.set(0.01, 0.01, 0.01);
@@ -50847,7 +50851,7 @@ const createPolygonPlane = (path)=>{
     // Position attribute, for position.setXYZ(i, x, y, z) updating
     const position = subgeometry.getAttribute('position');
     // Array of integers making up triangles, each triangle is three ints
-    // const indices = subgeometry.getIndex().array as THREE.TypedArray;
+    const indices = subgeometry.getIndex().array;
     // Remove offset element from points array
     points.reverse();
     points.pop();
@@ -50871,14 +50875,41 @@ const createPolygonPlane = (path)=>{
         };
         (0, _state.state).particles.push(particle);
     }
-    // state.particles[0].velocity = new THREE.Vector3(-100, 10000000, 1000);
+    (0, _state.state).particles[0].velocity = new _three.Vector3(-10, 10, 100);
     // Generate constraints from points
-    for(let i = 0; i < (positions.length - 3) / 3; ++i){
-        const pointPosition = new _three.Vector3(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-        const nextPointPosition = new _three.Vector3(positions[(i + 1) * 3], positions[(i + 1) * 3 + 1], positions[(i + 1) * 3 + 2]);
-        const constraint = new (0, _xpbdTypes.DistanceConstraint)(i, i + 1, 3, pointPosition.distanceTo(nextPointPosition), .1);
-        (0, _state.state).constraints.push(constraint);
+    // Use adjacency instead of just next point
+    for(let i = 0; i < indices.length / 3; i++){
+        const p1 = new _three.Vector3(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
+        const p2 = new _three.Vector3(positions[i * 3 + 3], positions[i * 3 + 4], positions[i * 3 + 5]);
+        const p3 = new _three.Vector3(positions[i * 3 + 6], positions[i * 3 + 7], positions[i * 3 + 8]);
+        const constraint1 = new (0, _xpbdTypes.DistanceConstraint)(i, i + 1, 3, p1.distanceTo(p2), .1);
+        const constraint2 = new (0, _xpbdTypes.DistanceConstraint)(i + 1, i + 2, 3, p2.distanceTo(p3), .1);
+        const constraint3 = new (0, _xpbdTypes.DistanceConstraint)(i + 2, i, 3, p3.distanceTo(p1), .1);
+        (0, _state.state).constraints.push(constraint1);
+        (0, _state.state).constraints.push(constraint2);
+        (0, _state.state).constraints.push(constraint3);
     }
+    console.log((0, _state.state).particles, (0, _state.state).constraints);
+    // for (let i = 0; i < (positions.length - 3) / 3; ++i) {
+    //   const pointPosition = new THREE.Vector3(
+    //     positions[i * 3], 
+    //     positions[i * 3 + 1], 
+    //     positions[i * 3 + 2]
+    //   );
+    //   const nextPointPosition = new THREE.Vector3(
+    //     positions[( i + 1 ) * 3], 
+    //     positions[( i + 1 ) * 3 + 1], 
+    //     positions[( i + 1 ) * 3 + 2]
+    //   );
+    //   const constraint:DistanceConstraint = new DistanceConstraint(
+    //     i,
+    //     i + 1,
+    //     3,
+    //     pointPosition.distanceTo(nextPointPosition),
+    //     .1
+    //   );
+    //   state.constraints.push(constraint);
+    // }
     (0, _state.state).testObject = mesh;
     return mesh;
 };

@@ -10,6 +10,7 @@ import { initializeHotkeys } from './2D/hotkeys/hotkeys';
 import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
 import { drawYRuler } from './2D/canvas';
 import { updateXPBD } from './3D/simulation/protoXPBD';
+import { SPEED } from './2D/settings/factors';
 
 export function initCanvas(ref:HTMLCanvasElement) {
   // Get a reference to the canvas element and its rendering context
@@ -154,7 +155,7 @@ function update() {
   dt += state.clock.getDelta();
   
   if (mouseOverCanvas(state) === true && dt > interval && state.c_shapes.length > 0) {
-    updateXPBD(dt);
+    updateXPBD(dt * SPEED);
     dt = 0;
 
     // update the picking ray with the camera and pointer position 
