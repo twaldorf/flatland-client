@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { sparseLog } from "../../utils/devutils";
 
-// A simple particle representing a vertex in your mesh.
 export interface Particle {
   position: THREE.Vector3;
   positionArray: THREE.BufferAttribute;      // current position
@@ -13,7 +12,6 @@ export interface Particle {
   geometry: THREE.BufferGeometry;
 }
 
-// A distance constraint between two particles using XPBD.
 export class DistanceConstraint {
   p1: number;         // index of the first particle
   p2: number;         // index of the second particle
@@ -22,7 +20,6 @@ export class DistanceConstraint {
   compliance: number; // softness parameter (0 for stiff constraints)
   lambda: number;     // Lagrange multiplier (per constraint, maintained over iterations)
   delta: THREE.Vector3;
-
 
   constructor(p1: number, p2: number, stride:number, restLength: number, compliance: number) {
     this.p1 = p1;
@@ -46,9 +43,6 @@ export class DistanceConstraint {
 
     this.delta.subVectors(p_i, p_j);
     const currentDist = this.delta.length();
-    sparseLog(p_i);
-    sparseLog(p_j);
-    sparseLog(currentDist);
 
     if (currentDist === 0) return;
 
