@@ -11,6 +11,7 @@ export const state:State = {
   scene: new Scene,
   camera: new Camera,
   camera_group: new Group,
+  camera_controls: undefined,
   renderer: undefined,
   
   raycaster: new Raycaster,

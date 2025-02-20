@@ -8,9 +8,10 @@ import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './3D/e
 import { createRectangularPrism } from './3D/geometry/primitives';
 import { initializeHotkeys } from './2D/hotkeys/hotkeys';
 import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
-import { drawYRuler } from './2D/canvas';
+import { drawCanvasSetup, drawGridRuler, drawYRuler } from './2D/canvas';
 import { updateXPBD } from './3D/simulation/protoXPBD';
 import { SPEED } from './2D/settings/factors';
+import { c_bgColor } from './UI/colors/colors';
 
 export function initCanvas(ref:HTMLCanvasElement) {
   // Get a reference to the canvas element and its rendering context
@@ -38,12 +39,9 @@ export function initCanvas(ref:HTMLCanvasElement) {
     canvas.height = canvas.clientHeight * devicePixelRatio;
 
     context.scale(devicePixelRatio, devicePixelRatio);
-
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    
+    drawCanvasSetup();
   }
-
-  drawYRuler();
 
   return { canvasRef: state.canvas };
 }
@@ -61,11 +59,14 @@ export function initScene(canvas:HTMLCanvasElement) {
   const aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight;
   const camera = new THREE.OrthographicCamera( frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 0.1, 1000 );
   state.camera = camera;
-  camera.position.z = 100;
-  camera.lookAt(0,0,0);
   camera_group.add(camera);
   
   const controls = new OrbitControls(camera, renderer.domElement);
+  controls.autoRotate = true;
+  controls.rotateSpeed = .1;
+  state.camera_controls = controls;
+  camera.position.set(0, 50, 100);
+  camera.lookAt(0,0,0);
 
   scene.background = new THREE.Color( 0xF5CF36 );
 
@@ -76,7 +77,6 @@ export function initScene(canvas:HTMLCanvasElement) {
   const pointer = new THREE.Vector2();
   state.raycaster = raycaster;
   state.pointer = pointer;
-  
 
   // register event listeners
   renderer.domElement.addEventListener( 'pointermove', onPointerMove );
@@ -84,11 +84,7 @@ export function initScene(canvas:HTMLCanvasElement) {
   renderer.domElement.addEventListener( 'pointerup', onPointerUp );
   renderer.domElement.addEventListener( 'dblclick', onDoubleClick );
   state.pointerDown = false;
-  
-  // test scene
-  // drawTestGeometry();
-  // drawTestPrimitive();
-  
+
   // kick off update
   renderer.render(state.scene, state.camera);
   update();
@@ -136,11 +132,6 @@ const drawTestGeometry = () => {
   test_geometry.computeBoundingSphere();
   
   // console.log( test_geometry.index )
-  // END BUFFER GEOMETRY INIT SPACE
-}
-
-function drawQuad(geometry:THREE.BufferGeometry) {
-
 }
 
 // Local deltatime, not tracked as state
@@ -189,9 +180,9 @@ function update() {
       
     }
     
-    renderer.render( scene, camera );
   }
-
+  state.camera_controls.update();
+  renderer.render( scene, camera );
 
 }
 

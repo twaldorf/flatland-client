@@ -5,6 +5,14 @@ import { state } from "../State";
 import { cf_canvas_to_inch } from "./settings/factors";
 import { c_bgColor } from "../UI/colors/colors";
 
+export function drawCanvasSetup() {
+  state.context.fillStyle = c_bgColor;
+  state.context.fillRect(0, 0, state.canvas.width, state.canvas.height);
+  drawCanvasFromState(state);
+  drawYRuler();
+  drawGridRuler();
+}
+
 export function drawCanvasFromState(state:State):void {
   erase();
   drawPaths(state);
@@ -17,12 +25,15 @@ export function redrawCanvas():void {
   erase();
   applyPoints();
   applyPaths();
+  applyGridRuler();
 }
 
 function erase() {
   state.context.fillStyle = c_bgColor;
   // Draw a background color rectangle from the start of the ruler to the bottom of the canvas
   state.context.fillRect(rulerWidth, rulerHeight, state.canvas.width, state.canvas.height);
+  // drawGridRuler();
+  applyGridRuler();
 }
 
 
@@ -65,6 +76,11 @@ const drawPoints = (state:State) => {
 
 function applyPoints() {
   const obj = state.c_buffers.get('points');
+  if (obj) state.context.drawImage(obj.canvas, 0, 0);
+}
+
+function applyGridRuler() {
+  const obj = state.c_buffers.get('grid');
   if (obj) state.context.drawImage(obj.canvas, 0, 0);
 }
 
@@ -206,11 +222,14 @@ export function drawDrawPreview(from:Vector2, to:Vector2): void {
 }
 
 export function drawYRuler() {
+  const bundle = getBuffer('grid');
+
+  const ctx = bundle.context;
+  const bufferCanvas = bundle.canvas;
+
     // Buffer
-  const bufferCanvas = document.createElement("canvas");
   bufferCanvas.width = 10;
   bufferCanvas.height = state.canvas.height;
-  const ctx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
 
   ctx.lineWidth = 1;
 
@@ -229,4 +248,30 @@ export function drawYRuler() {
   }
 
   state.context.drawImage(bufferCanvas, 0, 0);
+}
+
+export function drawGridRuler() {
+  const bufferCanvas = document.createElement("canvas");
+  bufferCanvas.width = state.canvas.width;
+  bufferCanvas.height = state.canvas.height;
+  const ctx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'white';
+
+  // Draw inches
+  for (let i = 25; i < bufferCanvas.height - 25; ++i) {
+    ctx.moveTo(0, i * cf_canvas_to_inch * state.c_zoomfactor);
+    ctx.lineTo(10, i * cf_canvas_to_inch  * state.c_zoomfactor);
+    ctx.stroke();
+  }
+
+  // Draw inches
+  for (let i = 25; i < bufferCanvas.height - 25; ++i) {
+    ctx.moveTo(i * cf_canvas_to_inch * .25 * state.c_zoomfactor, 0);
+    ctx.lineTo(i * cf_canvas_to_inch * .25  * state.c_zoomfactor, 25);
+    ctx.stroke();
+  }
+
+  state.context.drawImage(bufferCanvas, 0, 0); 
 }

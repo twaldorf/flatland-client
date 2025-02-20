@@ -1,4 +1,5 @@
 import { Clock, Face, Object3D, Vector2 } from "three";
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
 import { SelectTool } from "./2D/tools/SelectTool";
@@ -19,6 +20,7 @@ export interface State {
   scene: THREE.Scene;
   camera: THREE.Camera;
   camera_group: THREE.Group;
+  camera_controls: OrbitControls;
   renderer: THREE.Renderer;
   raycaster: THREE.Raycaster;
   selected: Set<Object3D>;
@@ -98,7 +100,7 @@ export interface BufferBundle {
   context: OffscreenCanvasRenderingContext2D;
 }
 
-export type BufferType = "preview" | "points" | "paths" | "shapes" ;
+export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" ;
 
 export interface ToolBase {
   name: string;
