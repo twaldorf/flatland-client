@@ -18723,7 +18723,6 @@ function initCanvas(ref) {
     (0, _pointerEvents.initializeCanvasEvents)(canvas);
     if (context) {
         const devicePixelRatio = window.devicePixelRatio || 1;
-        console.log(canvas.clientHeight, canvas.clientWidth, canvas.offsetHeight, canvas.parentElement?.clientHeight);
         canvas.width = canvas.clientWidth * devicePixelRatio;
         canvas.height = canvas.clientHeight * devicePixelRatio;
         // scaling removed, may need to add if this becomes a problem?
@@ -49401,7 +49400,7 @@ function point(index) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
-const c_bgColor = '#ededed';
+const c_bgColor = '#ddd';
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4BAnR":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -49598,7 +49597,6 @@ function drawGridRuler() {
         ctx.lineTo(i * verticalGridHeight, toY);
         ctx.stroke();
     }
-    console.log((0, _state.state).canvas.height, bufferCanvas.height);
     (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
 }
 
@@ -49621,7 +49619,7 @@ const cLocalizePoint = (sx, sy)=>{
     // x, y in [0, width, height resp.];
     const x = sx - (0, _state.state).canvas.getBoundingClientRect().x;
     const y = sy - (0, _state.state).canvas.getBoundingClientRect().y;
-    return new (0, _three.Vector2)(x, y);
+    return new (0, _three.Vector2)(x * 2, y * 2);
 };
 
 },{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8deBQ":[function(require,module,exports,__globalThis) {
@@ -51805,7 +51803,6 @@ function drawDrawPreview(from, to) {
         ctx.lineTo(w, h);
     } else {
         // 1st and 3rd quadrants
-        // ctx.fillStyle = c_bgColor;
         ctx.moveTo(0, h);
         ctx.lineTo(w, 0);
     }

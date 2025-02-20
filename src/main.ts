@@ -36,8 +36,6 @@ export function initCanvas(ref:HTMLCanvasElement) {
   if (context) {
     const devicePixelRatio = window.devicePixelRatio || 1;
 
-    console.log(canvas.clientHeight, canvas.clientWidth, canvas.offsetHeight, canvas.parentElement?.clientHeight)
-
     canvas.width = canvas.clientWidth * devicePixelRatio;
     canvas.height = canvas.clientHeight * devicePixelRatio;
 

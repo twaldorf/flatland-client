@@ -1,1 +1,1 @@
-export const c_bgColor = '#ededed'
+export const c_bgColor = '#ddd'

@@ -64,7 +64,5 @@ export function drawGridRuler() {
     ctx.stroke();
   }
 
-  console.log(state.canvas.height, bufferCanvas.height)
-
   state.context.drawImage(bufferCanvas, 0, 0);
 }

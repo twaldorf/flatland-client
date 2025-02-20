@@ -4,6 +4,7 @@ import { cf_canvas_to_inch } from "../settings/factors";
 import { rad } from "../settings/interface";
 import { redrawCanvas } from "./canvas";
 import { getBuffer } from "./getBuffer";
+import { c_bgColor } from "../../UI/colors/colors";
 
 
 export function drawDrawPreview(from: Vector2, to: Vector2): void {
@@ -40,7 +41,6 @@ export function drawDrawPreview(from: Vector2, to: Vector2): void {
     ctx.lineTo(w, h);
   } else {
     // 1st and 3rd quadrants
-    // ctx.fillStyle = c_bgColor;
     ctx.moveTo(0, h);
     ctx.lineTo(w, 0);
   }
