@@ -27,7 +27,7 @@ export function initCanvas(ref:HTMLCanvasElement) {
 
   context?.clearRect(0, 0, canvas.width, canvas.height);
 
-  var lastPoint = {x: 0, y: 0};
+  var lastPoint = { x: 0, y: 0 };
 
   initializeHotkeys();
   state.tool.initializeEvents();
@@ -36,12 +36,15 @@ export function initCanvas(ref:HTMLCanvasElement) {
   if (context) {
     const devicePixelRatio = window.devicePixelRatio || 1;
 
+    console.log(canvas.clientHeight, canvas.clientWidth, canvas.offsetHeight, canvas.parentElement?.clientHeight)
+
     canvas.width = canvas.clientWidth * devicePixelRatio;
     canvas.height = canvas.clientHeight * devicePixelRatio;
 
-    context.scale(devicePixelRatio, devicePixelRatio);
+    // scaling removed, may need to add if this becomes a problem?
     
     drawCanvasSetup();
+
   }
 
   return { canvasRef: state.canvas };

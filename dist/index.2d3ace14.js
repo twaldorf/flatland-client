@@ -18591,58 +18591,60 @@ const App = ()=>{
         }
     }, []);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
-        className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100",
+        className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2",
         children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "max-h-1/3",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
+                        fileName: "src/App.tsx",
+                        lineNumber: 23,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {
+                        activeTab: "untitled",
+                        tabs: [
+                            "untitled",
+                            "Shirt Block"
+                        ],
+                        onTabChange: function(tab) {
+                            throw new Error("Function not implemented.");
+                        }
+                    }, void 0, false, {
+                        fileName: "src/App.tsx",
+                        lineNumber: 25,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 23,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {
-                activeTab: "untitled",
-                tabs: [
-                    "untitled",
-                    "Shirt Block"
-                ],
-                onTabChange: function(tab) {
-                    throw new Error("Function not implemented.");
-                }
-            }, void 0, false, {
-                fileName: "src/App.tsx",
-                lineNumber: 25,
+                lineNumber: 22,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "grid grid-cols-2",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                        className: "h-full container",
-                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                            className: "bg-white h-full m-0 pt-2 px-3",
-                            children: [
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
-                                    fileName: "src/App.tsx",
-                                    lineNumber: 35,
-                                    columnNumber: 13
-                                }, undefined),
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
-                                    ref: canvasRef,
-                                    id: "canvas2d",
-                                    className: "w-full h-full col-1 mt-2 block rounded-xl"
-                                }, void 0, false, {
-                                    fileName: "src/App.tsx",
-                                    lineNumber: 37,
-                                    columnNumber: 9
-                                }, undefined)
-                            ]
-                        }, void 0, true, {
-                            fileName: "src/App.tsx",
-                            lineNumber: 33,
-                            columnNumber: 11
-                        }, undefined)
-                    }, void 0, false, {
+                        className: "container py-2 bg-white m-0 px-3 h-2/3",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 34,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
+                                ref: canvasRef,
+                                id: "canvas2d",
+                                className: "col-1 block rounded-md w-full h-full"
+                            }, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 36,
+                                columnNumber: 7
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 30,
+                        lineNumber: 32,
                         columnNumber: 6
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -18654,18 +18656,18 @@ const App = ()=>{
                             className: "w-1/1 h-100 col-2 block"
                         }, void 0, false, {
                             fileName: "src/App.tsx",
-                            lineNumber: 45,
+                            lineNumber: 42,
                             columnNumber: 7
                         }, undefined)
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 43,
+                        lineNumber: 40,
                         columnNumber: 6
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 28,
+                lineNumber: 30,
                 columnNumber: 7
             }, undefined)
         ]
@@ -18701,7 +18703,7 @@ var _pointer = require("./3D/events/pointer");
 var _primitives = require("./3D/geometry/primitives");
 var _hotkeys = require("./2D/hotkeys/hotkeys");
 var _pointerEvents = require("./2D/pointer/pointerEvents");
-var _canvas = require("./2D/canvas");
+var _canvas = require("./2D/rendering/canvas");
 var _protoXPBD = require("./3D/simulation/protoXPBD");
 var _factors = require("./2D/settings/factors");
 function initCanvas(ref) {
@@ -18721,9 +18723,10 @@ function initCanvas(ref) {
     (0, _pointerEvents.initializeCanvasEvents)(canvas);
     if (context) {
         const devicePixelRatio = window.devicePixelRatio || 1;
+        console.log(canvas.clientHeight, canvas.clientWidth, canvas.offsetHeight, canvas.parentElement?.clientHeight);
         canvas.width = canvas.clientWidth * devicePixelRatio;
         canvas.height = canvas.clientHeight * devicePixelRatio;
-        context.scale(devicePixelRatio, devicePixelRatio);
+        // scaling removed, may need to add if this becomes a problem?
         (0, _canvas.drawCanvasSetup)();
     }
     return {
@@ -18863,7 +18866,7 @@ function update() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","./State":"83rpN","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./util":"7wzGb","./3D/simulation/protoXPBD":"46Cm3","./Command":"efiIE","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./2D/settings/factors":"9qufK","./2D/canvas":"4a7yB"}],"ktPTu":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./State":"83rpN","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./util":"7wzGb","./3D/simulation/protoXPBD":"46Cm3","./Command":"efiIE","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./2D/settings/factors":"9qufK","./2D/rendering/canvas":"fjxS8"}],"ktPTu":[function(require,module,exports,__globalThis) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -48950,7 +48953,9 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathTool", ()=>PathTool);
 var _interface = require("../settings/interface");
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
+var _drawDrawPreview = require("../rendering/drawDrawPreview");
+var _drawSelectionMovePreview = require("../rendering/drawSelectionMovePreview");
 var _command = require("../../Command");
 var _pathToolMovePointCommand = require("../commands/PathToolMovePointCommand");
 var _cLocalizePoint = require("../pointer/cLocalizePoint");
@@ -49100,7 +49105,7 @@ class PathTool {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         switch(this.__state.type){
             case "moving":
-                (0, _canvas.drawSelectionMovePreview)(pos);
+                (0, _drawSelectionMovePreview.drawSelectionMovePreview)(pos);
                 break;
             case "selecting":
                 this.transition({
@@ -49121,7 +49126,7 @@ class PathTool {
                     const lastPointIndexWithinPath = (0, _state.state).c_paths[this.__currentPathIndex]?.length - 1;
                     const pointIndex = (0, _state.state).c_paths[this.__currentPathIndex][lastPointIndexWithinPath];
                     // console.log(lastPointIndexWithinPath, pointIndex);
-                    if ((0, _state.state).c_points[pointIndex]) (0, _canvas.drawDrawPreview)((0, _state.state).c_points[pointIndex], pos);
+                    if ((0, _state.state).c_points[pointIndex]) (0, _drawDrawPreview.drawDrawPreview)((0, _state.state).c_points[pointIndex], pos);
                 }
             case "idle":
                 if (Math.random() < .1) {
@@ -49214,7 +49219,7 @@ class PathTool {
     }
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../canvas":"4a7yB","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53"}],"dci9b":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr"}],"dci9b":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "rad", ()=>rad);
@@ -49225,251 +49230,6 @@ const rad = 4;
 const selectionRadius = 10;
 const rulerWidth = 10;
 const rulerHeight = 0;
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4a7yB":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawCanvasSetup", ()=>drawCanvasSetup);
-parcelHelpers.export(exports, "drawCanvasFromState", ()=>drawCanvasFromState);
-parcelHelpers.export(exports, "redrawCanvas", ()=>redrawCanvas);
-parcelHelpers.export(exports, "drawSelectionMovePreview", ()=>drawSelectionMovePreview);
-parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
-parcelHelpers.export(exports, "drawYRuler", ()=>drawYRuler);
-parcelHelpers.export(exports, "drawGridRuler", ()=>drawGridRuler);
-var _interface = require("./settings/interface");
-var _state = require("../State");
-var _factors = require("./settings/factors");
-var _colors = require("../UI/colors/colors");
-function drawCanvasSetup() {
-    (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
-    (0, _state.state).context.fillRect(0, 0, (0, _state.state).canvas.width, (0, _state.state).canvas.height);
-    drawCanvasFromState((0, _state.state));
-    drawYRuler();
-    drawGridRuler();
-}
-function drawCanvasFromState(state) {
-    erase();
-    drawPaths(state);
-    drawSelections();
-    drawPoints(state);
-// drawShapes();
-}
-function redrawCanvas() {
-    erase();
-    applyPoints();
-    applyPaths();
-    applyGridRuler();
-}
-function erase() {
-    (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
-    // Draw a background color rectangle from the start of the ruler to the bottom of the canvas
-    (0, _state.state).context.fillRect((0, _interface.rulerWidth), (0, _interface.rulerHeight), (0, _state.state).canvas.width, (0, _state.state).canvas.height);
-    // drawGridRuler();
-    applyGridRuler();
-}
-// Get or create and return a buffer bundle
-// A created buffer bundle has a 0 area canvas
-function getBuffer(buffer) {
-    // Get or create the canvas and context for the preview buffer
-    let bundle = (0, _state.state).c_buffers.get(buffer);
-    if (!bundle || !bundle.context || !bundle.canvas) {
-        const canvas = new OffscreenCanvas(0, 0);
-        const ctx = canvas.getContext('2d');
-        bundle = {
-            canvas,
-            context: ctx
-        };
-        (0, _state.state).c_buffers.set(buffer, bundle);
-    }
-    return bundle;
-}
-// Assuming only one active object, draw it
-// TODO: draw a tree of paths, or rather a 2d array of paths
-const drawPoints = (state)=>{
-    const { canvas, context } = getBuffer('points');
-    canvas.width = state.canvas.width;
-    canvas.height = state.canvas.height;
-    state.c_pointmap.forEach((e)=>{
-        context.fillStyle = 'white';
-        context.strokeStyle = 'black';
-        context.beginPath();
-        context.arc(e.x - (0, _interface.rad) / 2 + 2, e.y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
-        context.fill();
-        context.stroke();
-    });
-    state.context.drawImage(canvas, 0, 0);
-};
-function applyPoints() {
-    const obj = (0, _state.state).c_buffers.get('points');
-    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
-}
-function applyGridRuler() {
-    const obj = (0, _state.state).c_buffers.get('grid');
-    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
-}
-// Draw paths AND shapes
-const drawPaths = (state)=>{
-    const { canvas, context } = getBuffer('paths');
-    canvas.width = state.canvas.width;
-    canvas.height = state.canvas.height;
-    const _ = context;
-    // Make sure this is not a copy op
-    const paths = state.c_paths;
-    paths.forEach((points, i)=>{
-        // points is the array of point indices within state.c_points, i is the path index, not important
-        drawArrayOfPointIndices(points, context);
-    });
-    if (state.c_shapes.length > 0) // draw shapes
-    state.c_shapes.forEach((shapeArr)=>{
-        drawArrayOfPointIndices(shapeArr, context);
-        drawPolygonFromPointIndices(shapeArr, context);
-    });
-    state.context.drawImage(canvas, 0, 0);
-};
-function applyPaths() {
-    const obj = (0, _state.state).c_buffers.get('paths');
-    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
-}
-function drawPolygonFromPointIndices(points, context) {
-    const _ = context;
-    if (points.length > 0) {
-        _.beginPath();
-        _.fillStyle = '#B9C4EC';
-        _.strokeStyle = 'black';
-        const firstPoint = point(points[0]);
-        _.moveTo(firstPoint.x, firstPoint.y);
-        for(let i = 1; i < points.length; ++i){
-            const p = point(points[i]);
-            _.lineTo(p.x, p.y);
-        }
-        _.lineTo(firstPoint.x, firstPoint.y);
-        _.fill();
-        _.stroke();
-    }
-}
-function drawArrayOfPointIndices(points, context) {
-    const _ = context;
-    if (points.length > 0) {
-        _.beginPath();
-        _.strokeStyle = 'black';
-        const firstPoint = point(points[0]);
-        _.moveTo(firstPoint.x, firstPoint.y);
-        for(let i = 1; i < points.length; ++i){
-            _.lineTo(point(points[i]).x, point(points[i]).y);
-            _.moveTo(point(points[i]).x, point(points[i]).y);
-        }
-    }
-    _.stroke();
-}
-function point(index) {
-    return (0, _state.state).c_points[index];
-}
-const drawSelections = ()=>{
-    (0, _state.state).c_selected.map((index)=>{
-        (0, _state.state).context.fillStyle = 'black';
-        (0, _state.state).context.strokeStyle = 'black';
-        (0, _state.state).context.beginPath();
-        (0, _state.state).context.arc((0, _state.state).c_points[index].x - (0, _interface.rad) / 2 + 2, (0, _state.state).c_points[index].y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
-        (0, _state.state).context.fill();
-        (0, _state.state).context.stroke();
-    });
-};
-function drawSelectionMovePreview(pos) {
-    drawCanvasFromState((0, _state.state));
-    (0, _state.state).context.fillStyle = 'pink';
-    (0, _state.state).context.fillRect(pos.x - 5, pos.y - 5, 10, 10);
-}
-function drawDrawPreview(from, to) {
-    // Find the vertical and horizontal distances between the points
-    const h = Math.abs(from.y - to.y);
-    const w = Math.abs(from.x - to.x);
-    // Bail if the cursor is within the point icon
-    if (h * w < (0, _interface.rad)) return;
-    const bundle = getBuffer('preview');
-    const ctx = bundle.context;
-    const canvas = bundle.canvas;
-    // Prevent the canvas from getting smaller
-    canvas.height = canvas.height > h ? canvas.height : h + 10;
-    canvas.width = canvas.width > w ? canvas.width : w + 10;
-    const originX = from.x > to.x ? to.x : from.x;
-    const originY = from.y > to.y ? to.y : from.y;
-    // Clear the canvas
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    // 2nd and 4th quadrants
-    if (from.x > to.x && from.y > to.y || from.x < to.x && from.y < to.y) {
-        // ctx.fillStyle = c_bgColor;
-        ctx.moveTo(0, 0);
-        ctx.lineTo(w, h);
-    } else {
-        // 1st and 3rd quadrants
-        // ctx.fillStyle = c_bgColor;
-        ctx.moveTo(0, h);
-        ctx.lineTo(w, 0);
-    }
-    ctx.stroke();
-    ctx.fillText(`${Math.round(from.distanceTo(to)) / (0, _factors.cf_canvas_to_inch)}in`, w / 2 - 5, h / 2 - 5);
-    redrawCanvas();
-    (0, _state.state).context.drawImage(canvas, originX, originY);
-}
-function drawYRuler() {
-    const bundle = getBuffer('grid');
-    const ctx = bundle.context;
-    const bufferCanvas = bundle.canvas;
-    // Buffer
-    bufferCanvas.width = 10;
-    bufferCanvas.height = (0, _state.state).canvas.height;
-    ctx.lineWidth = 1;
-    // Draw inches
-    for(let i = 1; i < bufferCanvas.height; ++i){
-        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
-        ctx.lineTo(10, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
-        ctx.stroke();
-    }
-    // Draw inches
-    for(let i = 1; i < bufferCanvas.height; ++i){
-        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
-        ctx.lineTo(2.5, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
-        ctx.stroke();
-    }
-    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
-}
-function drawGridRuler() {
-    const bufferCanvas = document.createElement("canvas");
-    bufferCanvas.width = (0, _state.state).canvas.width;
-    bufferCanvas.height = (0, _state.state).canvas.height;
-    const ctx = bufferCanvas.getContext("2d");
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'white';
-    // Draw inches
-    for(let i = 25; i < bufferCanvas.height - 25; ++i){
-        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
-        ctx.lineTo(10, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
-        ctx.stroke();
-    }
-    // Draw inches
-    for(let i = 25; i < bufferCanvas.height - 25; ++i){
-        ctx.moveTo(i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor, 0);
-        ctx.lineTo(i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor, 25);
-        ctx.stroke();
-    }
-    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
-}
-
-},{"./settings/interface":"dci9b","../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./settings/factors":"9qufK","../UI/colors/colors":"eQ9g7"}],"9qufK":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
-parcelHelpers.export(exports, "SPEED", ()=>SPEED);
-const cf_canvas_to_inch = 25;
-const SPEED = 1;
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
-const c_bgColor = '#ededed';
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"efiIE":[function(require,module,exports,__globalThis) {
 // The Command interface and class is responsible for managing incoming user commands that affect state, with some exception (camera position)
@@ -49565,7 +49325,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolMovePointCommand", ()=>PathToolMovePointCommand);
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
 class PathToolMovePointCommand {
     constructor(indices, from, to){
         this.indices = indices;
@@ -49588,7 +49348,269 @@ class PathToolMovePointCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3rhkZ":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"fjxS8":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawCanvasSetup", ()=>drawCanvasSetup);
+parcelHelpers.export(exports, "drawCanvasFromState", ()=>drawCanvasFromState);
+parcelHelpers.export(exports, "redrawCanvas", ()=>redrawCanvas);
+parcelHelpers.export(exports, "point", ()=>point);
+var _interface = require("../settings/interface");
+var _state = require("../../State");
+var _colors = require("../../UI/colors/colors");
+var _drawPoints = require("./drawPoints");
+var _drawPaths = require("./drawPaths");
+var _drawSelections = require("./drawSelections");
+var _drawRulers = require("./drawRulers");
+function drawCanvasSetup() {
+    (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
+    (0, _state.state).context.fillRect(0, 0, (0, _state.state).canvas.width, (0, _state.state).canvas.height);
+    drawCanvasFromState((0, _state.state));
+    // drawYRuler();
+    (0, _drawRulers.drawGridRuler)();
+}
+function drawCanvasFromState(state) {
+    erase();
+    (0, _drawPaths.drawPaths)(state);
+    (0, _drawSelections.drawSelections)();
+    (0, _drawPoints.drawPoints)(state);
+// drawShapes();
+}
+function redrawCanvas() {
+    erase();
+    (0, _drawPoints.applyPoints)();
+    (0, _drawPaths.applyPaths)();
+    applyGridRuler();
+}
+function erase() {
+    (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
+    // Draw a background color rectangle from the start of the ruler to the bottom of the canvas
+    (0, _state.state).context.fillRect((0, _interface.rulerWidth), (0, _interface.rulerHeight), (0, _state.state).canvas.width, (0, _state.state).canvas.height);
+    // drawGridRuler();
+    applyGridRuler();
+}
+function applyGridRuler() {
+    const obj = (0, _state.state).c_buffers.get('grid');
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
+}
+function point(index) {
+    return (0, _state.state).c_points[index];
+}
+
+},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
+const c_bgColor = '#ededed';
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4BAnR":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawPoints", ()=>drawPoints);
+parcelHelpers.export(exports, "applyPoints", ()=>applyPoints);
+var _state = require("../../State");
+var _interface = require("../settings/interface");
+var _getBuffer = require("./getBuffer");
+const drawPoints = (state)=>{
+    const { canvas, context } = (0, _getBuffer.getBuffer)('points');
+    canvas.width = state.canvas.width;
+    canvas.height = state.canvas.height;
+    state.c_pointmap.forEach((e)=>{
+        context.fillStyle = 'white';
+        context.strokeStyle = 'black';
+        context.beginPath();
+        context.arc(e.x - (0, _interface.rad) / 2 + 2, e.y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
+        context.fill();
+        context.stroke();
+    });
+    state.context.drawImage(canvas, 0, 0);
+};
+function applyPoints() {
+    const obj = (0, _state.state).c_buffers.get('points');
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
+}
+
+},{"../../State":"83rpN","../settings/interface":"dci9b","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7bBl8":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// Get or create and return a buffer bundle
+// A created buffer bundle has a 0 area canvas
+parcelHelpers.export(exports, "getBuffer", ()=>getBuffer);
+var _state = require("../../State");
+function getBuffer(buffer) {
+    // Get or create the canvas and context for the preview buffer
+    let bundle = (0, _state.state).c_buffers.get(buffer);
+    if (!bundle || !bundle.context || !bundle.canvas) {
+        const canvas = new OffscreenCanvas(0, 0);
+        const ctx = canvas.getContext('2d');
+        bundle = {
+            canvas,
+            context: ctx
+        };
+        (0, _state.state).c_buffers.set(buffer, bundle);
+    }
+    return bundle;
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lgYVM":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawPaths", ()=>drawPaths);
+parcelHelpers.export(exports, "applyPaths", ()=>applyPaths);
+var _state = require("../../State");
+var _drawArrayOfPointIndices = require("./drawArrayOfPointIndices");
+var _drawPolygonFromPointIndices = require("./drawPolygonFromPointIndices");
+var _getBuffer = require("./getBuffer");
+const drawPaths = (state)=>{
+    const { canvas, context } = (0, _getBuffer.getBuffer)('paths');
+    canvas.width = state.canvas.width;
+    canvas.height = state.canvas.height;
+    const _ = context;
+    // Make sure this is not a copy op
+    const paths = state.c_paths;
+    paths.forEach((points, i)=>{
+        // points is the array of point indices within state.c_points, i is the path index, not important
+        (0, _drawArrayOfPointIndices.drawArrayOfPointIndices)(points, context);
+    });
+    if (state.c_shapes.length > 0) // draw shapes
+    state.c_shapes.forEach((shapeArr)=>{
+        (0, _drawArrayOfPointIndices.drawArrayOfPointIndices)(shapeArr, context);
+        (0, _drawPolygonFromPointIndices.drawPolygonFromPointIndices)(shapeArr, context);
+    });
+    state.context.drawImage(canvas, 0, 0);
+};
+function applyPaths() {
+    const obj = (0, _state.state).c_buffers.get('paths');
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
+}
+
+},{"../../State":"83rpN","./drawArrayOfPointIndices":"1cqZx","./drawPolygonFromPointIndices":"2ROJq","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1cqZx":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawArrayOfPointIndices", ()=>drawArrayOfPointIndices);
+var _canvas = require("./canvas");
+function drawArrayOfPointIndices(points, context) {
+    const _ = context;
+    if (points.length > 0) {
+        _.beginPath();
+        _.strokeStyle = 'black';
+        const firstPoint = (0, _canvas.point)(points[0]);
+        _.moveTo(firstPoint.x, firstPoint.y);
+        for(let i = 1; i < points.length; ++i){
+            _.lineTo((0, _canvas.point)(points[i]).x, (0, _canvas.point)(points[i]).y);
+            _.moveTo((0, _canvas.point)(points[i]).x, (0, _canvas.point)(points[i]).y);
+        }
+    }
+    _.stroke();
+}
+
+},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2ROJq":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawPolygonFromPointIndices", ()=>drawPolygonFromPointIndices);
+var _canvas = require("./canvas");
+function drawPolygonFromPointIndices(points, context) {
+    const _ = context;
+    if (points.length > 0) {
+        _.beginPath();
+        _.fillStyle = '#B9C4EC';
+        _.strokeStyle = 'black';
+        const firstPoint = (0, _canvas.point)(points[0]);
+        _.moveTo(firstPoint.x, firstPoint.y);
+        for(let i = 1; i < points.length; ++i){
+            const p = (0, _canvas.point)(points[i]);
+            _.lineTo(p.x, p.y);
+        }
+        _.lineTo(firstPoint.x, firstPoint.y);
+        _.fill();
+        _.stroke();
+    }
+}
+
+},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawSelections", ()=>drawSelections);
+var _state = require("../../State");
+var _interface = require("../settings/interface");
+const drawSelections = ()=>{
+    (0, _state.state).c_selected.map((index)=>{
+        (0, _state.state).context.fillStyle = 'black';
+        (0, _state.state).context.strokeStyle = 'black';
+        (0, _state.state).context.beginPath();
+        (0, _state.state).context.arc((0, _state.state).c_points[index].x - (0, _interface.rad) / 2 + 2, (0, _state.state).c_points[index].y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
+        (0, _state.state).context.fill();
+        (0, _state.state).context.stroke();
+    });
+};
+
+},{"../../State":"83rpN","../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h76tE":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawYRuler", ()=>drawYRuler);
+parcelHelpers.export(exports, "drawGridRuler", ()=>drawGridRuler);
+var _state = require("../../State");
+var _factors = require("../settings/factors");
+var _getBuffer = require("./getBuffer");
+function drawYRuler() {
+    const bundle = (0, _getBuffer.getBuffer)('grid');
+    const ctx = bundle.context;
+    const bufferCanvas = bundle.canvas;
+    // Buffer
+    bufferCanvas.width = 10;
+    bufferCanvas.height = (0, _state.state).canvas.height;
+    ctx.lineWidth = 1;
+    // Draw inches
+    for(let i = 1; i < bufferCanvas.height; ++i){
+        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
+        ctx.lineTo(10, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
+        ctx.stroke();
+    }
+    // Draw inches
+    for(let i = 1; i < bufferCanvas.height; ++i){
+        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
+        ctx.lineTo(2.5, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
+        ctx.stroke();
+    }
+    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
+}
+function drawGridRuler() {
+    const bundle = (0, _getBuffer.getBuffer)('grid');
+    const ctx = bundle.context;
+    const bufferCanvas = bundle.canvas;
+    bufferCanvas.width = (0, _state.state).canvas.width;
+    bufferCanvas.height = (0, _state.state).canvas.height;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'white';
+    // TODO: Center the start of the grid with an offset
+    const verticalGridHeight = (0, _factors.cf_canvas_to_inch) * 2;
+    const xMargin = verticalGridHeight;
+    const toX = Math.floor(bufferCanvas.width / verticalGridHeight) * verticalGridHeight;
+    const toY = Math.floor(bufferCanvas.height / verticalGridHeight) * verticalGridHeight - verticalGridHeight;
+    for(let i = 1; i < Math.floor(bufferCanvas.height / verticalGridHeight); ++i){
+        // Draw horizontal lines from top to bottom
+        ctx.moveTo(verticalGridHeight, i * verticalGridHeight);
+        ctx.lineTo(toX, i * verticalGridHeight);
+        ctx.stroke();
+    }
+    for(let i = 1; i < Math.floor(bufferCanvas.height / verticalGridHeight); ++i){
+        ctx.moveTo(i * verticalGridHeight, xMargin);
+        ctx.lineTo(i * verticalGridHeight, toY);
+        ctx.stroke();
+    }
+    console.log((0, _state.state).canvas.height, bufferCanvas.height);
+    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
+}
+
+},{"../../State":"83rpN","../settings/factors":"9qufK","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9qufK":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
+parcelHelpers.export(exports, "SPEED", ()=>SPEED);
+const cf_canvas_to_inch = 25;
+const SPEED = 1;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3rhkZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cLocalizePoint", ()=>cLocalizePoint);
@@ -49691,7 +49713,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolClosePathCommand", ()=>PathToolClosePathCommand);
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
 var _changeTool = require("../tools/changeTool");
 var _polygon = require("../../3D/geometry/polygon");
 class PathToolClosePathCommand {
@@ -49731,7 +49753,7 @@ class PathToolClosePathCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../tools/changeTool":"kXHtP","../../3D/geometry/polygon":"9OqtZ"}],"kXHtP":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../tools/changeTool":"kXHtP","../../3D/geometry/polygon":"9OqtZ","../rendering/canvas":"fjxS8"}],"kXHtP":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "changeTool", ()=>changeTool);
@@ -49902,7 +49924,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectToolMoveShapeCommand", ()=>SelectToolMoveShapeCommand);
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
 class SelectToolMoveShapeCommand {
     constructor(shapeIndex, from, to){
         this.shapeIndex = shapeIndex;
@@ -49932,7 +49954,7 @@ class SelectToolMoveShapeCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lpYSP":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"lpYSP":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Protected, only to be used by Command
@@ -49946,7 +49968,7 @@ parcelHelpers.export(exports, "__indexIsNotSelected", ()=>__indexIsNotSelected);
 parcelHelpers.export(exports, "checkPointOverlap", ()=>checkPointOverlap);
 parcelHelpers.export(exports, "checkPathOverlap", ()=>checkPathOverlap);
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
 var _interface = require("../settings/interface");
 function selectPoint(index) {
     if (!(0, _state.state).c_selected.includes(index)) {
@@ -49981,7 +50003,7 @@ function checkPathOverlap(v) {
     return true;
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"aHJgT":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
@@ -50008,7 +50030,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectToolPointCommand", ()=>SelectToolPointCommand);
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
 class SelectToolPointCommand {
     constructor(index){
         this.__index = index;
@@ -50022,12 +50044,12 @@ class SelectToolPointCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"35eIL":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"35eIL":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectToolDeselectAllCommand", ()=>SelectToolDeselectAllCommand);
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
 class SelectToolDeselectAllCommand {
     constructor(){
         this.old_selected = (0, _state.state).c_selected;
@@ -50041,7 +50063,7 @@ class SelectToolDeselectAllCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"l1Ff7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useAppState", ()=>useAppState);
@@ -51722,7 +51744,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
 class PathToolRemovePointCommand {
     constructor(pathIndex, pointIndex){
         this.pathIndex = pathIndex;
@@ -51749,7 +51771,63 @@ class PathToolRemovePointCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"aI2tH":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
+var _state = require("../../State");
+var _factors = require("../settings/factors");
+var _interface = require("../settings/interface");
+var _canvas = require("./canvas");
+var _getBuffer = require("./getBuffer");
+function drawDrawPreview(from, to) {
+    // Find the vertical and horizontal distances between the points
+    const h = Math.abs(from.y - to.y);
+    const w = Math.abs(from.x - to.x);
+    // Bail if the cursor is within the point icon
+    if (h * w < (0, _interface.rad)) return;
+    const bundle = (0, _getBuffer.getBuffer)('preview');
+    const ctx = bundle.context;
+    const canvas = bundle.canvas;
+    // Prevent the canvas from getting smaller
+    canvas.height = canvas.height > h ? canvas.height : h + 10;
+    canvas.width = canvas.width > w ? canvas.width : w + 10;
+    const originX = from.x > to.x ? to.x : from.x;
+    const originY = from.y > to.y ? to.y : from.y;
+    // Clear the canvas
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    // 2nd and 4th quadrants
+    if (from.x > to.x && from.y > to.y || from.x < to.x && from.y < to.y) {
+        // ctx.fillStyle = c_bgColor;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(w, h);
+    } else {
+        // 1st and 3rd quadrants
+        // ctx.fillStyle = c_bgColor;
+        ctx.moveTo(0, h);
+        ctx.lineTo(w, 0);
+    }
+    ctx.stroke();
+    ctx.fillText(`${Math.round(from.distanceTo(to)) / (0, _factors.cf_canvas_to_inch) / 2}in`, w / 2 - 5, h / 2 - 5);
+    (0, _canvas.redrawCanvas)();
+    (0, _state.state).context.drawImage(canvas, originX, originY);
+}
+
+},{"../../State":"83rpN","../settings/factors":"9qufK","../settings/interface":"dci9b","./canvas":"fjxS8","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jMLdr":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawSelectionMovePreview", ()=>drawSelectionMovePreview);
+var _state = require("../../State");
+var _canvas = require("./canvas");
+function drawSelectionMovePreview(pos) {
+    (0, _canvas.drawCanvasFromState)((0, _state.state));
+    (0, _state.state).context.fillStyle = 'pink';
+    (0, _state.state).context.fillRect(pos.x - 5, pos.y - 5, 10, 10);
+}
+
+},{"../../State":"83rpN","./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "onDoubleClick", ()=>onDoubleClick);
@@ -52164,7 +52242,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "DeleteCommand", ()=>DeleteCommand);
 var _state = require("../../State");
-var _canvas = require("../canvas");
+var _canvas = require("../rendering/canvas");
 class DeleteCommand {
     constructor(){
         this.deletedPoints = (0, _state.state).c_selected.map((index)=>({
@@ -52191,7 +52269,7 @@ class DeleteCommand {
     }
 }
 
-},{"../../State":"83rpN","../canvas":"4a7yB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"ghSIM":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
@@ -53039,7 +53117,7 @@ const Toolbar = ({})=>{
     _s();
     const selectedTool = (0, _store.useAppState)((state)=>state.selectedTool);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "bg-blue-400 p-2 rounded-md white flex flex-row",
+        className: "bg-blue-400 p-2 mb-2 rounded-md white flex flex-row",
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
             style: listStyle,
             className: "flex-row flex",

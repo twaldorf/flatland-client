@@ -33,27 +33,38 @@ export function drawYRuler() {
 }
 
 export function drawGridRuler() {
-  const bufferCanvas = document.createElement("canvas");
+  const bundle = getBuffer('grid');
+
+  const ctx = bundle.context;
+  const bufferCanvas = bundle.canvas;
+
   bufferCanvas.width = state.canvas.width;
   bufferCanvas.height = state.canvas.height;
-  const ctx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
 
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 2;
   ctx.strokeStyle = 'white';
 
-  // Draw inches
-  for (let i = 25; i < bufferCanvas.height - 25; ++i) {
-    ctx.moveTo(0, i * cf_canvas_to_inch * state.c_zoomfactor);
-    ctx.lineTo(10, i * cf_canvas_to_inch * state.c_zoomfactor);
+  // TODO: Center the start of the grid with an offset
+  const verticalGridHeight = cf_canvas_to_inch * 2;
+  const xMargin = verticalGridHeight;
+
+  const toX = Math.floor(bufferCanvas.width / verticalGridHeight) * verticalGridHeight;
+  const toY = Math.floor(bufferCanvas.height / verticalGridHeight) * verticalGridHeight - verticalGridHeight; 
+
+  for (let i = 1; i < Math.floor(bufferCanvas.height / verticalGridHeight); ++i) {
+    // Draw horizontal lines from top to bottom
+    ctx.moveTo(verticalGridHeight, i * verticalGridHeight);
+    ctx.lineTo(toX, i * verticalGridHeight);
     ctx.stroke();
   }
 
-  // Draw inches
-  for (let i = 25; i < bufferCanvas.height - 25; ++i) {
-    ctx.moveTo(i * cf_canvas_to_inch * .25 * state.c_zoomfactor, 0);
-    ctx.lineTo(i * cf_canvas_to_inch * .25 * state.c_zoomfactor, 25);
+  for (let i = 1; i < Math.floor(bufferCanvas.height / verticalGridHeight); ++i) {
+    ctx.moveTo(i * verticalGridHeight, xMargin);
+    ctx.lineTo(i * verticalGridHeight, toY);
     ctx.stroke();
   }
+
+  console.log(state.canvas.height, bufferCanvas.height)
 
   state.context.drawImage(bufferCanvas, 0, 0);
 }

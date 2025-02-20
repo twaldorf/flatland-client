@@ -8,7 +8,7 @@ export const Toolbar = ({}) => {
   const selectedTool = useAppState((state) => state.selectedTool);
 
   return (
-    <div className="bg-blue-400 p-2 rounded-md white flex flex-row">
+    <div className="bg-blue-400 p-2 mb-2 rounded-md white flex flex-row">
       <ul style={listStyle} className='flex-row flex'>
         <ToolIcon active={ selectedTool == 'select' ? true : false }></ToolIcon>
         <PathIcon active={ selectedTool == 'path' ? true : false }></PathIcon>

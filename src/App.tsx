@@ -18,25 +18,22 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100">
+    <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2">
+      <div className="max-h-1/3">
+        <Header></Header>
 
-      <Header></Header>
+        <Tabs activeTab={"untitled"} tabs={["untitled", "Shirt Block"]} onTabChange={function (tab: string): void {
+          throw new Error("Function not implemented.");
+        } }></Tabs>
+      </div>
 
-      <Tabs activeTab={"untitled"} tabs={["untitled", "Shirt Block"]} onTabChange={function (tab: string): void {
-        throw new Error("Function not implemented.");
-      } }></Tabs>
       <div className="grid grid-cols-2">
 
-  			<section className="h-full container">
+  			<section className="container py-2 bg-white m-0 px-3 h-2/3">
 
+          <Toolbar></Toolbar>
 
-          <div className="bg-white h-full m-0 pt-2 px-3">
-
-            <Toolbar></Toolbar>
-
-    				<canvas ref={canvasRef} id="canvas2d" className="w-full h-full col-1 mt-2 block rounded-xl"></canvas>
-
-          </div>
+  				<canvas ref={canvasRef} id="canvas2d" className="col-1 block rounded-md w-full h-full"></canvas>
 
   			</section>
 

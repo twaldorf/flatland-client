@@ -12,7 +12,7 @@ export function drawCanvasSetup() {
   state.context.fillStyle = c_bgColor;
   state.context.fillRect(0, 0, state.canvas.width, state.canvas.height);
   drawCanvasFromState(state);
-  drawYRuler();
+  // drawYRuler();
   drawGridRuler();
 }
 
