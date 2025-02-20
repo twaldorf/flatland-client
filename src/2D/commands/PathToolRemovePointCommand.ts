@@ -1,6 +1,6 @@
 import { Command } from "../../Command";
 import { state } from "../../State";
-import { drawCanvasFromState } from "../canvas";
+import { drawCanvasFromState } from "../rendering/canvas";
 
 export class PathToolRemovePointCommand implements Command {
   private pathIndex: number; // Index of the active path in c_paths

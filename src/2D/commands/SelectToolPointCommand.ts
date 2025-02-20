@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 import { Command } from "../../Command";
 import { state } from "../../State";
-import { drawCanvasFromState } from "../canvas";
+import { drawCanvasFromState } from "../rendering/canvas";
 
 export class SelectToolPointCommand implements Command {
   private __index:number;

@@ -1,7 +1,7 @@
 import { Vector2, Vector2Tuple } from "three";
 import { Command } from "../../Command";
 import { state } from "../../State";
-import { drawCanvasFromState } from "../canvas";
+import { drawCanvasFromState } from "../rendering/canvas";
 import { changeTool } from "../tools/changeTool";
 import { createPolygonPlane } from "../../3D/geometry/polygon";
 

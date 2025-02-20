@@ -1,6 +1,6 @@
 import { Vector2 } from "three";
 import { state } from "../../State";
-import { drawCanvasFromState } from "../canvas";
+import { drawCanvasFromState } from "../rendering/canvas";
 import { selectionRadius } from "../settings/interface";
 
 // Protected, only to be used by Command
