@@ -17,12 +17,13 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col">
+    <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100">
       <Header></Header>
       <Toolbar></Toolbar>
       <div className="grid grid-cols-2">
   			<div className="h-svh">
-  				<canvas ref={canvasRef} id="canvas2d" className="w-full h-full col-1 block"></canvas>
+          <h3>TabTitle</h3>
+  				<canvas ref={canvasRef} id="canvas2d" className="w-full h-full col-1 block rounded-xl"></canvas>
   			</div>
   			<div id="main" className="h-svh">
   				<canvas ref={threeRef} id="canvas3d-container" className="w-1/1 h-100 col-2 block"></canvas>

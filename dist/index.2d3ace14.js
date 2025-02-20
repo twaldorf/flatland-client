@@ -18590,7 +18590,7 @@ const App = ()=>{
         }
     }, []);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
-        className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col",
+        className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                 fileName: "src/App.tsx",
@@ -18607,16 +18607,25 @@ const App = ()=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "h-svh",
-                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
-                            ref: canvasRef,
-                            id: "canvas2d",
-                            className: "w-full h-full col-1 block"
-                        }, void 0, false, {
-                            fileName: "src/App.tsx",
-                            lineNumber: 25,
-                            columnNumber: 7
-                        }, undefined)
-                    }, void 0, false, {
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h3", {
+                                children: "TabTitle"
+                            }, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 25,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
+                                ref: canvasRef,
+                                id: "canvas2d",
+                                className: "w-full h-full col-1 block rounded-xl"
+                            }, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 26,
+                                columnNumber: 7
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
                         fileName: "src/App.tsx",
                         lineNumber: 24,
                         columnNumber: 6
@@ -18630,12 +18639,12 @@ const App = ()=>{
                             className: "w-1/1 h-100 col-2 block"
                         }, void 0, false, {
                             fileName: "src/App.tsx",
-                            lineNumber: 28,
+                            lineNumber: 29,
                             columnNumber: 7
                         }, undefined)
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 27,
+                        lineNumber: 28,
                         columnNumber: 6
                     }, undefined)
                 ]
@@ -64951,13 +64960,49 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Header", ()=>Header);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _menuItem = require("./Header/MenuItem");
+var _menuItemDefault = parcelHelpers.interopDefault(_menuItem);
 const Header = ()=>{
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
-        className: "text-2xl border-b p-3",
-        children: "flatland studio"
-    }, void 0, false, {
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("header", {
+        className: "p-3 flex flex-row items-center",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
+                className: "text-2xl bg-stone-900 text-white inline-block px-2",
+                children: "Flatland Studio"
+            }, void 0, false, {
+                fileName: "src/UI/sections/Header.tsx",
+                lineNumber: 6,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _menuItemDefault.default), {
+                label: "File",
+                options: [
+                    {
+                        name: "Recent >",
+                        action: ()=>console.log("Zoom In")
+                    },
+                    {
+                        name: "New",
+                        action: ()=>console.log("Zoom Out")
+                    },
+                    {
+                        name: "Open",
+                        action: ()=>console.log("Zoom Out")
+                    },
+                    {
+                        name: "Save",
+                        action: ()=>console.log("Zoom Out")
+                    }
+                ]
+            }, void 0, false, {
+                fileName: "src/UI/sections/Header.tsx",
+                lineNumber: 7,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
         fileName: "src/UI/sections/Header.tsx",
-        lineNumber: 3,
+        lineNumber: 5,
         columnNumber: 5
     }, undefined);
 };
@@ -64970,6 +65015,61 @@ $RefreshReg$(_c, "Header");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./Header/MenuItem":"6dTG8"}],"6dTG8":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$122f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$122f.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _s = $RefreshSig$();
+const MenuItem = ({ label, options })=>{
+    _s();
+    const [open, setOpen] = (0, _react.useState)(false);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "relative bg-white py-1 px-2 cursor-pointer text-stone-800 hover:bg-blue-200",
+        onMouseEnter: ()=>setOpen(true),
+        onMouseLeave: ()=>setOpen(false),
+        children: [
+            label,
+            open && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+                className: "absolute left-0 top-full bg-gray-800 text-white shadow-lg rounded w-40 z-50",
+                children: options.map((option, index)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+                        onClick: option.action,
+                        className: "px-4 py-2 hover:bg-blue-600 cursor-pointer",
+                        children: option.name
+                    }, index, false, {
+                        fileName: "src/UI/sections/Header/MenuItem.tsx",
+                        lineNumber: 21,
+                        columnNumber: 13
+                    }, undefined))
+            }, void 0, false, {
+                fileName: "src/UI/sections/Header/MenuItem.tsx",
+                lineNumber: 19,
+                columnNumber: 9
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/sections/Header/MenuItem.tsx",
+        lineNumber: 12,
+        columnNumber: 5
+    }, undefined);
+};
+_s(MenuItem, "xG1TONbKtDWtdOTrXaTAsNhPg/Q=");
+_c = MenuItem;
+exports.default = MenuItem;
+var _c;
+$RefreshReg$(_c, "MenuItem");
+
+  $parcel$ReactRefreshHelpers$122f.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map
