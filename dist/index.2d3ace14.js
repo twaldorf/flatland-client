@@ -50878,7 +50878,8 @@ const createPolygonPlane = (path)=>{
     (0, _state.state).particles[0].velocity = new _three.Vector3(-10, 10, 100);
     // Generate constraints from points
     // Use adjacency instead of just next point
-    for(let i = 0; i < indices.length / 3; i++){
+    for(let i = 0; i < indices.length / 5; i++){
+        // build this into an adjacency matrix to reduce redundancy
         const p1 = new _three.Vector3(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
         const p2 = new _three.Vector3(positions[i * 3 + 3], positions[i * 3 + 4], positions[i * 3 + 5]);
         const p3 = new _three.Vector3(positions[i * 3 + 6], positions[i * 3 + 7], positions[i * 3 + 8]);

@@ -69,7 +69,8 @@ export const createPolygonPlane = (path:number[]) => {
 
   // Generate constraints from points
   // Use adjacency instead of just next point
-  for (let i = 0; i < indices.length / 3; i++) {
+  for (let i = 0; i < indices.length / 5; i++) {
+    // build this into an adjacency matrix to reduce redundancy
     const p1 = new THREE.Vector3(
       positions[i * 3], 
       positions[i * 3 + 1], 
