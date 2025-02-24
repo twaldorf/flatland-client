@@ -33,7 +33,6 @@ export const drawCursorPreview = (pointer:unknown) => {
 
 export function applyCursorPreview() {
   const obj = state.c_buffers.get('cursor_preview');
-  console.log(state.pointer.x)
   if (obj) state.context.drawImage(obj.canvas, state.pointer.x + 10, state.pointer.y - 20);
 
 }

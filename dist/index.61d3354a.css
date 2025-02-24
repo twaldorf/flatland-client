@@ -820,10 +820,6 @@
     border-radius: .25rem;
   }
 
-  .rounded-full {
-    border-radius: 3.40282e38px;
-  }
-
   .rounded-md {
     border-radius: var(--radius-md);
   }

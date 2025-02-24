@@ -108,9 +108,10 @@ export class PathTool implements ToolBase {
   public removePointFromPath( i:number, pi:number ):void {
     const pointInPathIndex = state.c_paths[ pi ].findIndex( (c) => c == i );
 
-    // TODO: Shouldn't be splicing from global point array
-    state.c_points.splice( i, 1 );
-    state.c_paths[ pi ].splice( pointInPathIndex, 1 );
+    // TODO: Shouldn't be splicing from global point array, this majorly fucks everything up
+    // Use active point map instead
+    // state.c_points.splice( i, 1 );
+    // state.c_paths[ pi ].splice( pointInPathIndex, 1 );
     console.log(state.c_pointmap.delete(i));
     drawCanvasFromState(state);
   }
@@ -185,9 +186,11 @@ export class PathTool implements ToolBase {
           console.log(this.__currentPathIndex)
           pushCommand( new PathToolCommand(this, pos) );
           this.transition( {
-            type: 'drawing', 
-            currentPathIndex: this.__currentPathIndex 
-          });
+            type: 'drawing',
+            currentPathIndex: this.__currentPathIndex
+          } );
+          // Clear selected shapes, the incoming path is FIGURATIVELY the 'active' path
+          state.c_selected_shapes = [];
         }
         break;
     }

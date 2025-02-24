@@ -7,6 +7,7 @@ import { DistanceConstraint } from "./3D/simulation/xpbdTypes";
 export const state:State = {
   pointer: new Vector2,
   shiftDown: false,
+  pointerDown: false,
   
   scene: new Scene,
   camera: new Camera,
@@ -38,7 +39,6 @@ export const state:State = {
   c_preview_canvas: null,
   c_buffers: new Map<BufferType, BufferBundle>,
   canvas: undefined,
-  pointerDown: false,
   tool: new PathTool(),
   c_points: [],
   c_pointmap: new Map(),

@@ -1,7 +1,8 @@
 import { state } from "../../State";
 import { State } from "../../types";
+import { getShapeBoundingRect } from "../geometry/boundingBox";
 import { drawArrayOfPointIndices } from "./drawArrayOfPointIndices";
-import { drawPolygonFromPointIndices } from "./drawPolygonFromPointIndices";
+import { drawPolygonFromOffsetPointIndices, drawPolygonFromPointIndices } from "./drawPolygonFromPointIndices";
 import { getBuffer } from "./getBuffer";
 
 // Draw paths AND shapes
@@ -24,13 +25,22 @@ export const drawPaths = (state: State) => {
   if (state.c_shapes.length > 0) {
     // draw shapes
     state.c_shapes.forEach((shapeArr) => {
-      drawArrayOfPointIndices(shapeArr, context);
-      drawPolygonFromPointIndices(shapeArr, context);
+      drawShape(shapeArr,context) 
     });
   }
 
   state.context.drawImage(canvas, 0, 0);
 };
+
+export function drawShape(shapeArr:number[], context:OffscreenCanvasRenderingContext2D) {
+  drawArrayOfPointIndices(shapeArr, context);
+  drawPolygonFromPointIndices(shapeArr, context);
+}
+export function drawShapeNormalized(shapeArr:number[], context:OffscreenCanvasRenderingContext2D) {
+  const box = getShapeBoundingRect(shapeArr);
+  drawPolygonFromOffsetPointIndices(shapeArr, -box.x0, -box.y0, context);
+}
+
 export function applyPaths() {
   const obj = state.c_buffers.get('paths');
   if (obj) state.context.drawImage(obj.canvas, 0, 0);

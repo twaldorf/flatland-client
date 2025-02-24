@@ -12,7 +12,6 @@ export interface State {
   testObject: unknown;
 
   // ## State shared between editor and canvas
-  pattern: Pattern;
   pointerDown: boolean;
   pointer: THREE.Vector2;
   shiftDown: boolean;
@@ -59,6 +58,7 @@ export interface State {
   cSelecting: boolean;
 
   // Store the pending selection for execution on mouseUp
+  // TODO: deprecated ?
   pendingSelection: Command;
 
   // All points on the canvas
@@ -104,7 +104,7 @@ export interface BufferBundle {
   context: OffscreenCanvasRenderingContext2D;
 }
 
-export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" | "cursor_preview";
+export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" | "cursor_preview" | "shape_preview";
 
 export interface ToolBase {
   name: string;

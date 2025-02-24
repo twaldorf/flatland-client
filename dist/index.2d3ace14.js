@@ -48909,6 +48909,7 @@ var _pathTool = require("./2D/tools/PathTool");
 const state = {
     pointer: new (0, _three.Vector2),
     shiftDown: false,
+    pointerDown: false,
     scene: new (0, _three.Scene),
     camera: new (0, _three.Camera),
     camera_group: new (0, _three.Group),
@@ -48936,7 +48937,6 @@ const state = {
     c_preview_canvas: null,
     c_buffers: new Map,
     canvas: undefined,
-    pointerDown: false,
     tool: new (0, _pathTool.PathTool)(),
     c_points: [],
     c_pointmap: new Map(),
@@ -49038,9 +49038,10 @@ class PathTool {
     // Protected, to be used by a Command
     removePointFromPath(i, pi) {
         const pointInPathIndex = (0, _state.state).c_paths[pi].findIndex((c)=>c == i);
-        // TODO: Shouldn't be splicing from global point array
-        (0, _state.state).c_points.splice(i, 1);
-        (0, _state.state).c_paths[pi].splice(pointInPathIndex, 1);
+        // TODO: Shouldn't be splicing from global point array, this majorly fucks everything up
+        // Use active point map instead
+        // state.c_points.splice( i, 1 );
+        // state.c_paths[ pi ].splice( pointInPathIndex, 1 );
         console.log((0, _state.state).c_pointmap.delete(i));
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
@@ -49101,6 +49102,8 @@ class PathTool {
                         type: 'drawing',
                         currentPathIndex: this.__currentPathIndex
                     });
+                    // Clear selected shapes, the incoming path is FIGURATIVELY the 'active' path
+                    (0, _state.state).c_selected_shapes = [];
                 }
                 break;
         }
@@ -49392,6 +49395,7 @@ function redrawCanvas() {
     applyGridRuler();
     (0, _drawPoints.applyPoints)();
     (0, _drawPaths.applyPaths)();
+    // applyShapes();
     (0, _drawCursorPreview.applyCursorPreview)();
 }
 function erase() {
@@ -49496,8 +49500,11 @@ function getBuffer(buffer) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawPaths", ()=>drawPaths);
+parcelHelpers.export(exports, "drawShape", ()=>drawShape);
+parcelHelpers.export(exports, "drawShapeNormalized", ()=>drawShapeNormalized);
 parcelHelpers.export(exports, "applyPaths", ()=>applyPaths);
 var _state = require("../../State");
+var _boundingBox = require("../geometry/boundingBox");
 var _drawArrayOfPointIndices = require("./drawArrayOfPointIndices");
 var _drawPolygonFromPointIndices = require("./drawPolygonFromPointIndices");
 var _getBuffer = require("./getBuffer");
@@ -49514,17 +49521,24 @@ const drawPaths = (state)=>{
     });
     if (state.c_shapes.length > 0) // draw shapes
     state.c_shapes.forEach((shapeArr)=>{
-        (0, _drawArrayOfPointIndices.drawArrayOfPointIndices)(shapeArr, context);
-        (0, _drawPolygonFromPointIndices.drawPolygonFromPointIndices)(shapeArr, context);
+        drawShape(shapeArr, context);
     });
     state.context.drawImage(canvas, 0, 0);
 };
+function drawShape(shapeArr, context) {
+    (0, _drawArrayOfPointIndices.drawArrayOfPointIndices)(shapeArr, context);
+    (0, _drawPolygonFromPointIndices.drawPolygonFromPointIndices)(shapeArr, context);
+}
+function drawShapeNormalized(shapeArr, context) {
+    const box = (0, _boundingBox.getShapeBoundingRect)(shapeArr);
+    (0, _drawPolygonFromPointIndices.drawPolygonFromOffsetPointIndices)(shapeArr, -box.x0, -box.y0, context);
+}
 function applyPaths() {
     const obj = (0, _state.state).c_buffers.get('paths');
     if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
 
-},{"../../State":"83rpN","./drawArrayOfPointIndices":"1cqZx","./drawPolygonFromPointIndices":"2ROJq","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1cqZx":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","./drawArrayOfPointIndices":"1cqZx","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawPolygonFromPointIndices":"2ROJq","../geometry/boundingBox":"3SCvR"}],"1cqZx":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawArrayOfPointIndices", ()=>drawArrayOfPointIndices);
@@ -49548,6 +49562,7 @@ function drawArrayOfPointIndices(points, context) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawPolygonFromPointIndices", ()=>drawPolygonFromPointIndices);
+parcelHelpers.export(exports, "drawPolygonFromOffsetPointIndices", ()=>drawPolygonFromOffsetPointIndices);
 var _canvas = require("./canvas");
 function drawPolygonFromPointIndices(points, context) {
     const _ = context;
@@ -49566,8 +49581,62 @@ function drawPolygonFromPointIndices(points, context) {
         _.stroke();
     }
 }
+function drawPolygonFromOffsetPointIndices(points, xoffset, yoffset, context) {
+    const _ = context;
+    if (points.length > 0) {
+        _.beginPath();
+        _.fillStyle = '#B9C4EC';
+        _.strokeStyle = 'black';
+        const firstPoint = (0, _canvas.point)(points[0]);
+        _.moveTo(firstPoint.x + xoffset, firstPoint.y + yoffset);
+        for(let i = 1; i < points.length; ++i){
+            const p = (0, _canvas.point)(points[i]);
+            _.lineTo(p.x + xoffset, p.y + yoffset);
+        }
+        _.lineTo(firstPoint.x + xoffset, firstPoint.y + yoffset);
+        _.fill();
+        _.stroke();
+    }
+}
 
-},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
+},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3SCvR":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// Given an array of point indices which make up a shape,
+// Return a bounding rect within the coordinate space (i.e. not normalized)
+// In the form of x0, y0: upper left and x1, y1: bottom right
+parcelHelpers.export(exports, "getShapeBoundingRect", ()=>getShapeBoundingRect);
+// Given an array of point indices making up a shape (where the points are in state.c_points:number[]),
+// return an object containing the width and height of the shape
+parcelHelpers.export(exports, "getShapeDimensions", ()=>getShapeDimensions);
+var _state = require("../../State");
+function getShapeBoundingRect(shapeArr) {
+    if (shapeArr.length === 0) throw new Error("Shape array is empty.");
+    const points = shapeArr.map((index)=>(0, _state.state).c_points[index]);
+    if (points.some((p)=>!p)) throw new Error("Invalid point index in shape.");
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const point of points)if (point) {
+        x0 = Math.min(x0, point.x);
+        y0 = Math.min(y0, point.y);
+        x1 = Math.max(x1, point.x);
+        y1 = Math.max(y1, point.y);
+    }
+    return {
+        x0,
+        y0,
+        x1,
+        y1
+    };
+}
+function getShapeDimensions(shapeArr) {
+    const { x0, y0, x1, y1 } = getShapeBoundingRect(shapeArr);
+    return {
+        width: x1 - x0,
+        height: y1 - y0
+    };
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawSelections", ()=>drawSelections);
@@ -49678,7 +49747,6 @@ const drawCursorPreview = (pointer)=>{
 };
 function applyCursorPreview() {
     const obj = (0, _state.state).c_buffers.get('cursor_preview');
-    console.log((0, _state.state).pointer.x);
     if (obj) (0, _state.state).context.drawImage(obj.canvas, (0, _state.state).pointer.x + 10, (0, _state.state).pointer.y - 20);
 }
 
@@ -49887,6 +49955,8 @@ var _selectToolMoveShapeCommand = require("../commands/SelectToolMoveShapeComman
 var _common = require("./common");
 var _selectToolPointCommand = require("../commands/SelectToolPointCommand");
 var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
+var _canvas = require("../rendering/canvas");
+var _drawSelectionMovePreview = require("../rendering/drawSelectionMovePreview");
 class SelectTool {
     constructor(){
         // Tool state object stores tool mechanical state
@@ -49922,6 +49992,7 @@ class SelectTool {
         const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
         const hitIndex = (0, _common.checkPointOverlap)(clickPos);
+        (0, _state.state).pointerDown = true;
         switch(this.__state.type){
             case "idle":
                 if (selectedShapeIndex > -1) {
@@ -49967,17 +50038,27 @@ class SelectTool {
         return value;
     }
     onMouseMove(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         switch(this.__state.type){
+            case 'moving':
+                (0, _canvas.redrawCanvas)();
+                (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(pos);
+                break;
             case 'selecting':
-                this.transition({
-                    type: 'moving',
-                    selectedShapeIndex: this.__state.selectedShapeIndex,
-                    startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
-                });
+                if ((0, _state.state).pointerDown == true) {
+                    (0, _state.state).c_move_from = pos;
+                    this.transition({
+                        type: 'moving',
+                        selectedShapeIndex: this.__state.selectedShapeIndex,
+                        startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
+                    });
+                    (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(pos);
+                }
                 break;
         }
     }
     onMouseUp(e) {
+        (0, _state.state).pointerDown = false;
         switch(this.__state.type){
             case "moving":
                 const endPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
@@ -49994,7 +50075,7 @@ class SelectTool {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL"}],"aOEKs":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/drawSelectionMovePreview":"jMLdr","../rendering/canvas":"fjxS8"}],"aOEKs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -50161,7 +50242,45 @@ class SelectToolDeselectAllCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"l1Ff7":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"jMLdr":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawSelectionMovePreview", ()=>drawSelectionMovePreview);
+parcelHelpers.export(exports, "drawShapeSelectionMovePreview", ()=>drawShapeSelectionMovePreview);
+parcelHelpers.export(exports, "applyShapeSelectionMovePreview", ()=>applyShapeSelectionMovePreview);
+var _state = require("../../State");
+var _canvas = require("./canvas");
+var _getBuffer = require("./getBuffer");
+var _drawPaths = require("./drawPaths");
+var _boundingBox = require("../geometry/boundingBox");
+function drawSelectionMovePreview(pos) {
+    (0, _canvas.redrawCanvas)();
+    (0, _state.state).context.fillStyle = 'pink';
+    (0, _state.state).context.fillRect(pos.x - 5, pos.y - 5, 10, 10);
+}
+function drawShapeSelectionMovePreview(pos) {
+    const { canvas, context } = (0, _getBuffer.getBuffer)('shape_preview');
+    const dif = (0, _state.state).c_move_from.clone().sub(pos);
+    const shapesArr = (0, _state.state).c_selected_shapes.map((i)=>(0, _state.state).c_shapes[i]).flat(2);
+    const dim = (0, _boundingBox.getShapeDimensions)(shapesArr);
+    const box = (0, _boundingBox.getShapeBoundingRect)(shapesArr);
+    canvas.width = dim.width;
+    canvas.height = dim.height;
+    (0, _state.state).c_selected_shapes.forEach((shapeIndex)=>{
+        // context.fillStyle = 'pink';
+        // context.fillRect(0,0, dim.width, dim.height); 
+        (0, _drawPaths.drawShapeNormalized)((0, _state.state).c_shapes[shapeIndex], context);
+    });
+    (0, _state.state).context.drawImage(canvas, pos.x - (pos.x - box.x0) - dif.x, pos.y - (pos.y - box.y0) - dif.y);
+}
+function applyShapeSelectionMovePreview(pos) {
+    const { canvas, context } = (0, _getBuffer.getBuffer)('shape_preview');
+    const shapesArr = (0, _state.state).c_selected_shapes.map((i)=>(0, _state.state).c_shapes[i]).flat(2);
+    const box = (0, _boundingBox.getShapeBoundingRect)(shapesArr);
+    if (canvas) (0, _state.state).context.drawImage(canvas, pos.x - (pos.x - box.x0), pos.y - (pos.y - box.y0));
+}
+
+},{"../../State":"83rpN","./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./getBuffer":"7bBl8","../geometry/boundingBox":"3SCvR","./drawPaths":"lgYVM"}],"l1Ff7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useAppState", ()=>useAppState);
@@ -51922,19 +52041,7 @@ function drawDrawPreview(from, to) {
     (0, _state.state).context.drawImage(canvas, originX, originY);
 }
 
-},{"../../State":"83rpN","../settings/factors":"9qufK","../settings/interface":"dci9b","./canvas":"fjxS8","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jMLdr":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawSelectionMovePreview", ()=>drawSelectionMovePreview);
-var _state = require("../../State");
-var _canvas = require("./canvas");
-function drawSelectionMovePreview(pos) {
-    (0, _canvas.drawCanvasFromState)((0, _state.state));
-    (0, _state.state).context.fillStyle = 'pink';
-    (0, _state.state).context.fillRect(pos.x - 5, pos.y - 5, 10, 10);
-}
-
-},{"../../State":"83rpN","./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../settings/factors":"9qufK","../settings/interface":"dci9b","./canvas":"fjxS8","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Pointer Events for 3D canvas
@@ -65363,7 +65470,7 @@ const UserIcon = ({ user, onLogin, onLogout })=>{
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("img", {
                         src: user.avatarUrl,
                         alt: "User avatar",
-                        className: "w-8 h-8 rounded-full border border-gray-500"
+                        className: "w-8 h-8 border border-gray-500"
                     }, void 0, false, {
                         fileName: "src/UI/sections/Header/UserIcon.tsx",
                         lineNumber: 24,
@@ -65384,7 +65491,7 @@ const UserIcon = ({ user, onLogin, onLogout })=>{
                 columnNumber: 9
             }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                 onClick: onLogin,
-                className: "px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700",
+                className: "px-4 py-2 text-white bg-blue-600 hover:bg-blue-700",
                 children: "Log In"
             }, void 0, false, {
                 fileName: "src/UI/sections/Header/UserIcon.tsx",
@@ -65392,7 +65499,7 @@ const UserIcon = ({ user, onLogin, onLogout })=>{
                 columnNumber: 9
             }, undefined),
             dropdownOpen && user && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-                className: "absolute right-0 mt-2 bg-gray-800 text-white shadow-lg rounded w-32 z-50",
+                className: "absolute right-0 mt-2 bg-gray-800 text-white shadow-lg w-32 z-50",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
                         className: "px-4 py-2 hover:bg-gray-700 cursor-pointer",

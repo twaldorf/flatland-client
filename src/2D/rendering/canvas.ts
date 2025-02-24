@@ -31,6 +31,7 @@ export function redrawCanvas():void {
   applyGridRuler();
   applyPoints();
   applyPaths();
+  // applyShapes();
   applyCursorPreview();
 }
 

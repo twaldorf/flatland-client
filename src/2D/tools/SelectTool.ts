@@ -10,11 +10,13 @@ import { checkPointOverlap } from "./common";
 import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
 import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
 import { redrawCanvas } from "../rendering/canvas";
+import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
 
 export type SelectToolState = 
   | { type: "idle" }
   | { type: "hovering"; hoveredIndex: number }
   | { type: "moving"; selectedShapeIndex: number; startPos: Vector2 }
+  | { type: "mousedown"; mousePosition: Vector2 }
   | { type: "selecting"; selectedShapeIndex: number }
   | { type: "selecting_points"; selectedPointIndices: number[] }
 
@@ -58,6 +60,7 @@ export class SelectTool implements ToolBase {
     const clickPos = cLocalizePoint(e.clientX, e.clientY);
     const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
     const hitIndex = checkPointOverlap(clickPos);
+    state.pointerDown = true;
 
     switch (this.__state.type) {
       case "idle":
@@ -81,7 +84,7 @@ export class SelectTool implements ToolBase {
         if (state.shiftDown) {
           if ( selectedShapeIndex > -1 ) {
             pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
-          } 
+          }
         }
         break;
       
@@ -117,20 +120,30 @@ export class SelectTool implements ToolBase {
   }
 
   private onMouseMove(e: MouseEvent) {
+    const pos = cLocalizePoint(e.clientX, e.clientY);
     switch (this.__state.type) {
+
+      case 'moving':
+        redrawCanvas();
+        drawShapeSelectionMovePreview(pos); 
+        break;
       
       case 'selecting':
-        this.transition({
-          type: 'moving',
-          selectedShapeIndex: this.__state.selectedShapeIndex,
-          startPos: cLocalizePoint(e.clientX, e.clientY)
-        });
+        if (state.pointerDown == true) {
+          state.c_move_from = pos;
+          this.transition({
+            type: 'moving',
+            selectedShapeIndex: this.__state.selectedShapeIndex,
+            startPos: cLocalizePoint(e.clientX, e.clientY)
+          });
+          drawShapeSelectionMovePreview(pos);
+        };
         break;
-
     }
   }
 
   private onMouseUp(e: MouseEvent) {
+    state.pointerDown = false;
     switch (this.__state.type) {
       case "moving":
         const endPos = cLocalizePoint(e.clientX, e.clientY);
