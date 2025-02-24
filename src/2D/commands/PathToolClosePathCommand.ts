@@ -4,6 +4,7 @@ import { state } from "../../State";
 import { drawCanvasFromState } from "../rendering/canvas";
 import { changeTool } from "../tools/changeTool";
 import { createPolygonPlane } from "../../3D/geometry/polygon";
+import { useAppState } from "../../UI/store";
 
 export class PathToolClosePathCommand implements Command {
   private path: number[]; // This is the path without the closing point
@@ -26,7 +27,13 @@ export class PathToolClosePathCommand implements Command {
     state.c_paths[ state.c_activePath ].push(this.path[0]);
 
     // Save shape and remove shape from paths list
-    this.shapeIndex = state.c_shapes.push( state.c_paths.splice( state.c_activePath, 1 )[0] );
+    this.shapeIndex = state.c_shapes.push( state.c_paths.splice( state.c_activePath, 1 )[0] ) - 1;
+
+    // set active shape to the completed shape
+    state.c_selected_shapes = [ this.shapeIndex ];
+
+    // Update UI pieces list
+    useAppState.getState().addPiece({ name: "piece", shapeIndex: this.shapeIndex });
 
     // Store index
     this.pathIndex = state.c_activePath;

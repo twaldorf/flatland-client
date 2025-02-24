@@ -1,6 +1,6 @@
 import { Face, Intersection, Mesh, Object3D } from "three";
 import { Command } from "../../Command";
-import { material_selected } from "../../Materials";
+import { material_selected } from "../Materials";
 import { state } from "../../State";
 
 export interface FaceSelectionBundle {

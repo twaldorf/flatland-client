@@ -4,6 +4,7 @@ import { initScene, initCanvas } from "./main";
 import { Toolbar } from "./UI/tools/Toolbar";
 import { Header } from "./UI/sections/Header";
 import { Tabs } from "./UI/sections/Workspace/Tabs";
+import { Pieces } from "./UI/inventory/Pieces";
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 
 const App: React.FC = () => {
@@ -38,7 +39,7 @@ const App: React.FC = () => {
   			</section>
 
   			<section id="main" className="h-svh">
-          
+          <Pieces></Pieces>
   				<canvas ref={threeRef} id="canvas3d-container" className="w-1/1 h-100 col-2 block"></canvas>
 
   			</section>

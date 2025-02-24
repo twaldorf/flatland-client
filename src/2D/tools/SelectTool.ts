@@ -9,6 +9,7 @@ import { SelectToolMoveShapeCommand } from "../commands/SelectToolMoveShapeComma
 import { checkPointOverlap } from "./common";
 import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
 import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
+import { redrawCanvas } from "../rendering/canvas";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -140,5 +141,9 @@ export class SelectTool implements ToolBase {
           type: 'idle'
         });
     }
+  }
+
+  public get state():SelectToolState {
+    return this.__state;
   }
 }

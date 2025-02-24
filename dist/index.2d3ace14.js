@@ -18578,6 +18578,7 @@ var _main = require("./main");
 var _toolbar = require("./UI/tools/Toolbar");
 var _header = require("./UI/sections/Header");
 var _tabs = require("./UI/sections/Workspace/Tabs");
+var _pieces = require("./UI/inventory/Pieces");
 var _s = $RefreshSig$();
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 const App = ()=>{
@@ -18598,7 +18599,7 @@ const App = ()=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 23,
+                        lineNumber: 24,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {
@@ -18612,13 +18613,13 @@ const App = ()=>{
                         }
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 25,
+                        lineNumber: 26,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 22,
+                lineNumber: 23,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18629,7 +18630,7 @@ const App = ()=>{
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 34,
+                                lineNumber: 35,
                                 columnNumber: 11
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18638,42 +18639,49 @@ const App = ()=>{
                                 className: "col-1 block rounded-md w-full h-full"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 36,
+                                lineNumber: 37,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 32,
+                        lineNumber: 33,
                         columnNumber: 6
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
                         id: "main",
                         className: "h-svh",
-                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
-                            ref: threeRef,
-                            id: "canvas3d-container",
-                            className: "w-1/1 h-100 col-2 block"
-                        }, void 0, false, {
-                            fileName: "src/App.tsx",
-                            lineNumber: 42,
-                            columnNumber: 7
-                        }, undefined)
-                    }, void 0, false, {
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 42,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
+                                ref: threeRef,
+                                id: "canvas3d-container",
+                                className: "w-1/1 h-100 col-2 block"
+                            }, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 43,
+                                columnNumber: 7
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 40,
+                        lineNumber: 41,
                         columnNumber: 6
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 30,
+                lineNumber: 31,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 21,
+        lineNumber: 22,
         columnNumber: 5
     }, undefined);
 };
@@ -18688,7 +18696,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/sections/Workspace/Tabs":"kzo4h"}],"jeorp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB"}],"jeorp":[function(require,module,exports,__globalThis) {
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -49039,15 +49047,13 @@ class PathTool {
     // Path tool state management
     transition(newState) {
         console.log(`PathTool state: ${this.__state.type} \u{2192} ${newState.type}`);
-        // this.__currentPathIndex = -1;
-        // this.__length = -1;
         this.__state = newState;
     }
     // Path tool event management
     onMouseDown(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
         const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
-        console.log((0, _state.state));
         switch(this.__state.type){
             case "drawing":
                 // Case: Close the path and connect to the first point in the shape if there three or more points
@@ -49102,6 +49108,7 @@ class PathTool {
     }
     onMouseMove(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
         switch(this.__state.type){
             case "moving":
                 (0, _drawSelectionMovePreview.drawSelectionMovePreview)(pos);
@@ -49170,6 +49177,9 @@ class PathTool {
                 break;
         }
         (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    get state() {
+        return this.__state;
     }
     // Protected, only to be used by Command
     // Moved to common.ts
@@ -49361,6 +49371,7 @@ var _drawPoints = require("./drawPoints");
 var _drawPaths = require("./drawPaths");
 var _drawSelections = require("./drawSelections");
 var _drawRulers = require("./drawRulers");
+var _drawCursorPreview = require("./drawCursorPreview");
 function drawCanvasSetup() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
     (0, _state.state).context.fillRect(0, 0, (0, _state.state).canvas.width, (0, _state.state).canvas.height);
@@ -49373,13 +49384,15 @@ function drawCanvasFromState(state) {
     (0, _drawPaths.drawPaths)(state);
     (0, _drawSelections.drawSelections)();
     (0, _drawPoints.drawPoints)(state);
+    (0, _drawCursorPreview.drawCursorPreview)(state.pointer);
 // drawShapes();
 }
 function redrawCanvas() {
     erase();
+    applyGridRuler();
     (0, _drawPoints.applyPoints)();
     (0, _drawPaths.applyPaths)();
-    applyGridRuler();
+    (0, _drawCursorPreview.applyCursorPreview)();
 }
 function erase() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
@@ -49396,7 +49409,7 @@ function point(index) {
     return (0, _state.state).c_points[index];
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawCursorPreview":"12vmI"}],"eQ9g7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
@@ -49414,15 +49427,43 @@ const drawPoints = (state)=>{
     const { canvas, context } = (0, _getBuffer.getBuffer)('points');
     canvas.width = state.canvas.width;
     canvas.height = state.canvas.height;
-    state.c_pointmap.forEach((e)=>{
+    drawActivePoints();
+    // Draw selected shape points
+    state.c_selected_shapes.forEach((shapeIndex)=>{
+        state.c_shapes[shapeIndex].forEach((index)=>{
+            drawActiveShapePoint(index);
+        });
+    });
+    state.context.drawImage(canvas, 0, 0);
+    function drawActiveShapePoint(index) {
+        const e = state.c_points[index];
+        context.fillStyle = 'black';
+        context.strokeStyle = 'black';
+        context.beginPath();
+        context.arc(e.x - (0, _interface.rad) / 2 + 2, e.y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
+        context.fill();
+        context.stroke();
+    }
+    function drawPoint(index) {
+        const e = state.c_points[index];
         context.fillStyle = 'white';
         context.strokeStyle = 'black';
         context.beginPath();
         context.arc(e.x - (0, _interface.rad) / 2 + 2, e.y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
         context.fill();
         context.stroke();
-    });
-    state.context.drawImage(canvas, 0, 0);
+    }
+    function drawActivePoints() {
+        // Draw generic active points
+        state.c_pointmap.forEach((e)=>{
+            context.fillStyle = 'white';
+            context.strokeStyle = 'black';
+            context.beginPath();
+            context.arc(e.x - (0, _interface.rad) / 2 + 2, e.y - (0, _interface.rad) / 2 + 2, (0, _interface.rad), 0, 2 * Math.PI);
+            context.fill();
+            context.stroke();
+        });
+    }
 };
 function applyPoints() {
     const obj = (0, _state.state).c_buffers.get('points');
@@ -49608,6 +49649,47 @@ parcelHelpers.export(exports, "SPEED", ()=>SPEED);
 const cf_canvas_to_inch = 25;
 const SPEED = 1;
 
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"12vmI":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawCursorPreview", ()=>drawCursorPreview);
+parcelHelpers.export(exports, "applyCursorPreview", ()=>applyCursorPreview);
+var _state = require("../../State");
+var _getBuffer = require("./getBuffer");
+var _plusPath = require("../icons/plus_path");
+const drawCursorPreview = (pointer)=>{
+    const { context, canvas } = (0, _getBuffer.getBuffer)('cursor_preview');
+    // TODO: #optimization: make this a small canvas, draw it only at the pointer
+    canvas.width = 24;
+    canvas.height = 24;
+    // state.context.drawImage(canvas, 0, 0);
+    switch((0, _state.state).tool.state.type){
+        case "drawing":
+            context.stroke((0, _plusPath.path1));
+            context.stroke((0, _plusPath.path2));
+            break;
+        case "drawing new point":
+            context.stroke((0, _plusPath.path1));
+            context.stroke((0, _plusPath.path2));
+            break;
+        default:
+            break;
+    }
+};
+function applyCursorPreview() {
+    const obj = (0, _state.state).c_buffers.get('cursor_preview');
+    console.log((0, _state.state).pointer.x);
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, (0, _state.state).pointer.x + 10, (0, _state.state).pointer.y - 20);
+}
+
+},{"../../State":"83rpN","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../icons/plus_path":"fCwS7"}],"fCwS7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "path1", ()=>path1);
+parcelHelpers.export(exports, "path2", ()=>path2);
+const path1 = new Path2D(`M15,12.5H12.5V15a.5.5,0,0,1-1,0V12.5H9a.5.5,0,0,1,0-1h2.5V9a.5.5,0,0,1,1,0v2.5H15A.5.5,0,0,1,15,12.5Z`);
+const path2 = new Path2D(`M12,21.932A9.934,9.934,0,1,1,21.932,12,9.944,9.944,0,0,1,12,21.932ZM12,3.065A8.934,8.934,0,1,0,20.932,12,8.944,8.944,0,0,0,12,3.065Z`);
+
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3rhkZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -49714,6 +49796,7 @@ var _state = require("../../State");
 var _canvas = require("../rendering/canvas");
 var _changeTool = require("../tools/changeTool");
 var _polygon = require("../../3D/geometry/polygon");
+var _store = require("../../UI/store");
 class PathToolClosePathCommand {
     constructor(path){
         this.path = [
@@ -49729,7 +49812,16 @@ class PathToolClosePathCommand {
         // Close path
         (0, _state.state).c_paths[(0, _state.state).c_activePath].push(this.path[0]);
         // Save shape and remove shape from paths list
-        this.shapeIndex = (0, _state.state).c_shapes.push((0, _state.state).c_paths.splice((0, _state.state).c_activePath, 1)[0]);
+        this.shapeIndex = (0, _state.state).c_shapes.push((0, _state.state).c_paths.splice((0, _state.state).c_activePath, 1)[0]) - 1;
+        // set active shape to the completed shape
+        (0, _state.state).c_selected_shapes = [
+            this.shapeIndex
+        ];
+        // Update UI pieces list
+        (0, _store.useAppState).getState().addPiece({
+            name: "piece",
+            shapeIndex: this.shapeIndex
+        });
         // Store index
         this.pathIndex = (0, _state.state).c_activePath;
         // Clear active path
@@ -49751,12 +49843,13 @@ class PathToolClosePathCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../tools/changeTool":"kXHtP","../../3D/geometry/polygon":"9OqtZ","../rendering/canvas":"fjxS8"}],"kXHtP":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../tools/changeTool":"kXHtP","../../3D/geometry/polygon":"9OqtZ","../rendering/canvas":"fjxS8","../../UI/store":"l1Ff7"}],"kXHtP":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "changeTool", ()=>changeTool);
 var _state = require("../../State");
 var _store = require("../../UI/store");
+var _canvas = require("../rendering/canvas");
 var _pathTool = require("./PathTool");
 var _selectTool = require("./SelectTool");
 function changeTool(newState) {
@@ -49765,20 +49858,23 @@ function changeTool(newState) {
         case "path":
             (0, _state.state).tool = new (0, _pathTool.PathTool)();
             (0, _store.useAppState).getState().setSelectedTool("path");
+            (0, _canvas.redrawCanvas)();
             break;
         case "select":
             (0, _state.state).tool = new (0, _selectTool.SelectTool)();
             (0, _store.useAppState).getState().setSelectedTool("select");
+            (0, _canvas.redrawCanvas)();
             break;
         default:
             (0, _state.state).tool = new (0, _selectTool.SelectTool)();
             (0, _store.useAppState).getState().setSelectedTool("select");
+            (0, _canvas.redrawCanvas)();
             break;
     }
     (0, _state.state).tool.initializeEvents();
 }
 
-},{"../../State":"83rpN","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../UI/store":"l1Ff7"}],"jISwe":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8"}],"jISwe":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectTool", ()=>SelectTool);
@@ -49892,6 +49988,9 @@ class SelectTool {
                     type: 'idle'
                 });
         }
+    }
+    get state() {
+        return this.__state;
     }
 }
 
@@ -50015,6 +50114,7 @@ class SelectToolShapeCommand {
         (0, _state.state).c_selected_shapes = [
             this.shapeIndex
         ];
+        (0, _state.state).c_pointmap = new Map();
         console.log(`Shape ${this.shapeIndex} selected.`);
     }
     undo() {
@@ -50067,10 +50167,20 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useAppState", ()=>useAppState);
 var _zustand = require("zustand");
 const useAppState = (0, _zustand.create)((set)=>({
-        selectedTool: 'select',
+        selectedTool: 'path',
         setSelectedTool: (tool)=>set({
                 selectedTool: tool
-            })
+            }),
+        pieces: [],
+        addPiece: (piece)=>{
+            set((state)=>({
+                    pieces: [
+                        ...state.pieces,
+                        piece
+                    ]
+                }));
+        // makeThumbnail(piece)
+        }
     }));
 
 },{"zustand":"cPNyt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cPNyt":[function(require,module,exports,__globalThis) {
@@ -51827,6 +51937,7 @@ function drawSelectionMovePreview(pos) {
 },{"../../State":"83rpN","./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+// Pointer Events for 3D canvas
 parcelHelpers.export(exports, "onDoubleClick", ()=>onDoubleClick);
 // localize pointer position
 parcelHelpers.export(exports, "onPointerMove", ()=>onPointerMove);
@@ -51881,7 +51992,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectObjectCommand", ()=>SelectObjectCommand);
 parcelHelpers.export(exports, "DeselectObjectCommand", ()=>DeselectObjectCommand);
-var _materials = require("../../Materials");
+var _materials = require("../Materials");
 var _state = require("../../State");
 class SelectObjectCommand {
     constructor(object){
@@ -51919,7 +52030,7 @@ class DeselectObjectCommand {
     }
 }
 
-},{"../../Materials":"UNzMx","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"UNzMx":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../Materials":"eTWEv"}],"eTWEv":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "material_selected", ()=>material_selected);
@@ -52041,7 +52152,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createRectangularPrism", ()=>createRectangularPrism);
 var _three = require("three");
-var _materials = require("../../Materials");
+var _materials = require("../Materials");
 const createRectangularPrism = (origin, width = 1, height = 1, depth = 1)=>{
     const geometry = new _three.BufferGeometry();
     const halfWidth = width / 2;
@@ -52199,7 +52310,7 @@ const createRectangularPrism = (origin, width = 1, height = 1, depth = 1)=>{
     };
 };
 
-},{"three":"ktPTu","../../Materials":"UNzMx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdjjs":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../Materials":"eTWEv"}],"jdjjs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleKeyDown", ()=>handleKeyDown);
@@ -65387,6 +65498,52 @@ $RefreshReg$(_c, "Tabs");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY"}],"5aREB":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$7858.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Pieces", ()=>Pieces);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _store = require("../store");
+var _s = $RefreshSig$();
+const Pieces = (props)=>{
+    _s();
+    const pieces = (0, _store.useAppState)((state)=>state.pieces);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        children: pieces.map((piece)=>{
+            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+                children: piece.name
+            }, void 0, false, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 15,
+                columnNumber: 18
+            }, undefined);
+        })
+    }, void 0, false, {
+        fileName: "src/UI/inventory/Pieces.tsx",
+        lineNumber: 13,
+        columnNumber: 5
+    }, undefined);
+};
+_s(Pieces, "ZT9fPOpsR3+GOhOXE1hjJb0GtmU=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
+_c = Pieces;
+var _c;
+$RefreshReg$(_c, "Pieces");
+
+  $parcel$ReactRefreshHelpers$7858.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map

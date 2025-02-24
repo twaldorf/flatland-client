@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { material_default, material_selected } from "../../Materials";
+import { material_default, material_selected } from "../Materials";
 
 export const createRectangularPrism = (origin:THREE.Vector3, width=1, height=1, depth=1) => {
   const geometry = new THREE.BufferGeometry();

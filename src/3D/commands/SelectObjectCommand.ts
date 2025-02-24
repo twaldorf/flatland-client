@@ -1,6 +1,6 @@
 import { Intersection, Object3D } from "three";
 import { Command } from "../../Command";
-import { material_selected } from "../../Materials";
+import { material_selected } from "../Materials";
 import { state } from "../../State";
 
 export class SelectObjectCommand implements Command {

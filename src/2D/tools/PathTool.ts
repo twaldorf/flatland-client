@@ -118,16 +118,14 @@ export class PathTool implements ToolBase {
   // Path tool state management
   private transition(newState: PathToolState) {
     console.log(`PathTool state: ${this.__state.type} → ${newState.type}`);
-    // this.__currentPathIndex = -1;
-    // this.__length = -1;
     this.__state = newState;
   }
 
   // Path tool event management
   private onMouseDown(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
+    state.pointer = pos;
     const hitIndex = findNearestPoint(pos, state.c_points);
-    console.log(state)
 
     switch (this.__state.type) {
       case "drawing":
@@ -191,7 +189,6 @@ export class PathTool implements ToolBase {
             currentPathIndex: this.__currentPathIndex 
           });
         }
-
         break;
     }
 
@@ -200,6 +197,7 @@ export class PathTool implements ToolBase {
 
   private onMouseMove(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
+    state.pointer = pos;
     
     switch (this.__state.type) {
       case "moving":
@@ -286,6 +284,10 @@ export class PathTool implements ToolBase {
     }
 
     drawCanvasFromState(state);
+  }
+
+  get state():PathToolState {
+    return this.__state;
   }
 
   // Protected, only to be used by Command

@@ -1,9 +1,10 @@
 import { Clock, Face, Object3D, Vector2 } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { PathTool } from "./2D/tools/PathTool";
+import { PathTool, PathToolState } from "./2D/tools/PathTool";
 import { Command } from "./Command";
-import { SelectTool } from "./2D/tools/SelectTool";
+import { SelectTool, SelectToolState } from "./2D/tools/SelectTool";
 import { DistanceConstraint, Particle } from "./3D/simulation/xpbdTypes";
+import { ToolState } from "./2D/tools/changeTool";
 
 // State interface for global state singleton
 export interface State {
@@ -64,6 +65,9 @@ export interface State {
   c_points: Array<Vector2>;
 
   // Map of active points
+  // Pairs an index in the point array with a vector2 for convenience
+  // These points are all 'active', i.e. they have not been deleted and contribute to shapes or paths
+  // These points are not necessarily selected
   c_pointmap: Map<number, Vector2>;
 
   // 2D Array of all paths composed by the indices of each path member vertices
@@ -100,12 +104,13 @@ export interface BufferBundle {
   context: OffscreenCanvasRenderingContext2D;
 }
 
-export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" ;
+export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" | "cursor_preview";
 
 export interface ToolBase {
   name: string;
   initializeEvents: Function;
   dismountEvents: Function;
+  readonly state: PathToolState | SelectToolState;
 }
 
 export type Tool = PathTool | SelectTool;
@@ -121,23 +126,4 @@ interface RawPointer {
 interface Controls {
   waitForDoubleClick: boolean;
   doubleClick: boolean;
-}
-
-export interface Pattern {
-  pieces: Array<Node>;
-  seams: Array<number>;
-}
-
-export interface Quads {
-  // these are indices for tris in the geometry array
-  geometry: THREE.BufferGeometry;
-  n_vertices: number;
-}
-
-export interface Node {
-  // TODO: Replace quads with polygons
-  quads: Array<Quads>;
-  vertices: Array<THREE.Vector3>;
-  // contains index pairs for vertices array, a pair makes an edge
-  edges: Array<number>;
 }

@@ -7,6 +7,8 @@ import { DeselectFaceCommand, SelectFaceCommand, tagFace } from "../commands/Sel
 import { State } from "../../types";
 import { localizePointerTo } from "../../pointer/LocalizePointerTo";
 
+// Pointer Events for 3D canvas
+
 export function onDoubleClick(event: MouseEvent) {
   state.intersects = [];
   state.raycaster.setFromCamera( state.pointer, state.camera );
@@ -30,9 +32,7 @@ export function onDoubleClick(event: MouseEvent) {
 export function onPointerMove( event: MouseEvent ) {
   localizePointerTo( { event, state, domElement: state.renderer.domElement } )
   if (state.pointerDown && state.selected_faces.size > 0) {
-    
   }
-
 }
 
 // click to add points
