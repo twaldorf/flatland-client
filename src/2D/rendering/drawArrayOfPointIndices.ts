@@ -2,7 +2,7 @@ import { point } from "./canvas";
 
 
 
-export function drawArrayOfPointIndices(points: number[], context: OffscreenCanvasRenderingContext2D): void {
+export function drawArrayOfPointIndices(points: number[], context: OffscreenCanvasRenderingContext2D|CanvasRenderingContext2D): void {
   const _ = context;
   if (points.length > 0) {
     _.beginPath();

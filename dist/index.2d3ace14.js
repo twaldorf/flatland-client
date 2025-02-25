@@ -49480,6 +49480,9 @@ parcelHelpers.defineInteropFlag(exports);
 // Get or create and return a buffer bundle
 // A created buffer bundle has a 0 area canvas
 parcelHelpers.export(exports, "getBuffer", ()=>getBuffer);
+// Get or create and return an onscreen buffer bundle
+// A created buffer bundle has a 0 area canvas
+parcelHelpers.export(exports, "getOnscreenBuffer", ()=>getOnscreenBuffer);
 var _state = require("../../State");
 function getBuffer(buffer) {
     // Get or create the canvas and context for the preview buffer
@@ -49492,6 +49495,20 @@ function getBuffer(buffer) {
             context: ctx
         };
         (0, _state.state).c_buffers.set(buffer, bundle);
+    }
+    return bundle;
+}
+function getOnscreenBuffer(bufferId) {
+    // Get or create the canvas and context for the preview buffer
+    let bundle = (0, _state.state).c_buffers.get(bufferId);
+    if (!bundle || !bundle.context || !bundle.canvas) {
+        const canvas = new HTMLCanvasElement();
+        const ctx = canvas.getContext('2d');
+        bundle = {
+            canvas,
+            context: ctx
+        };
+        (0, _state.state).c_buffers.set(bufferId, bundle);
     }
     return bundle;
 }
@@ -65632,28 +65649,41 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Pieces", ()=>Pieces);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _drawPieceThumbnail = require("../../2D/rendering/drawPieceThumbnail");
 var _store = require("../store");
 var _s = $RefreshSig$();
 const Pieces = (props)=>{
     _s();
     const pieces = (0, _store.useAppState)((state)=>state.pieces);
+    const thumbnailRef = (0, _react.useRef)(null);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: pieces.map((piece)=>{
+            if (thumbnailRef.current) (0, _drawPieceThumbnail.drawPieceThumbnail)(piece, thumbnailRef.current);
             return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-                children: piece.name
-            }, void 0, false, {
+                children: [
+                    piece.name,
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
+                        ref: thumbnailRef
+                    }, void 0, false, {
+                        fileName: "src/UI/inventory/Pieces.tsx",
+                        lineNumber: 19,
+                        columnNumber: 13
+                    }, undefined)
+                ]
+            }, void 0, true, {
                 fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 15,
-                columnNumber: 18
+                lineNumber: 18,
+                columnNumber: 11
             }, undefined);
         })
     }, void 0, false, {
         fileName: "src/UI/inventory/Pieces.tsx",
-        lineNumber: 13,
+        lineNumber: 11,
         columnNumber: 5
     }, undefined);
 };
-_s(Pieces, "ZT9fPOpsR3+GOhOXE1hjJb0GtmU=", false, function() {
+_s(Pieces, "eAlqxOVLV4sKdLHOkotKsrJvm48=", false, function() {
     return [
         (0, _store.useAppState)
     ];
@@ -65667,6 +65697,23 @@ $RefreshReg$(_c, "Pieces");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react":"21dqq","../../2D/rendering/drawPieceThumbnail":"1Jt5c"}],"1Jt5c":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawPieceThumbnail", ()=>drawPieceThumbnail);
+var _state = require("../../State");
+var _boundingBox = require("../geometry/boundingBox");
+var _drawPaths = require("./drawPaths");
+function drawPieceThumbnail(piece, canvas) {
+    const context = canvas.getContext("2d");
+    // const { context, canvas } = getOnscreenBuffer(`preview_${piece.id}`);
+    const box = (0, _boundingBox.getShapeBoundingRect)((0, _state.state).c_shapes[piece.shapeIndex]);
+    canvas.width = box.x1 - box.x0;
+    canvas.height = box.y1 - box.y0;
+    (0, _drawPaths.drawShapeNormalized)((0, _state.state).c_shapes[piece.shapeIndex], context);
+    piece.thumb = canvas;
+}
+
+},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawPaths":"lgYVM","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map

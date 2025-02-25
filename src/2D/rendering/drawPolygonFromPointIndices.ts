@@ -21,7 +21,7 @@ export function drawPolygonFromPointIndices(points: number[], context: Offscreen
   }
 }
 
-export function drawPolygonFromOffsetPointIndices(points: number[], xoffset:number, yoffset:number, context: OffscreenCanvasRenderingContext2D) {
+export function drawPolygonFromOffsetPointIndices(points: number[], xoffset:number, yoffset:number, context: OffscreenCanvasRenderingContext2D|CanvasRenderingContext2D) {
   const _ = context;
   if (points.length > 0) {
     _.beginPath();

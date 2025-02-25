@@ -1,14 +1,6 @@
 import { create } from 'zustand';
 import { Tool, ToolName } from '../types';
 
-// This could be moved
-export interface Piece {
-  shapeIndex: number;
-  name: string;
-  // name is also the key to thhe thumbnail map
-  // area: number;
-}
-
 interface AppState {
   selectedTool: ToolName;
   setSelectedTool: (tool: ToolName) => void;

@@ -36,7 +36,7 @@ export function drawShape(shapeArr:number[], context:OffscreenCanvasRenderingCon
   drawArrayOfPointIndices(shapeArr, context);
   drawPolygonFromPointIndices(shapeArr, context);
 }
-export function drawShapeNormalized(shapeArr:number[], context:OffscreenCanvasRenderingContext2D) {
+export function drawShapeNormalized(shapeArr:number[], context:OffscreenCanvasRenderingContext2D|CanvasRenderingContext2D) {
   const box = getShapeBoundingRect(shapeArr);
   drawPolygonFromOffsetPointIndices(shapeArr, -box.x0, -box.y0, context);
 }

@@ -100,11 +100,12 @@ type Mode = 'default' |
             'group-select';
 
 export interface BufferBundle {
-  canvas: OffscreenCanvas;
-  context: OffscreenCanvasRenderingContext2D;
+  canvas: OffscreenCanvas | HTMLCanvasElement;
+  context: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 }
 
-export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" | "cursor_preview" | "shape_preview";
+export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" | "cursor_preview" | "shape_preview" | string;
+// The inclusion of string in BufferType allows for thumbnail buffers. If this causes trouble, simply split the thumbnail buffers into their own c_buffer_canvases map or something and narrow this type.
 
 export interface ToolBase {
   name: string;
@@ -117,6 +118,15 @@ export type Tool = PathTool | SelectTool;
 export type ToolName = "path" | "select";
 
 export type DrawableEntity = Vector2 | Vector2[];
+
+export interface Piece {
+  id: string;
+  shapeIndex: number;
+  name: string;
+  thumb: HTMLCanvasElement;
+  // name is also the key to thhe thumbnail map
+  // area: number;
+}
 
 interface RawPointer {
   rx: number,
