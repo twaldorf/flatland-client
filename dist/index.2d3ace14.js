@@ -50013,8 +50013,9 @@ class SelectTool {
                 break;
             case "selecting":
                 if ((0, _state.state).shiftDown) {
-                    if (selectedShapeIndex > -1) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
-                }
+                    if (selectedShapeIndex > -1) // not sufficienct
+                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
+                } else if (selectedShapeIndex > -1) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
                 break;
             case "selecting_points":
                 if (hitIndex && hitIndex > -1) {
@@ -50028,6 +50029,7 @@ class SelectTool {
                     });
                 }
         }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     checkForShapeOverlap(pos) {
         let value = -1;
@@ -50195,7 +50197,7 @@ class SelectToolShapeCommand {
         (0, _state.state).c_selected_shapes = [
             this.shapeIndex
         ];
-        (0, _state.state).c_pointmap = new Map();
+        // state.c_pointmap = new Map()
         console.log(`Shape ${this.shapeIndex} selected.`);
     }
     undo() {

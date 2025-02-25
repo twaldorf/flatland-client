@@ -9,7 +9,7 @@ import { SelectToolMoveShapeCommand } from "../commands/SelectToolMoveShapeComma
 import { checkPointOverlap } from "./common";
 import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
 import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
-import { redrawCanvas } from "../rendering/canvas";
+import { drawCanvasFromState, redrawCanvas } from "../rendering/canvas";
 import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
 
 export type SelectToolState = 
@@ -83,6 +83,11 @@ export class SelectTool implements ToolBase {
       case "selecting":
         if (state.shiftDown) {
           if ( selectedShapeIndex > -1 ) {
+            // not sufficienct
+            pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
+          }
+        } else {
+          if ( selectedShapeIndex > -1 ) {
             pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
           }
         }
@@ -106,6 +111,7 @@ export class SelectTool implements ToolBase {
           });
         }
     }
+    drawCanvasFromState(state);
   }
 
   public checkForShapeOverlap(pos:Vector2):number {

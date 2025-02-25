@@ -12,7 +12,7 @@ export class SelectToolShapeCommand implements Command {
 
   do() {
     state.c_selected_shapes = [ this.shapeIndex ];
-    state.c_pointmap = new Map()
+    // state.c_pointmap = new Map()
     console.log(`Shape ${this.shapeIndex} selected.`);
   }
 
