@@ -16,11 +16,13 @@ export const drawPoints = (state: State) => {
   drawActivePoints();
 
   // Draw selected shape points
-  state.c_selected_shapes.forEach((shapeIndex) => {
-    state.c_shapes[shapeIndex].forEach((index) => {
-      drawActiveShapePoint(index);
-    })
-  });
+  if (state.c_selected_shapes.length > 0) state
+    .c_selected_shapes.forEach((shapeIndex) => {
+      if (state.c_shapes[shapeIndex]) state
+        .c_shapes[shapeIndex].forEach((index) => {
+          drawActiveShapePoint(index);
+        });
+    });
 
   state.context.drawImage(canvas, 0, 0);
 

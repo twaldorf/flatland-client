@@ -9,7 +9,7 @@ export const handleKeyDown = (e: KeyboardEvent) => {
     case "Backspace":
     case "Delete":
       e.preventDefault();
-      handleDelete();
+      handleDelete(e);
       break;
     
     case "Shift":
@@ -27,10 +27,8 @@ export const handleKeyUp = (e: KeyboardEvent) => {
   }
 };
 
-const handleDelete = () => {
-  if (state.c_selected.length > 0) {
-    pushCommand(new DeleteCommand());
-  }
+const handleDelete = (e:KeyboardEvent) => {
+  state.tool.onKeyDown(e);
 };
 
 

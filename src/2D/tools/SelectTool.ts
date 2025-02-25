@@ -11,6 +11,9 @@ import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
 import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
 import { drawCanvasFromState, redrawCanvas } from "../rendering/canvas";
 import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
+import { Piece } from "../../UI/store";
+import { KeyboardEvent } from "react";
+import { DeleteShapeCommand } from "../commands/DeleteShapeCommand";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -19,6 +22,7 @@ export type SelectToolState =
   | { type: "mousedown"; mousePosition: Vector2 }
   | { type: "selecting"; selectedShapeIndex: number }
   | { type: "selecting_points"; selectedPointIndices: number[] }
+  | { type: "editing_piece"; editingShapeIndex: number; piece: Piece }
 
 export class SelectTool implements ToolBase {
   // Tool state object stores tool mechanical state
@@ -33,7 +37,8 @@ export class SelectTool implements ToolBase {
   private __listeners = {
     down: this.onMouseDown.bind(this),
     move: this.onMouseMove.bind(this),
-    up: this.onMouseUp.bind(this)
+    up: this.onMouseUp.bind(this),
+    dblclick: this.onDoubleClick.bind(this)
   }
 
   public initializeEvents() {
@@ -41,12 +46,14 @@ export class SelectTool implements ToolBase {
     canvas.addEventListener("mousedown", this.__listeners.down);
     canvas.addEventListener("mousemove", this.__listeners.move);
     canvas.addEventListener("mouseup", this.__listeners.up);
+    canvas.addEventListener("dblclick", this.__listeners.dblclick);
   }
 
   public dismountEvents() {
     state.canvas.removeEventListener('mousedown', this.__listeners.down);
     state.canvas.removeEventListener("mousemove", this.__listeners.move);
     state.canvas.removeEventListener("mouseup", this.__listeners.up);
+    state.canvas.removeEventListener("dblclick", this.__listeners.dblclick);
   }
 
   // Tool state updater
@@ -160,6 +167,29 @@ export class SelectTool implements ToolBase {
           type: 'idle'
         });
     }
+  }
+
+  private onDoubleClick(e: MouseEvent) {
+    const pos = cLocalizePoint(e.clientX, e.clientY);
+    // TODO: use this for isolation mode
+  }
+
+  public onKeyDown(e: KeyboardEvent<Element>) {
+    switch (this.state.type) {
+      case "selecting":
+        console.log('keypress', e)
+      // case "selecting_points":
+        if (e.code === 'Backspace' || e.code === 'Delete') {
+          if (state.c_selected_shapes.length > 0) {
+            pushCommand(new DeleteShapeCommand(this.state.selectedShapeIndex));
+          }
+          // also delete points
+        }
+        this.transition({type: "idle"});
+        break;
+
+    }
+
   }
 
   public get state():SelectToolState {

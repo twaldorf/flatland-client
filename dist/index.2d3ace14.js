@@ -49433,8 +49433,8 @@ const drawPoints = (state)=>{
     canvas.height = state.canvas.height;
     drawActivePoints();
     // Draw selected shape points
-    state.c_selected_shapes.forEach((shapeIndex)=>{
-        state.c_shapes[shapeIndex].forEach((index)=>{
+    if (state.c_selected_shapes.length > 0) state.c_selected_shapes.forEach((shapeIndex)=>{
+        if (state.c_shapes[shapeIndex]) state.c_shapes[shapeIndex].forEach((index)=>{
             drawActiveShapePoint(index);
         });
     });
@@ -49957,6 +49957,7 @@ var _selectToolPointCommand = require("../commands/SelectToolPointCommand");
 var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
 var _canvas = require("../rendering/canvas");
 var _drawSelectionMovePreview = require("../rendering/drawSelectionMovePreview");
+var _deleteShapeCommand = require("../commands/DeleteShapeCommand");
 class SelectTool {
     constructor(){
         // Tool state object stores tool mechanical state
@@ -49968,7 +49969,8 @@ class SelectTool {
         this.__listeners = {
             down: this.onMouseDown.bind(this),
             move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this)
+            up: this.onMouseUp.bind(this),
+            dblclick: this.onDoubleClick.bind(this)
         };
     }
     initializeEvents() {
@@ -49976,11 +49978,13 @@ class SelectTool {
         canvas.addEventListener("mousedown", this.__listeners.down);
         canvas.addEventListener("mousemove", this.__listeners.move);
         canvas.addEventListener("mouseup", this.__listeners.up);
+        canvas.addEventListener("dblclick", this.__listeners.dblclick);
     }
     dismountEvents() {
         (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
         (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
         (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+        (0, _state.state).canvas.removeEventListener("dblclick", this.__listeners.dblclick);
     }
     // Tool state updater
     transition(newState) {
@@ -50072,12 +50076,30 @@ class SelectTool {
                 });
         }
     }
+    onDoubleClick(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+    // TODO: use this for isolation mode
+    }
+    onKeyDown(e) {
+        switch(this.state.type){
+            case "selecting":
+                console.log('keypress', e);
+                // case "selecting_points":
+                if (e.code === 'Backspace' || e.code === 'Delete') {
+                    if ((0, _state.state).c_selected_shapes.length > 0) (0, _command.pushCommand)(new (0, _deleteShapeCommand.DeleteShapeCommand)(this.state.selectedShapeIndex));
+                }
+                this.transition({
+                    type: "idle"
+                });
+                break;
+        }
+    }
     get state() {
         return this.__state;
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/drawSelectionMovePreview":"jMLdr","../rendering/canvas":"fjxS8"}],"aOEKs":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/drawSelectionMovePreview":"jMLdr","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11"}],"aOEKs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -50282,7 +50304,33 @@ function applyShapeSelectionMovePreview(pos) {
     if (canvas) (0, _state.state).context.drawImage(canvas, pos.x - (pos.x - box.x0), pos.y - (pos.y - box.y0));
 }
 
-},{"../../State":"83rpN","./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./getBuffer":"7bBl8","../geometry/boundingBox":"3SCvR","./drawPaths":"lgYVM"}],"l1Ff7":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./getBuffer":"7bBl8","../geometry/boundingBox":"3SCvR","./drawPaths":"lgYVM"}],"3BS11":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DeleteShapeCommand", ()=>DeleteShapeCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class DeleteShapeCommand {
+    constructor(shapeIndex){
+        this.__shapeIndex = shapeIndex;
+    }
+    do() {
+        (0, _state.state).c_shapes[this.__shapeIndex].forEach((pointIndex)=>{
+            // Delete points from the active point map
+            (0, _state.state).c_pointmap.delete(pointIndex);
+        });
+        // Remove shape from the list of shapes
+        (0, _state.state).c_shapes.splice(this.__shapeIndex, 1);
+        console.log('deleted shape ', this.__shapeIndex);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // TODO: Implement DeleteShapeCommand undo
+        console.log("Undo function for DeleteshapeCommand not implemented");
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"l1Ff7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useAppState", ()=>useAppState);
@@ -52425,16 +52473,14 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleKeyDown", ()=>handleKeyDown);
 parcelHelpers.export(exports, "handleKeyUp", ()=>handleKeyUp);
 parcelHelpers.export(exports, "initializeHotkeys", ()=>initializeHotkeys);
-var _command = require("../../Command");
 var _state = require("../../State");
-var _deleteCommand = require("../commands/DeleteCommand");
 const handleKeyDown = (e)=>{
     if (e.repeat) return; // Ignore repeated keydown events
     switch(e.key){
         case "Backspace":
         case "Delete":
             e.preventDefault();
-            handleDelete();
+            handleDelete(e);
             break;
         case "Shift":
             (0, _state.state).shiftDown = true; // Track shift for multi-selection
@@ -52446,47 +52492,15 @@ const handleKeyDown = (e)=>{
 const handleKeyUp = (e)=>{
     if (e.key === "Shift") (0, _state.state).shiftDown = false;
 };
-const handleDelete = ()=>{
-    if ((0, _state.state).c_selected.length > 0) (0, _command.pushCommand)(new (0, _deleteCommand.DeleteCommand)());
+const handleDelete = (e)=>{
+    (0, _state.state).tool.onKeyDown(e);
 };
 const initializeHotkeys = ()=>{
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keyup", handleKeyUp);
 }; // Call this function in your app startup logic
 
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/DeleteCommand":"jrnPc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jrnPc":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DeleteCommand", ()=>DeleteCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class DeleteCommand {
-    constructor(){
-        this.deletedPoints = (0, _state.state).c_selected.map((index)=>({
-                index,
-                point: (0, _state.state).c_points[index]
-            }));
-    }
-    do() {
-        // Remove selected points from the state
-        (0, _state.state).c_selected.forEach((index)=>{
-            // Mark for removal
-            (0, _state.state).c_points[index] = null;
-        });
-        (0, _state.state).c_points = (0, _state.state).c_points.filter((p)=>p !== null);
-        (0, _state.state).c_selected = [];
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        // Restore deleted points
-        this.deletedPoints.forEach(({ index, point })=>{
-            (0, _state.state).c_points.splice(index, 0, point);
-        });
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"ghSIM":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
