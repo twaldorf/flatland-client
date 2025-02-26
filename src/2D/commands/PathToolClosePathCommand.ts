@@ -5,6 +5,9 @@ import { drawCanvasFromState } from "../rendering/canvas";
 import { changeTool } from "../tools/changeTool";
 import { createPolygonPlane } from "../../3D/geometry/polygon";
 import { useAppState } from "../../UI/store";
+import { generatePieceThumbnail } from "../rendering/drawPieceThumbnail";
+import { generateUUID } from "three/src/math/MathUtils";
+import { Piece } from "../../types";
 
 export class PathToolClosePathCommand implements Command {
   private path: number[]; // This is the path without the closing point
@@ -33,7 +36,15 @@ export class PathToolClosePathCommand implements Command {
     state.c_selected_shapes = [ this.shapeIndex ];
 
     // Update UI pieces list
-    useAppState.getState().addPiece({ name: "piece", shapeIndex: this.shapeIndex });
+    const piece:Piece = { 
+      name: `piece${useAppState.getState().pieces.length}`,
+      shapeIndex: this.shapeIndex, id:generateUUID(),
+      canvas: null, 
+      thumb: null
+    };
+
+    piece.canvas = generatePieceThumbnail(piece);
+    useAppState.getState().addPiece(piece);
 
     // Store index
     this.pathIndex = state.c_activePath;

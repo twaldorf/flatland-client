@@ -100,8 +100,8 @@ type Mode = 'default' |
             'group-select';
 
 export interface BufferBundle {
-  canvas: OffscreenCanvas | HTMLCanvasElement;
-  context: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
+  canvas: OffscreenCanvas;
+  context: OffscreenCanvasRenderingContext2D;
 }
 
 export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" | "cursor_preview" | "shape_preview" | string;
@@ -124,6 +124,7 @@ export interface Piece {
   shapeIndex: number;
   name: string;
   thumb: HTMLCanvasElement;
+  canvas: OffscreenCanvas;
   // name is also the key to thhe thumbnail map
   // area: number;
 }

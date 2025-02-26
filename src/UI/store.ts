@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Tool, ToolName } from '../types';
+import { Piece, Tool, ToolName } from '../types';
 
 interface AppState {
   selectedTool: ToolName;

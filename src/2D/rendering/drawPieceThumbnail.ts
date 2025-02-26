@@ -5,11 +5,17 @@ import { getShapeBoundingRect } from "../geometry/boundingBox";
 import { drawShapeNormalized } from "./drawPaths";
 import { getBuffer, getOnscreenBuffer } from "./getBuffer";
 
+// Apply the thumbnail to the canvas
 export function drawPieceThumbnail(piece:Piece, canvas: HTMLCanvasElement) {
 
   const context = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-  // const { context, canvas } = getOnscreenBuffer(`preview_${piece.id}`);
+  if (piece.canvas) context.drawImage(piece.canvas, 0, 0);
+}
+
+// draw the shape to an offscreen canvas, this should be called as the piece is made or updated
+export function generatePieceThumbnail( piece:Piece ) {
+  const { context, canvas } = getBuffer(`preview_${piece.name}`);
 
   const box = getShapeBoundingRect(state.c_shapes[piece.shapeIndex]);
 
@@ -19,5 +25,5 @@ export function drawPieceThumbnail(piece:Piece, canvas: HTMLCanvasElement) {
 
   drawShapeNormalized(state.c_shapes[piece.shapeIndex], context);
 
-  piece.thumb = canvas;
+  return canvas;
 }
