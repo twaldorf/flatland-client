@@ -19,9 +19,9 @@ export function generatePieceThumbnail( piece:Piece ) {
 
   const box = getShapeBoundingRect(state.c_shapes[piece.shapeIndex]);
 
-  canvas.width = box.x1 - box.x0;
+  canvas.width = box.x1 - box.x0 + 1;
 
-  canvas.height = box.y1 - box.y0;
+  canvas.height = box.y1 - box.y0 + 1;
 
   drawShapeNormalized(state.c_shapes[piece.shapeIndex], context);
 

@@ -50373,6 +50373,14 @@ const useAppState = (0, _zustand.create)((set)=>({
                     ]
                 }));
         // makeThumbnail(piece)
+        },
+        setPieceName: (pieceId, newName)=>{
+            set((state)=>({
+                    pieces: state.pieces.map((piece)=>piece.id === pieceId ? {
+                            ...piece,
+                            name: newName
+                        } : piece)
+                }));
         }
     }));
 
@@ -52058,8 +52066,8 @@ function drawPieceThumbnail(piece, canvas) {
 function generatePieceThumbnail(piece) {
     const { context, canvas } = (0, _getBuffer.getBuffer)(`preview_${piece.name}`);
     const box = (0, _boundingBox.getShapeBoundingRect)((0, _state.state).c_shapes[piece.shapeIndex]);
-    canvas.width = box.x1 - box.x0;
-    canvas.height = box.y1 - box.y0;
+    canvas.width = box.x1 - box.x0 + 1;
+    canvas.height = box.y1 - box.y0 + 1;
     (0, _drawPaths.drawShapeNormalized)((0, _state.state).c_shapes[piece.shapeIndex], context);
     return canvas;
 }
@@ -66168,16 +66176,32 @@ var _s = $RefreshSig$();
 const Pieces = ()=>{
     _s();
     const pieces = (0, _store.useAppState)((state)=>state.pieces);
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-        className: "rounded-lg bg-stone-200 min-h-24 flex flex-row",
-        children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
-                piece: piece
-            }, piece.id, false, {
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "rounded-lg bg-stone-200 min-h-24 bg-white p-2",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: "Pieces"
+            }, void 0, false, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 16,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+                className: "flex flex-row text-xs relative",
+                children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
+                        piece: piece
+                    }, piece.id, false, {
+                        fileName: "src/UI/inventory/Pieces.tsx",
+                        lineNumber: 19,
+                        columnNumber: 11
+                    }, undefined))
+            }, void 0, false, {
                 fileName: "src/UI/inventory/Pieces.tsx",
                 lineNumber: 17,
-                columnNumber: 9
-            }, undefined))
-    }, void 0, false, {
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
         fileName: "src/UI/inventory/Pieces.tsx",
         lineNumber: 15,
         columnNumber: 5
@@ -66230,44 +66254,121 @@ parcelHelpers.export(exports, "PieceComponent", ()=>PieceComponent);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _drawPieceThumbnail = require("../../2D/rendering/drawPieceThumbnail");
-var _s = $RefreshSig$();
+var _ci = require("react-icons/ci");
+var _store = require("../store");
+var _s = $RefreshSig$(), _s1 = $RefreshSig$();
 const PieceComponent = ({ piece })=>{
     _s();
     const thumbnailRef = (0, _react.useRef)(null);
+    const [editing, setEditing] = (0, _react.useState)(false);
+    const setPieceName = (0, _store.useAppState)((state)=>state.setPieceName);
+    const onSave = (newName)=>{
+        setPieceName(piece.id, newName);
+        setEditing(false);
+    };
     (0, _react.useEffect)(()=>{
         if (thumbnailRef.current) (0, _drawPieceThumbnail.drawPieceThumbnail)(piece, thumbnailRef.current);
     }, [
         piece
     ]);
+    function handleClick() {
+        editing == true ? setEditing(false) : setEditing(true);
+    }
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-        className: "my-auto mx-2",
+        className: "my-auto mx-2 max-w-24",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
-                className: "max-h-12",
+                className: "max-h-12 border border-stone-400",
                 ref: thumbnailRef
             }, void 0, false, {
                 fileName: "src/UI/inventory/Piece.tsx",
-                lineNumber: 16,
+                lineNumber: 30,
                 columnNumber: 7
             }, undefined),
-            piece.name
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex-row flex justify-center items-center",
+                children: [
+                    editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(EditPieceNameAttr, {
+                        piece: piece,
+                        onSave: onSave
+                    }, void 0, false, {
+                        fileName: "src/UI/inventory/Piece.tsx",
+                        lineNumber: 32,
+                        columnNumber: 22
+                    }, undefined),
+                    !editing && piece.name,
+                    !editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {
+                        onClick: handleClick
+                    }, void 0, false, {
+                        fileName: "src/UI/inventory/Piece.tsx",
+                        lineNumber: 34,
+                        columnNumber: 23
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/inventory/Piece.tsx",
+                lineNumber: 31,
+                columnNumber: 7
+            }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/inventory/Piece.tsx",
-        lineNumber: 15,
+        lineNumber: 29,
         columnNumber: 5
     }, undefined);
 };
-_s(PieceComponent, "2VOHp0qCoT9nfmfxoqf9rZnmJw0=");
+_s(PieceComponent, "7wkZWaLVLPq6vYXMB8n6NMlecw0=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
 _c = PieceComponent;
-var _c;
+const EditPieceNameAttr = ({ piece, onSave })=>{
+    _s1();
+    const [newName, setNewName] = (0, _react.useState)(piece.name);
+    const inputRef = (0, _react.useRef)(null);
+    (0, _react.useEffect)(()=>{
+        if (inputRef.current) {
+            inputRef.current.focus();
+            inputRef.current.select();
+        }
+    }, []);
+    const handleChange = (e)=>{
+        console.log(e);
+        setNewName(e.target.value);
+    };
+    const handleKeyDown = (e)=>{
+        if (e.key === "Enter") onSave(newName);
+        if (e.key === "Backspace" || e.key === "Delete") setNewName(e.target.value.slice(0, -1));
+    };
+    const handleBlur = ()=>{
+        onSave(newName);
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+        type: "text",
+        ref: inputRef,
+        value: newName,
+        onChange: handleChange,
+        onKeyDown: handleKeyDown,
+        onBlur: handleBlur,
+        className: "w-full"
+    }, void 0, false, {
+        fileName: "src/UI/inventory/Piece.tsx",
+        lineNumber: 71,
+        columnNumber: 5
+    }, undefined);
+};
+_s1(EditPieceNameAttr, "gsrx4r5om27wpSK3FvdyFfcHfks=");
+_c1 = EditPieceNameAttr;
+var _c, _c1;
 $RefreshReg$(_c, "PieceComponent");
+$RefreshReg$(_c1, "EditPieceNameAttr");
 
   $parcel$ReactRefreshHelpers$0d5a.postlude(module);
 } finally {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../2D/rendering/drawPieceThumbnail":"1Jt5c","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../2D/rendering/drawPieceThumbnail":"1Jt5c","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY","../store":"l1Ff7"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map

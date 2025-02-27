@@ -12,11 +12,14 @@ export const Pieces = () => {
   const pieces = useAppState((state) => state.pieces);
 
   return (
-    <ul className="rounded-lg bg-stone-200 min-h-24 flex flex-row">
-      {pieces.map((piece) => (
-        <PieceComponent key={piece.id} piece={piece} />
-      ))}
-    </ul>
+    <div className="rounded-lg bg-stone-200 min-h-24 bg-white p-2">
+      <h4>Pieces</h4>
+      <ul className="flex flex-row text-xs relative">
+        {pieces.map((piece) => (
+          <PieceComponent key={piece.id} piece={piece} />
+        ))}
+      </ul>
+    </div>
   );
 };
 

@@ -7,6 +7,9 @@ interface AppState {
 
   pieces: Piece[];
   addPiece: (piece: Piece) => void;
+  setPieceName: (pieceId: Piece["id"], newName: Piece["name"]) => void;
+  
+  
 }
 
 export const useAppState = create<AppState>((set) => ({
@@ -14,10 +17,18 @@ export const useAppState = create<AppState>((set) => ({
   setSelectedTool: (tool) => set({ selectedTool: tool }),
 
   pieces: [],
-  addPiece: (piece) => {
+  addPiece: (piece:Piece) => {
     set((state) => ({
       pieces: [...state.pieces, piece],
     }));
     // makeThumbnail(piece)
+  },
+
+  setPieceName: (pieceId: Piece["id"], newName: Piece["name"]) => {
+    set((state) => ({
+      pieces: state.pieces.map((piece) =>
+        piece.id === pieceId ? { ...piece, name: newName } : piece
+      ),
+    }));
   }
 }));

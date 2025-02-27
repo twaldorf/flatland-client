@@ -708,14 +708,6 @@
     margin: calc(var(--spacing) * 0);
   }
 
-  .m-2 {
-    margin: calc(var(--spacing) * 2);
-  }
-
-  .m-auto {
-    margin: auto;
-  }
-
   .mx-2 {
     margin-inline: calc(var(--spacing) * 2);
   }
@@ -780,10 +772,6 @@
     max-height: calc(var(--spacing) * 12);
   }
 
-  .min-h-12 {
-    min-height: calc(var(--spacing) * 12);
-  }
-
   .min-h-24 {
     min-height: calc(var(--spacing) * 24);
   }
@@ -804,8 +792,20 @@
     width: calc(var(--spacing) * 40);
   }
 
+  .w-100 {
+    width: calc(var(--spacing) * 100);
+  }
+
   .w-full {
     width: 100%;
+  }
+
+  .max-w-12 {
+    max-width: calc(var(--spacing) * 12);
+  }
+
+  .max-w-24 {
+    max-width: calc(var(--spacing) * 24);
   }
 
   .cursor-pointer {
@@ -836,6 +836,10 @@
     justify-content: space-between;
   }
 
+  .justify-center {
+    justify-content: center;
+  }
+
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
@@ -861,6 +865,11 @@
     border-width: 1px;
   }
 
+  .border-6 {
+    border-style: var(--tw-border-style);
+    border-width: 6px;
+  }
+
   .border-b-2 {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 2px;
@@ -872,6 +881,34 @@
 
   .border-gray-500 {
     border-color: var(--color-gray-500);
+  }
+
+  .border-stone-50 {
+    border-color: var(--color-stone-50);
+  }
+
+  .border-stone-100 {
+    border-color: var(--color-stone-100);
+  }
+
+  .border-stone-200 {
+    border-color: var(--color-stone-200);
+  }
+
+  .border-stone-300 {
+    border-color: var(--color-stone-300);
+  }
+
+  .border-stone-400 {
+    border-color: var(--color-stone-400);
+  }
+
+  .border-stone-500 {
+    border-color: var(--color-stone-500);
+  }
+
+  .border-stone-600 {
+    border-color: var(--color-stone-600);
   }
 
   .bg-amber-400 {
@@ -954,6 +991,16 @@
   .text-3xl {
     font-size: var(--text-3xl);
     line-height: var(--tw-leading, var(--text-3xl--line-height));
+  }
+
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+
+  .text-xs {
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-xs--line-height));
   }
 
   .font-bold {
