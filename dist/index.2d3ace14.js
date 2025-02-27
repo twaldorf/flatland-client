@@ -18815,10 +18815,6 @@ const drawTestGeometry = ()=>{
         -1,
         1.0 // v5
     ]);
-    const test_quad = {
-        geometry: test_geometry,
-        n_vertices: 4
-    };
     test_geometry.setAttribute('position', new _three.BufferAttribute(vertices, 3));
     test_geometry.setDrawRange(0, 12);
     const material = new _three.MeshBasicMaterial({
@@ -49733,7 +49729,7 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
 parcelHelpers.export(exports, "SPEED", ()=>SPEED);
 const cf_canvas_to_inch = 25;
-const SPEED = 1;
+const SPEED = 5;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"12vmI":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -50465,6 +50461,7 @@ var _state = require("../../State");
 var _xpbdTypes = require("../simulation/xpbdTypes");
 var _threeSubdivide = require("three-subdivide");
 var _bufferGeometryUtils = require("three/examples/jsm/utils/BufferGeometryUtils");
+var _stretchConstraints = require("./mueller/stretchConstraints");
 const createPolygonPlane = (path)=>{
     const points = path.map((index)=>{
         return (0, _state.state).c_points[index].clone();
@@ -50524,86 +50521,40 @@ const createPolygonPlane = (path)=>{
         (0, _state.state).particles.push(particle);
     }
     (0, _state.state).particles[0].velocity = new _three.Vector3(-10, 10, 100);
-    // Generate constraints from points
-    // Use adjacency instead of just next point
-    for(let i = 0; i < indices.length / 5; i++){
-        // build this into an adjacency matrix to reduce redundancy
-        const p1 = new _three.Vector3(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-        const p2 = new _three.Vector3(positions[i * 3 + 3], positions[i * 3 + 4], positions[i * 3 + 5]);
-        const p3 = new _three.Vector3(positions[i * 3 + 6], positions[i * 3 + 7], positions[i * 3 + 8]);
-        const constraint1 = new (0, _xpbdTypes.DistanceConstraint)(i, i + 1, 3, p1.distanceTo(p2), .1);
-        const constraint2 = new (0, _xpbdTypes.DistanceConstraint)(i + 1, i + 2, 3, p2.distanceTo(p3), .1);
-        const constraint3 = new (0, _xpbdTypes.DistanceConstraint)(i + 2, i, 3, p3.distanceTo(p1), .1);
+    console.log(indices);
+    function generateDistanceConstraintBetweenPointIds(id0, id1) {
+        const p1 = new _three.Vector3(positions[id0 * 3], positions[id0 * 3 + 1], positions[id0 * 3 + 2]);
+        const p2 = new _three.Vector3(positions[id1 * 3], positions[id1 * 3 + 1], positions[id1 * 3 + 2]);
+        const constraint1 = new (0, _xpbdTypes.DistanceConstraint)(id0, id1, 3, p1.distanceTo(p2), .1);
         (0, _state.state).constraints.push(constraint1);
-        (0, _state.state).constraints.push(constraint2);
-        (0, _state.state).constraints.push(constraint3);
+        constraintPointIds.push([
+            id0,
+            id1
+        ]);
     }
+    // List of paired points
+    const constraintPointIds = [];
+    const { edgeIds } = (0, _stretchConstraints.generateTriPairIds)(indices);
+    console.log(edgeIds);
+    for(let index = 0; index < edgeIds.length - 1; index++){
+        // build this into an adjacency matrix to reduce redundancy
+        const i = edgeIds[index];
+        const j = edgeIds[index + 1];
+        const ids = [
+            i,
+            j
+        ];
+        ids.sort((a, b)=>a - b);
+        // If the points do not already have a distance constraint
+        if (constraintPointIds.find((pair)=>pair[0] == ids[0] && pair[1] == ids[1]) === undefined && i * 3 + 5 < indices.length - 1) generateDistanceConstraintBetweenPointIds(ids[0], ids[1]);
+    }
+    console.log(constraintPointIds);
     console.log((0, _state.state).particles, (0, _state.state).constraints);
-    // for (let i = 0; i < (positions.length - 3) / 3; ++i) {
-    //   const pointPosition = new THREE.Vector3(
-    //     positions[i * 3], 
-    //     positions[i * 3 + 1], 
-    //     positions[i * 3 + 2]
-    //   );
-    //   const nextPointPosition = new THREE.Vector3(
-    //     positions[( i + 1 ) * 3], 
-    //     positions[( i + 1 ) * 3 + 1], 
-    //     positions[( i + 1 ) * 3 + 2]
-    //   );
-    //   const constraint:DistanceConstraint = new DistanceConstraint(
-    //     i,
-    //     i + 1,
-    //     3,
-    //     pointPosition.distanceTo(nextPointPosition),
-    //     .1
-    //   );
-    //   state.constraints.push(constraint);
-    // }
     (0, _state.state).testObject = mesh;
     return mesh;
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu","../../State":"83rpN","../simulation/xpbdTypes":"4aPO7","three-subdivide":"e6vhA","three/examples/jsm/utils/BufferGeometryUtils":"5o7x9"}],"4aPO7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DistanceConstraint", ()=>DistanceConstraint);
-var _three = require("three");
-class DistanceConstraint {
-    constructor(p1, p2, stride, restLength, compliance){
-        this.p1 = p1;
-        this.p2 = p2;
-        this.stride = stride;
-        this.restLength = restLength;
-        this.compliance = compliance;
-        this.lambda = 0;
-        this.delta = new _three.Vector3(0, 0, 0);
-    }
-    // XPBD constraint solve method.
-    // deltaTime is the simulation time step.
-    solve(deltaTime, particleObject) {
-        const { particles } = particleObject;
-        const p_i = particles[this.p1].predicted;
-        const p_j = particles[this.p2].predicted;
-        const w_i = particles[this.p1].invMass;
-        const w_j = particles[this.p2].invMass;
-        // This could be included in the constraint instead of creating a new vector!
-        this.delta.subVectors(p_i, p_j);
-        const currentDist = this.delta.length();
-        if (currentDist === 0) return;
-        const C = currentDist - this.restLength;
-        const wSum = w_i + w_j;
-        // compliance term scaled by dt^2, should be almost infinite
-        const alpha = this.compliance / (deltaTime * deltaTime);
-        // lambda
-        const dlambda = -C / (wSum + alpha);
-        // Apply the correction scaled by the normalized gradient.
-        const correction = this.delta.normalize().multiplyScalar(dlambda);
-        if (w_i > 0) p_i.addScaledVector(correction, w_i);
-        if (w_j > 0) p_j.addScaledVector(correction, -w_j);
-    }
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu"}],"e6vhA":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu","../../State":"83rpN","three-subdivide":"e6vhA","three/examples/jsm/utils/BufferGeometryUtils":"5o7x9","../simulation/xpbdTypes":"4aPO7","./mueller/stretchConstraints":"4gI9y"}],"e6vhA":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "LoopSubdivision", ()=>(0, _loopSubdivisionJs.LoopSubdivision));
@@ -52048,7 +51999,125 @@ function mergeBufferAttributes(attributes) {
     return mergeAttributes(attributes);
 }
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1Jt5c":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4aPO7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DistanceConstraint", ()=>DistanceConstraint);
+var _three = require("three");
+class DistanceConstraint {
+    constructor(p1, p2, stride, restLength, compliance){
+        this.p1 = p1;
+        this.p2 = p2;
+        this.stride = stride;
+        this.restLength = restLength;
+        this.compliance = compliance;
+        this.lambda = 0;
+        this.delta = new _three.Vector3(0, 0, 0);
+    }
+    // XPBD constraint solve method.
+    // deltaTime is the simulation time step.
+    solve(deltaTime, particleObject) {
+        const { particles } = particleObject;
+        const p_i = particles[this.p1].predicted;
+        const p_j = particles[this.p2].predicted;
+        const w_i = particles[this.p1].invMass;
+        const w_j = particles[this.p2].invMass;
+        // This could be included in the constraint instead of creating a new vector!
+        this.delta.subVectors(p_i, p_j);
+        const currentDist = this.delta.length();
+        if (currentDist === 0) return;
+        const C = currentDist - this.restLength;
+        const wSum = w_i + w_j;
+        // compliance term scaled by dt^2, should be almost infinite
+        const alpha = this.compliance / (deltaTime * deltaTime);
+        // lambda
+        const dlambda = -C / (wSum + alpha);
+        // Apply the correction scaled by the normalized gradient.
+        const correction = this.delta.normalize().multiplyScalar(dlambda);
+        if (w_i > 0) p_i.addScaledVector(correction, w_i);
+        if (w_j > 0) p_j.addScaledVector(correction, -w_j);
+    }
+}
+
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4gI9y":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// from https://github.com/matthias-research/pages/blob/master/tenMinutePhysics/14-cloth.html#L148
+parcelHelpers.export(exports, "generateTriPairIds", ()=>generateTriPairIds);
+var _findTriNeighbors = require("./findTriNeighbors");
+function generateTriPairIds(faceTriIds) {
+    const neighbors = (0, _findTriNeighbors.findTriNeighbors)(faceTriIds);
+    var numTris = faceTriIds.length / 3;
+    var edgeIds = [];
+    var triPairIds = [];
+    for(var i = 0; i < numTris; i++)for(var j = 0; j < 3; j++){
+        var id0 = faceTriIds[3 * i + j];
+        var id1 = faceTriIds[3 * i + (j + 1) % 3];
+        // each edge only once
+        var n = neighbors[3 * i + j];
+        if (n < 0 || id0 < id1) {
+            edgeIds.push(id0);
+            edgeIds.push(id1);
+        }
+        // tri pair
+        if (n >= 0) {
+            // opposite ids
+            var ni = Math.floor(n / 3);
+            var nj = n % 3;
+            var id2 = faceTriIds[3 * i + (j + 2) % 3];
+            var id3 = faceTriIds[3 * ni + (nj + 2) % 3];
+            triPairIds.push(id0);
+            triPairIds.push(id1);
+            triPairIds.push(id2);
+            triPairIds.push(id3);
+        }
+    }
+    return {
+        triPairIds,
+        edgeIds
+    };
+}
+
+},{"./findTriNeighbors":"aDJEh","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aDJEh":[function(require,module,exports,__globalThis) {
+// from https://github.com/matthias-research/pages/blob/master/tenMinutePhysics/14-cloth.html#L148
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "findTriNeighbors", ()=>findTriNeighbors);
+function findTriNeighbors(triIds) {
+    // create common edges
+    var edges = [];
+    var numTris = triIds.length / 3;
+    for(var i = 0; i < numTris; i++)for(var j = 0; j < 3; j++){
+        var id0 = triIds[3 * i + j];
+        var id1 = triIds[3 * i + (j + 1) % 3];
+        edges.push({
+            id0: Math.min(id0, id1),
+            id1: Math.max(id0, id1),
+            edgeNr: 3 * i + j
+        });
+    }
+    // sort so common edges are next to each other
+    edges.sort((a, b)=>a.id0 < b.id0 || a.id0 == b.id0 && a.id1 < b.id1 ? -1 : 1);
+    // find matchign edges
+    const neighbors = new Float32Array(3 * numTris);
+    neighbors.fill(-1); // open edge
+    var nr = 0;
+    while(nr < edges.length){
+        var e0 = edges[nr];
+        nr++;
+        if (nr < edges.length) {
+            var e1 = edges[nr];
+            if (e0.id0 == e1.id0 && e0.id1 == e1.id1) {
+                neighbors[e0.edgeNr] = e1.edgeNr;
+                neighbors[e1.edgeNr] = e0.edgeNr;
+            }
+            nr++;
+        }
+    }
+    return neighbors;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1Jt5c":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Apply the thumbnail to the canvas
@@ -53101,7 +53170,7 @@ function updateXPBD(deltaTime) {
         particle.predicted.addScaledVector(gravity, particle.invMass * dtsq);
     }
     for (const particle of (0, _state.state).particles)resolveCollisions(particle, 0);
-    const iterations = 10;
+    const iterations = 1;
     for(let iter = 0; iter < iterations; iter++)for (const constraint of (0, _state.state).constraints)constraint.solve(deltaTime, {
         particles: (0, _state.state).particles
     });
@@ -66187,7 +66256,7 @@ const Pieces = ()=>{
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-                className: "flex flex-row text-xs relative",
+                className: "flex flex-row text-xs relative gap-2 overflow-auto",
                 children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
                         piece: piece
                     }, piece.id, false, {
@@ -66275,7 +66344,7 @@ const PieceComponent = ({ piece })=>{
         editing == true ? setEditing(false) : setEditing(true);
     }
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-        className: "my-auto mx-2 max-w-24",
+        className: "my-auto max-w-24",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
                 className: "max-h-12 border border-stone-400",

@@ -26,7 +26,7 @@ export const PieceComponent = ({ piece }: { piece: Piece }) => {
   }
 
   return (
-    <li className="my-auto mx-2 max-w-24">
+    <li className="my-auto max-w-24">
       <canvas className="max-h-12 border border-stone-400" ref={thumbnailRef}></canvas>
       <div className="flex-row flex justify-center items-center">
         { editing && <EditPieceNameAttr piece={ piece } onSave={onSave} />}

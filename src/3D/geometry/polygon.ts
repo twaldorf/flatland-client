@@ -3,6 +3,7 @@ import { state } from "../../State";
 import { DistanceConstraint, Particle } from "../simulation/xpbdTypes";
 import { LoopSubdivision } from 'three-subdivide';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
+import { generateTriPairIds } from "./mueller/stretchConstraints";
 
 export const createPolygonPlane = (path:number[]) => {
   const points = path.map((index) => {
@@ -66,84 +67,54 @@ export const createPolygonPlane = (path:number[]) => {
 
   state.particles[0].velocity = new THREE.Vector3(-10, 10, 100);
 
-
-  // Generate constraints from points
-  // Use adjacency instead of just next point
-  for (let i = 0; i < indices.length / 5; i++) {
-    // build this into an adjacency matrix to reduce redundancy
+  
+  console.log(indices)
+  
+  function generateDistanceConstraintBetweenPointIds(id0:number, id1:number) {
     const p1 = new THREE.Vector3(
-      positions[i * 3], 
-      positions[i * 3 + 1], 
-      positions[i * 3 + 2]
+      positions[id0 * 3], 
+      positions[id0 * 3 + 1], 
+      positions[id0 * 3 + 2]
     );
     
     const p2 = new THREE.Vector3(
-      positions[i * 3 + 3], 
-      positions[i * 3 + 4], 
-      positions[i * 3 + 5]
-    );
-
-    const p3 = new THREE.Vector3(
-      positions[i * 3 + 6], 
-      positions[i * 3 + 7], 
-      positions[i * 3 + 8]
+      positions[id1 * 3], 
+      positions[id1 * 3 + 1], 
+      positions[id1 * 3 + 2]
     );
     
     const constraint1:DistanceConstraint = new DistanceConstraint(
-      i,
-      i + 1,
+      id0,
+      id1,
       3,
       p1.distanceTo(p2),
       .1
     );
-
-    const constraint2:DistanceConstraint = new DistanceConstraint(
-      i + 1,
-      i + 2,
-      3,
-      p2.distanceTo(p3),
-      .1
-    );
-
-    const constraint3:DistanceConstraint = new DistanceConstraint(
-      i + 2,
-      i,
-      3,
-      p3.distanceTo(p1),
-      .1
-    );
-
+    
     state.constraints.push(constraint1);
-    state.constraints.push(constraint2);
-    state.constraints.push(constraint3);
+    constraintPointIds.push([id0, id1]);
+  }
+  
+  // List of paired points
+  const constraintPointIds:number[][] = [];
+  const { edgeIds } = generateTriPairIds(indices as Int8Array);
+  console.log(edgeIds);
+
+  for (let index = 0; index < edgeIds.length - 1; index++) {
+    // build this into an adjacency matrix to reduce redundancy
+    const i = edgeIds[index];
+    const j = edgeIds[index + 1];
+    const ids = [i, j];
+    ids.sort((a, b) => a - b);
+
+    // If the points do not already have a distance constraint
+    if (constraintPointIds.find((pair) => pair[0] == ids[0] && pair[1] == ids[1]) === undefined && (i * 3 + 5) < indices.length - 1) {
+      generateDistanceConstraintBetweenPointIds(ids[0], ids[1]);
+    }
 
   }
+  console.log(constraintPointIds)
   console.log(state.particles, state.constraints)
-
-  // for (let i = 0; i < (positions.length - 3) / 3; ++i) {
-
-  //   const pointPosition = new THREE.Vector3(
-  //     positions[i * 3], 
-  //     positions[i * 3 + 1], 
-  //     positions[i * 3 + 2]
-  //   );
-
-  //   const nextPointPosition = new THREE.Vector3(
-  //     positions[( i + 1 ) * 3], 
-  //     positions[( i + 1 ) * 3 + 1], 
-  //     positions[( i + 1 ) * 3 + 2]
-  //   );
-
-  //   const constraint:DistanceConstraint = new DistanceConstraint(
-  //     i,
-  //     i + 1,
-  //     3,
-  //     pointPosition.distanceTo(nextPointPosition),
-  //     .1
-  //   );
-
-  //   state.constraints.push(constraint);
-  // }
 
   state.testObject = mesh;
   return mesh;

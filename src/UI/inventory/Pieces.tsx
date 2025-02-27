@@ -14,7 +14,7 @@ export const Pieces = () => {
   return (
     <div className="rounded-lg bg-stone-200 min-h-24 bg-white p-2">
       <h4>Pieces</h4>
-      <ul className="flex flex-row text-xs relative">
+      <ul className="flex flex-row text-xs relative gap-2 overflow-auto">
         {pieces.map((piece) => (
           <PieceComponent key={piece.id} piece={piece} />
         ))}

@@ -33,7 +33,7 @@ export function updateXPBD(deltaTime: number) {
     resolveCollisions(particle, 0);
   }
 
-  const iterations = 10;
+  const iterations = 1;
   for (let iter = 0; iter < iterations; iter++) {
     for (const constraint of state.constraints) {
       constraint.solve(deltaTime, { particles: state.particles });

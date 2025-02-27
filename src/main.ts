@@ -117,8 +117,6 @@ const drawTestGeometry = () => {
     -1.0, -1.0,  1.0  // v5
   ] );
 
-  const test_quad = { geometry: test_geometry, n_vertices: 4 };
-  
   test_geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
   test_geometry.setDrawRange( 0, 12 );
   
