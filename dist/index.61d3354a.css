@@ -836,20 +836,12 @@
     gap: calc(var(--spacing) * 2);
   }
 
-  .gap-4 {
-    gap: calc(var(--spacing) * 4);
-  }
-
   .overflow-auto {
     overflow: auto;
   }
 
   .overflow-hidden {
     overflow: hidden;
-  }
-
-  .overflow-x-scroll {
-    overflow-x: scroll;
   }
 
   .rounded {

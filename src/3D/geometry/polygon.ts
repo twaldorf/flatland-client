@@ -66,9 +66,6 @@ export const createPolygonPlane = (path:number[]) => {
   };
 
   state.particles[0].velocity = new THREE.Vector3(-10, 10, 100);
-
-  
-  console.log(indices)
   
   function generateDistanceConstraintBetweenPointIds(id0:number, id1:number) {
     const p1 = new THREE.Vector3(
@@ -98,7 +95,6 @@ export const createPolygonPlane = (path:number[]) => {
   // List of paired points
   const constraintPointIds:number[][] = [];
   const { edgeIds } = generateTriPairIds(indices as Int8Array);
-  console.log(edgeIds);
 
   for (let index = 0; index < edgeIds.length - 1; index++) {
     // build this into an adjacency matrix to reduce redundancy
@@ -113,8 +109,6 @@ export const createPolygonPlane = (path:number[]) => {
     }
 
   }
-  console.log(constraintPointIds)
-  console.log(state.particles, state.constraints)
 
   state.testObject = mesh;
   return mesh;

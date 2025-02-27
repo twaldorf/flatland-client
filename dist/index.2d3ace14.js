@@ -49728,10 +49728,15 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
 parcelHelpers.export(exports, "SPEED", ()=>SPEED);
+parcelHelpers.export(exports, "velocityMax", ()=>velocityMax);
+parcelHelpers.export(exports, "velocityMin", ()=>velocityMin);
+var _three = require("three");
 const cf_canvas_to_inch = 25;
 const SPEED = 5;
+const velocityMax = new _three.Vector3(100, 100, 100);
+const velocityMin = new _three.Vector3(-100, -100, -100);
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"12vmI":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu"}],"12vmI":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawCursorPreview", ()=>drawCursorPreview);
@@ -50521,7 +50526,6 @@ const createPolygonPlane = (path)=>{
         (0, _state.state).particles.push(particle);
     }
     (0, _state.state).particles[0].velocity = new _three.Vector3(-10, 10, 100);
-    console.log(indices);
     function generateDistanceConstraintBetweenPointIds(id0, id1) {
         const p1 = new _three.Vector3(positions[id0 * 3], positions[id0 * 3 + 1], positions[id0 * 3 + 2]);
         const p2 = new _three.Vector3(positions[id1 * 3], positions[id1 * 3 + 1], positions[id1 * 3 + 2]);
@@ -50535,7 +50539,6 @@ const createPolygonPlane = (path)=>{
     // List of paired points
     const constraintPointIds = [];
     const { edgeIds } = (0, _stretchConstraints.generateTriPairIds)(indices);
-    console.log(edgeIds);
     for(let index = 0; index < edgeIds.length - 1; index++){
         // build this into an adjacency matrix to reduce redundancy
         const i = edgeIds[index];
@@ -50548,8 +50551,6 @@ const createPolygonPlane = (path)=>{
         // If the points do not already have a distance constraint
         if (constraintPointIds.find((pair)=>pair[0] == ids[0] && pair[1] == ids[1]) === undefined && i * 3 + 5 < indices.length - 1) generateDistanceConstraintBetweenPointIds(ids[0], ids[1]);
     }
-    console.log(constraintPointIds);
-    console.log((0, _state.state).particles, (0, _state.state).constraints);
     (0, _state.state).testObject = mesh;
     return mesh;
 };
@@ -53152,6 +53153,7 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "updateXPBD", ()=>updateXPBD);
 var _three = require("three");
 var _state = require("../../State");
+var _factors = require("../../2D/settings/factors");
 // For collisions, we’ll resolve with a simple floor at y = 0.
 function resolveCollisions(particle, floorY) {
     if (particle.predicted.y < floorY) // Push the particle back to the floor.
@@ -53170,7 +53172,7 @@ function updateXPBD(deltaTime) {
         particle.predicted.addScaledVector(gravity, particle.invMass * dtsq);
     }
     for (const particle of (0, _state.state).particles)resolveCollisions(particle, 0);
-    const iterations = 1;
+    const iterations = 10;
     for(let iter = 0; iter < iterations; iter++)for (const constraint of (0, _state.state).constraints)constraint.solve(deltaTime, {
         particles: (0, _state.state).particles
     });
@@ -53186,13 +53188,14 @@ function updateXPBD(deltaTime) {
         // Update velocity with possible Number guards (-> damping)
         particle.velocity.copy(particle.position);
         particle.velocity.sub(particle.previousPosition);
+        particle.velocity.clamp((0, _factors.velocityMin), (0, _factors.velocityMax));
         particle.velocity.divideScalar(deltaTime);
     }
     (0, _state.state).particles[0].geometry.attributes.position.needsUpdate = true;
     (0, _state.state).particles[0].geometry.computeBoundingSphere();
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN","three":"ktPTu"}],"7mqRv":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN","three":"ktPTu","../../2D/settings/factors":"9qufK"}],"7mqRv":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "OrbitControls", ()=>OrbitControls);

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { state } from '../../State';
 import { Particle, DistanceConstraint } from './xpbdTypes';
+import { velocityMax, velocityMin } from '../../2D/settings/factors';
 
 // For collisions, we’ll resolve with a simple floor at y = 0.
 function resolveCollisions(particle: Particle, floorY: number) {
@@ -33,7 +34,7 @@ export function updateXPBD(deltaTime: number) {
     resolveCollisions(particle, 0);
   }
 
-  const iterations = 1;
+  const iterations = 10;
   for (let iter = 0; iter < iterations; iter++) {
     for (const constraint of state.constraints) {
       constraint.solve(deltaTime, { particles: state.particles });
@@ -55,6 +56,7 @@ export function updateXPBD(deltaTime: number) {
     // Update velocity with possible Number guards (-> damping)
     particle.velocity.copy(particle.position);
     particle.velocity.sub(particle.previousPosition);
+    particle.velocity.clamp(velocityMin, velocityMax);
     particle.velocity.divideScalar(deltaTime);
   }
 
