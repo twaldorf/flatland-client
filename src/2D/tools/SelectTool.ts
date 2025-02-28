@@ -14,6 +14,7 @@ import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePre
 import { Piece } from "../../UI/store";
 import { KeyboardEvent } from "react";
 import { DeleteShapeCommand } from "../commands/DeleteShapeCommand";
+import { checkLineIntersection } from "../geometry/lineIntersection";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -67,6 +68,8 @@ export class SelectTool implements ToolBase {
     const clickPos = cLocalizePoint(e.clientX, e.clientY);
     const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
     const hitIndex = checkPointOverlap(clickPos);
+    const lineHit = checkLineIntersection(clickPos);
+    console.log(lineHit);
     state.pointerDown = true;
 
     switch (this.__state.type) {

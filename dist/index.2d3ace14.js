@@ -49983,6 +49983,7 @@ var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCo
 var _canvas = require("../rendering/canvas");
 var _drawSelectionMovePreview = require("../rendering/drawSelectionMovePreview");
 var _deleteShapeCommand = require("../commands/DeleteShapeCommand");
+var _lineIntersection = require("../geometry/lineIntersection");
 class SelectTool {
     constructor(){
         // Tool state object stores tool mechanical state
@@ -50021,6 +50022,8 @@ class SelectTool {
         const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
         const hitIndex = (0, _common.checkPointOverlap)(clickPos);
+        const lineHit = (0, _lineIntersection.checkLineIntersection)(clickPos);
+        console.log(lineHit);
         (0, _state.state).pointerDown = true;
         switch(this.__state.type){
             case "idle":
@@ -50124,7 +50127,7 @@ class SelectTool {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/drawSelectionMovePreview":"jMLdr","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11"}],"aOEKs":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/drawSelectionMovePreview":"jMLdr","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s"}],"aOEKs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -50355,7 +50358,50 @@ class DeleteShapeCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"l1Ff7":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"jIp1s":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "pointLineIntersection", ()=>pointLineIntersection);
+parcelHelpers.export(exports, "checkLineIntersection", ()=>checkLineIntersection);
+var _interface = require("../settings/interface");
+var _state = require("../../State");
+function pointLineIntersection(point, v0, v1) {
+    // Ensure v0 is always the leftmost point
+    let p0 = v0.x > v1.x ? v1.clone() : v0.clone();
+    let p1 = v0.x > v1.x ? v0.clone() : v1.clone();
+    // Bounding box check
+    const minX = Math.min(p0.x, p1.x) - (0, _interface.rad) * 2;
+    const maxX = Math.max(p0.x, p1.x) + (0, _interface.rad) * 2;
+    const minY = Math.min(p0.y, p1.y) - (0, _interface.rad) * 2;
+    const maxY = Math.max(p0.y, p1.y) + (0, _interface.rad) * 2;
+    if (!(point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY)) return false;
+    // Compute line equation: y = mx + b
+    const dx = p1.x - p0.x;
+    if (dx === 0) // Vertical line case
+    return Math.abs(point.x - p0.x) < (0, _interface.rad) * 2;
+    const m = (p1.y - p0.y) / dx;
+    const b = p0.y - m * p0.x;
+    // Check if the point lies close to the line within a tolerance
+    const epsilon = (0, _interface.rad) * 2;
+    return Math.abs(point.y - (m * point.x + b)) < epsilon;
+}
+function checkLineIntersection(pos) {
+    var result = null;
+    (0, _state.state).c_shapes.forEach((shapeArr, index)=>{
+        console.log(shapeArr);
+        for(let i = 0; i < shapeArr.length - 1; ++i){
+            const p0 = (0, _state.state).c_points[shapeArr[i]];
+            const p1 = (0, _state.state).c_points[shapeArr[(i + 1) % (shapeArr.length - 1)]];
+            if (pointLineIntersection(pos, p0, p1)) result = {
+                shapeIndex: index,
+                lineStartIndex: i
+            };
+        }
+    });
+    return result;
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../settings/interface":"dci9b"}],"l1Ff7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useAppState", ()=>useAppState);
