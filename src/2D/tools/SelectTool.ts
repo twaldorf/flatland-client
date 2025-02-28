@@ -14,7 +14,9 @@ import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePre
 import { Piece } from "../../UI/store";
 import { KeyboardEvent } from "react";
 import { DeleteShapeCommand } from "../commands/DeleteShapeCommand";
-import { checkLineIntersection } from "../geometry/lineIntersection";
+import { checkLineIntersection, LineHit } from "../geometry/lineIntersection";
+import { SelectToolSelectLineCommand } from "../commands/SelectToolSelectLineCommand";
+import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -23,6 +25,7 @@ export type SelectToolState =
   | { type: "mousedown"; mousePosition: Vector2 }
   | { type: "selecting"; selectedShapeIndex: number }
   | { type: "selecting_points"; selectedPointIndices: number[] }
+  | { type: "selecting_lines"; selectedLineHits: LineHit[] }
   | { type: "editing_piece"; editingShapeIndex: number; piece: Piece }
 
 export class SelectTool implements ToolBase {
@@ -69,7 +72,6 @@ export class SelectTool implements ToolBase {
     const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
     const hitIndex = checkPointOverlap(clickPos);
     const lineHit = checkLineIntersection(clickPos);
-    console.log(lineHit);
     state.pointerDown = true;
 
     switch (this.__state.type) {
@@ -87,16 +89,23 @@ export class SelectTool implements ToolBase {
             selectedPointIndices: [ hitIndex ]
           });
         }
-
+        else if ( lineHit ) {
+          pushCommand( new SelectToolSelectLineCommand( lineHit ) );
+          this.transition({
+            type: "selecting_lines",
+            selectedLineHits: [ lineHit ]
+          }); 
+        }
         break;
       
       case "selecting":
         if (state.shiftDown) {
           if ( selectedShapeIndex > -1 ) {
-            // not sufficienct
-            pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
+            // not sufficient
+            pushCommand( new SelectToolAddShapeCommand( selectedShapeIndex ) );
           }
-        } else {
+        } 
+        else {
           if ( selectedShapeIndex > -1 ) {
             pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
           }
@@ -120,7 +129,18 @@ export class SelectTool implements ToolBase {
             type: "idle"
           });
         }
+        break;
+
+      case "selecting_lines":
+        if (!hitIndex || hitIndex < 0) {
+          pushCommand( new SelectToolDeselectAllCommand() );
+          this.transition({
+            type: "idle"
+          });
+        }
+        break;
     }
+
     drawCanvasFromState(state);
   }
 
@@ -169,6 +189,7 @@ export class SelectTool implements ToolBase {
         this.transition({
           type: 'idle'
         });
+        break;
     }
   }
 

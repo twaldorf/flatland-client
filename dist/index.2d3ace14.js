@@ -48940,6 +48940,7 @@ const state = {
     c_selected: [],
     c_shapes: [],
     c_selected_shapes: [],
+    c_selected_lines: [],
     cActive: false,
     cSelecting: false,
     pendingSelection: undefined,
@@ -49664,6 +49665,21 @@ const drawSelections = ()=>{
         (0, _state.state).context.fill();
         (0, _state.state).context.stroke();
     });
+    console.log((0, _state.state).c_selected_lines);
+    (0, _state.state).c_selected_lines.map((hit)=>{
+        const shapeArr = (0, _state.state).c_shapes[hit.shapeIndex];
+        const i1 = shapeArr[hit.lineStartIndex];
+        const i2 = shapeArr[(hit.lineStartIndex + 1) % (shapeArr.length - 1)];
+        const point1 = (0, _state.state).c_pointmap.get(i1);
+        const point2 = (0, _state.state).c_pointmap.get(i2);
+        if (point1 && point2) {
+            (0, _state.state).context.moveTo(point1.x, point1.y);
+            (0, _state.state).context.lineTo(point2.x, point2.y);
+            (0, _state.state).context.strokeStyle = 'blue';
+            (0, _state.state).context.lineWidth = 10;
+            (0, _state.state).context.stroke();
+        }
+    });
 };
 
 },{"../../State":"83rpN","../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h76tE":[function(require,module,exports,__globalThis) {
@@ -49984,6 +50000,8 @@ var _canvas = require("../rendering/canvas");
 var _drawSelectionMovePreview = require("../rendering/drawSelectionMovePreview");
 var _deleteShapeCommand = require("../commands/DeleteShapeCommand");
 var _lineIntersection = require("../geometry/lineIntersection");
+var _selectToolSelectLineCommand = require("../commands/SelectToolSelectLineCommand");
+var _selectToolAddShapeCommand = require("../commands/SelectToolAddShapeCommand");
 class SelectTool {
     constructor(){
         // Tool state object stores tool mechanical state
@@ -50023,7 +50041,6 @@ class SelectTool {
         const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
         const hitIndex = (0, _common.checkPointOverlap)(clickPos);
         const lineHit = (0, _lineIntersection.checkLineIntersection)(clickPos);
-        console.log(lineHit);
         (0, _state.state).pointerDown = true;
         switch(this.__state.type){
             case "idle":
@@ -50041,12 +50058,20 @@ class SelectTool {
                             hitIndex
                         ]
                     });
+                } else if (lineHit) {
+                    (0, _command.pushCommand)(new (0, _selectToolSelectLineCommand.SelectToolSelectLineCommand)(lineHit));
+                    this.transition({
+                        type: "selecting_lines",
+                        selectedLineHits: [
+                            lineHit
+                        ]
+                    });
                 }
                 break;
             case "selecting":
                 if ((0, _state.state).shiftDown) {
-                    if (selectedShapeIndex > -1) // not sufficienct
-                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
+                    if (selectedShapeIndex > -1) // not sufficient
+                    (0, _command.pushCommand)(new (0, _selectToolAddShapeCommand.SelectToolAddShapeCommand)(selectedShapeIndex));
                 } else if (selectedShapeIndex > -1) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
                 break;
             case "selecting_points":
@@ -50060,6 +50085,15 @@ class SelectTool {
                         type: "idle"
                     });
                 }
+                break;
+            case "selecting_lines":
+                if (!hitIndex || hitIndex < 0) {
+                    (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
+                    this.transition({
+                        type: "idle"
+                    });
+                }
+                break;
         }
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
@@ -50102,6 +50136,7 @@ class SelectTool {
                 this.transition({
                     type: 'idle'
                 });
+                break;
         }
     }
     onDoubleClick(e) {
@@ -50127,7 +50162,7 @@ class SelectTool {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/drawSelectionMovePreview":"jMLdr","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s"}],"aOEKs":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../pointer/cLocalizePoint":"3rhkZ","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolShapeCommand":"aHJgT","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/drawSelectionMovePreview":"jMLdr","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s","../commands/SelectToolSelectLineCommand":"aamTt","../commands/SelectToolAddShapeCommand":"fcLPE"}],"aOEKs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -50284,13 +50319,19 @@ var _canvas = require("../rendering/canvas");
 class SelectToolDeselectAllCommand {
     constructor(){
         this.old_selected = (0, _state.state).c_selected;
+        this.old_selected_lines = (0, _state.state).c_selected_lines;
+        this.old_selected_shapes = (0, _state.state).c_selected_shapes;
     }
     do() {
         (0, _state.state).c_selected = [];
+        (0, _state.state).c_selected_lines = [];
+        (0, _state.state).c_selected_shapes = [];
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
         (0, _state.state).c_selected = this.old_selected;
+        (0, _state.state).c_selected_lines = this.old_selected_lines;
+        (0, _state.state).c_selected_shapes = this.old_selected_shapes;
     }
 }
 
@@ -50401,7 +50442,44 @@ function checkLineIntersection(pos) {
     return result;
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../settings/interface":"dci9b"}],"l1Ff7":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../settings/interface":"dci9b"}],"aamTt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolSelectLineCommand", ()=>SelectToolSelectLineCommand);
+var _state = require("../../State");
+class SelectToolSelectLineCommand {
+    constructor(lineHit){
+        this.lineHit = lineHit;
+        this.previousSelection = (0, _state.state).c_selected_lines;
+    }
+    do() {
+        (0, _state.state).c_selected_lines = [
+            this.lineHit
+        ];
+    }
+    undo() {
+        (0, _state.state).c_selected_lines = this.previousSelection;
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fcLPE":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolAddShapeCommand", ()=>SelectToolAddShapeCommand);
+var _state = require("../../State");
+class SelectToolAddShapeCommand {
+    constructor(shapeIndex){
+        this.shapeIndex = shapeIndex;
+    }
+    do() {
+        (0, _state.state).c_selected_shapes.push(this.shapeIndex);
+    }
+    undo() {
+        (0, _state.state).c_selected_shapes.pop(); // could  be a splice for better accuracy but I really depend on this being rather clean overall so I don't think this is a huge risk
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useAppState", ()=>useAppState);

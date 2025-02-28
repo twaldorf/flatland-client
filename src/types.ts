@@ -5,6 +5,7 @@ import { Command } from "./Command";
 import { SelectTool, SelectToolState } from "./2D/tools/SelectTool";
 import { DistanceConstraint, Particle } from "./3D/simulation/xpbdTypes";
 import { ToolState } from "./2D/tools/changeTool";
+import { LineHit } from "./2D/geometry/lineIntersection";
 
 // State interface for global state singleton
 export interface State {
@@ -79,6 +80,9 @@ export interface State {
   // All selected shapes on the canvas
   // Indices of elements in c_shapes
   c_selected_shapes: Array<number>;
+
+  // Array of LineHits, lines that are currently selected
+  c_selected_lines: Array<LineHit>;
 
   // Array of closed paths (shapes)
   // Shapes are moved from the paths array into the shapes array
