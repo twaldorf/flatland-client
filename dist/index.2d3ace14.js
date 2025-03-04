@@ -52804,8 +52804,8 @@ var _canvas = require("./canvas");
 var _getBuffer = require("./getBuffer");
 function drawDrawPreview(from, to) {
     // Find the vertical and horizontal distances between the points
-    const h = Math.abs(from.y - to.y);
-    const w = Math.abs(from.x - to.x);
+    const h = Math.max(Math.abs(from.y - to.y), 1);
+    const w = Math.max(Math.abs(from.x - to.x), 1);
     // Bail if the cursor is within the point icon
     if (h * w < (0, _interface.rad)) return;
     const bundle = (0, _getBuffer.getBuffer)('preview');
@@ -52821,7 +52821,7 @@ function drawDrawPreview(from, to) {
     ctx.lineWidth = 1;
     ctx.beginPath();
     // 2nd and 4th quadrants
-    if (from.x > to.x && from.y > to.y || from.x < to.x && from.y < to.y) {
+    if (from.x >= to.x && from.y >= to.y || from.x <= to.x && from.y <= to.y) {
         // ctx.fillStyle = c_bgColor;
         ctx.moveTo(0, 0);
         ctx.lineTo(w, h);
