@@ -49731,7 +49731,7 @@ function drawGridRuler() {
         ctx.lineTo(toX, i * verticalGridHeight);
         ctx.stroke();
     }
-    for(let i = 1; i < Math.floor(bufferCanvas.height / verticalGridHeight); ++i){
+    for(let i = 1; i <= Math.floor(bufferCanvas.width / verticalGridHeight); ++i){
         ctx.moveTo(i * verticalGridHeight, xMargin);
         ctx.lineTo(i * verticalGridHeight, toY);
         ctx.stroke();
@@ -49799,6 +49799,10 @@ parcelHelpers.export(exports, "cLocalizePoint", ()=>cLocalizePoint);
 var _three = require("three");
 var _state = require("../../State");
 const cLocalizePoint = (sx, sy)=>{
+    if ((0, _state.state).shiftDown) {
+        sx = Math.round(sx / 10) * 10;
+        sy = Math.round(sy / 10) * 10;
+    }
     // sx, sy in [-1, 1];
     // x, y in [0, width, height resp.];
     const x = sx - (0, _state.state).canvas.getBoundingClientRect().x;

@@ -58,7 +58,7 @@ export function drawGridRuler() {
     ctx.stroke();
   }
 
-  for (let i = 1; i < Math.floor(bufferCanvas.height / verticalGridHeight); ++i) {
+  for (let i = 1; i <= Math.floor(bufferCanvas.width / verticalGridHeight); ++i) {
     ctx.moveTo(i * verticalGridHeight, xMargin);
     ctx.lineTo(i * verticalGridHeight, toY);
     ctx.stroke();
