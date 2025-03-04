@@ -49798,19 +49798,28 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cLocalizePoint", ()=>cLocalizePoint);
 var _three = require("three");
 var _state = require("../../State");
+var _factors = require("../settings/factors");
 const cLocalizePoint = (sx, sy)=>{
+    const rect = (0, _state.state).canvas.getBoundingClientRect();
+    const yoffset = rect.top + window.scrollY;
+    const xoffset = rect.left;
+    sy -= yoffset;
+    sx -= xoffset;
     if ((0, _state.state).shiftDown) {
-        sx = Math.round(sx / 10) * 10;
-        sy = Math.round(sy / 10) * 10;
+        console.log(sx, sy);
+        const param = (0, _factors.cf_canvas_to_inch) / 2;
+        sx = Math.round(sx / param) * param;
+        sy = Math.round(sy / param) * param;
+        console.log(sx, sy);
     }
     // sx, sy in [-1, 1];
     // x, y in [0, width, height resp.];
-    const x = sx - (0, _state.state).canvas.getBoundingClientRect().x;
-    const y = sy - (0, _state.state).canvas.getBoundingClientRect().y;
-    return new (0, _three.Vector2)(x * 2, y * 2);
+    // const x = ( sx - state.canvas.getBoundingClientRect().x ) ;
+    // const y = ( sy - state.canvas.getBoundingClientRect().y ) ;
+    return new (0, _three.Vector2)(sx * 2, sy * 2);
 };
 
-},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8deBQ":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../settings/factors":"9qufK"}],"8deBQ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "findNearestPoint", ()=>findNearestPoint);
