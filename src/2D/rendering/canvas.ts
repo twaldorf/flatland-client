@@ -20,7 +20,7 @@ export function drawCanvasSetup() {
 export function drawCanvasFromState(state:State):void {
   erase();
   drawPaths(state);
-  drawSelections();
+  drawSelections(state);
   drawPoints(state);
   drawCursorPreview(state.pointer);
   // drawShapes();

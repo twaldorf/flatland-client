@@ -17,6 +17,7 @@ import { DeleteShapeCommand } from "../commands/DeleteShapeCommand";
 import { checkLineIntersection, LineHit } from "../geometry/lineIntersection";
 import { SelectToolSelectLineCommand } from "../commands/SelectToolSelectLineCommand";
 import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand";
+import { SelectToolDeselectLinesCommand } from "../commands/SelectToolDeselectLinesCommand";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -72,75 +73,104 @@ export class SelectTool implements ToolBase {
     const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
     const hitIndex = checkPointOverlap(clickPos);
     const lineHit = checkLineIntersection(clickPos);
+    console.log(lineHit)
     state.pointerDown = true;
 
-    switch (this.__state.type) {
-      case "idle":
-        if ( selectedShapeIndex > -1 ) {
-          pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
-          this.transition({
-            type: "selecting",
-            selectedShapeIndex
-          });
-        } else if ( hitIndex && hitIndex > -1 ) {
-          pushCommand( new SelectToolPointCommand( hitIndex ) );
-          this.transition({
-            type: "selecting_points",
-            selectedPointIndices: [ hitIndex ]
-          });
-        }
-        else if ( lineHit ) {
-          pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-          this.transition({
-            type: "selecting_lines",
-            selectedLineHits: [ lineHit ]
-          }); 
-        }
-        break;
-      
-      case "selecting":
-        if (state.shiftDown) {
-          if ( selectedShapeIndex > -1 ) {
-            // not sufficient
-            pushCommand( new SelectToolAddShapeCommand( selectedShapeIndex ) );
-          }
-        } 
-        else {
-          if ( selectedShapeIndex > -1 ) {
+    if (selectedShapeIndex >= 0 || (hitIndex && hitIndex >= 0) || lineHit != null) {
+      switch (this.__state.type) {
+        case "idle":
+          if ( hitIndex && hitIndex > -1 ) {
+            pushCommand( new SelectToolPointCommand( hitIndex ) );
+            this.transition({
+              type: "selecting_points",
+              selectedPointIndices: [ hitIndex ]
+            });
+          } else if ( lineHit ) {
+            pushCommand( new SelectToolSelectLineCommand( lineHit ) );
+            this.transition({
+              type: "selecting_lines",
+              selectedLineHits: [ lineHit ]
+            }); 
+          } else if ( selectedShapeIndex > -1 ) {
             pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
+            this.transition({
+              type: "selecting",
+              selectedShapeIndex
+            });
           }
-        }
-        break;
-      
-      case "selecting_points":
-        if ( hitIndex && hitIndex > -1) {
-          if (state.shiftDown ) {
-            if (state.c_selected.indexOf(hitIndex) === -1) {
-              pushCommand( new SelectToolPointCommand( hitIndex ) );
+          break;
+        
+        case "selecting":
+          if (state.shiftDown) {
+            if ( selectedShapeIndex > -1 ) {
+              // not sufficient
+              pushCommand( new SelectToolAddShapeCommand( selectedShapeIndex ) );
             }
-          } else {
-            if (state.c_selected.indexOf(hitIndex) === -1) {
-              pushCommand( new SelectToolPointCommand( hitIndex ) );
-            } 
+          } 
+          else {
+            if ( selectedShapeIndex > -1 ) {
+              pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
+            }
           }
-        } else if ( !state.shiftDown ) {
-          pushCommand( new SelectToolDeselectAllCommand() );
-          this.transition({
-            type: "idle"
-          });
-        }
-        break;
+          break;
+        
+        case "selecting_points":
+          if ( hitIndex && hitIndex > -1) {
+            if (state.shiftDown ) {
+              if (state.c_selected.indexOf(hitIndex) === -1) {
+                pushCommand( new SelectToolPointCommand( hitIndex ) );
+              }
+            } else {
+              if (state.c_selected.indexOf(hitIndex) === -1) {
+                pushCommand( new SelectToolPointCommand( hitIndex ) );
+              } 
+            }
+          } else if ( !state.shiftDown ) {
+            pushCommand( new SelectToolDeselectAllCommand() );
+            this.transition({
+              type: "idle"
+            });
+          }
+          break;
 
-      case "selecting_lines":
-        if (!hitIndex || hitIndex < 0) {
-          pushCommand( new SelectToolDeselectAllCommand() );
-          this.transition({
-            type: "idle"
-          });
-        }
-        break;
+
+        case "selecting_lines":
+
+          // Hit Point
+          if ( hitIndex && hitIndex > -1 ) {
+            pushCommand( new SelectToolPointCommand( hitIndex ) );
+            this.transition({
+              type: "selecting_points",
+              selectedPointIndices: [ hitIndex ]
+            });
+
+          // Hit Line
+          } else if ( lineHit ) {
+            if (state.shiftDown) {
+              // refact to append to line array
+              pushCommand( new SelectToolSelectLineCommand( lineHit ) );
+            } else {
+              pushCommand( new SelectToolDeselectLinesCommand() );
+              pushCommand( new SelectToolSelectLineCommand( lineHit ) );
+            }
+
+          // Hit Shape
+          } else if ( selectedShapeIndex > -1 ) {
+            pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
+            this.transition({
+              type: "selecting",
+              selectedShapeIndex
+            });
+          }
+          break;
+      }
+    // No hits, deselect all
+    } else {
+      pushCommand( new SelectToolDeselectAllCommand() );
+      this.transition({
+        type: "idle"
+      });
     }
-
     drawCanvasFromState(state);
   }
 
@@ -214,6 +244,10 @@ export class SelectTool implements ToolBase {
 
     }
 
+  }
+
+  public deselect() {
+    console.error('Not implemented for the Select tool');
   }
 
   public get state():SelectToolState {

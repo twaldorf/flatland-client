@@ -23,7 +23,7 @@ const App: React.FC = () => {
       <div className="max-h-1/3">
         <Header></Header>
 
-        <Tabs activeTab={"untitled"} tabs={["untitled", "Shirt Block"]} onTabChange={function (tab: string): void {
+        <Tabs activeTab={"untitled"} tabs={["untitled"]} onTabChange={function (tab: string): void {
           throw new Error("Function not implemented.");
         } }></Tabs>
       </div>

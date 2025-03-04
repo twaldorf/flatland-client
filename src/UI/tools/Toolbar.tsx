@@ -2,6 +2,7 @@ import { useAppState } from '../store';
 import { listStyleNone } from '../styles/common'
 import { PathIcon } from './toolbar/Pathicon'
 import { ToolIcon } from './toolbar/ToolIcon'
+import { MeasureIcon } from './toolbar/MeasureIcon'
 
 export const Toolbar = ({}) => {
 
@@ -12,6 +13,7 @@ export const Toolbar = ({}) => {
       <ul style={listStyle} className='flex-row flex'>
         <ToolIcon active={ selectedTool == 'select' ? true : false }></ToolIcon>
         <PathIcon active={ selectedTool == 'path' ? true : false }></PathIcon>
+        <MeasureIcon active={ selectedTool == 'measure' ? true : false }></MeasureIcon>
       </ul>
     </div>
   )

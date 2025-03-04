@@ -6,6 +6,7 @@ import { SelectTool, SelectToolState } from "./2D/tools/SelectTool";
 import { DistanceConstraint, Particle } from "./3D/simulation/xpbdTypes";
 import { ToolState } from "./2D/tools/changeTool";
 import { LineHit } from "./2D/geometry/lineIntersection";
+import { MeasureTool, MeasureToolState } from "./2D/tools/MeasureTool";
 
 // State interface for global state singleton
 export interface State {
@@ -92,6 +93,9 @@ export interface State {
   // -1 when it is inactive
   c_activePath: number;
 
+  // Array of point indices making up a measuring line
+  c_measure_path: number[]
+
   // Scale factor manipulated by the user through zoom functionality
   c_zoomfactor: number;
 
@@ -115,11 +119,11 @@ export interface ToolBase {
   name: string;
   initializeEvents: Function;
   dismountEvents: Function;
-  readonly state: PathToolState | SelectToolState;
+  readonly state: PathToolState | SelectToolState | MeasureToolState;
 }
 
-export type Tool = PathTool | SelectTool;
-export type ToolName = "path" | "select";
+export type Tool = PathTool | SelectTool | MeasureTool;
+export type ToolName = "path" | "select" | "measure";
 
 export type DrawableEntity = Vector2 | Vector2[];
 

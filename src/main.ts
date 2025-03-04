@@ -8,7 +8,7 @@ import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './3D/e
 import { createRectangularPrism } from './3D/geometry/primitives';
 import { initializeHotkeys } from './2D/hotkeys/hotkeys';
 import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
-import { drawCanvasSetup } from './2D/rendering/canvas';
+import { drawCanvasFromState, drawCanvasSetup } from './2D/rendering/canvas';
 import { drawGridRuler, drawYRuler } from "./2D/rendering/drawRulers";
 import { updateXPBD } from './3D/simulation/protoXPBD';
 import { SPEED } from './2D/settings/factors';
