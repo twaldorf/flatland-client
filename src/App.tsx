@@ -5,6 +5,7 @@ import { Toolbar } from "./UI/tools/Toolbar";
 import { Header } from "./UI/sections/Header";
 import { Tabs } from "./UI/sections/Workspace/Tabs";
 import { Pieces } from "./UI/inventory/Pieces";
+import Label from "./UI/sections/Overlay/Label";
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 
 const App: React.FC = () => {
@@ -27,6 +28,8 @@ const App: React.FC = () => {
           throw new Error("Function not implemented.");
         } }></Tabs>
       </div>
+      
+      <Label></Label>
 
       <div className="grid grid-cols-2">
 

@@ -5,20 +5,19 @@ import { Command } from "../../Command";
 export class MeasureToolAddPointCommand implements Command {
 
   pos:Vector2;
-  last:number[];
+  key:string;
   
   constructor(pos:Vector2) {
     this.pos = pos;
-    this.last = state.c_measure_path;
+    this.key = String.fromCharCode(65 + state.c_measure_points.size);
   }
 
   do() {
-    const index = state.c_points.push(this.pos) - 1;
-    state.c_measure_path.push(index);
+    state.c_measure_points.set(this.key, this.pos);
   }
 
   undo() {
-    state.c_measure_path = this.last;
+    state.c_measure_points.delete(this.key);
   }
 
 }

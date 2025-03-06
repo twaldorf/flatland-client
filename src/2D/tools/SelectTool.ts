@@ -11,7 +11,7 @@ import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
 import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
 import { drawCanvasFromState, redrawCanvas } from "../rendering/canvas";
 import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
-import { Piece } from "../../UI/store";
+
 import { KeyboardEvent } from "react";
 import { DeleteShapeCommand } from "../commands/DeleteShapeCommand";
 import { checkLineIntersection, LineHit } from "../geometry/lineIntersection";

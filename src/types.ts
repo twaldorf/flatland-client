@@ -94,7 +94,8 @@ export interface State {
   c_activePath: number;
 
   // Array of point indices making up a measuring line
-  c_measure_path: number[]
+  c_measure_path: number[];
+  c_measure_points: Map<string, Vector2>;
 
   // Scale factor manipulated by the user through zoom functionality
   c_zoomfactor: number;

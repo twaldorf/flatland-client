@@ -1,5 +1,11 @@
 import { create } from 'zustand';
 import { Piece, Tool, ToolName } from '../types';
+import { Vector2 } from 'three';
+
+interface Label {
+  point: Vector2;
+  piece: Piece;
+}
 
 interface AppState {
   selectedTool: ToolName;
@@ -9,6 +15,9 @@ interface AppState {
   addPiece: (piece: Piece) => void;
   setPieceName: (pieceId: Piece["id"], newName: Piece["name"]) => void;
   
+  labelPiece: (labelPoint: Vector2, piece: Piece) => void;
+  clearLabel: () => void;
+  label: Label | undefined;
   
 }
 
@@ -30,5 +39,20 @@ export const useAppState = create<AppState>((set) => ({
         piece.id === pieceId ? { ...piece, name: newName } : piece
       ),
     }));
+  },
+
+  label: undefined,
+
+  labelPiece: (labelPoint: Vector2, piece: Piece) => {
+    set((state) => ({
+      label: { point: labelPoint, piece: piece }
+    }))
+  },
+
+  clearLabel: () => {
+    set((state) => ({
+      label: undefined
+    }))
   }
+
 }));
