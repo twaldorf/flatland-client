@@ -49380,6 +49380,7 @@ var _drawPaths = require("./drawPaths");
 var _drawSelections = require("./drawSelections");
 var _drawRulers = require("./drawRulers");
 var _drawCursorPreview = require("./drawCursorPreview");
+var _drawMeasurements = require("./drawMeasurements");
 function drawCanvasSetup() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
     (0, _state.state).context.fillRect(0, 0, (0, _state.state).canvas.width, (0, _state.state).canvas.height);
@@ -49393,6 +49394,7 @@ function drawCanvasFromState(state) {
     (0, _drawSelections.drawSelections)(state);
     (0, _drawPoints.drawPoints)(state);
     (0, _drawCursorPreview.drawCursorPreview)(state.pointer);
+    (0, _drawMeasurements.drawMeasurements)(state);
 // drawShapes();
 }
 function redrawCanvas() {
@@ -49418,7 +49420,7 @@ function point(index) {
     return (0, _state.state).c_points[index];
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawCursorPreview":"12vmI"}],"eQ9g7":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawCursorPreview":"12vmI","./drawMeasurements":"aqmR1"}],"eQ9g7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
@@ -49804,7 +49806,17 @@ parcelHelpers.export(exports, "path2", ()=>path2);
 const path1 = new Path2D(`M15,12.5H12.5V15a.5.5,0,0,1-1,0V12.5H9a.5.5,0,0,1,0-1h2.5V9a.5.5,0,0,1,1,0v2.5H15A.5.5,0,0,1,15,12.5Z`);
 const path2 = new Path2D(`M12,21.932A9.934,9.934,0,1,1,21.932,12,9.944,9.944,0,0,1,12,21.932ZM12,3.065A8.934,8.934,0,1,0,20.932,12,8.944,8.944,0,0,0,12,3.065Z`);
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3rhkZ":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aqmR1":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawMeasurements", ()=>drawMeasurements);
+var _getBuffer = require("./getBuffer");
+function drawMeasurements(state) {
+    const { context, canvas } = (0, _getBuffer.getBuffer)('measurements');
+    for (const key of state.c_measure_points.keys())context;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./getBuffer":"7bBl8"}],"3rhkZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cLocalizePoint", ()=>cLocalizePoint);
