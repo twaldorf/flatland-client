@@ -49800,21 +49800,10 @@ class PathTool {
         const pathIndex = this.__currentPathIndex;
         if ((0, _state.state).c_paths[pathIndex]) // Add the point to the path
         (0, _state.state).c_paths[pathIndex].push(pointIndex);
-        else this.__currentPathIndex = (0, _state.state).c_paths.push([
+        else // Create a new path and add the point to it
+        this.__currentPathIndex = (0, _state.state).c_paths.push([
             pointIndex
         ]) - 1;
-        // Already drawing, continue adding points to the current path
-        // if (this.__state.type == 'drawing') {
-        //   state.c_paths[ this.__state.currentPathIndex ].push( pointIndex );
-        // }
-        // if (this.__state.type == 'idle') {
-        //   const path = [ pointIndex ];
-        //   const pathIndex = state.c_paths.push( path ) - 1;
-        //   this.transition({
-        //     type: "drawing",
-        //     currentPathIndex: pathIndex
-        //   })
-        // }
         (0, _canvas.drawCanvasFromState)((0, _state.state));
         return {
             pointIndex,
@@ -49822,13 +49811,14 @@ class PathTool {
         };
     }
     // Protected, to be used by a Command
-    removePointFromPath(i, pi) {
-        const pointInPathIndex = (0, _state.state).c_paths[pi].findIndex((c)=>c == i);
-        // TODO: Shouldn't be splicing from global point array, this majorly fucks everything up
-        // Use active point map instead
-        // state.c_points.splice( i, 1 );
-        // state.c_paths[ pi ].splice( pointInPathIndex, 1 );
-        console.log((0, _state.state).c_pointmap.delete(i));
+    /**
+  @param {number} i - The index of the point within the global point array
+  @param {number} pi - The index of the path within the global path array
+  */ removePointFromPath(i, pi) {
+        const pointInPathIndex = (0, _state.state).c_paths[pi].findIndex((c)=>c === i);
+        console.log(i, pi, pointInPathIndex);
+        (0, _state.state).c_paths[pi].splice(pointInPathIndex, 1);
+        (0, _state.state).c_pointmap.delete(i);
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     // Path tool state management
@@ -50628,7 +50618,10 @@ function executeCommands() {
 }
 function undoCommands() {
     const cmd = queue.popHistory();
-    if (cmd) cmd.undo();
+    if (cmd) {
+        console.log(cmd);
+        cmd.undo();
+    }
 }
 // Invoker function for storing and invoking commands
 // Not used, and not really needed, a bit too elaborate
@@ -50683,12 +50676,10 @@ class CQueue {
         this.__hsize++;
     }
     popHistory() {
-        if (this.__hsize < 1) return false;
+        const cmd = this.__history.pop();
         this.__hsize--;
-        const index = this.__hindex;
-        this.__hindex++;
-        // todo: addFuture(this.__history[index])
-        return this.__history[index];
+        if (cmd) return cmd;
+        else return false;
     }
 }
 const queue = new CQueue();
@@ -54213,7 +54204,10 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleKeyDown", ()=>handleKeyDown);
 parcelHelpers.export(exports, "handleKeyUp", ()=>handleKeyUp);
 parcelHelpers.export(exports, "initializeHotkeys", ()=>initializeHotkeys);
+var _command = require("../../Command");
 var _state = require("../../State");
+var _changeToolCommand = require("../commands/ChangeToolCommand");
+var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
 const handleKeyDown = (e)=>{
     if (e.repeat) return; // Ignore repeated keydown events
     switch(e.key){
@@ -54224,6 +54218,13 @@ const handleKeyDown = (e)=>{
             break;
         case "Shift":
             (0, _state.state).shiftDown = true; // Track shift for multi-selection
+            break;
+        case "z":
+            (0, _command.undoCommands)();
+            break;
+        case "Escape":
+            (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("select"));
+            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
             break;
         default:
             break;
@@ -54240,7 +54241,27 @@ const initializeHotkeys = ()=>{
     document.addEventListener("keyup", handleKeyUp);
 }; // Call this function in your app startup logic
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL"}],"i5Ou7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
+var _changeTool = require("../tools/changeTool");
+class ChangeToolCommand {
+    constructor(type){
+        this.__type = type;
+    }
+    do() {
+        (0, _changeTool.changeTool)({
+            type: this.__type
+        });
+    }
+    undo() {
+        // TODO
+        console.log('Undo not yet implemented for ChangeToolCommand');
+    }
+}
+
+},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
@@ -66109,27 +66130,7 @@ var DefaultContext = {
 };
 var IconContext = (0, _reactDefault.default).createContext && /*#__PURE__*/ (0, _reactDefault.default).createContext(DefaultContext);
 
-},{"react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
-var _changeTool = require("../tools/changeTool");
-class ChangeToolCommand {
-    constructor(type){
-        this.__type = type;
-    }
-    do() {
-        (0, _changeTool.changeTool)({
-            type: this.__type
-        });
-    }
-    undo() {
-        // TODO
-        console.log('Undo not yet implemented for ChangeToolCommand');
-    }
-}
-
-},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"km3Ru":[function(require,module,exports,__globalThis) {
+},{"react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"km3Ru":[function(require,module,exports,__globalThis) {
 "use strict";
 var Refresh = require("7422ead32dcc1e6b");
 var { version } = require("630b62916b1ae0e7");

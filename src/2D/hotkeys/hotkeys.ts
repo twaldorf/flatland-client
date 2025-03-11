@@ -1,6 +1,9 @@
-import { pushCommand } from "../../Command";
+import { pushCommand, undoCommands } from "../../Command";
 import { state } from "../../State";
+import { ChangeToolCommand } from "../commands/ChangeToolCommand";
 import { DeleteCommand } from "../commands/DeleteCommand";
+import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
+import { drawCanvasFromState } from "../rendering/canvas";
 
 export const handleKeyDown = (e: KeyboardEvent) => {
   if (e.repeat) return; // Ignore repeated keydown events
@@ -14,6 +17,15 @@ export const handleKeyDown = (e: KeyboardEvent) => {
     
     case "Shift":
       state.shiftDown = true; // Track shift for multi-selection
+      break;
+    
+    case "z":
+      undoCommands();
+      break;
+
+    case "Escape":
+      pushCommand(new ChangeToolCommand("select"));
+      pushCommand(new SelectToolDeselectAllCommand());
       break;
 
     default:

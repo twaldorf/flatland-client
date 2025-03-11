@@ -83,36 +83,23 @@ export class PathTool implements ToolBase {
       // Add the point to the path
       state.c_paths[ pathIndex ].push(pointIndex);
     } else {
+      // Create a new path and add the point to it
       this.__currentPathIndex = state.c_paths.push([ pointIndex ]) - 1;
     }
-
-    // Already drawing, continue adding points to the current path
-    // if (this.__state.type == 'drawing') {
-    //   state.c_paths[ this.__state.currentPathIndex ].push( pointIndex );
-    // }
-
-    // if (this.__state.type == 'idle') {
-    //   const path = [ pointIndex ];
-    //   const pathIndex = state.c_paths.push( path ) - 1;
-
-    //   this.transition({
-    //     type: "drawing",
-    //     currentPathIndex: pathIndex
-    //   })
-    // }
     drawCanvasFromState(state);
     return { pointIndex, pathIndex };
   }
 
   // Protected, to be used by a Command
+  /**
+  @param {number} i - The index of the point within the global point array
+  @param {number} pi - The index of the path within the global path array
+  */
   public removePointFromPath( i:number, pi:number ):void {
-    const pointInPathIndex = state.c_paths[ pi ].findIndex( (c) => c == i );
-
-    // TODO: Shouldn't be splicing from global point array, this majorly fucks everything up
-    // Use active point map instead
-    // state.c_points.splice( i, 1 );
-    // state.c_paths[ pi ].splice( pointInPathIndex, 1 );
-    console.log(state.c_pointmap.delete(i));
+    const pointInPathIndex = state.c_paths[ pi ].findIndex( (c) => c === i );
+    console.log(i, pi, pointInPathIndex );
+    state.c_paths[ pi ].splice( pointInPathIndex, 1 );
+    state.c_pointmap.delete(i);
     drawCanvasFromState(state);
   }
 

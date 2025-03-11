@@ -17,7 +17,7 @@ export function executeCommands() {
     const cmd = queue.pop();
     if (cmd) {
       cmd.do();
-      queue.addHistory(cmd); 
+      queue.addHistory(cmd);
     }
   }
 }
@@ -25,6 +25,7 @@ export function executeCommands() {
 export function undoCommands() {
   const cmd = queue.popHistory();
   if (cmd) {
+    console.log(cmd)
     cmd.undo();
   }
 }
@@ -109,18 +110,13 @@ class CQueue {
   }
 
   public popHistory(): false | Command {
-    if (this.__hsize < 1) {
-      return false;
-    }
-
+    const cmd = this.__history.pop();
     this.__hsize--;
 
-    const index = this.__hindex;
-    this.__hindex++;
-
-    // todo: addFuture(this.__history[index])
-
-    return this.__history[index];
+    if (cmd) {
+      return cmd;
+    } else return false;
+    
   }
 
 }
