@@ -57,6 +57,13 @@ export class MeasureTool implements ToolBase {
         pushCommand(new MeasureToolAddPointCommand(pos));
         this.transition({type: 'drawing'});
         break;
+
+      case ("drawing"):
+        pushCommand(new MeasureToolAddPointCommand(pos));
+        break;
+        
+      default:
+        break;
     }
     
     drawCanvasFromState(state);
@@ -68,12 +75,13 @@ export class MeasureTool implements ToolBase {
 
   private onMouseUp(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
+
     switch (this.__state.type) {
       default:
         break;
     }
 
-    drawCanvasFromState(state);
+    // drawCanvasFromState(state);
   }
 
   get state():MeasureToolState {

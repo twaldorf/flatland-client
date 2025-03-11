@@ -20,7 +20,6 @@ export const drawSelections = (state:State) => {
   });
 
 
-  console.log(state.c_selected_lines)
   state.c_selected_lines.map((hit:LineHit) => {
     const shapeArr = state.c_shapes[hit.shapeIndex];
     const i1 = shapeArr[hit.lineStartIndex];
