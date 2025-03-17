@@ -6,6 +6,7 @@ import { Header } from "./UI/sections/Header";
 import { Tabs } from "./UI/sections/Workspace/Tabs";
 import { Pieces } from "./UI/inventory/Pieces";
 import Label from "./UI/sections/Overlay/Label";
+import CursorInfo from "./UI/sections/Overlay/CursorInfo";
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 
 const App: React.FC = () => {
@@ -33,8 +34,9 @@ const App: React.FC = () => {
 
       <div className="grid grid-cols-2">
 
-  			<section className="container py-2 bg-white m-0 px-3 h-2/3">
+  			<section className="container relative py-2 bg-white m-0 px-3 h-2/3">
 
+        <CursorInfo />
           <Toolbar></Toolbar>
 
   				<canvas ref={canvasRef} id="canvas2d" className="col-1 block rounded-md w-full h-full"></canvas>

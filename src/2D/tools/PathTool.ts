@@ -14,6 +14,7 @@ import { PathToolSelectCommand } from "../commands/PathToolSelectCommand";
 import { PathToolDeselectCommand } from "../commands/PathToolDeselectCommand";
 import { PathToolClosePathCommand } from "../commands/PathToolClosePathCommand";
 import { PathToolRemovePointCommand } from "../commands/PathToolRemovePointCommand";
+import { useAppState } from "../../UI/store";
 
 export type PathToolState = 
   | { type: "idle" }
@@ -36,6 +37,8 @@ export class PathTool implements ToolBase {
 
   // Number of points in the current path
   private __length: number;
+  
+  private setPointer = useAppState.getState().setPointer;
   
   private __listeners = {
     down: this.onMouseDown.bind(this),
@@ -188,6 +191,8 @@ export class PathTool implements ToolBase {
   private onMouseMove(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
     state.pointer = pos;
+
+    this.setPointer(state.pointer);
     
     switch (this.__state.type) {
       case "moving":

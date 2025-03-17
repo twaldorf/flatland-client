@@ -13,5 +13,7 @@ export const cLocalizePoint = (sx:number, sy:number):Vector2 => {
     sx = Math.round(sx / param) * param;
     sy = Math.round(sy / param) * param;
   }
-  return new Vector2(sx * 2, sy * 2);
+  const v = new Vector2(sx * 2, sy * 2);
+  state.pointer = v;
+  return v;
 }

@@ -1,4 +1,4 @@
-import { Intersection, Mesh, Object3D } from "three";
+import { Intersection, Mesh, Object3D, Vector2 } from "three";
 import { pushCommand } from "../../Command";
 import { SelectObjectCommand, DeselectObjectCommand } from "../commands/SelectObjectCommand";
 import { state } from "../../State";
@@ -6,6 +6,7 @@ import { first_intersecting_face, first_intersecting_object, intersecting } from
 import { DeselectFaceCommand, SelectFaceCommand, tagFace } from "../commands/SelectFaceCommand";
 import { State } from "../../types";
 import { localizePointerTo } from "../../pointer/LocalizePointerTo";
+import { useAppState } from "../../UI/store";
 
 // Pointer Events for 3D canvas
 
@@ -27,12 +28,12 @@ export function onDoubleClick(event: MouseEvent) {
   } 
 }
 
-// localize pointer position
+// localize pointer position, expose to React UI
 
 export function onPointerMove( event: MouseEvent ) {
   localizePointerTo( { event, state, domElement: state.renderer.domElement } )
-  if (state.pointerDown && state.selected_faces.size > 0) {
-  }
+  // if (state.pointerDown && state.selected_faces.size > 0) {
+  // }
 }
 
 // click to add points

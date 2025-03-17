@@ -281,12 +281,20 @@
 @layer components;
 
 @layer utilities {
+  .pointer-events-none {
+    pointer-events: none;
+  }
+
   .visible {
     visibility: visible;
   }
 
   .absolute {
     position: absolute;
+  }
+
+  .fixed {
+    position: fixed;
   }
 
   .relative {
@@ -303,6 +311,10 @@
 
   .right-0 {
     right: calc(var(--spacing) * 0);
+  }
+
+  .bottom-0 {
+    bottom: calc(var(--spacing) * 0);
   }
 
   .left-0 {

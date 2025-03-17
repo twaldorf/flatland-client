@@ -18581,6 +18581,8 @@ var _tabs = require("./UI/sections/Workspace/Tabs");
 var _pieces = require("./UI/inventory/Pieces");
 var _label = require("./UI/sections/Overlay/Label");
 var _labelDefault = parcelHelpers.interopDefault(_label);
+var _cursorInfo = require("./UI/sections/Overlay/CursorInfo");
+var _cursorInfoDefault = parcelHelpers.interopDefault(_cursorInfo);
 var _s = $RefreshSig$();
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 const App = ()=>{
@@ -18601,7 +18603,7 @@ const App = ()=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 25,
+                        lineNumber: 26,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {
@@ -18614,29 +18616,34 @@ const App = ()=>{
                         }
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 27,
+                        lineNumber: 28,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 24,
+                lineNumber: 25,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 32,
+                lineNumber: 33,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "grid grid-cols-2",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                        className: "container py-2 bg-white m-0 px-3 h-2/3",
+                        className: "container relative py-2 bg-white m-0 px-3 h-2/3",
                         children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 39,
+                                columnNumber: 9
+                            }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 38,
+                                lineNumber: 40,
                                 columnNumber: 11
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18645,13 +18652,13 @@ const App = ()=>{
                                 className: "col-1 block rounded-md w-full h-full"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 40,
+                                lineNumber: 42,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 36,
+                        lineNumber: 37,
                         columnNumber: 6
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -18660,7 +18667,7 @@ const App = ()=>{
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 45,
+                                lineNumber: 47,
                                 columnNumber: 11
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18669,25 +18676,25 @@ const App = ()=>{
                                 className: "w-1/1 h-100 col-2 block"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 46,
+                                lineNumber: 48,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 44,
+                        lineNumber: 46,
                         columnNumber: 6
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 34,
+                lineNumber: 35,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 23,
+        lineNumber: 24,
         columnNumber: 5
     }, undefined);
 };
@@ -18702,7 +18709,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"jeorp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/sections/Overlay/CursorInfo":"bSDlR"}],"jeorp":[function(require,module,exports,__globalThis) {
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -49758,6 +49765,7 @@ var _pathToolSelectCommand = require("../commands/PathToolSelectCommand");
 var _pathToolDeselectCommand = require("../commands/PathToolDeselectCommand");
 var _pathToolClosePathCommand = require("../commands/PathToolClosePathCommand");
 var _pathToolRemovePointCommand = require("../commands/PathToolRemovePointCommand");
+var _store = require("../../UI/store");
 class PathTool {
     constructor(){
         // Path tool state object stores tool mechanical state, no data
@@ -49766,6 +49774,7 @@ class PathTool {
         };
         // Tool name
         this.name = 'path';
+        this.setPointer = (0, _store.useAppState).getState().setPointer;
         this.__listeners = {
             down: this.onMouseDown.bind(this),
             move: this.onMouseMove.bind(this),
@@ -49888,6 +49897,7 @@ class PathTool {
     onMouseMove(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         (0, _state.state).pointer = pos;
+        this.setPointer((0, _state.state).pointer);
         switch(this.__state.type){
             case "moving":
                 (0, _drawSelectionMovePreview.drawSelectionMovePreview)(pos);
@@ -50007,7 +50017,7 @@ class PathTool {
     }
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dci9b":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../UI/store":"l1Ff7"}],"dci9b":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "rad", ()=>rad);
@@ -50730,7 +50740,9 @@ const cLocalizePoint = (sx, sy)=>{
         sx = Math.round(sx / param) * param;
         sy = Math.round(sy / param) * param;
     }
-    return new (0, _three.Vector2)(sx * 2, sy * 2);
+    const v = new (0, _three.Vector2)(sx * 2, sy * 2);
+    (0, _state.state).pointer = v;
+    return v;
 };
 
 },{"three":"ktPTu","../../State":"83rpN","../settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8deBQ":[function(require,module,exports,__globalThis) {
@@ -50921,6 +50933,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useAppState", ()=>useAppState);
 var _zustand = require("zustand");
+var _three = require("three");
 const useAppState = (0, _zustand.create)((set)=>({
         selectedTool: 'path',
         setSelectedTool: (tool)=>set({
@@ -50957,10 +50970,19 @@ const useAppState = (0, _zustand.create)((set)=>({
             set((state)=>({
                     label: undefined
                 }));
+        },
+        pointer: new (0, _three.Vector2)(0, 0),
+        tool: {
+            name: "select"
+        },
+        setPointer: (point)=>{
+            set({
+                pointer: point
+            });
         }
     }));
 
-},{"zustand":"cPNyt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cPNyt":[function(require,module,exports,__globalThis) {
+},{"zustand":"cPNyt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu"}],"cPNyt":[function(require,module,exports,__globalThis) {
 'use strict';
 var vanilla = require("a19f4edd89926025");
 var react = require("a0cacd268d6bf882");
@@ -53865,7 +53887,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Pointer Events for 3D canvas
 parcelHelpers.export(exports, "onDoubleClick", ()=>onDoubleClick);
-// localize pointer position
+// localize pointer position, expose to React UI
 parcelHelpers.export(exports, "onPointerMove", ()=>onPointerMove);
 // click to add points
 parcelHelpers.export(exports, "onPointerDown", ()=>onPointerDown);
@@ -53895,7 +53917,8 @@ function onPointerMove(event) {
         state: (0, _state.state),
         domElement: (0, _state.state).renderer.domElement
     });
-    (0, _state.state).pointerDown && (0, _state.state).selected_faces.size;
+// if (state.pointerDown && state.selected_faces.size > 0) {
+// }
 }
 function onPointerDown(event) {
     (0, _state.state).pointerDown = true;
@@ -54241,7 +54264,7 @@ const initializeHotkeys = ()=>{
     document.addEventListener("keyup", handleKeyUp);
 }; // Call this function in your app startup logic
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL"}],"i5Ou7":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
@@ -66963,6 +66986,80 @@ $RefreshReg$(_c, "Label");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"bSDlR":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$1b5e = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$1b5e.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _store = require("../../store");
+var _s = $RefreshSig$();
+const CursorInfo = ()=>{
+    _s();
+    const pointerX = (0, _store.useAppState)((state)=>state.pointer.x);
+    const pointerY = (0, _store.useAppState)((state)=>state.pointer.y);
+    const toolName = (0, _store.useAppState)((state)=>state.tool.name);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "absolute bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md pointer-events-none bottom-0 right-0",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                children: [
+                    "Tool: ",
+                    toolName
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
+                lineNumber: 10,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                children: [
+                    "X: ",
+                    Math.round(pointerX)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
+                lineNumber: 11,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                children: [
+                    "Y: ",
+                    Math.round(pointerY)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
+                lineNumber: 12,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
+        lineNumber: 9,
+        columnNumber: 5
+    }, undefined);
+};
+_s(CursorInfo, "yfpZjXMHaCEobV+FOwQgtldRd7U=", false, function() {
+    return [
+        (0, _store.useAppState),
+        (0, _store.useAppState),
+        (0, _store.useAppState)
+    ];
+});
+_c = CursorInfo;
+exports.default = CursorInfo;
+var _c;
+$RefreshReg$(_c, "CursorInfo");
+
+  $parcel$ReactRefreshHelpers$1b5e.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../store":"l1Ff7"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map

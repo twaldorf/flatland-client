@@ -19,6 +19,9 @@ interface AppState {
   clearLabel: () => void;
   label: Label | undefined;
   
+  pointer: Vector2;
+  tool: { name: string };
+  setPointer: (point: Vector2) => void;
 }
 
 export const useAppState = create<AppState>((set) => ({
@@ -53,6 +56,11 @@ export const useAppState = create<AppState>((set) => ({
     set((state) => ({
       label: undefined
     }))
-  }
+  },
+
+  pointer: new Vector2(0, 0),
+  tool: { name: "select" },
+
+  setPointer: (point) => { set({ pointer: point }) },
 
 }));
