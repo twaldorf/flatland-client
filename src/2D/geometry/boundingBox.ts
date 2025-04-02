@@ -31,7 +31,7 @@ export function getShapeBoundingRect(shapeArr: number[]): { x0: number, y0: numb
 
 // Overload stand-in for Map of points, not necessarily closed shapes
 export function getMapShapeBoundingRect(shapeMap: Map<string, Vector2>) {
-  const points = shapeMap.values().toArray();
+  const points = Array.from(shapeMap.values());
 
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
 

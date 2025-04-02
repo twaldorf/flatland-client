@@ -93,6 +93,35 @@ export class PathTool implements ToolBase {
     return { pointIndex, pathIndex };
   }
 
+  // Protected, to be used only by a Command
+  /**
+  @param {number} i - The index of the point within the shape or path
+  @param {Vector2} v - The point to be inserted into the shape or path
+  */
+  public insertPointIntoCurrentPath( i:number, v:Vector2 ): { pointIndex: number, pathIndex: number } {
+    // Set active path
+    state.c_activePath = this.__currentPathIndex;
+
+    // Index of point in global point array
+    const gPointIndex = state.c_points.push( v ) - 1;
+
+    // Add the point to the active point array
+    state.c_pointmap.set(gPointIndex, v);
+    
+    // Index of current path in global path array
+    const pathIndex = this.__currentPathIndex;
+
+    if (state.c_paths[ pathIndex ]) {
+      // Add the point to the path
+      state.c_paths[ pathIndex ].splice(i, 0, gPointIndex);
+    } else {
+      // Create a new path and add the point to it
+      this.__currentPathIndex = state.c_paths.push([ gPointIndex ]) - 1;
+    }
+
+    return { pointIndex: gPointIndex, pathIndex };
+  }
+
   // Protected, to be used by a Command
   /**
   @param {number} i - The index of the point within the global point array

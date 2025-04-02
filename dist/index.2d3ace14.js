@@ -18583,6 +18583,7 @@ var _label = require("./UI/sections/Overlay/Label");
 var _labelDefault = parcelHelpers.interopDefault(_label);
 var _cursorInfo = require("./UI/sections/Overlay/CursorInfo");
 var _cursorInfoDefault = parcelHelpers.interopDefault(_cursorInfo);
+var _shapeInfo = require("./UI/sections/Overlay/ShapeInfo");
 var _s = $RefreshSig$();
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 const App = ()=>{
@@ -18599,102 +18600,105 @@ const App = ()=>{
         className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "max-h-1/3",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 26,
-                        columnNumber: 9
+                        lineNumber: 27,
+                        columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {
                         activeTab: "untitled",
                         tabs: [
                             "untitled"
                         ],
-                        onTabChange: function(tab) {
+                        onTabChange: (tab)=>{
                             throw new Error("Function not implemented.");
                         }
                     }, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 28,
-                        columnNumber: 9
+                        columnNumber: 5
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 25,
-                columnNumber: 7
+                lineNumber: 26,
+                columnNumber: 3
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 33,
-                columnNumber: 7
+                lineNumber: 37,
+                columnNumber: 3
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "grid grid-cols-2",
+                className: "grid grid-cols-2 flex-1 overflow-hidden",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                        className: "container relative py-2 bg-white m-0 px-3 h-2/3",
+                        className: "relative flex flex-col bg-white p-3 overflow-hidden",
                         children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
-                                fileName: "src/App.tsx",
-                                lineNumber: 39,
-                                columnNumber: 9
-                            }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 40,
-                                columnNumber: 11
+                                lineNumber: 42,
+                                columnNumber: 7
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 43,
+                                columnNumber: 7
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 44,
+                                columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
                                 ref: canvasRef,
                                 id: "canvas2d",
-                                className: "col-1 block rounded-md w-full h-full"
+                                className: "flex-1 w-full h-full rounded-md"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 42,
+                                lineNumber: 45,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 37,
-                        columnNumber: 6
+                        lineNumber: 41,
+                        columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                        id: "main",
-                        className: "h-svh",
+                        className: "flex flex-col h-full overflow-hidden",
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 47,
-                                columnNumber: 11
+                                lineNumber: 54,
+                                columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
                                 ref: threeRef,
                                 id: "canvas3d-container",
-                                className: "w-1/1 h-100 col-2 block"
+                                className: "flex-1 w-full h-full"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 48,
+                                lineNumber: 55,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 46,
-                        columnNumber: 6
+                        lineNumber: 53,
+                        columnNumber: 5
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 35,
-                columnNumber: 7
+                lineNumber: 39,
+                columnNumber: 3
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 24,
+        lineNumber: 25,
         columnNumber: 5
     }, undefined);
 };
@@ -18709,7 +18713,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/sections/Overlay/CursorInfo":"bSDlR"}],"jeorp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"jeorp":[function(require,module,exports,__globalThis) {
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -49819,6 +49823,30 @@ class PathTool {
             pathIndex
         };
     }
+    // Protected, to be used only by a Command
+    /**
+  @param {number} i - The index of the point within the shape or path
+  @param {Vector2} v - The point to be inserted into the shape or path
+  */ insertPointIntoCurrentPath(i, v) {
+        // Set active path
+        (0, _state.state).c_activePath = this.__currentPathIndex;
+        // Index of point in global point array
+        const gPointIndex = (0, _state.state).c_points.push(v) - 1;
+        // Add the point to the active point array
+        (0, _state.state).c_pointmap.set(gPointIndex, v);
+        // Index of current path in global path array
+        const pathIndex = this.__currentPathIndex;
+        if ((0, _state.state).c_paths[pathIndex]) // Add the point to the path
+        (0, _state.state).c_paths[pathIndex].splice(i, 0, gPointIndex);
+        else // Create a new path and add the point to it
+        this.__currentPathIndex = (0, _state.state).c_paths.push([
+            gPointIndex
+        ]) - 1;
+        return {
+            pointIndex: gPointIndex,
+            pathIndex
+        };
+    }
     // Protected, to be used by a Command
     /**
   @param {number} i - The index of the point within the global point array
@@ -50017,7 +50045,7 @@ class PathTool {
     }
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../UI/store":"l1Ff7"}],"dci9b":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dci9b":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "rad", ()=>rad);
@@ -50260,7 +50288,7 @@ function getShapeBoundingRect(shapeArr) {
     };
 }
 function getMapShapeBoundingRect(shapeMap) {
-    const points = shapeMap.values().toArray();
+    const points = Array.from(shapeMap.values());
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     for (const point of points)if (point) {
         x0 = Math.min(x0, point.x);
@@ -50511,7 +50539,7 @@ function drawMeasurements(state) {
     }
     const { context, canvas } = (0, _getBuffer.getBuffer)('measurements');
     const dimensions = (0, _boundingBox.getMapShapeDimensions)(state.c_measure_points);
-    const points = state.c_measure_points.values().toArray();
+    const points = Array.from(state.c_measure_points.values());
     canvas.width = state.canvas.width;
     canvas.height = state.canvas.height;
     for(let i = 0; i < state.c_measure_points.size - 1; ++i){
@@ -50767,8 +50795,7 @@ function findNearestPoint(pos, points) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolCommand", ()=>PathToolCommand);
-var _state = require("../../State");
-var _interface = require("../settings/interface");
+var _store = require("../../UI/store");
 class PathToolCommand {
     constructor(tool, point){
         this.tool = tool;
@@ -50777,19 +50804,273 @@ class PathToolCommand {
         this.__pathIndex = -1;
     }
     do() {
-        (0, _state.state).context.fillStyle = 'black';
-        (0, _state.state).context.strokeStyle = 'black';
-        (0, _state.state).context.fillRect(this.__point.x - (0, _interface.rad) / 2 - (0, _interface.rad) / 4, this.__point.y - (0, _interface.rad) / 2 - (0, _interface.rad) / 4, (0, _interface.rad), (0, _interface.rad));
         const indices = this.tool.addPointToCurrentPath(this.__point);
         this.__index = indices.pointIndex;
         this.__pathIndex = indices.pathIndex;
+        (0, _store.useAppState).getState().addShapePoint(this.__point);
     }
     undo() {
         this.tool.removePointFromPath(this.__index, this.__pathIndex);
     }
 }
 
-},{"../../State":"83rpN","../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jtaot":[function(require,module,exports,__globalThis) {
+},{"../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "useAppState", ()=>useAppState);
+var _zustand = require("zustand");
+var _three = require("three");
+var _command = require("../Command");
+var _genericAddPointCommand = require("../2D/commands/Generic/GenericAddPointCommand");
+var _genericDeletePointCommand = require("../2D/commands/Generic/GenericDeletePointCommand");
+var _genericUpdatePointCommand = require("../2D/commands/Generic/GenericUpdatePointCommand");
+const useAppState = (0, _zustand.create)((set)=>({
+        selectedTool: 'path',
+        setSelectedTool: (tool)=>set({
+                selectedTool: tool
+            }),
+        pieces: [],
+        addPiece: (piece)=>{
+            set((state)=>({
+                    pieces: [
+                        ...state.pieces,
+                        piece
+                    ]
+                }));
+        // makeThumbnail(piece)
+        },
+        setPieceName: (pieceId, newName)=>{
+            set((state)=>({
+                    pieces: state.pieces.map((piece)=>piece.id === pieceId ? {
+                            ...piece,
+                            name: newName
+                        } : piece)
+                }));
+        },
+        label: undefined,
+        labelPiece: (labelPoint, piece)=>{
+            set((state)=>({
+                    label: {
+                        point: labelPoint,
+                        piece: piece
+                    }
+                }));
+        },
+        clearLabel: ()=>{
+            set((state)=>({
+                    label: undefined
+                }));
+        },
+        pointer: new (0, _three.Vector2)(0, 0),
+        tool: {
+            name: "select"
+        },
+        setPointer: (point)=>{
+            set({
+                pointer: point
+            });
+        },
+        shapePoints: [],
+        syncShapePoints: (points)=>{
+            set({
+                shapePoints: points
+            });
+        },
+        addShapePoint: (point)=>{
+            set((state)=>({
+                    shapePoints: [
+                        ...state.shapePoints,
+                        point
+                    ]
+                }));
+        },
+        updatePoint: (index, point)=>set((state)=>{
+                (0, _command.pushCommand)(new (0, _genericUpdatePointCommand.GenericUpdatePointCommand)(index, point));
+                const points = [
+                    ...state.shapePoints
+                ];
+                points[index] = point;
+                return {
+                    shapePoints: points
+                };
+            }),
+        deletePoint: (index)=>set((state)=>{
+                (0, _command.pushCommand)(new (0, _genericDeletePointCommand.GenericDeletePointCommand)(index));
+                const points = state.shapePoints.filter((_, i)=>i !== index);
+                return {
+                    shapePoints: points
+                };
+            }),
+        insertPoint: (index, point)=>set((state)=>{
+                // points.splice(index + 1, 0, point);
+                (0, _command.pushCommand)(new (0, _genericAddPointCommand.GenericAddPointCommand)(index + 1, point));
+                const points = [
+                    ...state.shapePoints
+                ];
+                return {
+                    shapePoints: points
+                };
+            })
+    }));
+
+},{"zustand":"cPNyt","three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../Command":"efiIE","../2D/commands/Generic/GenericAddPointCommand":"4JRAF","../2D/commands/Generic/GenericDeletePointCommand":"3jXya","../2D/commands/Generic/GenericUpdatePointCommand":"2wHUw"}],"cPNyt":[function(require,module,exports,__globalThis) {
+'use strict';
+var vanilla = require("a19f4edd89926025");
+var react = require("a0cacd268d6bf882");
+Object.keys(vanilla).forEach(function(k) {
+    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
+        enumerable: true,
+        get: function() {
+            return vanilla[k];
+        }
+    });
+});
+Object.keys(react).forEach(function(k) {
+    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
+        enumerable: true,
+        get: function() {
+            return react[k];
+        }
+    });
+});
+
+},{"a19f4edd89926025":"2SLIN","a0cacd268d6bf882":"fhDSt"}],"2SLIN":[function(require,module,exports,__globalThis) {
+'use strict';
+const createStoreImpl = (createState)=>{
+    let state;
+    const listeners = /* @__PURE__ */ new Set();
+    const setState = (partial, replace)=>{
+        const nextState = typeof partial === "function" ? partial(state) : partial;
+        if (!Object.is(nextState, state)) {
+            const previousState = state;
+            state = (replace != null ? replace : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
+            listeners.forEach((listener)=>listener(state, previousState));
+        }
+    };
+    const getState = ()=>state;
+    const getInitialState = ()=>initialState;
+    const subscribe = (listener)=>{
+        listeners.add(listener);
+        return ()=>listeners.delete(listener);
+    };
+    const api = {
+        setState,
+        getState,
+        getInitialState,
+        subscribe
+    };
+    const initialState = state = createState(setState, getState, api);
+    return api;
+};
+const createStore = (createState)=>createState ? createStoreImpl(createState) : createStoreImpl;
+exports.createStore = createStore;
+
+},{}],"fhDSt":[function(require,module,exports,__globalThis) {
+'use strict';
+var React = require("6a69048f974f8971");
+var vanilla = require("985957b117977eb9");
+const identity = (arg)=>arg;
+function useStore(api, selector = identity) {
+    const slice = React.useSyncExternalStore(api.subscribe, ()=>selector(api.getState()), ()=>selector(api.getInitialState()));
+    React.useDebugValue(slice);
+    return slice;
+}
+const createImpl = (createState)=>{
+    const api = vanilla.createStore(createState);
+    const useBoundStore = (selector)=>useStore(api, selector);
+    Object.assign(useBoundStore, api);
+    return useBoundStore;
+};
+const create = (createState)=>createState ? createImpl(createState) : createImpl;
+exports.create = create;
+exports.useStore = useStore;
+
+},{"6a69048f974f8971":"21dqq","985957b117977eb9":"2SLIN"}],"4JRAF":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GenericAddPointCommand", ()=>GenericAddPointCommand);
+var _store = require("../../../UI/store");
+var _state = require("../../../State");
+class GenericAddPointCommand {
+    constructor(index, point){
+        this.tool = null;
+        this.__point = point;
+        this.__index = index;
+        this.__pathIndex = -1;
+    }
+    do() {
+        switch((0, _state.state).tool.name){
+            case 'path':
+                const t = (0, _state.state).tool;
+                const indices = t.insertPointIntoCurrentPath(this.__index, this.__point);
+                this.__index = indices.pointIndex;
+                this.__pathIndex = indices.pathIndex;
+                (0, _store.useAppState).getState().addShapePoint(this.__point);
+        }
+    }
+    undo() {
+        this.tool?.removePointFromPath(this.__index, this.__pathIndex);
+    }
+}
+
+},{"../../../UI/store":"l1Ff7","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3jXya":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GenericDeletePointCommand", ()=>GenericDeletePointCommand);
+var _state = require("../../../State");
+class GenericDeletePointCommand {
+    /**
+  @param {number} pointIndex - Index of the point within the current path
+  */ constructor(pointIndex){
+        // Pick active path, as with all generic commands
+        this.pathIndex = (0, _state.state).c_activePath;
+        // Find the right globalPointIndex from the current path
+        this.pointIndex = (0, _state.state).c_paths[this.pathIndex][pointIndex];
+        // Store previous state
+        this.previousPathState = [
+            ...(0, _state.state).c_paths[this.pathIndex]
+        ];
+    }
+    do() {
+        const path = (0, _state.state).c_paths[this.pathIndex];
+        // Ensure the path exists and contains the point
+        if (!path || path.length <= 1) return; // Prevent removing too many points
+        (0, _state.state).c_paths[this.pathIndex] = path.filter((value, index)=>value !== this.pointIndex);
+        (0, _state.state).c_pointmap.delete(this.pointIndex);
+    }
+    undo() {
+        (0, _state.state).c_paths[this.pathIndex] = [
+            ...this.previousPathState
+        ];
+    }
+}
+
+},{"../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2wHUw":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GenericUpdatePointCommand", ()=>GenericUpdatePointCommand);
+var _state = require("../../../State");
+var _canvas = require("../../rendering/canvas");
+class GenericUpdatePointCommand {
+    constructor(index, point){
+        this.tool = null;
+        this.point = point;
+        this.lIndex = index;
+        this.pathIndex = (0, _state.state).c_activePath;
+        this.gIndex = (0, _state.state).c_paths[this.pathIndex][this.lIndex];
+        this.oldPoint = (0, _state.state).c_points[this.gIndex];
+    }
+    do() {
+        (0, _state.state).c_pointmap.set(this.gIndex, this.point);
+        (0, _state.state).c_points[this.gIndex] = this.point;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_pointmap.set(this.gIndex, this.oldPoint);
+    }
+}
+
+},{"../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../rendering/canvas":"fjxS8"}],"jtaot":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolSelectCommand", ()=>PathToolSelectCommand);
@@ -50928,133 +51209,7 @@ function changeTool(newState) {
     (0, _state.state).tool.initializeEvents();
 }
 
-},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "useAppState", ()=>useAppState);
-var _zustand = require("zustand");
-var _three = require("three");
-const useAppState = (0, _zustand.create)((set)=>({
-        selectedTool: 'path',
-        setSelectedTool: (tool)=>set({
-                selectedTool: tool
-            }),
-        pieces: [],
-        addPiece: (piece)=>{
-            set((state)=>({
-                    pieces: [
-                        ...state.pieces,
-                        piece
-                    ]
-                }));
-        // makeThumbnail(piece)
-        },
-        setPieceName: (pieceId, newName)=>{
-            set((state)=>({
-                    pieces: state.pieces.map((piece)=>piece.id === pieceId ? {
-                            ...piece,
-                            name: newName
-                        } : piece)
-                }));
-        },
-        label: undefined,
-        labelPiece: (labelPoint, piece)=>{
-            set((state)=>({
-                    label: {
-                        point: labelPoint,
-                        piece: piece
-                    }
-                }));
-        },
-        clearLabel: ()=>{
-            set((state)=>({
-                    label: undefined
-                }));
-        },
-        pointer: new (0, _three.Vector2)(0, 0),
-        tool: {
-            name: "select"
-        },
-        setPointer: (point)=>{
-            set({
-                pointer: point
-            });
-        }
-    }));
-
-},{"zustand":"cPNyt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu"}],"cPNyt":[function(require,module,exports,__globalThis) {
-'use strict';
-var vanilla = require("a19f4edd89926025");
-var react = require("a0cacd268d6bf882");
-Object.keys(vanilla).forEach(function(k) {
-    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
-        enumerable: true,
-        get: function() {
-            return vanilla[k];
-        }
-    });
-});
-Object.keys(react).forEach(function(k) {
-    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
-        enumerable: true,
-        get: function() {
-            return react[k];
-        }
-    });
-});
-
-},{"a19f4edd89926025":"2SLIN","a0cacd268d6bf882":"fhDSt"}],"2SLIN":[function(require,module,exports,__globalThis) {
-'use strict';
-const createStoreImpl = (createState)=>{
-    let state;
-    const listeners = /* @__PURE__ */ new Set();
-    const setState = (partial, replace)=>{
-        const nextState = typeof partial === "function" ? partial(state) : partial;
-        if (!Object.is(nextState, state)) {
-            const previousState = state;
-            state = (replace != null ? replace : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
-            listeners.forEach((listener)=>listener(state, previousState));
-        }
-    };
-    const getState = ()=>state;
-    const getInitialState = ()=>initialState;
-    const subscribe = (listener)=>{
-        listeners.add(listener);
-        return ()=>listeners.delete(listener);
-    };
-    const api = {
-        setState,
-        getState,
-        getInitialState,
-        subscribe
-    };
-    const initialState = state = createState(setState, getState, api);
-    return api;
-};
-const createStore = (createState)=>createState ? createStoreImpl(createState) : createStoreImpl;
-exports.createStore = createStore;
-
-},{}],"fhDSt":[function(require,module,exports,__globalThis) {
-'use strict';
-var React = require("6a69048f974f8971");
-var vanilla = require("985957b117977eb9");
-const identity = (arg)=>arg;
-function useStore(api, selector = identity) {
-    const slice = React.useSyncExternalStore(api.subscribe, ()=>selector(api.getState()), ()=>selector(api.getInitialState()));
-    React.useDebugValue(slice);
-    return slice;
-}
-const createImpl = (createState)=>{
-    const api = vanilla.createStore(createState);
-    const useBoundStore = (selector)=>useStore(api, selector);
-    Object.assign(useBoundStore, api);
-    return useBoundStore;
-};
-const create = (createState)=>createState ? createImpl(createState) : createImpl;
-exports.create = create;
-exports.useStore = useStore;
-
-},{"6a69048f974f8971":"21dqq","985957b117977eb9":"2SLIN"}],"3Zp6S":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
@@ -53868,9 +54023,7 @@ class PathToolRemovePointCommand {
         const path = (0, _state.state).c_paths[this.pathIndex];
         // Ensure the path exists and contains the point
         if (!path || path.length <= 1) return; // Prevent removing too many points
-        console.log(`Path index ${this.pathIndex} PointIndex ${this.pointIndex} Path: ${path}`);
         (0, _state.state).c_paths[this.pathIndex] = path.filter((value, index)=>value !== this.pointIndex);
-        console.log(`Path index ${this.pathIndex} PointIndex ${this.pointIndex} Path: ${path}`);
         (0, _state.state).c_pointmap.delete(this.pointIndex);
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
@@ -67002,18 +67155,16 @@ const CursorInfo = ()=>{
     _s();
     const pointerX = (0, _store.useAppState)((state)=>state.pointer.x);
     const pointerY = (0, _store.useAppState)((state)=>state.pointer.y);
-    const toolName = (0, _store.useAppState)((state)=>state.tool.name);
+    const toolName = (0, _store.useAppState)((state)=>state.selectedTool);
+    console.log(toolName);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "absolute bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md pointer-events-none bottom-0 right-0",
+        className: "absolute bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md pointer-events-none bottom-3 right-3 w-2/10",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                children: [
-                    "Tool: ",
-                    toolName
-                ]
-            }, void 0, true, {
+                children: toolName
+            }, void 0, false, {
                 fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 10,
+                lineNumber: 11,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -67023,7 +67174,7 @@ const CursorInfo = ()=>{
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 11,
+                lineNumber: 12,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -67033,13 +67184,13 @@ const CursorInfo = ()=>{
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 12,
+                lineNumber: 13,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-        lineNumber: 9,
+        lineNumber: 10,
         columnNumber: 5
     }, undefined);
 };
@@ -67060,6 +67211,168 @@ $RefreshReg$(_c, "CursorInfo");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../store":"l1Ff7"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"dkMF4":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$618c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$618c.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ShapeInfo", ()=>ShapeInfo);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _three = require("three");
+var _store = require("../../store");
+var _s = $RefreshSig$();
+const ShapeInfo = ()=>{
+    _s();
+    const points = (0, _store.useAppState)((state)=>state.shapePoints);
+    const updatePoint = (0, _store.useAppState)((state)=>state.updatePoint);
+    const deletePoint = (0, _store.useAppState)((state)=>state.deletePoint);
+    const insertPoint = (0, _store.useAppState)((state)=>state.insertPoint);
+    const toolName = (0, _store.useAppState)((state)=>state.selectedTool);
+    if (!points || points.length === 0 || toolName != 'path') return null;
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+        className: "absolute box-border bottom-3 left-3 right-3 flex flex-row flex-nowrap items-center bg-blue-300 text-white rounded-md text-xs p-1 max-w-7/10 overflow-x-auto",
+        style: {
+            zIndex: 20
+        },
+        children: [
+            points.map((point, index)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "flex items-center mx-1 space-x-1",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+                            className: "flex flex-col whitespace-nowrap bg-blue-400 p-1 rounded",
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    className: "flex items-center",
+                                    children: [
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                            className: "mr-1 text-blue-100",
+                                            children: [
+                                                "x",
+                                                index + 1,
+                                                ":"
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                                            lineNumber: 23,
+                                            columnNumber: 15
+                                        }, undefined),
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                            type: "number",
+                                            className: "w-12 text-black rounded text-white",
+                                            value: point.x,
+                                            onChange: (e)=>updatePoint(index, new (0, _three.Vector2)(+e.target.value, point.y))
+                                        }, void 0, false, {
+                                            fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                                            lineNumber: 24,
+                                            columnNumber: 15
+                                        }, undefined)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                                    lineNumber: 22,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    className: "flex items-center mt-1",
+                                    children: [
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                            className: "mr-1 text-blue-100",
+                                            children: [
+                                                "y",
+                                                index + 1,
+                                                ":"
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                                            lineNumber: 34,
+                                            columnNumber: 15
+                                        }, undefined),
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                            type: "number",
+                                            className: "w-12 text-black rounded text-white",
+                                            value: point.y,
+                                            onChange: (e)=>updatePoint(index, new (0, _three.Vector2)(point.x, +e.target.value))
+                                        }, void 0, false, {
+                                            fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                                            lineNumber: 35,
+                                            columnNumber: 15
+                                        }, undefined)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                                    lineNumber: 33,
+                                    columnNumber: 13
+                                }, undefined)
+                            ]
+                        }, void 0, true, {
+                            fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                            lineNumber: 21,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                            onClick: ()=>deletePoint(index),
+                            className: "text-white hover:text-red-700 text-sm font-bold",
+                            title: "Delete Point",
+                            children: "\u2715"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                            lineNumber: 47,
+                            columnNumber: 11
+                        }, undefined),
+                        index < points.length - 1 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                            onClick: ()=>insertPoint(index, new (0, _three.Vector2)((point.x + points[index + 1].x) / 2, (point.y + points[index + 1].y) / 2)),
+                            className: "text-blue-200 hover:text-white text-sm font-bold",
+                            title: "Insert Point",
+                            children: "\uFF0B"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                            lineNumber: 57,
+                            columnNumber: 13
+                        }, undefined)
+                    ]
+                }, index, true, {
+                    fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                    lineNumber: 19,
+                    columnNumber: 9
+                }, undefined)),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                onClick: ()=>insertPoint(points.length - 1, new (0, _three.Vector2)(0, 0)),
+                className: "text-blue-100 hover:text-white text-sm font-bold mx-1",
+                children: "\uFF0B Point"
+            }, void 0, false, {
+                fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+                lineNumber: 70,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/sections/Overlay/ShapeInfo.tsx",
+        lineNumber: 14,
+        columnNumber: 5
+    }, undefined);
+};
+_s(ShapeInfo, "2ug4KHzwlphZFgJVtDjsxqGnTxE=", false, function() {
+    return [
+        (0, _store.useAppState),
+        (0, _store.useAppState),
+        (0, _store.useAppState),
+        (0, _store.useAppState),
+        (0, _store.useAppState)
+    ];
+});
+_c = ShapeInfo;
+var _c;
+$RefreshReg$(_c, "ShapeInfo");
+
+  $parcel$ReactRefreshHelpers$618c.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","three":"ktPTu"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map

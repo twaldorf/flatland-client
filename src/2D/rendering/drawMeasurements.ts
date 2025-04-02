@@ -15,7 +15,7 @@ export function drawMeasurements(state:State) {
 
   const dimensions = getMapShapeDimensions(state.c_measure_points);
 
-  const points = state.c_measure_points.values().toArray();
+  const points = Array.from(state.c_measure_points.values());
 
   canvas.width = state.canvas.width;
   canvas.height = state.canvas.height;

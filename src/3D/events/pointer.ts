@@ -6,7 +6,6 @@ import { first_intersecting_face, first_intersecting_object, intersecting } from
 import { DeselectFaceCommand, SelectFaceCommand, tagFace } from "../commands/SelectFaceCommand";
 import { State } from "../../types";
 import { localizePointerTo } from "../../pointer/LocalizePointerTo";
-import { useAppState } from "../../UI/store";
 
 // Pointer Events for 3D canvas
 

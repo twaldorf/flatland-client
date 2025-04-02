@@ -7,6 +7,7 @@ import { Tabs } from "./UI/sections/Workspace/Tabs";
 import { Pieces } from "./UI/inventory/Pieces";
 import Label from "./UI/sections/Overlay/Label";
 import CursorInfo from "./UI/sections/Overlay/CursorInfo";
+import { ShapeInfo } from "./UI/sections/Overlay/ShapeInfo";
 // import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 
 const App: React.FC = () => {
@@ -22,36 +23,44 @@ const App: React.FC = () => {
 
   return (
     <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2">
-      <div className="max-h-1/3">
-        <Header></Header>
+  <div>
+    <Header />
+    <Tabs
+      activeTab={"untitled"}
+      tabs={["untitled"]}
+      onTabChange={(tab: string) => {
+        throw new Error("Function not implemented.");
+      }}
+    />
+  </div>
 
-        <Tabs activeTab={"untitled"} tabs={["untitled"]} onTabChange={function (tab: string): void {
-          throw new Error("Function not implemented.");
-        } }></Tabs>
-      </div>
-      
-      <Label></Label>
+  <Label />
 
-      <div className="grid grid-cols-2">
+  <div className="grid grid-cols-2 flex-1 overflow-hidden">
+    {/* Left Column: 2D Canvas */}
+    <section className="relative flex flex-col bg-white p-3 overflow-hidden">
+      <Toolbar />
+      <CursorInfo />
+      <ShapeInfo />
+      <canvas
+        ref={canvasRef}
+        id="canvas2d"
+        className="flex-1 w-full h-full rounded-md"
+      ></canvas>
+    </section>
 
-  			<section className="container relative py-2 bg-white m-0 px-3 h-2/3">
+    {/* Right Column: 3D Canvas and Pieces */}
+    <section className="flex flex-col h-full overflow-hidden">
+      <Pieces />
+      <canvas
+        ref={threeRef}
+        id="canvas3d-container"
+        className="flex-1 w-full h-full"
+      ></canvas>
+    </section>
+  </div>
+</main>
 
-        <CursorInfo />
-          <Toolbar></Toolbar>
-
-  				<canvas ref={canvasRef} id="canvas2d" className="col-1 block rounded-md w-full h-full"></canvas>
-
-  			</section>
-
-  			<section id="main" className="h-svh">
-          <Pieces></Pieces>
-  				<canvas ref={threeRef} id="canvas3d-container" className="w-1/1 h-100 col-2 block"></canvas>
-
-  			</section>
-
-		  </div>
-
-    </main>
   );
 };
 

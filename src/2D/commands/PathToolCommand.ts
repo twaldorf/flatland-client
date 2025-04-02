@@ -4,6 +4,7 @@ import { state } from '../../State';
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { PathTool } from "../tools/PathTool";
 import { rad } from "../settings/interface";
+import { useAppState } from "../../UI/store";
 
 export class PathToolCommand implements Command {
   __point:Vector2;
@@ -19,12 +20,11 @@ export class PathToolCommand implements Command {
   }
 
   do() {
-    state.context.fillStyle = 'black';
-    state.context.strokeStyle = 'black';
-    state.context.fillRect(this.__point.x - rad / 2 - rad / 4, this.__point.y - rad / 2 - rad / 4, rad, rad);
     const indices = this.tool.addPointToCurrentPath( this.__point );
     this.__index = indices.pointIndex;
     this.__pathIndex = indices.pathIndex;
+
+    useAppState.getState().addShapePoint(this.__point);
   }
 
   undo() {
