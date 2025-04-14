@@ -1,5 +1,6 @@
 import { pushCommand, undoCommands } from "../../Command";
 import { state } from "../../State";
+import { SaveProjectCommand } from "../../UI/commands/SaveProjectCommand";
 import { ChangeToolCommand } from "../commands/ChangeToolCommand";
 import { DeleteCommand } from "../commands/DeleteCommand";
 import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
@@ -23,6 +24,14 @@ export const handleKeyDown = (e: KeyboardEvent) => {
       undoCommands();
       break;
 
+    case "s":
+      pushCommand(new SaveProjectCommand());
+      break;
+
+    case "Alt":
+      state.altDown = true;
+      break;
+
     case "Escape":
       pushCommand(new ChangeToolCommand("select"));
       pushCommand(new SelectToolDeselectAllCommand());
@@ -34,8 +43,16 @@ export const handleKeyDown = (e: KeyboardEvent) => {
 };
 
 export const handleKeyUp = (e: KeyboardEvent) => {
-  if (e.key === "Shift") {
-    state.shiftDown = false;
+  switch (e.key) {
+    case "Shift":
+      state.shiftDown = false;
+      break;
+
+    case "Alt":
+      state.altDown = false;
+
+    default:
+      break;
   }
 };
 

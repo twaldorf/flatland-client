@@ -46,6 +46,7 @@ export function drawDrawPreview(from: Vector2, to: Vector2): void {
   }
   ctx.stroke();
 
+  ctx.font = 'bold 22px sans-serif';
   ctx.fillText(`${Math.round(from.distanceTo(to)) / cf_canvas_to_inch / 2}in`, w / 2 - 5, h / 2 - 5);
 
   redrawCanvas();

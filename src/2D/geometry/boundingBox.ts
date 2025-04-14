@@ -47,7 +47,6 @@ export function getMapShapeBoundingRect(shapeMap: Map<string, Vector2>) {
   return { x0, y0, x1, y1 };
 }
 
-
 // Given an array of point indices making up a shape (where the points are in state.c_points:number[]),
 // return an object containing the width and height of the shape
 export function getShapeDimensions(shapeArr: number[]): { width: number, height: number } {

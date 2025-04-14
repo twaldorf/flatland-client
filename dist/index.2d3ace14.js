@@ -18584,8 +18584,9 @@ var _labelDefault = parcelHelpers.interopDefault(_label);
 var _cursorInfo = require("./UI/sections/Overlay/CursorInfo");
 var _cursorInfoDefault = parcelHelpers.interopDefault(_cursorInfo);
 var _shapeInfo = require("./UI/sections/Overlay/ShapeInfo");
+var _openOverlay = require("./UI/sections/Header/OpenOverlay");
+var _store = require("./UI/store");
 var _s = $RefreshSig$();
-// import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
 const App = ()=>{
     _s();
     const canvasRef = (0, _react.useRef)(null);
@@ -18596,38 +18597,51 @@ const App = ()=>{
             (0, _main.initCanvas)(canvasRef.current);
         }
     }, []);
+    // TODO: Change this from hook to use Zustand modal context
+    const [open, setOpen] = (0, _react.useState)(false);
+    const activeProjectTitle = (0, _store.useAppState)((state)=>state.activeProjectTitle);
+    const openProjects = (0, _store.useAppState)((state)=>state.openProjectTitles);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
         className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _openOverlay.OpenProjectOverlay), {
+                        open: open,
+                        setOpen: setOpen
+                    }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 27,
+                        lineNumber: 34,
+                        columnNumber: 5
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {
+                        setOpen: setOpen
+                    }, void 0, false, {
+                        fileName: "src/App.tsx",
+                        lineNumber: 35,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {
-                        activeTab: "untitled",
-                        tabs: [
-                            "untitled"
-                        ],
-                        onTabChange: (tab)=>{
-                            throw new Error("Function not implemented.");
+                        activeTab: activeProjectTitle || "untitled",
+                        tabs: openProjects,
+                        onTabClick: (tabTitle)=>{
+                            if (tabTitle == activeProjectTitle) (0, _store.useAppState)((store)=>store.showModal)("Edit Project Info");
+                            else console.log('Not implemented: change to another active project via tab');
                         }
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 28,
+                        lineNumber: 36,
                         columnNumber: 5
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 26,
+                lineNumber: 33,
                 columnNumber: 3
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 37,
+                lineNumber: 49,
                 columnNumber: 3
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18638,17 +18652,17 @@ const App = ()=>{
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 42,
+                                lineNumber: 54,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 43,
+                                lineNumber: 55,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 44,
+                                lineNumber: 56,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18657,13 +18671,13 @@ const App = ()=>{
                                 className: "flex-1 w-full h-full rounded-md"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 45,
+                                lineNumber: 57,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 41,
+                        lineNumber: 53,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -18671,7 +18685,7 @@ const App = ()=>{
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 54,
+                                lineNumber: 66,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18680,29 +18694,34 @@ const App = ()=>{
                                 className: "flex-1 w-full h-full"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 55,
+                                lineNumber: 67,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 53,
+                        lineNumber: 65,
                         columnNumber: 5
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 39,
+                lineNumber: 51,
                 columnNumber: 3
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 25,
+        lineNumber: 32,
         columnNumber: 5
     }, undefined);
 };
-_s(App, "VlCriyS8VOZGlt/W7s2P9cXObt4=");
+_s(App, "mHfLE3JEYMWSUA7qMwjkIucwh50=", false, function() {
+    return [
+        (0, _store.useAppState),
+        (0, _store.useAppState)
+    ];
+});
 _c = App;
 exports.default = App;
 var _c;
@@ -18713,7 +18732,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"jeorp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/store":"l1Ff7"}],"jeorp":[function(require,module,exports,__globalThis) {
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -49701,8 +49720,10 @@ parcelHelpers.export(exports, "state", ()=>state);
 var _three = require("three");
 var _pathTool = require("./2D/tools/PathTool");
 const state = {
+    version: '0.1',
     pointer: new (0, _three.Vector2),
     shiftDown: false,
+    altDown: false,
     pointerDown: false,
     scene: new (0, _three.Scene),
     camera: new (0, _three.Camera),
@@ -49740,15 +49761,76 @@ const state = {
     c_selected_shapes: [],
     c_selected_lines: [],
     c_measure_path: [],
+    c_measure_paths: [],
     c_measure_points: new Map(),
     cActive: false,
     cSelecting: false,
     pendingSelection: undefined,
     cMovingPoint: false,
-    c_move_from: undefined,
+    c_move_from: new (0, _three.Vector2)(),
     particles: [],
     constraints: [],
-    c_zoomfactor: 1
+    c_zoomfactor: 1,
+    projectInfo: {
+        title: 'untitled',
+        author: 'unknown',
+        lastUpdated: new Date()
+    },
+    serialize () {
+        const { version, c_pointmap, c_points, c_paths, c_measure_paths, c_measure_points, c_shapes } = this;
+        const coreInfo = {
+            version,
+            c_pointmap: Array.from(this.c_pointmap.entries()).map(([k, v])=>[
+                    k,
+                    [
+                        v.x,
+                        v.y
+                    ]
+                ]),
+            c_points: this.c_points.map((p)=>[
+                    p.x,
+                    p.y
+                ]),
+            c_paths,
+            c_measure_paths,
+            c_measure_points: Array.from(this.c_measure_points.entries()).map(([k, v])=>[
+                    k,
+                    [
+                        v.x,
+                        v.y
+                    ]
+                ]),
+            c_shapes
+        };
+        const serializedObj = JSON.stringify(coreInfo);
+        return serializedObj;
+    },
+    deserialize (stringObj) {
+        const serializedObj = JSON.parse(stringObj);
+        if (serializedObj.version == this.version) {
+            console.log('version match, loading objects', serializedObj);
+            this.c_pointmap = new Map(serializedObj.c_pointmap.map(([k, [x, y]])=>[
+                    k,
+                    new (0, _three.Vector2)(x, y)
+                ]));
+            this.c_points = serializedObj.c_points.map(([x, y])=>new (0, _three.Vector2)(x, y));
+            this.c_paths = serializedObj.c_paths;
+            this.c_measure_paths = serializedObj.c_measure_paths;
+            this.c_measure_points = new Map(serializedObj.c_measure_points.map(([k, [x, y]])=>[
+                    k,
+                    new (0, _three.Vector2)(x, y)
+                ]));
+            this.c_shapes = serializedObj.c_shapes;
+        }
+    },
+    clear () {
+        this.c_pointmap = new Map();
+        this.c_points = [];
+        this.c_paths = [];
+        this.c_measure_paths = [];
+        this.c_measure_points = new Map();
+        this.c_shapes = [];
+    }
 };
 
 },{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports,__globalThis) {
@@ -50096,6 +50178,7 @@ function redrawCanvas() {
     (0, _drawPaths.applyPaths)();
     // applyShapes();
     (0, _drawCursorPreview.applyCursorPreview)();
+    (0, _drawMeasurements.applyMeasurements)();
 }
 function erase() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
@@ -50528,32 +50611,42 @@ const path2 = new Path2D(`M12,21.932A9.934,9.934,0,1,1,21.932,12,9.944,9.944,0,0
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawMeasurements", ()=>drawMeasurements);
-var _boundingBox = require("../geometry/boundingBox");
+parcelHelpers.export(exports, "applyMeasurements", ()=>applyMeasurements);
+var _three = require("three");
 var _getBuffer = require("./getBuffer");
+var _factors = require("../settings/factors");
+var _state = require("../../State");
 function drawMeasurements(state) {
-    console.log(state.c_measure_points.size);
-    if (state.c_measure_points.size < 2) {
-        //bail if there are no measurements
-        console.log('BAIL');
-        return;
-    }
+    if (state.c_measure_points.size < 2) //bail if there are no measurements
+    return;
     const { context, canvas } = (0, _getBuffer.getBuffer)('measurements');
-    const dimensions = (0, _boundingBox.getMapShapeDimensions)(state.c_measure_points);
-    const points = Array.from(state.c_measure_points.values());
     canvas.width = state.canvas.width;
     canvas.height = state.canvas.height;
-    for(let i = 0; i < state.c_measure_points.size - 1; ++i){
-        context.moveTo(points[i].x, points[i].y);
-        context.lineTo(points[i + 1].x, points[i + 1].y);
-        context.fillRect(points[i].x, points[i].y, 5, 5);
-    }
-    context.lineWidth = 10;
+    state.c_measure_paths.forEach((pathArr)=>{
+        const p0 = state.c_measure_points.get(pathArr[0]);
+        context.moveTo(p0.x, p0.y);
+        var last = p0;
+        for(let i = 1; i < pathArr.length; ++i){
+            const p = state.c_measure_points.get(pathArr[i]);
+            context.font = 'bold 22px sans-serif';
+            const midpoint = new (0, _three.Vector2)();
+            midpoint.addVectors(p, last).divideScalar(2);
+            context.fillText(`${Math.round(last.distanceTo(p)) / (0, _factors.cf_canvas_to_inch) / 2}in`, midpoint.x, midpoint.y);
+            context.lineTo(p.x, p.y);
+            last = p;
+        }
+    });
+    context.lineWidth = 4;
+    context.strokeStyle = '#ffaa55';
     context.stroke();
     state.context.drawImage(canvas, 0, 0);
-    console.log('draw image');
+}
+function applyMeasurements() {
+    const obj = (0, _state.state).c_buffers.get('measurements');
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
 
-},{"../geometry/boundingBox":"3SCvR","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aI2tH":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN"}],"aI2tH":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
@@ -50591,6 +50684,7 @@ function drawDrawPreview(from, to) {
         ctx.lineTo(w, 0);
     }
     ctx.stroke();
+    ctx.font = 'bold 22px sans-serif';
     ctx.fillText(`${Math.round(from.distanceTo(to)) / (0, _factors.cf_canvas_to_inch) / 2}in`, w / 2 - 5, h / 2 - 5);
     (0, _canvas.redrawCanvas)();
     (0, _state.state).context.drawImage(canvas, originX, originY);
@@ -50829,6 +50923,17 @@ const useAppState = (0, _zustand.create)((set)=>({
         setSelectedTool: (tool)=>set({
                 selectedTool: tool
             }),
+        activeProjectTitle: 'untitled',
+        openProjectTitles: [
+            'untitled'
+        ],
+        modal: null,
+        showModal: (modal)=>set({
+                modal
+            }),
+        hideModal: ()=>set({
+                modal: null
+            }),
         pieces: [],
         addPiece: (piece)=>{
             set((state)=>({
@@ -50837,7 +50942,6 @@ const useAppState = (0, _zustand.create)((set)=>({
                         piece
                     ]
                 }));
-        // makeThumbnail(piece)
         },
         setPieceName: (pieceId, newName)=>{
             set((state)=>({
@@ -50913,7 +51017,7 @@ const useAppState = (0, _zustand.create)((set)=>({
             })
     }));
 
-},{"zustand":"cPNyt","three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../Command":"efiIE","../2D/commands/Generic/GenericAddPointCommand":"4JRAF","../2D/commands/Generic/GenericDeletePointCommand":"3jXya","../2D/commands/Generic/GenericUpdatePointCommand":"2wHUw"}],"cPNyt":[function(require,module,exports,__globalThis) {
+},{"zustand":"cPNyt","three":"ktPTu","../Command":"efiIE","../2D/commands/Generic/GenericAddPointCommand":"4JRAF","../2D/commands/Generic/GenericDeletePointCommand":"3jXya","../2D/commands/Generic/GenericUpdatePointCommand":"2wHUw","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cPNyt":[function(require,module,exports,__globalThis) {
 'use strict';
 var vanilla = require("a19f4edd89926025");
 var react = require("a0cacd268d6bf882");
@@ -51070,7 +51174,7 @@ class GenericUpdatePointCommand {
     }
 }
 
-},{"../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../rendering/canvas":"fjxS8"}],"jtaot":[function(require,module,exports,__globalThis) {
+},{"../../../State":"83rpN","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jtaot":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolSelectCommand", ()=>PathToolSelectCommand);
@@ -51216,8 +51320,10 @@ parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
 var _command = require("../../Command");
 var _state = require("../../State");
 var _measureToolAddPointCommand = require("../commands/MeasureToolAddPointCommand");
+var _measureToolClosePathCommand = require("../commands/MeasureToolClosePathCommand");
 var _cLocalizePoint = require("../pointer/cLocalizePoint");
 var _canvas = require("../rendering/canvas");
+var _drawDrawPreview = require("../rendering/drawDrawPreview");
 class MeasureTool {
     constructor(){
         this.__state = {
@@ -51254,13 +51360,20 @@ class MeasureTool {
         (0, _state.state).pointer = pos;
         switch(this.__state.type){
             case "idle":
-                (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos));
                 this.transition({
-                    type: 'drawing'
+                    type: 'drawing',
+                    currentPathIndex: (0, _state.state).c_measure_paths.length
                 });
+                (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, (0, _state.state).c_measure_paths.length));
                 break;
             case "drawing":
-                (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos));
+                if ((0, _state.state).altDown) (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, this.__state.currentPathIndex));
+                else {
+                    (0, _command.pushCommand)(new (0, _measureToolClosePathCommand.MeasureToolClosePathCommand)(pos, this.__state.currentPathIndex));
+                    this.transition({
+                        type: 'idle'
+                    });
+                }
                 break;
             default:
                 break;
@@ -51268,7 +51381,15 @@ class MeasureTool {
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     onMouseMove(e) {
-    // TODO: Add measuring logic
+        switch(this.__state.type){
+            case "idle":
+                break;
+            case "drawing":
+                if ((0, _state.state).c_measure_paths[this.__state.currentPathIndex]) (0, _drawDrawPreview.drawDrawPreview)((0, _state.state).c_measure_points.get((0, _state.state).c_measure_paths[this.__state.currentPathIndex][0]), (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY));
+                break;
+            default:
+                break;
+        }
     }
     onMouseUp(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
@@ -51280,7 +51401,7 @@ class MeasureTool {
     }
 }
 
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1IlS2":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../commands/MeasureToolClosePathCommand":"aINj4","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1IlS2":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MeasureToolAddPointCommand", ()=>MeasureToolAddPointCommand);
@@ -51288,14 +51409,40 @@ var _three = require("three");
 var _state = require("../../State");
 var _canvas = require("../rendering/canvas");
 class MeasureToolAddPointCommand {
-    constructor(pos){
+    constructor(pos, pathIndex){
         this.pos = new (0, _three.Vector2)();
         this.pos.copy(pos);
+        this.currentPathIndex = pathIndex;
         this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
     }
     do() {
         (0, _state.state).c_measure_points.set(this.key, this.pos);
-        console.log((0, _state.state).c_measure_points.size);
+        if (!(0, _state.state).c_measure_paths[this.currentPathIndex]) (0, _state.state).c_measure_paths[this.currentPathIndex] = [];
+        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_measure_points.delete(this.key);
+    }
+}
+
+},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aINj4":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "MeasureToolClosePathCommand", ()=>MeasureToolClosePathCommand);
+var _three = require("three");
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class MeasureToolClosePathCommand {
+    constructor(pos, pathIndex){
+        this.pos = new (0, _three.Vector2)();
+        this.pos.copy(pos);
+        this.currentPathIndex = pathIndex;
+        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
+    }
+    do() {
+        (0, _state.state).c_measure_points.set(this.key, this.pos);
+        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
@@ -51317,12 +51464,12 @@ var _common = require("./common");
 var _selectToolPointCommand = require("../commands/SelectToolPointCommand");
 var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
 var _canvas = require("../rendering/canvas");
-var _drawSelectionMovePreview = require("../rendering/drawSelectionMovePreview");
 var _deleteShapeCommand = require("../commands/DeleteShapeCommand");
 var _lineIntersection = require("../geometry/lineIntersection");
 var _selectToolSelectLineCommand = require("../commands/SelectToolSelectLineCommand");
 var _selectToolAddShapeCommand = require("../commands/SelectToolAddShapeCommand");
 var _selectToolDeselectLinesCommand = require("../commands/SelectToolDeselectLinesCommand");
+var _drawPreviewsCommand = require("../commands/Rendering/DrawPreviewsCommand");
 class SelectTool {
     constructor(){
         // Tool state object stores tool mechanical state
@@ -51455,19 +51602,20 @@ class SelectTool {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         switch(this.__state.type){
             case 'moving':
-                (0, _canvas.redrawCanvas)();
-                (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(pos);
+                (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
                 break;
             case 'selecting':
                 if ((0, _state.state).pointerDown == true) {
                     (0, _state.state).c_move_from = pos;
+                    (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
                     this.transition({
                         type: 'moving',
                         selectedShapeIndex: this.__state.selectedShapeIndex,
                         startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
                     });
-                    (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(pos);
                 }
+                break;
+            default:
                 break;
         }
     }
@@ -51511,7 +51659,7 @@ class SelectTool {
     }
 }
 
-},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../rendering/drawSelectionMovePreview":"jMLdr","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s","../commands/SelectToolSelectLineCommand":"aamTt","../commands/SelectToolAddShapeCommand":"fcLPE","../commands/SelectToolDeselectLinesCommand":"fcEzj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s","../commands/SelectToolSelectLineCommand":"aamTt","../commands/SelectToolAddShapeCommand":"fcLPE","../commands/SelectToolDeselectLinesCommand":"fcEzj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/Rendering/DrawPreviewsCommand":"4QHCH"}],"aHJgT":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
@@ -52320,7 +52468,26 @@ class SelectToolDeselectLinesCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4QHCH":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DrawPreviewsCommand", ()=>DrawPreviewsCommand);
+var _drawSelectionMovePreview = require("../../rendering/drawSelectionMovePreview");
+var _canvas = require("../../rendering/canvas");
+class DrawPreviewsCommand {
+    constructor(pos){
+        this.pos = pos;
+    }
+    do() {
+        (0, _canvas.redrawCanvas)();
+        (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(this.pos);
+    }
+    undo() {
+    // do render commands have an undo?
+    }
+}
+
+},{"../../rendering/drawSelectionMovePreview":"jMLdr","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../rendering/canvas":"fjxS8"}],"9OqtZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
@@ -54382,6 +54549,7 @@ parcelHelpers.export(exports, "handleKeyUp", ()=>handleKeyUp);
 parcelHelpers.export(exports, "initializeHotkeys", ()=>initializeHotkeys);
 var _command = require("../../Command");
 var _state = require("../../State");
+var _saveProjectCommand = require("../../UI/commands/SaveProjectCommand");
 var _changeToolCommand = require("../commands/ChangeToolCommand");
 var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
 const handleKeyDown = (e)=>{
@@ -54398,6 +54566,12 @@ const handleKeyDown = (e)=>{
         case "z":
             (0, _command.undoCommands)();
             break;
+        case "s":
+            (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)());
+            break;
+        case "Alt":
+            (0, _state.state).altDown = true;
+            break;
         case "Escape":
             (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("select"));
             (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
@@ -54407,7 +54581,15 @@ const handleKeyDown = (e)=>{
     }
 };
 const handleKeyUp = (e)=>{
-    if (e.key === "Shift") (0, _state.state).shiftDown = false;
+    switch(e.key){
+        case "Shift":
+            (0, _state.state).shiftDown = false;
+            break;
+        case "Alt":
+            (0, _state.state).altDown = false;
+        default:
+            break;
+    }
 };
 const handleDelete = (e)=>{
     (0, _state.state).tool.onKeyDown(e);
@@ -54417,7 +54599,7 @@ const initializeHotkeys = ()=>{
     document.addEventListener("keyup", handleKeyUp);
 }; // Call this function in your app startup logic
 
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../UI/commands/SaveProjectCommand":"8Akqt"}],"i5Ou7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
@@ -54437,7 +54619,35 @@ class ChangeToolCommand {
     }
 }
 
-},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
+},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Akqt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SaveProjectCommand", ()=>SaveProjectCommand);
+var _state = require("../../State");
+class SaveProjectCommand {
+    constructor(projectName = "default"){
+        projectName = (0, _state.state).projectInfo.title;
+        this.key = `flatland-project-${projectName}`;
+    }
+    do() {
+        const json = (0, _state.state).serialize();
+        localStorage.setItem(this.key, json);
+        const projects = localStorage.getItem('flatland-projects');
+        if (projects) {
+            const projects_list = JSON.parse(projects);
+            projects_list.push(this.key);
+            localStorage.setItem('flatland-projects', JSON.stringify(projects_list));
+        } else localStorage.setItem('flatland-projects', JSON.stringify([
+            this.key
+        ]));
+        console.log('saved item to ', this.key);
+    }
+    undo() {
+    // no undo for save
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
@@ -66548,10 +66758,17 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Header", ()=>Header);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _command = require("../../Command");
+var _newProjectCommand = require("../commands/NewProjectCommand");
+var _saveProjectCommand = require("../commands/SaveProjectCommand");
 var _menuItem = require("./Header/MenuItem");
 var _menuItemDefault = parcelHelpers.interopDefault(_menuItem);
 var _userIcon = require("./Header/UserIcon");
-const Header = ()=>{
+const Header = (props)=>{
+    const { setOpen } = props;
+    function triggerOpen() {
+        setOpen(true);
+    }
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("header", {
         className: "p-3 flex flex-row items-center justify-between",
         children: [
@@ -66563,7 +66780,7 @@ const Header = ()=>{
                         children: "Flatland Studio"
                     }, void 0, false, {
                         fileName: "src/UI/sections/Header.tsx",
-                        lineNumber: 8,
+                        lineNumber: 23,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _menuItemDefault.default), {
@@ -66575,26 +66792,26 @@ const Header = ()=>{
                             },
                             {
                                 name: "New",
-                                action: ()=>console.log("Zoom Out")
+                                action: ()=>(0, _command.pushCommand)(new (0, _newProjectCommand.NewProjectCommand)())
                             },
                             {
                                 name: "Open",
-                                action: ()=>console.log("Zoom Out")
+                                action: ()=>triggerOpen()
                             },
                             {
                                 name: "Save",
-                                action: ()=>console.log("Zoom Out")
+                                action: ()=>(0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)())
                             }
                         ]
                     }, void 0, false, {
                         fileName: "src/UI/sections/Header.tsx",
-                        lineNumber: 9,
+                        lineNumber: 24,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Header.tsx",
-                lineNumber: 7,
+                lineNumber: 22,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -66608,18 +66825,18 @@ const Header = ()=>{
                     }
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header.tsx",
-                    lineNumber: 17,
+                    lineNumber: 32,
                     columnNumber: 9
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/UI/sections/Header.tsx",
-                lineNumber: 16,
+                lineNumber: 31,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Header.tsx",
-        lineNumber: 6,
+        lineNumber: 21,
         columnNumber: 5
     }, undefined);
 };
@@ -66632,7 +66849,7 @@ $RefreshReg$(_c, "Header");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","./Header/MenuItem":"6dTG8","./Header/UserIcon":"5JxDc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6dTG8":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","./Header/MenuItem":"6dTG8","./Header/UserIcon":"5JxDc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../Command":"efiIE","../commands/NewProjectCommand":"eoWAT","../commands/SaveProjectCommand":"8Akqt"}],"6dTG8":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$122f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -66792,7 +67009,45 @@ $RefreshReg$(_c, "UserIcon");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"kzo4h":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"eoWAT":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "NewProjectCommand", ()=>NewProjectCommand);
+parcelHelpers.export(exports, "DownloadProjectCommand", ()=>DownloadProjectCommand);
+var _state = require("../../State");
+class NewProjectCommand {
+    constructor(){
+        this.previousState = (0, _state.state).serialize();
+    }
+    do() {
+        (0, _state.state).clear() // define this on your state singleton
+        ;
+    }
+    undo() {
+        (0, _state.state).deserialize(this.previousState);
+    }
+}
+class DownloadProjectCommand {
+    do() {
+        const json = (0, _state.state).serialize();
+        const blob = new Blob([
+            json
+        ], {
+            type: "application/json"
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "flatland_project.json";
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+    undo() {
+    // Save is a one-way action, optionally no-op or show a toast
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kzo4h":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$8725 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -66804,38 +67059,51 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Tabs", ()=>Tabs);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _ci = require("react-icons/ci");
-const Tabs = ({ activeTab, tabs, onTabChange })=>{
+var _store = require("../../store");
+const Tabs = ({ activeTab, tabs, onTabClick })=>{
+    var _s = $RefreshSig$();
+    function newDocument() {
+        _s();
+        (0, _store.useAppState)((state)=>state.showModal)("New Project");
+    }
+    _s(newDocument, "eSDnaBcKPQPS0NW8g/hRAyz79/g=", false, function() {
+        return [
+            (0, _store.useAppState)
+        ];
+    });
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
         className: "flex m-0  px-3",
         children: [
             tabs.map((tab)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                     className: `px-4 py-2  ${activeTab === tab ? "border-b-2 border-blue-500 font-bold bg-white " : "text-gray-500 bg-stone-200"}`,
-                    onClick: ()=>onTabChange(tab),
+                    onClick: ()=>{
+                        onTabClick(tab);
+                    },
                     children: tab
                 }, tab, false, {
                     fileName: "src/UI/sections/Workspace/Tabs.tsx",
-                    lineNumber: 14,
+                    lineNumber: 20,
                     columnNumber: 9
                 }, undefined)),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                 className: `px-4 py-2 bg-amber-400 text-white`,
-                onClick: ()=>newDocument,
+                onClick: newDocument,
                 children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiSquarePlus), {
                     strokeWidth: "1.5"
                 }, void 0, false, {
                     fileName: "src/UI/sections/Workspace/Tabs.tsx",
-                    lineNumber: 28,
+                    lineNumber: 34,
                     columnNumber: 11
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/UI/sections/Workspace/Tabs.tsx",
-                lineNumber: 24,
+                lineNumber: 30,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Workspace/Tabs.tsx",
-        lineNumber: 12,
+        lineNumber: 18,
         columnNumber: 5
     }, undefined);
 };
@@ -66848,7 +67116,7 @@ $RefreshReg$(_c, "Tabs");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"5aREB":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../store":"l1Ff7"}],"5aREB":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67373,6 +67641,117 @@ $RefreshReg$(_c, "ShapeInfo");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","three":"ktPTu"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","three":"ktPTu","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"bNtGY":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$6951 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$6951.prelude(module);
+
+try {
+// components/Overlays/OpenProjectOverlay.tsx
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "OpenProjectOverlay", ()=>OpenProjectOverlay);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _state = require("../../../State");
+var _s = $RefreshSig$();
+const OpenProjectOverlay = (props)=>{
+    _s();
+    const [keys, setKeys] = (0, _react.useState)([]);
+    const { open, setOpen } = props;
+    (0, _react.useEffect)(()=>{
+        const project_list = localStorage.getItem('flatland-projects');
+        if (project_list) {
+            const savedKeys = JSON.parse(project_list).filter((k)=>k.startsWith("flatland-project-"));
+            setKeys(savedKeys);
+        }
+    }, []);
+    function hide() {
+        setOpen(false);
+    }
+    const loadProject = (key)=>{
+        const json = localStorage.getItem(key);
+        console.log(json);
+        if (!json) return;
+        const data = json;
+        (0, _state.state).deserialize(data);
+    // TODO: Close the window
+    };
+    if (open) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "bg-white rounded-xl shadow-xl p-6 max-w-md w-full",
+            children: [
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                    className: "text-xl font-bold mb-4",
+                    children: "Open Project"
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Header/OpenOverlay.tsx",
+                    lineNumber: 40,
+                    columnNumber: 11
+                }, undefined),
+                keys.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                    className: "text-gray-500",
+                    children: "No saved projects."
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Header/OpenOverlay.tsx",
+                    lineNumber: 42,
+                    columnNumber: 13
+                }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+                    className: "space-y-2",
+                    children: keys.map((key)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                className: "w-full text-left px-4 py-2 rounded bg-stone-100 hover:bg-stone-200",
+                                onClick: ()=>loadProject(key),
+                                children: key.replace("flatland-project-", "")
+                            }, void 0, false, {
+                                fileName: "src/UI/sections/Header/OpenOverlay.tsx",
+                                lineNumber: 47,
+                                columnNumber: 19
+                            }, undefined)
+                        }, key, false, {
+                            fileName: "src/UI/sections/Header/OpenOverlay.tsx",
+                            lineNumber: 46,
+                            columnNumber: 17
+                        }, undefined))
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Header/OpenOverlay.tsx",
+                    lineNumber: 44,
+                    columnNumber: 13
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                    className: "mt-4 text-sm text-blue-500 hover:underline",
+                    onClick: hide,
+                    children: "Cancel"
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Header/OpenOverlay.tsx",
+                    lineNumber: 57,
+                    columnNumber: 11
+                }, undefined)
+            ]
+        }, void 0, true, {
+            fileName: "src/UI/sections/Header/OpenOverlay.tsx",
+            lineNumber: 39,
+            columnNumber: 9
+        }, undefined)
+    }, void 0, false, {
+        fileName: "src/UI/sections/Header/OpenOverlay.tsx",
+        lineNumber: 38,
+        columnNumber: 7
+    }, undefined);
+    else return null;
+};
+_s(OpenProjectOverlay, "Mu0T+TB+Zc8GdyDmQL3Fd+Qm+aU=");
+_c = OpenProjectOverlay;
+var _c;
+$RefreshReg$(_c, "OpenProjectOverlay");
+
+  $parcel$ReactRefreshHelpers$6951.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map

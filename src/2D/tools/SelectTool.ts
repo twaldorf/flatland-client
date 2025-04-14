@@ -18,6 +18,7 @@ import { checkLineIntersection, LineHit } from "../geometry/lineIntersection";
 import { SelectToolSelectLineCommand } from "../commands/SelectToolSelectLineCommand";
 import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand";
 import { SelectToolDeselectLinesCommand } from "../commands/SelectToolDeselectLinesCommand";
+import { DrawPreviewsCommand } from "../commands/Rendering/DrawPreviewsCommand";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -190,20 +191,23 @@ export class SelectTool implements ToolBase {
     switch (this.__state.type) {
 
       case 'moving':
-        redrawCanvas();
-        drawShapeSelectionMovePreview(pos); 
+        pushCommand(new DrawPreviewsCommand(pos));
         break;
-      
+        
       case 'selecting':
         if (state.pointerDown == true) {
           state.c_move_from = pos;
+          pushCommand(new DrawPreviewsCommand(pos));
+
           this.transition({
             type: 'moving',
             selectedShapeIndex: this.__state.selectedShapeIndex,
             startPos: cLocalizePoint(e.clientX, e.clientY)
           });
-          drawShapeSelectionMovePreview(pos);
         };
+        break;
+
+      default:
         break;
     }
   }
@@ -220,6 +224,7 @@ export class SelectTool implements ToolBase {
           type: 'idle'
         });
         break;
+
     }
   }
 

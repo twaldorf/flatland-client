@@ -13,10 +13,17 @@ export interface State {
   // Test object for debugging
   testObject: unknown;
 
+  // State schema version
+  version: string,
+
+  // Project info like title, author, lastUpdated, etc
+  projectInfo: ProjectInfo;
+
   // ## State shared between editor and canvas
   pointerDown: boolean;
   pointer: THREE.Vector2;
   shiftDown: boolean;
+  altDown: boolean;
 
   // ## Editor state properties, not prepended
   scene: THREE.Scene;
@@ -95,6 +102,11 @@ export interface State {
 
   // Array of point indices making up a measuring line
   c_measure_path: number[];
+
+  // Array of arrays of measure point ids
+  c_measure_paths: string[][];
+
+  // Map of all points used in measurement
   c_measure_points: Map<string, Vector2>;
 
   // Scale factor manipulated by the user through zoom functionality
@@ -103,6 +115,12 @@ export interface State {
   // XPBD & Simulations
   constraints: DistanceConstraint[];
   particles: Particle[];
+
+  // Load, save functionality
+  serialize(): string;
+  deserialize(s:string): void;
+  clear(): void;
+
 }
 
 type Mode = 'default' | 
@@ -121,6 +139,12 @@ export interface ToolBase {
   initializeEvents: Function;
   dismountEvents: Function;
   readonly state: PathToolState | SelectToolState | MeasureToolState;
+}
+
+export interface ProjectInfo {
+  title: string;
+  author: string;
+  lastUpdated: Date;
 }
 
 export type Tool = PathTool | SelectTool | MeasureTool;

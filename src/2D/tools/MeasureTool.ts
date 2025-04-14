@@ -2,13 +2,15 @@ import { pushCommand } from "../../Command";
 import { state } from "../../State";
 import { ToolBase } from "../../types";
 import { MeasureToolAddPointCommand } from "../commands/MeasureToolAddPointCommand";
+import { MeasureToolClosePathCommand } from "../commands/MeasureToolClosePathCommand";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { drawCanvasFromState } from "../rendering/canvas";
+import { drawDrawPreview } from "../rendering/drawDrawPreview";
 
 
 export type MeasureToolState = 
   | { type: "idle" }
-  | { type: "drawing" }
+  | { type: "drawing", currentPathIndex:number }
 
 export class MeasureTool implements ToolBase {
   private __state:MeasureToolState = { type: "idle" };
@@ -54,12 +56,17 @@ export class MeasureTool implements ToolBase {
 
     switch (this.__state.type) {
       case ("idle"):
-        pushCommand(new MeasureToolAddPointCommand(pos));
-        this.transition({type: 'drawing'});
+        this.transition({type: 'drawing', currentPathIndex: state.c_measure_paths.length});
+        pushCommand(new MeasureToolAddPointCommand(pos, state.c_measure_paths.length));
         break;
 
       case ("drawing"):
-        pushCommand(new MeasureToolAddPointCommand(pos));
+        if (state.altDown) {
+          pushCommand(new MeasureToolAddPointCommand(pos, this.__state.currentPathIndex)); 
+        } else {
+          pushCommand(new MeasureToolClosePathCommand(pos, this.__state.currentPathIndex));
+          this.transition({ type: 'idle' });
+        }
         break;
         
       default:
@@ -70,7 +77,19 @@ export class MeasureTool implements ToolBase {
   }
 
   private onMouseMove(e: MouseEvent) {
-    // TODO: Add measuring logic
+    switch (this.__state.type) {
+      case ("idle"):
+        break;
+
+      case ("drawing"):
+        if (state.c_measure_paths[this.__state.currentPathIndex]) {
+          drawDrawPreview(state.c_measure_points.get(state.c_measure_paths[ this.__state.currentPathIndex ][0]), cLocalizePoint(e.clientX, e.clientY));
+        }
+        break;
+        
+      default:
+        break;
+    }
   }
 
   private onMouseUp(e: MouseEvent) {

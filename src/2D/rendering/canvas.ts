@@ -8,7 +8,7 @@ import { drawPaths, applyPaths } from "./drawPaths";
 import { drawSelections } from "./drawSelections";
 import { drawYRuler, drawGridRuler } from "./drawRulers";
 import { applyCursorPreview, drawCursorPreview } from "./drawCursorPreview";
-import { drawMeasurements } from "./drawMeasurements";
+import { applyMeasurements, drawMeasurements } from "./drawMeasurements";
 
 export function drawCanvasSetup() {
   state.context.fillStyle = c_bgColor;
@@ -35,6 +35,7 @@ export function redrawCanvas():void {
   applyPaths();
   // applyShapes();
   applyCursorPreview();
+  applyMeasurements();
 }
 
 function erase() {

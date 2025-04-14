@@ -1,20 +1,30 @@
 import { create } from 'zustand';
-import { Piece, Tool, ToolName } from '../types';
+import { Piece, ProjectInfo, Tool, ToolName } from '../types';
 import { Vector2 } from 'three';
 import { PathToolCommand } from '../2D/commands/PathToolCommand';
 import { pushCommand } from '../Command';
 import { GenericAddPointCommand } from '../2D/commands/Generic/GenericAddPointCommand';
 import { GenericDeletePointCommand } from '../2D/commands/Generic/GenericDeletePointCommand';
 import { GenericUpdatePointCommand } from '../2D/commands/Generic/GenericUpdatePointCommand';
+import { MouseEventHandler } from 'react';
 
 interface Label {
   point: Vector2;
   piece: Piece;
 }
 
+type ModalName = null | "Edit Project Info" | "New Project";
+
 interface AppState {
   selectedTool: ToolName;
   setSelectedTool: (tool: ToolName) => void;
+
+  activeProjectTitle: string;
+  openProjectTitles: string[];
+
+  modal: ModalName;
+  showModal: (modal: ModalName) => void;
+  hideModal: () => void;
 
   pieces: Piece[];
   addPiece: (piece: Piece) => void;
@@ -28,10 +38,10 @@ interface AppState {
   tool: { name: string };
   setPointer: (point: Vector2) => void;
 
+  // This point logic will be replaced by the global message system, however, the local broker logic will look very similar to this
   shapePoints: Vector2[];
   syncShapePoints: (points: Vector2[]) => void;
   addShapePoint: (point: Vector2) => void;
-
   updatePoint: (index: number, point: Vector2) => void;
   deletePoint: (index: number) => void;
   insertPoint: (index: number, point: Vector2) => void;
@@ -41,12 +51,17 @@ export const useAppState = create<AppState>((set) => ({
   selectedTool: 'path',
   setSelectedTool: (tool) => set({ selectedTool: tool }),
 
+  activeProjectTitle: 'untitled',
+  openProjectTitles: ['untitled'],
+  modal: null,
+  showModal: (modal: ModalName) => set({ modal }),
+  hideModal: () => set({ modal: null }),
+
   pieces: [],
   addPiece: (piece:Piece) => {
     set((state) => ({
       pieces: [...state.pieces, piece],
     }));
-    // makeThumbnail(piece)
   },
 
   setPieceName: (pieceId: Piece["id"], newName: Piece["name"]) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // import "./styles.css";
 import { initScene, initCanvas } from "./main";
 import { Toolbar } from "./UI/tools/Toolbar";
@@ -8,7 +8,8 @@ import { Pieces } from "./UI/inventory/Pieces";
 import Label from "./UI/sections/Overlay/Label";
 import CursorInfo from "./UI/sections/Overlay/CursorInfo";
 import { ShapeInfo } from "./UI/sections/Overlay/ShapeInfo";
-// import { initThreeScene } from "./threeSetup"; // Assuming you have a Three.js scene setup
+import { OpenProjectOverlay } from "./UI/sections/Header/OpenOverlay";
+import { useAppState } from "./UI/store";
 
 const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,15 +22,26 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // TODO: Change this from hook to use Zustand modal context
+  const [ open, setOpen ] = useState(false);
+
+  const activeProjectTitle = useAppState(state => state.activeProjectTitle);
+  const openProjects = useAppState(state => state.openProjectTitles);
+
   return (
     <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2">
   <div>
-    <Header />
+    <OpenProjectOverlay open={open} setOpen={setOpen} />
+    <Header setOpen={setOpen} />
     <Tabs
-      activeTab={"untitled"}
-      tabs={["untitled"]}
-      onTabChange={(tab: string) => {
-        throw new Error("Function not implemented.");
+      activeTab={activeProjectTitle || "untitled"}
+      tabs={openProjects}
+      onTabClick={(tabTitle:string) => {
+        if (tabTitle == activeProjectTitle) {
+          useAppState(store => store.showModal)("Edit Project Info")
+        } else {
+          console.log('Not implemented: change to another active project via tab');
+        }
       }}
     />
   </div>
@@ -37,7 +49,7 @@ const App: React.FC = () => {
   <Label />
 
   <div className="grid grid-cols-2 flex-1 overflow-hidden">
-    {/* Left Column: 2D Canvas */}
+    {/* Left column */}
     <section className="relative flex flex-col bg-white p-3 overflow-hidden">
       <Toolbar />
       <CursorInfo />
@@ -49,7 +61,7 @@ const App: React.FC = () => {
       ></canvas>
     </section>
 
-    {/* Right Column: 3D Canvas and Pieces */}
+    {/* Right column */}
     <section className="flex flex-col h-full overflow-hidden">
       <Pieces />
       <canvas
