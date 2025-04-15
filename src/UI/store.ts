@@ -20,7 +20,10 @@ interface AppState {
   setSelectedTool: (tool: ToolName) => void;
 
   activeProjectTitle: string;
+  setActiveProjectTitle: (title: string) => void;
+
   openProjectTitles: string[];
+  // addOpenProjectTitle: (title: string) => void;
 
   modal: ModalName;
   showModal: (modal: ModalName) => void;
@@ -52,6 +55,8 @@ export const useAppState = create<AppState>((set) => ({
   setSelectedTool: (tool) => set({ selectedTool: tool }),
 
   activeProjectTitle: 'untitled',
+  setActiveProjectTitle: (title) => set({ activeProjectTitle: title }),
+
   openProjectTitles: ['untitled'],
   modal: null,
   showModal: (modal: ModalName) => set({ modal }),

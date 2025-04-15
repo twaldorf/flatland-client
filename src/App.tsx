@@ -10,6 +10,7 @@ import CursorInfo from "./UI/sections/Overlay/CursorInfo";
 import { ShapeInfo } from "./UI/sections/Overlay/ShapeInfo";
 import { OpenProjectOverlay } from "./UI/sections/Header/OpenOverlay";
 import { useAppState } from "./UI/store";
+import { NewProjectModal } from "./UI/sections/Header/NewProjectModal";
 
 const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,6 +33,7 @@ const App: React.FC = () => {
     <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2">
   <div>
     <OpenProjectOverlay open={open} setOpen={setOpen} />
+    <NewProjectModal />
     <Header setOpen={setOpen} />
     <Tabs
       activeTab={activeProjectTitle || "untitled"}
