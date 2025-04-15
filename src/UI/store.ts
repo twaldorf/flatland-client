@@ -13,7 +13,7 @@ interface Label {
   piece: Piece;
 }
 
-type ModalName = null | "Edit Project Info" | "New Project";
+type ModalName = null | "Edit Project Info" | "New Project" | "Open Project";
 
 interface AppState {
   selectedTool: ToolName;

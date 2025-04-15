@@ -1,15 +1,14 @@
 // components/Overlays/OpenProjectOverlay.tsx
 import { useEffect, useState } from "react"
 import { state } from "../../../State"
+import { drawCanvasFromState } from "../../../2D/rendering/canvas";
+import { useAppState } from "../../store";
 
-interface Props {
-  open: boolean;
-  setOpen(v:boolean): void;
-}
 
-export const OpenProjectOverlay = (props: Props) => {
-  const [keys, setKeys] = useState<string[]>([])
-  const { open, setOpen } = props;
+export const OpenProjectOverlay = () => {
+  const [keys, setKeys] = useState<string[]>([]);
+  const open = useAppState(s => s.modal);
+  const hideModal = useAppState(s => s.hideModal);
 
   useEffect(() => {
     const project_list = localStorage.getItem('flatland-projects');
@@ -20,20 +19,17 @@ export const OpenProjectOverlay = (props: Props) => {
     }
   }, []);
 
-  function hide() {
-    setOpen(false);
-  }
-
   const loadProject = (key: string) => {
     const json = localStorage.getItem(key)
     console.log(json)
     if (!json) return
     const data = json;
     state.deserialize(data);
-    // TODO: Close the window
+    drawCanvasFromState(state);
+    hideModal();
   }
 
-  if (open) {
+  if (open === 'Open Project') {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full">
@@ -56,7 +52,7 @@ export const OpenProjectOverlay = (props: Props) => {
           )}
           <button
             className="mt-4 text-sm text-blue-500 hover:underline"
-            onClick={hide}
+            onClick={hideModal}
           >
             Cancel
           </button>

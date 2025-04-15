@@ -18607,10 +18607,7 @@ const App = ()=>{
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _openOverlay.OpenProjectOverlay), {
-                        open: open,
-                        setOpen: setOpen
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _openOverlay.OpenProjectOverlay), {}, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 35,
                         columnNumber: 5
@@ -18620,9 +18617,7 @@ const App = ()=>{
                         lineNumber: 36,
                         columnNumber: 5
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {
-                        setOpen: setOpen
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 37,
                         columnNumber: 5
@@ -66776,11 +66771,11 @@ var _saveProjectCommand = require("../commands/SaveProjectCommand");
 var _menuItem = require("./Header/MenuItem");
 var _menuItemDefault = parcelHelpers.interopDefault(_menuItem);
 var _userIcon = require("./Header/UserIcon");
-const Header = (props)=>{
-    const { setOpen } = props;
-    function triggerOpen() {
-        setOpen(true);
-    }
+var _store = require("../store");
+var _s = $RefreshSig$();
+const Header = ()=>{
+    _s();
+    const showModal = (0, _store.useAppState)((s)=>s.showModal);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("header", {
         className: "p-3 flex flex-row items-center justify-between",
         children: [
@@ -66792,7 +66787,7 @@ const Header = (props)=>{
                         children: "Flatland Studio"
                     }, void 0, false, {
                         fileName: "src/UI/sections/Header.tsx",
-                        lineNumber: 23,
+                        lineNumber: 16,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _menuItemDefault.default), {
@@ -66808,7 +66803,7 @@ const Header = (props)=>{
                             },
                             {
                                 name: "Open",
-                                action: ()=>triggerOpen()
+                                action: ()=>showModal('Open Project')
                             },
                             {
                                 name: "Save",
@@ -66817,13 +66812,13 @@ const Header = (props)=>{
                         ]
                     }, void 0, false, {
                         fileName: "src/UI/sections/Header.tsx",
-                        lineNumber: 24,
+                        lineNumber: 17,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Header.tsx",
-                lineNumber: 22,
+                lineNumber: 15,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -66837,21 +66832,26 @@ const Header = (props)=>{
                     }
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header.tsx",
-                    lineNumber: 32,
+                    lineNumber: 25,
                     columnNumber: 9
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/UI/sections/Header.tsx",
-                lineNumber: 31,
+                lineNumber: 24,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Header.tsx",
-        lineNumber: 21,
+        lineNumber: 14,
         columnNumber: 5
     }, undefined);
 };
+_s(Header, "W6iXQHZojcEiDzgJ0VwaHXtI5aI=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
 _c = Header;
 var _c;
 $RefreshReg$(_c, "Header");
@@ -66861,7 +66861,7 @@ $RefreshReg$(_c, "Header");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","./Header/MenuItem":"6dTG8","./Header/UserIcon":"5JxDc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../Command":"efiIE","../commands/NewProjectCommand":"eoWAT","../commands/SaveProjectCommand":"8Akqt"}],"6dTG8":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","./Header/MenuItem":"6dTG8","./Header/UserIcon":"5JxDc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../Command":"efiIE","../commands/NewProjectCommand":"eoWAT","../commands/SaveProjectCommand":"8Akqt","../store":"l1Ff7"}],"6dTG8":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$122f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67667,11 +67667,14 @@ parcelHelpers.export(exports, "OpenProjectOverlay", ()=>OpenProjectOverlay);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _state = require("../../../State");
+var _canvas = require("../../../2D/rendering/canvas");
+var _store = require("../../store");
 var _s = $RefreshSig$();
-const OpenProjectOverlay = (props)=>{
+const OpenProjectOverlay = ()=>{
     _s();
     const [keys, setKeys] = (0, _react.useState)([]);
-    const { open, setOpen } = props;
+    const open = (0, _store.useAppState)((s)=>s.modal);
+    const hideModal = (0, _store.useAppState)((s)=>s.hideModal);
     (0, _react.useEffect)(()=>{
         const project_list = localStorage.getItem('flatland-projects');
         if (project_list) {
@@ -67679,18 +67682,16 @@ const OpenProjectOverlay = (props)=>{
             setKeys(savedKeys);
         }
     }, []);
-    function hide() {
-        setOpen(false);
-    }
     const loadProject = (key)=>{
         const json = localStorage.getItem(key);
         console.log(json);
         if (!json) return;
         const data = json;
         (0, _state.state).deserialize(data);
-    // TODO: Close the window
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+        hideModal();
     };
-    if (open) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+    if (open === 'Open Project') return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50",
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
             className: "bg-white rounded-xl shadow-xl p-6 max-w-md w-full",
@@ -67700,7 +67701,7 @@ const OpenProjectOverlay = (props)=>{
                     children: "Open Project"
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                    lineNumber: 40,
+                    lineNumber: 36,
                     columnNumber: 11
                 }, undefined),
                 keys.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -67708,7 +67709,7 @@ const OpenProjectOverlay = (props)=>{
                     children: "No saved projects."
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                    lineNumber: 42,
+                    lineNumber: 38,
                     columnNumber: 13
                 }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
                     className: "space-y-2",
@@ -67719,42 +67720,47 @@ const OpenProjectOverlay = (props)=>{
                                 children: key.replace("flatland-project-", "")
                             }, void 0, false, {
                                 fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                                lineNumber: 47,
+                                lineNumber: 43,
                                 columnNumber: 19
                             }, undefined)
                         }, key, false, {
                             fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                            lineNumber: 46,
+                            lineNumber: 42,
                             columnNumber: 17
                         }, undefined))
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                    lineNumber: 44,
+                    lineNumber: 40,
                     columnNumber: 13
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                     className: "mt-4 text-sm text-blue-500 hover:underline",
-                    onClick: hide,
+                    onClick: hideModal,
                     children: "Cancel"
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                    lineNumber: 57,
+                    lineNumber: 53,
                     columnNumber: 11
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-            lineNumber: 39,
+            lineNumber: 35,
             columnNumber: 9
         }, undefined)
     }, void 0, false, {
         fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-        lineNumber: 38,
+        lineNumber: 34,
         columnNumber: 7
     }, undefined);
     else return null;
 };
-_s(OpenProjectOverlay, "Mu0T+TB+Zc8GdyDmQL3Fd+Qm+aU=");
+_s(OpenProjectOverlay, "Hyz6YEJNaRuvBOp5rZX0Q3/JjEA=", false, function() {
+    return [
+        (0, _store.useAppState),
+        (0, _store.useAppState)
+    ];
+});
 _c = OpenProjectOverlay;
 var _c;
 $RefreshReg$(_c, "OpenProjectOverlay");
@@ -67764,7 +67770,7 @@ $RefreshReg$(_c, "OpenProjectOverlay");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"hPbLI":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../2D/rendering/canvas":"fjxS8","../../store":"l1Ff7"}],"hPbLI":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$6d9c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;

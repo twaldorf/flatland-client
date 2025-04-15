@@ -4,18 +4,11 @@ import { NewProjectCommand } from "../commands/NewProjectCommand"
 import { SaveProjectCommand } from "../commands/SaveProjectCommand"
 import MenuItem from "./Header/MenuItem"
 import { UserIcon } from "./Header/UserIcon"
+import { useAppState } from "../store"
 
-interface Props {
-  setOpen(v:boolean): void;
-}
+export const Header = () => {
 
-export const Header = ( props:Props ) => {
-
-  const { setOpen } = props;
-
-  function triggerOpen() {
-    setOpen(true);
-  }
+  const showModal = useAppState(s => s.showModal);
 
   return (
     <header className="p-3 flex flex-row items-center justify-between">
@@ -24,7 +17,7 @@ export const Header = ( props:Props ) => {
         <MenuItem label={"File"} options={[
             { name: "Recent >", action: () => console.log("Zoom In") },
             { name: "New", action: () => pushCommand(new NewProjectCommand()) },
-            { name: "Open", action: () => triggerOpen() },
+            { name: "Open", action: () => showModal('Open Project')},
             { name: "Save", action: () => pushCommand(new SaveProjectCommand()) },
           ]} />
       </section>

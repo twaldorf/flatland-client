@@ -32,9 +32,9 @@ const App: React.FC = () => {
   return (
     <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2">
   <div>
-    <OpenProjectOverlay open={open} setOpen={setOpen} />
+    <OpenProjectOverlay />
     <NewProjectModal />
-    <Header setOpen={setOpen} />
+    <Header />
     <Tabs
       activeTab={activeProjectTitle || "untitled"}
       tabs={openProjects}
