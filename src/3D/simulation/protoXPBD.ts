@@ -13,8 +13,15 @@ function resolveCollisions(particle: Particle, floorY: number) {
 
 // The main update function where XPBD and collision handling occur.
 export function updateXPBD(deltaTime: number) {
-  // --- 1. Predict positions by applying external forces (e.g., gravity)
+
+  if (state.particles.length < 1 ) {
+    // Bail if the geometry is not initialized
+    // TODO: Add user input or smart re-triggering for polygon building
+    return;
+  }
+
   const gravity = new THREE.Vector3(0, -9.81, 0);
+
   for (const particle of state.particles) {
     if (particle.invMass > 0) {
       // Predict new position

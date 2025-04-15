@@ -54494,7 +54494,9 @@ function resolveCollisions(particle, floorY) {
     particle.predicted.y = floorY;
 }
 function updateXPBD(deltaTime) {
-    // --- 1. Predict positions by applying external forces (e.g., gravity)
+    if ((0, _state.state).particles.length < 1) // Bail if the geometry is not initialized
+    // TODO: Add user input or smart re-triggering for polygon building
+    return;
     const gravity = new _three.Vector3(0, -9.81, 0);
     for (const particle of (0, _state.state).particles)if (particle.invMass > 0) {
         // Predict new position
