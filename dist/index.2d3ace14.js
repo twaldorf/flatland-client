@@ -18737,7 +18737,10 @@ $RefreshReg$(_c, "App");
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+// This file initializes 2D and 3D canvases and runs the global update loop (which processes all Commands for the canvases)
+// 2D initialization
 parcelHelpers.export(exports, "initCanvas", ()=>initCanvas);
+// 3D initialization
 parcelHelpers.export(exports, "initScene", ()=>initScene);
 var _three = require("three");
 var _util = require("./util");
@@ -18745,7 +18748,6 @@ var _orbitControlsJs = require("three/examples/jsm/controls/OrbitControls.js");
 var _state = require("./State");
 var _command = require("./Command");
 var _pointer = require("./3D/events/pointer");
-var _primitives = require("./3D/geometry/primitives");
 var _hotkeys = require("./2D/hotkeys/hotkeys");
 var _pointerEvents = require("./2D/pointer/pointerEvents");
 var _canvas = require("./2D/rendering/canvas");
@@ -18817,63 +18819,10 @@ function initScene(canvas) {
         threeRef: parent
     };
 }
-const drawTestPrimitive = ()=>{
-    const prismPair = (0, _primitives.createRectangularPrism)(new _three.Vector3(0, 0, 0), 10, 5, 2);
-    (0, _state.state).scene.add(prismPair.mesh);
-    (0, _state.state).scene.add(prismPair.line);
-    (0, _state.state).objects = [
-        prismPair.mesh,
-        prismPair.line
-    ];
-};
-const drawTestGeometry = ()=>{
-    // initialize buffer geometry
-    const test_geometry = new _three.BufferGeometry();
-    const ARRAY_MAX = 1500;
-    // const vertices = new Float32Array( ARRAY_MAX );
-    // test vertices, two tris forming a quad:
-    const vertices = new Float32Array([
-        -1,
-        -1,
-        1.0,
-        1.0,
-        -1,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        -1,
-        1.0,
-        1.0,
-        -1,
-        -1,
-        1.0 // v5
-    ]);
-    test_geometry.setAttribute('position', new _three.BufferAttribute(vertices, 3));
-    test_geometry.setDrawRange(0, 12);
-    const material = new _three.MeshBasicMaterial({
-        color: 0xff0000
-    });
-    const line_material = new _three.MeshBasicMaterial({
-        color: "#ffffff"
-    });
-    const mesh = new _three.Mesh(test_geometry, material);
-    const line = new _three.Line(test_geometry, line_material);
-    (0, _state.state).scene.add(mesh);
-    (0, _state.state).scene.add(line);
-    (0, _state.state).objects = [
-        mesh,
-        line
-    ];
-    test_geometry.computeBoundingSphere();
-// console.log( test_geometry.index )
-};
 // Local deltatime, not tracked as state
 let dt = 0.0;
 const interval = 1 / 30;
+// Render and global command processing loop
 function update() {
     const { pointer, camera, scene, renderer, raycaster } = (0, _state.state);
     const [mesh, line] = (0, _state.state).objects;
@@ -18890,6 +18839,8 @@ function update() {
         (0, _state.state).intersects = intersects;
         if (intersects.length > 0) {
             const intersect = intersects[0];
+        // This is a good example of attribute management but is no longer used
+        // TODO move this or file it away in documentation
         // const face = intersect.face;
         // const linePosition = line.geometry.attributes.position;
         // const meshPosition = mesh.geometry.attributes.position;
@@ -18906,7 +18857,7 @@ function update() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./3D/geometry/primitives":"21R6K","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","./2D/rendering/canvas":"fjxS8","./3D/simulation/protoXPBD":"46Cm3","./2D/settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","./2D/rendering/canvas":"fjxS8","./3D/simulation/protoXPBD":"46Cm3","./2D/settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports,__globalThis) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -54382,170 +54333,7 @@ const localizePointerTo = ({ event, state, domElement })=>{
     state.pointer.y = -2 * (window.innerHeight / domElement.offsetHeight) * (event.clientY - state.renderer.domElement.getBoundingClientRect().y) / window.innerHeight + 1;
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"21R6K":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "createRectangularPrism", ()=>createRectangularPrism);
-var _three = require("three");
-var _materials = require("../Materials");
-const createRectangularPrism = (origin, width = 1, height = 1, depth = 1)=>{
-    const geometry = new _three.BufferGeometry();
-    const halfWidth = width / 2;
-    const halfHeight = height / 2;
-    const halfDepth = depth / 2;
-    const vertices = new Float32Array([
-        // Front face
-        -halfWidth,
-        -halfHeight,
-        halfDepth,
-        halfWidth,
-        -halfHeight,
-        halfDepth,
-        halfWidth,
-        halfHeight,
-        halfDepth,
-        -halfWidth,
-        halfHeight,
-        halfDepth,
-        // Back face
-        -halfWidth,
-        -halfHeight,
-        -halfDepth,
-        halfWidth,
-        -halfHeight,
-        -halfDepth,
-        halfWidth,
-        halfHeight,
-        -halfDepth,
-        -halfWidth,
-        halfHeight,
-        -halfDepth // 7: Top Left Back
-    ]);
-    // Define the indices for each face (two triangles per face)
-    const indices = [
-        // Front face
-        0,
-        1,
-        2,
-        0,
-        2,
-        3,
-        // Back face
-        5,
-        4,
-        7,
-        5,
-        7,
-        6,
-        // Top face
-        3,
-        2,
-        6,
-        3,
-        6,
-        7,
-        // Bottom face
-        4,
-        5,
-        1,
-        4,
-        1,
-        0,
-        // Right face
-        1,
-        5,
-        6,
-        1,
-        6,
-        2,
-        // Left face
-        4,
-        0,
-        3,
-        4,
-        3,
-        7
-    ];
-    // Assign the vertices and indices to the geometry
-    geometry.setAttribute('position', new _three.BufferAttribute(vertices, 3));
-    geometry.setIndex(indices);
-    // Compute normals for lighting
-    geometry.computeVertexNormals();
-    // Define UV coordinates for texturing
-    const uvs = new Float32Array([
-        // Front face
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        1,
-        // Back face
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        // Top face
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        // Bottom face
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        // Right face
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        // Left face
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        1
-    ]);
-    geometry.setAttribute('uv', new _three.BufferAttribute(uvs, 2));
-    // Group the indices into quads (each group contains 6 indices: two triangles)
-    geometry.clearGroups(); // Clear any existing groups
-    const faceCount = 6; // Front, Back, Top, Bottom, Right, Left
-    for(let i = 0; i < faceCount; i++)geometry.addGroup(i * 6, 6, 0); // (start, count, materialIndex)
-    const materials = [
-        (0, _materials.material_default),
-        (0, _materials.material_selected)
-    ];
-    const mesh = new _three.Mesh(geometry, materials);
-    const line = new _three.Line(geometry, materials);
-    return {
-        mesh,
-        line
-    };
-};
-
-},{"three":"ktPTu","../Materials":"eTWEv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdjjs":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdjjs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleKeyDown", ()=>handleKeyDown);

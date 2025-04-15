@@ -2,6 +2,8 @@ import { Face, Intersection, Mesh, Object3D } from "three";
 import { State } from "./types";
 import { FaceSelectionBundle } from "./commands/SelectFaceCommand";
 
+// This file and all its logic is very stale and will be overrun as soon as significant work is done on the geometry side
+
 export const mouseOverCanvas = (state:State):boolean => {
   const bounds = state.renderer.domElement.getBoundingClientRect();
   if (state.rawPointer) {

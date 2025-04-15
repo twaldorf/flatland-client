@@ -3,17 +3,17 @@ import * as THREE from 'three'
 import { mouseOverCanvas } from './util'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { state } from './State';
-import { executeCommands, pushCommand } from './Command';
+import { executeCommands } from './Command';
 import { onPointerMove, onPointerDown, onPointerUp, onDoubleClick } from './3D/events/pointer';
-import { createRectangularPrism } from './3D/geometry/primitives';
 import { initializeHotkeys } from './2D/hotkeys/hotkeys';
 import { initializeCanvasEvents } from './2D/pointer/pointerEvents';
-import { drawCanvasFromState, drawCanvasSetup } from './2D/rendering/canvas';
-import { drawGridRuler, drawYRuler } from "./2D/rendering/drawRulers";
+import { drawCanvasSetup } from './2D/rendering/canvas';
 import { updateXPBD } from './3D/simulation/protoXPBD';
 import { SPEED } from './2D/settings/factors';
-import { c_bgColor } from './UI/colors/colors';
 
+// This file initializes 2D and 3D canvases and runs the global update loop (which processes all Commands for the canvases)
+
+// 2D initialization
 export function initCanvas(ref:HTMLCanvasElement) {
   // Get a reference to the canvas element and its rendering context
   const canvas = ref;
@@ -48,6 +48,7 @@ export function initCanvas(ref:HTMLCanvasElement) {
   return { canvasRef: state.canvas };
 }
 
+// 3D initialization
 export function initScene(canvas:HTMLCanvasElement) {
   state.renderer = new THREE.WebGLRenderer( { canvas } );
   const renderer = state.renderer;
@@ -93,51 +94,11 @@ export function initScene(canvas:HTMLCanvasElement) {
   return { threeRef: parent };
 }
 
-const drawTestPrimitive = () => {
-  const prismPair = createRectangularPrism(new THREE.Vector3(0,0,0), 10, 5, 2);
-  state.scene.add( prismPair.mesh );
-  state.scene.add( prismPair.line );
-  state.objects = [ prismPair.mesh, prismPair.line ];
-}
-
-const drawTestGeometry = () => {
-  // initialize buffer geometry
-  const test_geometry = new THREE.BufferGeometry(  );
-
-  const ARRAY_MAX = 500 * 3;
-  // const vertices = new Float32Array( ARRAY_MAX );
-  // test vertices, two tris forming a quad:
-  const vertices = new Float32Array( [
-    -1.0, -1.0,  1.0, // v0
-     1.0, -1.0,  1.0, // v1
-     1.0,  1.0,  1.0, // v2
-  
-     1.0,  1.0,  1.0, // v3
-    -1.0,  1.0,  1.0, // v4
-    -1.0, -1.0,  1.0  // v5
-  ] );
-
-  test_geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-  test_geometry.setDrawRange( 0, 12 );
-  
-  const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-  const line_material = new THREE.MeshBasicMaterial( { color: "#ffffff"} );
-  const mesh = new THREE.Mesh( test_geometry, material );
-  const line = new THREE.Line( test_geometry, line_material );
-
-  state.scene.add( mesh );
-  state.scene.add( line );
-  state.objects = [ mesh, line];
-
-  test_geometry.computeBoundingSphere();
-  
-  // console.log( test_geometry.index )
-}
-
 // Local deltatime, not tracked as state
 let dt = 0.0;
 const interval = 1/30;
 
+// Render and global command processing loop
 function update() {
   const { pointer, camera, scene, renderer, raycaster } = state;
   const [ mesh, line ] = state.objects;
@@ -158,6 +119,8 @@ function update() {
     
     if ( intersects.length > 0 ) {
       const intersect = intersects[ 0 ];
+      // This is a good example of attribute management but is no longer used
+      // TODO move this or file it away in documentation
       // const face = intersect.face;
       
       // const linePosition = line.geometry.attributes.position;
@@ -175,12 +138,10 @@ function update() {
       // line.visible = true;
       
     } else {
-      
       // line.visible = false;
-      
     }
-    
   }
+
   state.camera_controls.update();
   renderer.render( scene, camera );
 
