@@ -25,7 +25,10 @@ export const handleKeyDown = (e: KeyboardEvent) => {
       break;
 
     case "s":
-      pushCommand(new SaveProjectCommand());
+      if (e.metaKey) {
+        e.preventDefault();
+        pushCommand(new SaveProjectCommand());
+      }
       break;
 
     case "Alt":

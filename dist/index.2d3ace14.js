@@ -54576,7 +54576,10 @@ const handleKeyDown = (e)=>{
             (0, _command.undoCommands)();
             break;
         case "s":
-            (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)());
+            if (e.metaKey) {
+                e.preventDefault();
+                (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)());
+            }
             break;
         case "Alt":
             (0, _state.state).altDown = true;
