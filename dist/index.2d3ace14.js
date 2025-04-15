@@ -50652,7 +50652,7 @@ function applyMeasurements() {
     if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
 
-},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN"}],"aI2tH":[function(require,module,exports,__globalThis) {
+},{"./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu","../settings/factors":"9qufK","../../State":"83rpN"}],"aI2tH":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
@@ -51410,7 +51410,7 @@ class MeasureTool {
     }
 }
 
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../commands/MeasureToolClosePathCommand":"aINj4","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1IlS2":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/MeasureToolClosePathCommand":"aINj4","../rendering/drawDrawPreview":"aI2tH"}],"1IlS2":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MeasureToolAddPointCommand", ()=>MeasureToolAddPointCommand);
@@ -52496,7 +52496,7 @@ class DrawPreviewsCommand {
     }
 }
 
-},{"../../rendering/drawSelectionMovePreview":"jMLdr","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../rendering/canvas":"fjxS8"}],"9OqtZ":[function(require,module,exports,__globalThis) {
+},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
