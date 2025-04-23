@@ -55,13 +55,18 @@ export const useAppState = create<AppState>((set) => ({
   setSelectedTool: (tool) => set({ selectedTool: tool }),
 
   activeProjectTitle: 'untitled',
-  setActiveProjectTitle: (title) => set({ activeProjectTitle: title }),
-
-  openProjectTitles: ['untitled'],
+  setActiveProjectTitle: (title) => {
+    set((state) => ({
+      activeProjectTitle: title, openProjectTitles: [ title ]
+    })
+  )},
+  
+  openProjectTitles: [],
+  setOpenProjectTitles: (i:string[]) => set({openProjectTitles: i}),
   modal: null,
   showModal: (modal: ModalName) => set({ modal }),
   hideModal: () => set({ modal: null }),
-
+  
   pieces: [],
   addPiece: (piece:Piece) => {
     set((state) => ({

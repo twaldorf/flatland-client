@@ -16,7 +16,7 @@ export const Header = () => {
         <h1 className="text-2xl bg-stone-900 text-white inline-block px-2">Flatland Studio</h1>
         <MenuItem label={"File"} options={[
             { name: "Recent >", action: () => console.log("Zoom In") },
-            { name: "New", action: () => pushCommand(new NewProjectCommand()) },
+            { name: "New", action: () => showModal('New Project') },
             { name: "Open", action: () => showModal('Open Project')},
             { name: "Save", action: () => pushCommand(new SaveProjectCommand()) },
           ]} />

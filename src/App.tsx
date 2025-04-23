@@ -11,6 +11,9 @@ import { ShapeInfo } from "./UI/sections/Overlay/ShapeInfo";
 import { OpenProjectOverlay } from "./UI/sections/Header/OpenOverlay";
 import { useAppState } from "./UI/store";
 import { NewProjectModal } from "./UI/sections/Header/NewProjectModal";
+import { pushCommand } from "./Command";
+import { NewProjectCommand } from "./UI/commands/NewProjectCommand";
+import { EditProjectModal } from "./UI/sections/Header/EditProjectModal";
 
 const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,6 +23,7 @@ const App: React.FC = () => {
     if (canvasRef.current && threeRef.current) {
       initScene(threeRef.current);
       initCanvas(canvasRef.current);
+      pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
     }
   }, []);
 
@@ -34,18 +38,9 @@ const App: React.FC = () => {
   <div>
     <OpenProjectOverlay />
     <NewProjectModal />
+    <EditProjectModal />
     <Header />
-    <Tabs
-      activeTab={activeProjectTitle || "untitled"}
-      tabs={openProjects}
-      onTabClick={(tabTitle:string) => {
-        if (tabTitle == activeProjectTitle) {
-          useAppState(store => store.showModal)("Edit Project Info")
-        } else {
-          console.log('Not implemented: change to another active project via tab');
-        }
-      }}
-    />
+    <Tabs />
   </div>
 
   <Label />

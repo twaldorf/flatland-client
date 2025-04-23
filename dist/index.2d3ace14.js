@@ -18587,6 +18587,9 @@ var _shapeInfo = require("./UI/sections/Overlay/ShapeInfo");
 var _openOverlay = require("./UI/sections/Header/OpenOverlay");
 var _store = require("./UI/store");
 var _newProjectModal = require("./UI/sections/Header/NewProjectModal");
+var _command = require("./Command");
+var _newProjectCommand = require("./UI/commands/NewProjectCommand");
+var _editProjectModal = require("./UI/sections/Header/EditProjectModal");
 var _s = $RefreshSig$();
 const App = ()=>{
     _s();
@@ -18596,6 +18599,10 @@ const App = ()=>{
         if (canvasRef.current && threeRef.current) {
             (0, _main.initScene)(threeRef.current);
             (0, _main.initCanvas)(canvasRef.current);
+            (0, _command.pushCommand)(new (0, _newProjectCommand.NewProjectCommand)({
+                title: 'untitled',
+                author: 'unknown'
+            }));
         }
     }, []);
     // TODO: Change this from hook to use Zustand modal context
@@ -18609,40 +18616,38 @@ const App = ()=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _openOverlay.OpenProjectOverlay), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 35,
+                        lineNumber: 39,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _newProjectModal.NewProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 36,
+                        lineNumber: 40,
+                        columnNumber: 5
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editProjectModal.EditProjectModal), {}, void 0, false, {
+                        fileName: "src/App.tsx",
+                        lineNumber: 41,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 37,
+                        lineNumber: 42,
                         columnNumber: 5
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {
-                        activeTab: activeProjectTitle || "untitled",
-                        tabs: openProjects,
-                        onTabClick: (tabTitle)=>{
-                            if (tabTitle == activeProjectTitle) (0, _store.useAppState)((store)=>store.showModal)("Edit Project Info");
-                            else console.log('Not implemented: change to another active project via tab');
-                        }
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 38,
+                        lineNumber: 43,
                         columnNumber: 5
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 34,
+                lineNumber: 38,
                 columnNumber: 3
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 51,
+                lineNumber: 46,
                 columnNumber: 3
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18653,17 +18658,17 @@ const App = ()=>{
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 56,
+                                lineNumber: 51,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 57,
+                                lineNumber: 52,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 58,
+                                lineNumber: 53,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18672,13 +18677,13 @@ const App = ()=>{
                                 className: "flex-1 w-full h-full rounded-md"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 59,
+                                lineNumber: 54,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 55,
+                        lineNumber: 50,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -18686,7 +18691,7 @@ const App = ()=>{
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 68,
+                                lineNumber: 63,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18695,25 +18700,25 @@ const App = ()=>{
                                 className: "flex-1 w-full h-full"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 69,
+                                lineNumber: 64,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 67,
+                        lineNumber: 62,
                         columnNumber: 5
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 53,
+                lineNumber: 48,
                 columnNumber: 3
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 33,
+        lineNumber: 37,
         columnNumber: 5
     }, undefined);
 };
@@ -18733,7 +18738,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/store":"l1Ff7","./UI/sections/Header/NewProjectModal":"hPbLI"}],"jeorp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/store":"l1Ff7","./UI/sections/Header/NewProjectModal":"hPbLI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./Command":"efiIE","./UI/commands/NewProjectCommand":"eoWAT","./UI/sections/Header/EditProjectModal":"gSpmT"}],"jeorp":[function(require,module,exports,__globalThis) {
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -50598,7 +50603,7 @@ function applyMeasurements() {
     if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
 
-},{"./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu","../settings/factors":"9qufK","../../State":"83rpN"}],"aI2tH":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aI2tH":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
@@ -50876,12 +50881,18 @@ const useAppState = (0, _zustand.create)((set)=>({
                 selectedTool: tool
             }),
         activeProjectTitle: 'untitled',
-        setActiveProjectTitle: (title)=>set({
-                activeProjectTitle: title
+        setActiveProjectTitle: (title)=>{
+            set((state)=>({
+                    activeProjectTitle: title,
+                    openProjectTitles: [
+                        title
+                    ]
+                }));
+        },
+        openProjectTitles: [],
+        setOpenProjectTitles: (i)=>set({
+                openProjectTitles: i
             }),
-        openProjectTitles: [
-            'untitled'
-        ],
         modal: null,
         showModal: (modal)=>set({
                 modal
@@ -51356,7 +51367,7 @@ class MeasureTool {
     }
 }
 
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/MeasureToolClosePathCommand":"aINj4","../rendering/drawDrawPreview":"aI2tH"}],"1IlS2":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../commands/MeasureToolClosePathCommand":"aINj4","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1IlS2":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MeasureToolAddPointCommand", ()=>MeasureToolAddPointCommand);
@@ -51614,7 +51625,7 @@ class SelectTool {
     }
 }
 
-},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s","../commands/SelectToolSelectLineCommand":"aamTt","../commands/SelectToolAddShapeCommand":"fcLPE","../commands/SelectToolDeselectLinesCommand":"fcEzj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/Rendering/DrawPreviewsCommand":"4QHCH"}],"aHJgT":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s","../commands/SelectToolSelectLineCommand":"aamTt","../commands/SelectToolAddShapeCommand":"fcLPE","../commands/SelectToolDeselectLinesCommand":"fcEzj","../commands/Rendering/DrawPreviewsCommand":"4QHCH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
@@ -54394,27 +54405,7 @@ const initializeHotkeys = ()=>{
     document.addEventListener("keyup", handleKeyUp);
 }; // Call this function in your app startup logic
 
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../UI/commands/SaveProjectCommand":"8Akqt"}],"i5Ou7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
-var _changeTool = require("../tools/changeTool");
-class ChangeToolCommand {
-    constructor(type){
-        this.__type = type;
-    }
-    do() {
-        (0, _changeTool.changeTool)({
-            type: this.__type
-        });
-    }
-    undo() {
-        // TODO
-        console.log('Undo not yet implemented for ChangeToolCommand');
-    }
-}
-
-},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Akqt":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../../UI/commands/SaveProjectCommand":"8Akqt","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Akqt":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SaveProjectCommand", ()=>SaveProjectCommand);
@@ -54442,7 +54433,27 @@ class SaveProjectCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
+var _changeTool = require("../tools/changeTool");
+class ChangeToolCommand {
+    constructor(type){
+        this.__type = type;
+    }
+    do() {
+        (0, _changeTool.changeTool)({
+            type: this.__type
+        });
+    }
+    undo() {
+        // TODO
+        console.log('Undo not yet implemented for ChangeToolCommand');
+    }
+}
+
+},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
@@ -66556,7 +66567,6 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Header", ()=>Header);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _command = require("../../Command");
-var _newProjectCommand = require("../commands/NewProjectCommand");
 var _saveProjectCommand = require("../commands/SaveProjectCommand");
 var _menuItem = require("./Header/MenuItem");
 var _menuItemDefault = parcelHelpers.interopDefault(_menuItem);
@@ -66589,7 +66599,7 @@ const Header = ()=>{
                             },
                             {
                                 name: "New",
-                                action: ()=>(0, _command.pushCommand)(new (0, _newProjectCommand.NewProjectCommand)())
+                                action: ()=>showModal('New Project')
                             },
                             {
                                 name: "Open",
@@ -66651,7 +66661,7 @@ $RefreshReg$(_c, "Header");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","./Header/MenuItem":"6dTG8","./Header/UserIcon":"5JxDc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../Command":"efiIE","../commands/NewProjectCommand":"eoWAT","../commands/SaveProjectCommand":"8Akqt","../store":"l1Ff7"}],"6dTG8":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","../../Command":"efiIE","../commands/SaveProjectCommand":"8Akqt","./Header/MenuItem":"6dTG8","./Header/UserIcon":"5JxDc","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6dTG8":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$122f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -66811,45 +66821,7 @@ $RefreshReg$(_c, "UserIcon");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"eoWAT":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "NewProjectCommand", ()=>NewProjectCommand);
-parcelHelpers.export(exports, "DownloadProjectCommand", ()=>DownloadProjectCommand);
-var _state = require("../../State");
-class NewProjectCommand {
-    constructor(){
-        this.previousState = (0, _state.state).serialize();
-    }
-    do() {
-        (0, _state.state).clear() // define this on your state singleton
-        ;
-    }
-    undo() {
-        (0, _state.state).deserialize(this.previousState);
-    }
-}
-class DownloadProjectCommand {
-    do() {
-        const json = (0, _state.state).serialize();
-        const blob = new Blob([
-            json
-        ], {
-            type: "application/json"
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "flatland_project.json";
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-    undo() {
-    // Save is a one-way action, optionally no-op or show a toast
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kzo4h":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"kzo4h":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$8725 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -66860,55 +66832,59 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Tabs", ()=>Tabs);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _ci = require("react-icons/ci");
 var _store = require("../../store");
-const Tabs = ({ activeTab, tabs, onTabClick })=>{
-    var _s = $RefreshSig$();
+var _ci = require("react-icons/ci");
+var _s = $RefreshSig$();
+const Tabs = ()=>{
+    _s();
+    var _s1 = $RefreshSig$();
+    const tabs = (0, _store.useAppState)((s)=>s.openProjectTitles);
+    const activeTab = (0, _store.useAppState)((s)=>s.activeProjectTitle);
+    const showModal = (0, _store.useAppState)((s)=>s.showModal);
     function newDocument() {
-        _s();
+        _s1();
         (0, _store.useAppState)((state)=>state.showModal)("New Project");
     }
-    _s(newDocument, "eSDnaBcKPQPS0NW8g/hRAyz79/g=", false, function() {
+    _s1(newDocument, "eSDnaBcKPQPS0NW8g/hRAyz79/g=", false, function() {
         return [
             (0, _store.useAppState)
         ];
     });
+    function onTabClick() {
+        showModal("Edit Project Info");
+    }
+    console.log(tabs);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
         className: "flex m-0  px-3",
-        children: [
-            tabs.map((tab)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                    className: `px-4 py-2  ${activeTab === tab ? "border-b-2 border-blue-500 font-bold bg-white " : "text-gray-500 bg-stone-200"}`,
-                    onClick: ()=>{
-                        onTabClick(tab);
-                    },
-                    children: tab
-                }, tab, false, {
-                    fileName: "src/UI/sections/Workspace/Tabs.tsx",
-                    lineNumber: 20,
-                    columnNumber: 9
-                }, undefined)),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                className: `px-4 py-2 bg-amber-400 text-white`,
-                onClick: newDocument,
-                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiSquarePlus), {
-                    strokeWidth: "1.5"
-                }, void 0, false, {
-                    fileName: "src/UI/sections/Workspace/Tabs.tsx",
-                    lineNumber: 34,
-                    columnNumber: 11
-                }, undefined)
-            }, void 0, false, {
+        children: tabs.map((tab)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                className: `px-4 py-2 flex flex-row items-center justify-between ${activeTab === tab ? "border-b-2 border-blue-500 font-bold bg-white " : "text-gray-500 bg-stone-200"}`,
+                onClick: onTabClick,
+                children: [
+                    tab,
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {}, void 0, false, {
+                        fileName: "src/UI/sections/Workspace/Tabs.tsx",
+                        lineNumber: 33,
+                        columnNumber: 11
+                    }, undefined)
+                ]
+            }, tab, true, {
                 fileName: "src/UI/sections/Workspace/Tabs.tsx",
-                lineNumber: 30,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
+                lineNumber: 25,
+                columnNumber: 9
+            }, undefined))
+    }, void 0, false, {
         fileName: "src/UI/sections/Workspace/Tabs.tsx",
-        lineNumber: 18,
+        lineNumber: 23,
         columnNumber: 5
     }, undefined);
 };
+_s(Tabs, "E/u4aQqh6Lyhn9Q0DCdB446mdcs=", false, function() {
+    return [
+        (0, _store.useAppState),
+        (0, _store.useAppState),
+        (0, _store.useAppState)
+    ];
+});
 _c = Tabs;
 var _c;
 $RefreshReg$(_c, "Tabs");
@@ -66918,7 +66894,7 @@ $RefreshReg$(_c, "Tabs");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../store":"l1Ff7"}],"5aREB":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY"}],"5aREB":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67560,7 +67536,7 @@ $RefreshReg$(_c, "OpenProjectOverlay");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../2D/rendering/canvas":"fjxS8","../../store":"l1Ff7"}],"hPbLI":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../State":"83rpN","../../../2D/rendering/canvas":"fjxS8","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"hPbLI":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$6d9c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67573,6 +67549,8 @@ parcelHelpers.export(exports, "NewProjectModal", ()=>NewProjectModal);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _store = require("../../store");
+var _command = require("../../../Command");
+var _newProjectCommand = require("../../commands/NewProjectCommand");
 var _s = $RefreshSig$();
 const NewProjectModal = ()=>{
     _s();
@@ -67592,8 +67570,14 @@ const NewProjectModal = ()=>{
         //   addCategory(newCategory)
         //   setCategory(newCategory)
         // }
+        const projectInfo = {
+            title,
+            author,
+            lastUpdated: new Date()
+        };
         setActiveProjectTitle(title || "Untitled");
         // TODO: set other project metadata if needed
+        (0, _command.pushCommand)(new (0, _newProjectCommand.NewProjectCommand)(projectInfo));
         hideModal();
     };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -67606,7 +67590,7 @@ const NewProjectModal = ()=>{
                     children: "New Project"
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                    lineNumber: 33,
+                    lineNumber: 42,
                     columnNumber: 9
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
@@ -67617,39 +67601,13 @@ const NewProjectModal = ()=>{
                             children: "Project Title"
                         }, void 0, false, {
                             fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                            lineNumber: 36,
+                            lineNumber: 45,
                             columnNumber: 11
                         }, undefined),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
                             className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
                             value: title,
                             onChange: (e)=>setTitle(e.target.value)
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                            lineNumber: 37,
-                            columnNumber: 11
-                        }, undefined)
-                    ]
-                }, void 0, true, {
-                    fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                    lineNumber: 35,
-                    columnNumber: 9
-                }, undefined),
-                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                    className: "block mb-2",
-                    children: [
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                            className: "block text-sm font-medium",
-                            children: "Author"
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                            lineNumber: 45,
-                            columnNumber: 11
-                        }, undefined),
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
-                            value: author,
-                            onChange: (e)=>setAuthor(e.target.value)
                         }, void 0, false, {
                             fileName: "src/UI/sections/Header/NewProjectModal.tsx",
                             lineNumber: 46,
@@ -67666,10 +67624,36 @@ const NewProjectModal = ()=>{
                     children: [
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                             className: "block text-sm font-medium",
-                            children: "Type"
+                            children: "Author"
                         }, void 0, false, {
                             fileName: "src/UI/sections/Header/NewProjectModal.tsx",
                             lineNumber: 54,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
+                            value: author,
+                            onChange: (e)=>setAuthor(e.target.value)
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/NewProjectModal.tsx",
+                            lineNumber: 55,
+                            columnNumber: 11
+                        }, undefined)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/UI/sections/Header/NewProjectModal.tsx",
+                    lineNumber: 53,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                    className: "block mb-2",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "block text-sm font-medium",
+                            children: "Type"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/NewProjectModal.tsx",
+                            lineNumber: 63,
                             columnNumber: 11
                         }, undefined),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("select", {
@@ -67682,7 +67666,7 @@ const NewProjectModal = ()=>{
                                     children: "Garment"
                                 }, void 0, false, {
                                     fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                                    lineNumber: 60,
+                                    lineNumber: 69,
                                     columnNumber: 13
                                 }, undefined),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -67690,7 +67674,7 @@ const NewProjectModal = ()=>{
                                     children: "Gear"
                                 }, void 0, false, {
                                     fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                                    lineNumber: 61,
+                                    lineNumber: 70,
                                     columnNumber: 13
                                 }, undefined),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -67698,19 +67682,19 @@ const NewProjectModal = ()=>{
                                     children: "Custom"
                                 }, void 0, false, {
                                     fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                                    lineNumber: 62,
+                                    lineNumber: 71,
                                     columnNumber: 13
                                 }, undefined)
                             ]
                         }, void 0, true, {
                             fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                            lineNumber: 55,
+                            lineNumber: 64,
                             columnNumber: 11
                         }, undefined)
                     ]
                 }, void 0, true, {
                     fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                    lineNumber: 53,
+                    lineNumber: 62,
                     columnNumber: 9
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -67722,7 +67706,7 @@ const NewProjectModal = ()=>{
                             children: "Cancel"
                         }, void 0, false, {
                             fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                            lineNumber: 91,
+                            lineNumber: 100,
                             columnNumber: 11
                         }, undefined),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -67731,24 +67715,24 @@ const NewProjectModal = ()=>{
                             children: "Create Project"
                         }, void 0, false, {
                             fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                            lineNumber: 97,
+                            lineNumber: 106,
                             columnNumber: 11
                         }, undefined)
                     ]
                 }, void 0, true, {
                     fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-                    lineNumber: 90,
+                    lineNumber: 99,
                     columnNumber: 9
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-            lineNumber: 32,
+            lineNumber: 41,
             columnNumber: 7
         }, undefined)
     }, void 0, false, {
         fileName: "src/UI/sections/Header/NewProjectModal.tsx",
-        lineNumber: 31,
+        lineNumber: 40,
         columnNumber: 5
     }, undefined);
 };
@@ -67768,6 +67752,254 @@ $RefreshReg$(_c, "NewProjectModal");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../Command":"efiIE","../../commands/NewProjectCommand":"eoWAT"}],"eoWAT":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "NewProjectCommand", ()=>NewProjectCommand);
+parcelHelpers.export(exports, "DownloadProjectCommand", ()=>DownloadProjectCommand);
+var _state = require("../../State");
+var _store = require("../store");
+class NewProjectCommand {
+    constructor(projectInfo){
+        this.previousState = (0, _state.state).serialize();
+        this.projectInfo = projectInfo;
+    }
+    do() {
+        (0, _state.state).clear() // define this on your state singleton
+        ;
+        (0, _store.useAppState).getState().setActiveProjectTitle(this.projectInfo.title);
+        (0, _state.state).projectInfo = this.projectInfo;
+    }
+    undo() {
+        (0, _state.state).deserialize(this.previousState);
+    }
+}
+class DownloadProjectCommand {
+    do() {
+        const json = (0, _state.state).serialize();
+        const blob = new Blob([
+            json
+        ], {
+            type: "application/json"
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "flatland_project.json";
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+    undo() {
+    // Save is a one-way action, optionally no-op or show a toast
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../store":"l1Ff7"}],"gSpmT":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$b0e6 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$b0e6.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "EditProjectModal", ()=>EditProjectModal);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _store = require("../../store");
+var _state = require("../../../State");
+var _s = $RefreshSig$();
+const EditProjectModal = ()=>{
+    _s();
+    const modal = (0, _store.useAppState)((s)=>s.modal);
+    const hideModal = (0, _store.useAppState)((s)=>s.hideModal);
+    const setActiveProjectTitle = (0, _store.useAppState)((s)=>s.setActiveProjectTitle);
+    const [title, setTitle] = (0, _react.useState)("");
+    const [author, setAuthor] = (0, _react.useState)("");
+    const [type, setType] = (0, _react.useState)("Garment");
+    if (modal !== "Edit Project Info") return null;
+    const handleSubmit = ()=>{
+        const projectInfo = {
+            title,
+            author,
+            lastUpdated: new Date()
+        };
+        setActiveProjectTitle(title);
+        (0, _state.state).projectInfo = projectInfo;
+        hideModal();
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "fixed inset-0 bg-black/40 flex justify-center items-center z-50",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "bg-white rounded-lg p-6 w-full max-w-md shadow-lg",
+            children: [
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                    className: "text-xl font-bold mb-4",
+                    children: "Edit Project Info"
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 34,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                    className: "block mb-2",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "block text-sm font-medium",
+                            children: "Project Title"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 37,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
+                            value: title,
+                            onChange: (e)=>setTitle(e.target.value)
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 38,
+                            columnNumber: 11
+                        }, undefined)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 36,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                    className: "block mb-2",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "block text-sm font-medium",
+                            children: "Author"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 46,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
+                            value: author,
+                            onChange: (e)=>setAuthor(e.target.value)
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 47,
+                            columnNumber: 11
+                        }, undefined)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 45,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                    className: "block mb-2",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "block text-sm font-medium",
+                            children: "Type"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 55,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("select", {
+                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
+                            value: type,
+                            onChange: (e)=>setType(e.target.value),
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
+                                    value: "Garment",
+                                    children: "Garment"
+                                }, void 0, false, {
+                                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                                    lineNumber: 61,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
+                                    value: "Gear",
+                                    children: "Gear"
+                                }, void 0, false, {
+                                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                                    lineNumber: 62,
+                                    columnNumber: 13
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
+                                    value: "Custom",
+                                    children: "Custom"
+                                }, void 0, false, {
+                                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                                    lineNumber: 63,
+                                    columnNumber: 13
+                                }, undefined)
+                            ]
+                        }, void 0, true, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 56,
+                            columnNumber: 11
+                        }, undefined)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 54,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "flex justify-end space-x-2",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                            className: "px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300",
+                            onClick: hideModal,
+                            children: "Cancel"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 68,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                            className: "px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700",
+                            onClick: handleSubmit,
+                            children: "Confirm"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 74,
+                            columnNumber: 11
+                        }, undefined)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 67,
+                    columnNumber: 9
+                }, undefined)
+            ]
+        }, void 0, true, {
+            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+            lineNumber: 33,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+        lineNumber: 32,
+        columnNumber: 5
+    }, undefined);
+};
+_s(EditProjectModal, "OAC6pbUjJYdskY2uQe/jDT0q0SY=", false, function() {
+    return [
+        (0, _store.useAppState),
+        (0, _store.useAppState),
+        (0, _store.useAppState)
+    ];
+});
+_c = EditProjectModal;
+var _c;
+$RefreshReg$(_c, "EditProjectModal");
+
+  $parcel$ReactRefreshHelpers$b0e6.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map

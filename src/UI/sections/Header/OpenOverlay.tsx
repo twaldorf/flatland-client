@@ -20,7 +20,7 @@ export const OpenProjectOverlay = () => {
   }, []);
 
   const loadProject = (key: string) => {
-    const json = localStorage.getItem(key)
+    const json = localStorage.getItem(key);
     console.log(json)
     if (!json) return
     const data = json;

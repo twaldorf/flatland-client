@@ -1,15 +1,21 @@
 import { Command } from "../../Command"
 import { state } from "../../State"
+import { ProjectInfo } from "../../types";
+import { useAppState } from "../store";
 
 export class NewProjectCommand implements Command {
-  private previousState: any
+  private previousState: string;
+  private projectInfo: ProjectInfo;
 
-  constructor() {
+  constructor(projectInfo:ProjectInfo) {
     this.previousState = state.serialize();
+    this.projectInfo = projectInfo;
   }
 
   do() {
     state.clear() // define this on your state singleton
+    useAppState.getState().setActiveProjectTitle(this.projectInfo.title);
+    state.projectInfo = this.projectInfo;
   }
 
   undo() {
