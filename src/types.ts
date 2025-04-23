@@ -7,6 +7,7 @@ import { DistanceConstraint, Particle } from "./3D/simulation/xpbdTypes";
 import { ToolState } from "./2D/tools/changeTool";
 import { LineHit } from "./2D/geometry/lineIntersection";
 import { MeasureTool, MeasureToolState } from "./2D/tools/MeasureTool";
+import { GrainlineTool, GrainlineToolState } from "./2D/tools/GrainlineTool";
 
 // State interface for global state singleton
 export interface State {
@@ -138,7 +139,7 @@ export interface ToolBase {
   name: string;
   initializeEvents: Function;
   dismountEvents: Function;
-  readonly state: PathToolState | SelectToolState | MeasureToolState;
+  readonly state: PathToolState | SelectToolState | MeasureToolState | GrainlineToolState;
 }
 
 export interface ProjectInfo {
@@ -147,8 +148,8 @@ export interface ProjectInfo {
   lastUpdated: Date;
 }
 
-export type Tool = PathTool | SelectTool | MeasureTool;
-export type ToolName = "path" | "select" | "measure";
+export type Tool = PathTool | SelectTool | MeasureTool | GrainlineTool;
+export type ToolName = "path" | "select" | "measure" | "grainline";
 
 export type DrawableEntity = Vector2 | Vector2[];
 

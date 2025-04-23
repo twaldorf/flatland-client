@@ -43,7 +43,6 @@ const App: React.FC = () => {
     <Tabs />
   </div>
 
-  <Label />
 
   <div className="grid grid-cols-2 flex-1 overflow-hidden">
     {/* Left column */}
@@ -51,6 +50,7 @@ const App: React.FC = () => {
       <Toolbar />
       <CursorInfo />
       <ShapeInfo />
+      <Label />
       <canvas
         ref={canvasRef}
         id="canvas2d"

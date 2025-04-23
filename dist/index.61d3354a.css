@@ -3,6 +3,8 @@
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --color-red-300: oklch(.808 .114 19.571);
+    --color-red-500: oklch(.637 .237 25.331);
     --color-red-600: oklch(.577 .245 27.325);
     --color-red-700: oklch(.505 .213 27.518);
     --color-amber-400: oklch(.828 .189 84.429);
@@ -40,6 +42,7 @@
     --text-3xl--line-height: calc(2.25 / 1.875);
     --font-weight-medium: 500;
     --font-weight-bold: 700;
+    --radius-sm: .25rem;
     --radius-md: .375rem;
     --radius-lg: .5rem;
     --radius-xl: .75rem;
@@ -630,6 +633,10 @@
     border-radius: var(--radius-md);
   }
 
+  .rounded-sm {
+    border-radius: var(--radius-sm);
+  }
+
   .rounded-xl {
     border-radius: var(--radius-xl);
   }
@@ -658,6 +665,10 @@
 
   .border-stone-400 {
     border-color: var(--color-stone-400);
+  }
+
+  .border-white {
+    border-color: var(--color-white);
   }
 
   .bg-amber-400 {
@@ -944,6 +955,16 @@
     }
   }
 
+  .hover\:text-red-300 {
+    &:hover {
+      @media (hover: hover) {
+        & {
+          color: var(--color-red-300);
+        }
+      }
+    }
+  }
+
   .hover\:text-red-700 {
     &:hover {
       @media (hover: hover) {
@@ -971,6 +992,56 @@
           text-decoration-line: underline;
         }
       }
+    }
+  }
+
+  .focus\:border {
+    &:focus {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+    }
+  }
+
+  .focus\:border-blue-500 {
+    &:focus {
+      border-color: var(--color-blue-500);
+    }
+  }
+
+  .focus\:border-red-500 {
+    &:focus {
+      border-color: var(--color-red-500);
+    }
+  }
+
+  .focus\:bg-red-500 {
+    &:focus {
+      background-color: var(--color-red-500);
+    }
+  }
+
+  .active\:border {
+    &:active {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+    }
+  }
+
+  .active\:border-blue-500 {
+    &:active {
+      border-color: var(--color-blue-500);
+    }
+  }
+
+  .active\:bg-red-500 {
+    &:active {
+      background-color: var(--color-red-500);
+    }
+  }
+
+  .active\:text-red-300 {
+    &:active {
+      color: var(--color-red-300);
     }
   }
 }

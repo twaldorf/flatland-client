@@ -18645,11 +18645,6 @@ const App = ()=>{
                 lineNumber: 38,
                 columnNumber: 3
             }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
-                fileName: "src/App.tsx",
-                lineNumber: 46,
-                columnNumber: 3
-            }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "grid grid-cols-2 flex-1 overflow-hidden",
                 children: [
@@ -18658,15 +18653,20 @@ const App = ()=>{
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 51,
+                                lineNumber: 50,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 52,
+                                lineNumber: 51,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
+                                fileName: "src/App.tsx",
+                                lineNumber: 52,
+                                columnNumber: 7
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
                                 fileName: "src/App.tsx",
                                 lineNumber: 53,
                                 columnNumber: 7
@@ -18683,7 +18683,7 @@ const App = ()=>{
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 50,
+                        lineNumber: 49,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -18712,7 +18712,7 @@ const App = ()=>{
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 48,
+                lineNumber: 47,
                 columnNumber: 3
             }, undefined)
         ]
@@ -50112,6 +50112,7 @@ var _drawSelections = require("./drawSelections");
 var _drawRulers = require("./drawRulers");
 var _drawCursorPreview = require("./drawCursorPreview");
 var _drawMeasurements = require("./drawMeasurements");
+var _drawHelpers = require("./drawHelpers");
 function drawCanvasSetup() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
     (0, _state.state).context.fillRect(0, 0, (0, _state.state).canvas.width, (0, _state.state).canvas.height);
@@ -50126,7 +50127,8 @@ function drawCanvasFromState(state) {
     (0, _drawPoints.drawPoints)(state);
     (0, _drawCursorPreview.drawCursorPreview)(state.pointer);
     (0, _drawMeasurements.drawMeasurements)(state);
-// drawShapes();
+    // drawShapes();
+    (0, _drawHelpers.drawHelpers)();
 }
 function redrawCanvas() {
     erase();
@@ -50136,6 +50138,7 @@ function redrawCanvas() {
     // applyShapes();
     (0, _drawCursorPreview.applyCursorPreview)();
     (0, _drawMeasurements.applyMeasurements)();
+    (0, _drawHelpers.applyHelpers)();
 }
 function erase() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
@@ -50152,7 +50155,7 @@ function point(index) {
     return (0, _state.state).c_points[index];
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","./drawCursorPreview":"12vmI","./drawMeasurements":"aqmR1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","./drawCursorPreview":"12vmI","./drawMeasurements":"aqmR1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawHelpers":"4gSYT"}],"eQ9g7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
@@ -50603,7 +50606,56 @@ function applyMeasurements() {
     if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
 
-},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aI2tH":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4gSYT":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawHelpers", ()=>drawHelpers);
+parcelHelpers.export(exports, "applyHelpers", ()=>applyHelpers);
+var _state = require("../../State");
+var _centroid = require("../geometry/centroid");
+var _getBuffer = require("./getBuffer");
+function drawHelpers() {
+    console.log('drawing helpers');
+    const { canvas, context } = (0, _getBuffer.getBuffer)('helpers');
+    if ((0, _state.state).tool.name === 'grainline') {
+        canvas.width = (0, _state.state).canvas.width;
+        canvas.height = (0, _state.state).canvas.height;
+        context.fillStyle = 'black';
+        const rad = 10;
+        (0, _state.state).c_selected_shapes.forEach((shapeIndex)=>{
+            const shape = (0, _state.state).c_shapes[shapeIndex];
+            const centroid = (0, _centroid.computeCentroid)(shape);
+            context.beginPath();
+            context.arc(centroid.x, centroid.y, rad, 0, 2 * Math.PI);
+            context.fill();
+        // state.context.drawImage(canvas, centroid.x, centroid.y);
+        });
+        (0, _state.state).context.drawImage(canvas, 0, 0);
+    }
+}
+function applyHelpers() {
+    const obj = (0, _state.state).c_buffers.get('helpers');
+    if (obj && obj.canvas.width > 0) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
+}
+
+},{"../../State":"83rpN","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/centroid":"gsjQg"}],"gsjQg":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
+var _three = require("three");
+var _state = require("../../State");
+function computeCentroid(indices) {
+    if (indices.length === 0) return new (0, _three.Vector2)();
+    const centroid = new (0, _three.Vector2)();
+    for (const index of indices){
+        const point = (0, _state.state).c_points[index];
+        centroid.add(point);
+    }
+    centroid.divideScalar(indices.length);
+    return centroid;
+}
+
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aI2tH":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
@@ -51249,6 +51301,7 @@ parcelHelpers.export(exports, "changeTool", ()=>changeTool);
 var _state = require("../../State");
 var _store = require("../../UI/store");
 var _canvas = require("../rendering/canvas");
+var _grainlineTool = require("./GrainlineTool");
 var _measureTool = require("./MeasureTool");
 var _pathTool = require("./PathTool");
 var _selectTool = require("./SelectTool");
@@ -51270,6 +51323,11 @@ function changeTool(newState) {
             (0, _store.useAppState).getState().setSelectedTool("measure");
             (0, _canvas.redrawCanvas)();
             break;
+        case "grainline":
+            (0, _state.state).tool = new (0, _grainlineTool.GrainlineTool)();
+            (0, _store.useAppState).getState().setSelectedTool("grainline");
+            (0, _canvas.redrawCanvas)();
+            break;
         default:
             (0, _state.state).tool = new (0, _selectTool.SelectTool)();
             (0, _store.useAppState).getState().setSelectedTool("select");
@@ -51279,7 +51337,7 @@ function changeTool(newState) {
     (0, _state.state).tool.initializeEvents();
 }
 
-},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./GrainlineTool":"jR44c"}],"3Zp6S":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
@@ -52453,7 +52511,76 @@ class DrawPreviewsCommand {
     }
 }
 
-},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
+},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _cLocalizePoint = require("../pointer/cLocalizePoint");
+var _findNearestPoint = require("../geometry/findNearestPoint");
+var _store = require("../../UI/store");
+class GrainlineTool {
+    constructor(){
+        // Tool state object stores tool mechanical state, no data
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = 'grainline';
+        this.setPointer = (0, _store.useAppState).getState().setPointer;
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+        this.angle = 0;
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    }
+    get state() {
+        return this.__state;
+    }
+    // Tool state management
+    transition(newState) {
+        console.log(`Tool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    // Tool event management
+    onMouseDown(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
+        const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
+        switch(this.__state.type){
+            case "idle":
+                console.log('hey');
+                break;
+            default:
+                break;
+        }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    onMouseMove(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
+        this.setPointer((0, _state.state).pointer);
+    }
+    onMouseUp(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
@@ -67118,58 +67245,102 @@ try {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _ci = require("react-icons/ci");
 var _store = require("../../store");
+var _changeToolCommand = require("../../../2D/commands/ChangeToolCommand");
+var _command = require("../../../Command");
+var _react = require("react");
 var _s = $RefreshSig$();
 const Label = ()=>{
     _s();
     const label = (0, _store.useAppState)((state)=>state.label);
     const clearLabel = (0, _store.useAppState)((state)=>state.clearLabel);
+    const grainlineRef = (0, _react.useRef)(null);
+    const handleGrainlineClick = ()=>{
+        grainlineRef.current.focus();
+        (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)('grainline'));
+    };
     if (!label) return null; // Don't render if there's no label
     const { point, piece } = label;
-    console.log(label);
+    console.log(label, 'label');
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "absolute bg-gray-800 text-white px-3 py-2 rounded shadow-md",
+        className: "absolute gap-2 flex flex-row bg-gray-800 text-white px-3 py-2 rounded shadow-md",
         style: {
+            // left: 0, right: 0
             left: `${point.x / 2}px`,
-            top: `${point.y / 2}px`
+            top: `${point.y / 2}px`,
+            transform: "translate(-50%, -100%)"
         },
         children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                className: "text-sm font-medium",
-                children: piece.name
-            }, void 0, false, {
-                fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 23,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                className: "text-xs text-gray-400",
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 children: [
-                    "Shape #",
-                    piece.shapeIndex
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                        className: "text-sm font-medium",
+                        children: piece.name
+                    }, void 0, false, {
+                        fileName: "src/UI/sections/Overlay/Label.tsx",
+                        lineNumber: 36,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                        className: "text-xs text-gray-400",
+                        children: [
+                            "Shape #",
+                            piece.shapeIndex
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/UI/sections/Overlay/Label.tsx",
+                        lineNumber: 37,
+                        columnNumber: 9
+                    }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 24,
+                lineNumber: 35,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                className: "mt-1 text-xs text-blue-400 hover:text-blue-300",
+                ref: grainlineRef,
+                className: "flex flex-row items-center text-sm p-2 border border-white focus:border-blue-500 focus:border rounded-sm",
+                onClick: handleGrainlineClick,
+                children: [
+                    "Grainline",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {
+                        className: "text-2xl"
+                    }, void 0, false, {
+                        fileName: "src/UI/sections/Overlay/Label.tsx",
+                        lineNumber: 44,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/sections/Overlay/Label.tsx",
+                lineNumber: 39,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                className: "text-2xl hover:text-red-300",
                 onClick: clearLabel,
-                children: "Close"
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiCircleRemove), {
+                    strokeWidth: ".5"
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Overlay/Label.tsx",
+                    lineNumber: 50,
+                    columnNumber: 9
+                }, undefined)
             }, void 0, false, {
                 fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 25,
+                lineNumber: 46,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Overlay/Label.tsx",
-        lineNumber: 15,
+        lineNumber: 26,
         columnNumber: 5
     }, undefined);
 };
-_s(Label, "dnMboVMzaqyAwXJ+fV8Cn9/QINM=", false, function() {
+_s(Label, "VERmnmQJKKLYMB3IDR49MMrFLfk=", false, function() {
     return [
         (0, _store.useAppState),
         (0, _store.useAppState)
@@ -67185,7 +67356,7 @@ $RefreshReg$(_c, "Label");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"bSDlR":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","react":"21dqq"}],"bSDlR":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$1b5e = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;

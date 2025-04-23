@@ -2,6 +2,7 @@ import { state } from "../../State";
 import { ToolName } from "../../types";
 import { useAppState } from "../../UI/store";
 import { redrawCanvas } from "../rendering/canvas";
+import { GrainlineTool } from "./GrainlineTool";
 import { MeasureTool } from "./MeasureTool";
 import { PathTool } from "./PathTool";
 import { SelectTool } from "./SelectTool";
@@ -28,6 +29,12 @@ export function changeTool(newState:ToolState) {
     case "measure":
       state.tool = new MeasureTool();
       useAppState.getState().setSelectedTool("measure");
+      redrawCanvas();
+      break;
+
+    case "grainline":
+      state.tool = new GrainlineTool();
+      useAppState.getState().setSelectedTool("grainline");
       redrawCanvas();
       break;
           
