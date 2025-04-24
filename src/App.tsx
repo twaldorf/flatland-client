@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 // import "./styles.css";
-import { initScene, initCanvas } from "./main";
+import { initScene, initCanvas, initUpdate } from "./main";
 import { Toolbar } from "./UI/tools/Toolbar";
 import { Header } from "./UI/sections/Header";
 import { Tabs } from "./UI/sections/Workspace/Tabs";
@@ -20,18 +20,15 @@ const App: React.FC = () => {
   const threeRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (canvasRef.current && threeRef.current) {
-      initScene(threeRef.current);
+    if (canvasRef.current) {
       initCanvas(canvasRef.current);
-      pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
     }
+    if (threeRef.current) {
+      initScene(threeRef.current);
+    }
+    pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
+    initUpdate();
   }, []);
-
-  // TODO: Change this from hook to use Zustand modal context
-  const [ open, setOpen ] = useState(false);
-
-  const activeProjectTitle = useAppState(state => state.activeProjectTitle);
-  const openProjects = useAppState(state => state.openProjectTitles);
 
   return (
     <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2">
@@ -61,11 +58,11 @@ const App: React.FC = () => {
     {/* Right column */}
     <section className="flex flex-col h-full overflow-hidden">
       <Pieces />
-      <canvas
+      {/* <canvas
         ref={threeRef}
         id="canvas3d-container"
         className="flex-1 w-full h-full"
-      ></canvas>
+      ></canvas> */}
     </section>
   </div>
 </main>

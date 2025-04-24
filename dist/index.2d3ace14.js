@@ -18585,7 +18585,6 @@ var _cursorInfo = require("./UI/sections/Overlay/CursorInfo");
 var _cursorInfoDefault = parcelHelpers.interopDefault(_cursorInfo);
 var _shapeInfo = require("./UI/sections/Overlay/ShapeInfo");
 var _openOverlay = require("./UI/sections/Header/OpenOverlay");
-var _store = require("./UI/store");
 var _newProjectModal = require("./UI/sections/Header/NewProjectModal");
 var _command = require("./Command");
 var _newProjectCommand = require("./UI/commands/NewProjectCommand");
@@ -18596,19 +18595,14 @@ const App = ()=>{
     const canvasRef = (0, _react.useRef)(null);
     const threeRef = (0, _react.useRef)(null);
     (0, _react.useEffect)(()=>{
-        if (canvasRef.current && threeRef.current) {
-            (0, _main.initScene)(threeRef.current);
-            (0, _main.initCanvas)(canvasRef.current);
-            (0, _command.pushCommand)(new (0, _newProjectCommand.NewProjectCommand)({
-                title: 'untitled',
-                author: 'unknown'
-            }));
-        }
+        if (canvasRef.current) (0, _main.initCanvas)(canvasRef.current);
+        if (threeRef.current) (0, _main.initScene)(threeRef.current);
+        (0, _command.pushCommand)(new (0, _newProjectCommand.NewProjectCommand)({
+            title: 'untitled',
+            author: 'unknown'
+        }));
+        (0, _main.initUpdate)();
     }, []);
-    // TODO: Change this from hook to use Zustand modal context
-    const [open, setOpen] = (0, _react.useState)(false);
-    const activeProjectTitle = (0, _store.useAppState)((state)=>state.activeProjectTitle);
-    const openProjects = (0, _store.useAppState)((state)=>state.openProjectTitles);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
         className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2",
         children: [
@@ -18616,33 +18610,33 @@ const App = ()=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _openOverlay.OpenProjectOverlay), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 39,
+                        lineNumber: 36,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _newProjectModal.NewProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 40,
+                        lineNumber: 37,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editProjectModal.EditProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 41,
+                        lineNumber: 38,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 42,
+                        lineNumber: 39,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 43,
+                        lineNumber: 40,
                         columnNumber: 5
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 38,
+                lineNumber: 35,
                 columnNumber: 3
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18653,22 +18647,22 @@ const App = ()=>{
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 50,
+                                lineNumber: 47,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 51,
+                                lineNumber: 48,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 52,
+                                lineNumber: 49,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 53,
+                                lineNumber: 50,
                                 columnNumber: 7
                             }, undefined),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -18677,57 +18671,41 @@ const App = ()=>{
                                 className: "flex-1 w-full h-full rounded-md"
                             }, void 0, false, {
                                 fileName: "src/App.tsx",
-                                lineNumber: 54,
+                                lineNumber: 51,
                                 columnNumber: 7
                             }, undefined)
                         ]
                     }, void 0, true, {
                         fileName: "src/App.tsx",
-                        lineNumber: 49,
+                        lineNumber: 46,
                         columnNumber: 5
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
                         className: "flex flex-col h-full overflow-hidden",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
-                                fileName: "src/App.tsx",
-                                lineNumber: 63,
-                                columnNumber: 7
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
-                                ref: threeRef,
-                                id: "canvas3d-container",
-                                className: "flex-1 w-full h-full"
-                            }, void 0, false, {
-                                fileName: "src/App.tsx",
-                                lineNumber: 64,
-                                columnNumber: 7
-                            }, undefined)
-                        ]
-                    }, void 0, true, {
+                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
+                            fileName: "src/App.tsx",
+                            lineNumber: 60,
+                            columnNumber: 7
+                        }, undefined)
+                    }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 62,
+                        lineNumber: 59,
                         columnNumber: 5
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 47,
+                lineNumber: 44,
                 columnNumber: 3
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 37,
+        lineNumber: 34,
         columnNumber: 5
     }, undefined);
 };
-_s(App, "mHfLE3JEYMWSUA7qMwjkIucwh50=", false, function() {
-    return [
-        (0, _store.useAppState),
-        (0, _store.useAppState)
-    ];
-});
+_s(App, "VlCriyS8VOZGlt/W7s2P9cXObt4=");
 _c = App;
 exports.default = App;
 var _c;
@@ -18738,11 +18716,12 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/store":"l1Ff7","./UI/sections/Header/NewProjectModal":"hPbLI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./Command":"efiIE","./UI/commands/NewProjectCommand":"eoWAT","./UI/sections/Header/EditProjectModal":"gSpmT"}],"jeorp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./Command":"efiIE","./UI/commands/NewProjectCommand":"eoWAT","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/inventory/Pieces":"5aREB"}],"jeorp":[function(require,module,exports,__globalThis) {
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-// This file initializes 2D and 3D canvases and runs the global update loop (which processes all Commands for the canvases)
+// Initialize renderloop
+parcelHelpers.export(exports, "initUpdate", ()=>initUpdate);
 // 2D initialization
 parcelHelpers.export(exports, "initCanvas", ()=>initCanvas);
 // 3D initialization
@@ -18758,18 +18737,25 @@ var _pointerEvents = require("./2D/pointer/pointerEvents");
 var _canvas = require("./2D/rendering/canvas");
 var _protoXPBD = require("./3D/simulation/protoXPBD");
 var _factors = require("./2D/settings/factors");
+// This file initializes 2D and 3D canvases and runs the global update loop (which processes all Commands for the canvases)
+const renderFlags = {
+    renderer3dAlive: false,
+    renderer2dAlive: false,
+    commandsUp: true
+};
+function initUpdate() {
+    // Explore feature flags
+    update();
+}
 function initCanvas(ref) {
     // Get a reference to the canvas element and its rendering context
     const canvas = ref;
     (0, _state.state).canvas = canvas;
+    console.log('canvas init');
     const context = canvas.getContext("2d");
     if (!context) throw new Error('No such 2D context when initializing page elements');
     (0, _state.state).context = context;
     context?.clearRect(0, 0, canvas.width, canvas.height);
-    var lastPoint = {
-        x: 0,
-        y: 0
-    };
     (0, _hotkeys.initializeHotkeys)();
     (0, _state.state).tool.initializeEvents();
     (0, _pointerEvents.initializeCanvasEvents)(canvas);
@@ -18779,12 +18765,15 @@ function initCanvas(ref) {
         canvas.height = canvas.clientHeight * devicePixelRatio;
         // scaling removed, may need to add if this becomes a problem?
         (0, _canvas.drawCanvasSetup)();
+        renderFlags.renderer2dAlive = true;
     }
     return {
         canvasRef: (0, _state.state).canvas
     };
 }
 function initScene(canvas) {
+    // Bail if no canvas has been passed
+    if (!canvas) return false;
     (0, _state.state).renderer = new _three.WebGLRenderer({
         canvas
     });
@@ -18818,8 +18807,8 @@ function initScene(canvas) {
     renderer.domElement.addEventListener('dblclick', (0, _pointer.onDoubleClick));
     (0, _state.state).pointerDown = false;
     // kick off update
+    renderFlags.renderer3dAlive = true;
     renderer.render((0, _state.state).scene, (0, _state.state).camera);
-    update();
     return {
         threeRef: parent
     };
@@ -18829,37 +18818,41 @@ let dt = 0.0;
 const interval = 1 / 30;
 // Render and global command processing loop
 function update() {
+    if (renderFlags.commandsUp) (0, _command.executeCommands)();
     const { pointer, camera, scene, renderer, raycaster } = (0, _state.state);
-    const [mesh, line] = (0, _state.state).objects;
-    (0, _command.executeCommands)();
     requestAnimationFrame(update);
     dt += (0, _state.state).clock.getDelta();
-    if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval && (0, _state.state).c_shapes.length > 0) {
-        (0, _protoXPBD.updateXPBD)(dt * (0, _factors.SPEED));
-        dt = 0;
-        // update the picking ray with the camera and pointer position 
-        camera.updateMatrixWorld();
-        raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects((0, _state.state).objects);
-        (0, _state.state).intersects = intersects;
-        if (intersects.length > 0) {
-            const intersect = intersects[0];
-        // This is a good example of attribute management but is no longer used
-        // TODO move this or file it away in documentation
-        // const face = intersect.face;
-        // const linePosition = line.geometry.attributes.position;
-        // const meshPosition = mesh.geometry.attributes.position;
-        // linePosition.copyAt( 0, meshPosition, face.a );
-        // linePosition.copyAt( 1, meshPosition, face.b );
-        // linePosition.copyAt( 2, meshPosition, face.c );
-        // linePosition.copyAt( 3, meshPosition, face.a );
-        // mesh.updateMatrix(); 
-        // line.geometry.applyMatrix4( mesh.matrix );
-        // line.visible = true;
+    if (renderFlags.renderer3dAlive) // Physics loop
+    {
+        if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval && (0, _state.state).c_shapes.length > 0) {
+            (0, _protoXPBD.updateXPBD)(dt * (0, _factors.SPEED));
+            dt = 0;
+            // update the picking ray with the camera and pointer position 
+            camera.updateMatrixWorld();
+            raycaster.setFromCamera(pointer, camera);
+            const intersects = raycaster.intersectObjects((0, _state.state).objects);
+            (0, _state.state).intersects = intersects;
+            if (intersects.length > 0) {
+                const intersect = intersects[0];
+            // This is a good example of attribute management but is no longer used
+            // TODO move this or file it away in documentation
+            // const face = intersect.face;
+            // const linePosition = line.geometry.attributes.position;
+            // const meshPosition = mesh.geometry.attributes.position;
+            // linePosition.copyAt( 0, meshPosition, face.a );
+            // linePosition.copyAt( 1, meshPosition, face.b );
+            // linePosition.copyAt( 2, meshPosition, face.c );
+            // linePosition.copyAt( 3, meshPosition, face.a );
+            // mesh.updateMatrix(); 
+            // line.geometry.applyMatrix4( mesh.matrix );
+            // line.visible = true;
+            }
         }
     }
-    (0, _state.state).camera_controls.update();
-    renderer.render(scene, camera);
+    if (renderFlags.renderer3dAlive) {
+        (0, _state.state).camera_controls.update();
+        renderer.render(scene, camera);
+    }
 }
 
 },{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","./2D/rendering/canvas":"fjxS8","./3D/simulation/protoXPBD":"46Cm3","./2D/settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports,__globalThis) {
@@ -49728,6 +49721,7 @@ const state = {
     particles: [],
     constraints: [],
     c_zoomfactor: 1,
+    pieces: new Map(),
     projectInfo: {
         title: 'untitled',
         author: 'unknown',
@@ -50128,7 +50122,7 @@ function drawCanvasFromState(state) {
     (0, _drawCursorPreview.drawCursorPreview)(state.pointer);
     (0, _drawMeasurements.drawMeasurements)(state);
     // drawShapes();
-    (0, _drawHelpers.drawHelpers)();
+    (0, _drawHelpers.drawGrainlines)();
 }
 function redrawCanvas() {
     erase();
@@ -50138,7 +50132,7 @@ function redrawCanvas() {
     // applyShapes();
     (0, _drawCursorPreview.applyCursorPreview)();
     (0, _drawMeasurements.applyMeasurements)();
-    (0, _drawHelpers.applyHelpers)();
+    (0, _drawHelpers.applyGrainlines)();
 }
 function erase() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
@@ -50609,12 +50603,12 @@ function applyMeasurements() {
 },{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4gSYT":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawHelpers", ()=>drawHelpers);
-parcelHelpers.export(exports, "applyHelpers", ()=>applyHelpers);
+parcelHelpers.export(exports, "drawGrainlines", ()=>drawGrainlines);
+parcelHelpers.export(exports, "applyGrainlines", ()=>applyGrainlines);
 var _state = require("../../State");
 var _centroid = require("../geometry/centroid");
 var _getBuffer = require("./getBuffer");
-function drawHelpers() {
+function drawGrainlines() {
     console.log('drawing helpers');
     const { canvas, context } = (0, _getBuffer.getBuffer)('helpers');
     if ((0, _state.state).tool.name === 'grainline') {
@@ -50633,12 +50627,12 @@ function drawHelpers() {
         (0, _state.state).context.drawImage(canvas, 0, 0);
     }
 }
-function applyHelpers() {
+function applyGrainlines() {
     const obj = (0, _state.state).c_buffers.get('helpers');
     if (obj && obj.canvas.width > 0) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
 
-},{"../../State":"83rpN","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/centroid":"gsjQg"}],"gsjQg":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../geometry/centroid":"gsjQg","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gsjQg":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
@@ -51721,8 +51715,8 @@ const generateFloatingLabel = (shapeIndex)=>{
     const box = (0, _boundingBox.getShapeBoundingRect)((0, _state.state).c_shapes[shapeIndex]);
     const dim = (0, _boundingBox.getShapeDimensions)((0, _state.state).c_shapes[shapeIndex]);
     const rect = (0, _state.state).canvas.getBoundingClientRect();
+    // Generate a point in the upper left hand corner of the shape in windowspace
     const labelPoint = new (0, _three.Vector2)(box.x0 + rect.x, box.y0 + rect.y);
-    console.log(box);
     const pieceIndex = (0, _store.useAppState).getState().pieces.findIndex((piece)=>piece.shapeIndex == shapeIndex);
     let piece;
     if (pieceIndex < 0) piece = {
@@ -52518,7 +52512,6 @@ parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
 var _state = require("../../State");
 var _canvas = require("../rendering/canvas");
 var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _findNearestPoint = require("../geometry/findNearestPoint");
 var _store = require("../../UI/store");
 class GrainlineTool {
     constructor(){
@@ -52558,12 +52551,15 @@ class GrainlineTool {
     }
     // Tool event management
     onMouseDown(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        (0, _state.state).pointer = pos;
-        const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
+        // const pos = cLocalizePoint(e.clientX, e.clientY);
+        // state.pointer = pos;
+        // const hitIndex = findNearestPoint(pos, state.c_points);
         switch(this.__state.type){
             case "idle":
-                console.log('hey');
+                this.transition({
+                    type: 'drawing',
+                    angle: 0
+                });
                 break;
             default:
                 break;
@@ -52574,13 +52570,14 @@ class GrainlineTool {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         (0, _state.state).pointer = pos;
         this.setPointer((0, _state.state).pointer);
+        this.__state.type;
     }
     onMouseUp(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
     }
 }
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
@@ -67021,221 +67018,7 @@ $RefreshReg$(_c, "Tabs");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY"}],"5aREB":[function(require,module,exports,__globalThis) {
-var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$7858.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Pieces", ()=>Pieces);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _store = require("../store");
-var _piece = require("./Piece");
-var _s = $RefreshSig$();
-const Pieces = ()=>{
-    _s();
-    const pieces = (0, _store.useAppState)((state)=>state.pieces);
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "rounded-lg bg-stone-200 min-h-24 bg-white p-2",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
-                children: [
-                    "Pieces (",
-                    pieces.length,
-                    ")"
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 16,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-                className: "flex flex-row text-xs relative gap-2 overflow-auto",
-                children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
-                        piece: piece
-                    }, piece.id, false, {
-                        fileName: "src/UI/inventory/Pieces.tsx",
-                        lineNumber: 19,
-                        columnNumber: 11
-                    }, undefined))
-            }, void 0, false, {
-                fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 17,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/inventory/Pieces.tsx",
-        lineNumber: 15,
-        columnNumber: 5
-    }, undefined);
-}; // export const Pieces = (props:PiecesProps) => {
- //   const pieces = useAppState((state) => state.pieces);
- //   const thumbnailRef = useRef<HTMLCanvasElement>(null);
- //   return (
- //     <ul style={ulStyle} className="rounded-lg bg-stone-200 min-h-24 flex flex-row">
- //       { pieces.map((piece:Piece) => {
- //         if (thumbnailRef.current) {
- //           console.log('drawing', piece.name)
- //           drawPieceThumbnail(piece, thumbnailRef.current);
- //         };
- //         return (
- //           <li className="my-auto mx-2">
- //             <canvas className="max-h-12" ref={thumbnailRef}></canvas>
- //             {piece.name}
- //           </li>)
- //       })}
- //     </ul>
- //   )
- // }
- // const ulStyle = {
- // }
-_s(Pieces, "ZT9fPOpsR3+GOhOXE1hjJb0GtmU=", false, function() {
-    return [
-        (0, _store.useAppState)
-    ];
-});
-_c = Pieces;
-var _c;
-$RefreshReg$(_c, "Pieces");
-
-  $parcel$ReactRefreshHelpers$7858.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","./Piece":"40lLH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"40lLH":[function(require,module,exports,__globalThis) {
-var $parcel$ReactRefreshHelpers$0d5a = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$0d5a.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "PieceComponent", ()=>PieceComponent);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _react = require("react");
-var _drawPieceThumbnail = require("../../2D/rendering/drawPieceThumbnail");
-var _ci = require("react-icons/ci");
-var _store = require("../store");
-var _s = $RefreshSig$(), _s1 = $RefreshSig$();
-const PieceComponent = ({ piece })=>{
-    _s();
-    const thumbnailRef = (0, _react.useRef)(null);
-    const [editing, setEditing] = (0, _react.useState)(false);
-    const setPieceName = (0, _store.useAppState)((state)=>state.setPieceName);
-    const onSave = (newName)=>{
-        setPieceName(piece.id, newName);
-        setEditing(false);
-    };
-    (0, _react.useEffect)(()=>{
-        if (thumbnailRef.current) (0, _drawPieceThumbnail.drawPieceThumbnail)(piece, thumbnailRef.current);
-    }, [
-        piece
-    ]);
-    function handleClick() {
-        editing == true ? setEditing(false) : setEditing(true);
-    }
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-        className: "my-auto max-w-24",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
-                className: "max-h-12 border border-stone-400",
-                ref: thumbnailRef
-            }, void 0, false, {
-                fileName: "src/UI/inventory/Piece.tsx",
-                lineNumber: 30,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "flex-row flex justify-center items-center",
-                children: [
-                    editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(EditPieceNameAttr, {
-                        piece: piece,
-                        onSave: onSave
-                    }, void 0, false, {
-                        fileName: "src/UI/inventory/Piece.tsx",
-                        lineNumber: 32,
-                        columnNumber: 22
-                    }, undefined),
-                    !editing && piece.name,
-                    !editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {
-                        onClick: handleClick
-                    }, void 0, false, {
-                        fileName: "src/UI/inventory/Piece.tsx",
-                        lineNumber: 34,
-                        columnNumber: 23
-                    }, undefined)
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/inventory/Piece.tsx",
-                lineNumber: 31,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/inventory/Piece.tsx",
-        lineNumber: 29,
-        columnNumber: 5
-    }, undefined);
-};
-_s(PieceComponent, "7wkZWaLVLPq6vYXMB8n6NMlecw0=", false, function() {
-    return [
-        (0, _store.useAppState)
-    ];
-});
-_c = PieceComponent;
-const EditPieceNameAttr = ({ piece, onSave })=>{
-    _s1();
-    const [newName, setNewName] = (0, _react.useState)(piece.name);
-    const inputRef = (0, _react.useRef)(null);
-    (0, _react.useEffect)(()=>{
-        if (inputRef.current) {
-            inputRef.current.focus();
-            inputRef.current.select();
-        }
-    }, []);
-    const handleChange = (e)=>{
-        console.log(e);
-        setNewName(e.target.value);
-    };
-    const handleKeyDown = (e)=>{
-        if (e.key === "Enter") onSave(newName);
-        if (e.key === "Backspace" || e.key === "Delete") setNewName(e.target.value.slice(0, -1));
-    };
-    const handleBlur = ()=>{
-        onSave(newName);
-    };
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-        type: "text",
-        ref: inputRef,
-        value: newName,
-        onChange: handleChange,
-        onKeyDown: handleKeyDown,
-        onBlur: handleBlur,
-        className: "w-full"
-    }, void 0, false, {
-        fileName: "src/UI/inventory/Piece.tsx",
-        lineNumber: 71,
-        columnNumber: 5
-    }, undefined);
-};
-_s1(EditPieceNameAttr, "gsrx4r5om27wpSK3FvdyFfcHfks=");
-_c1 = EditPieceNameAttr;
-var _c, _c1;
-$RefreshReg$(_c, "PieceComponent");
-$RefreshReg$(_c1, "EditPieceNameAttr");
-
-  $parcel$ReactRefreshHelpers$0d5a.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../2D/rendering/drawPieceThumbnail":"1Jt5c","react-icons/ci":"7bNnY","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"SPMyB":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY"}],"SPMyB":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$cd8f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67256,20 +67039,19 @@ const Label = ()=>{
     const label = (0, _store.useAppState)((state)=>state.label);
     const clearLabel = (0, _store.useAppState)((state)=>state.clearLabel);
     const grainlineRef = (0, _react.useRef)(null);
+    const labelRef = (0, _react.useRef)(null);
     const handleGrainlineClick = ()=>{
-        grainlineRef.current.focus();
         (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)('grainline'));
     };
     if (!label) return null; // Don't render if there's no label
     const { point, piece } = label;
-    console.log(label, 'label');
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "absolute gap-2 flex flex-row bg-gray-800 text-white px-3 py-2 rounded shadow-md",
+        ref: labelRef,
         style: {
-            // left: 0, right: 0
-            left: `${point.x / 2}px`,
-            top: `${point.y / 2}px`,
-            transform: "translate(-50%, -100%)"
+            left: `${Math.max(12, point.x / 2)}px`,
+            top: `${Math.max(0, point.y / 2)}px`,
+            transform: "translate(0, -100%)"
         },
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -67279,7 +67061,7 @@ const Label = ()=>{
                         children: piece.name
                     }, void 0, false, {
                         fileName: "src/UI/sections/Overlay/Label.tsx",
-                        lineNumber: 36,
+                        lineNumber: 34,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -67290,13 +67072,13 @@ const Label = ()=>{
                         ]
                     }, void 0, true, {
                         fileName: "src/UI/sections/Overlay/Label.tsx",
-                        lineNumber: 37,
+                        lineNumber: 35,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 35,
+                lineNumber: 33,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -67309,13 +67091,13 @@ const Label = ()=>{
                         className: "text-2xl"
                     }, void 0, false, {
                         fileName: "src/UI/sections/Overlay/Label.tsx",
-                        lineNumber: 44,
+                        lineNumber: 42,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 39,
+                lineNumber: 37,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -67325,22 +67107,22 @@ const Label = ()=>{
                     strokeWidth: ".5"
                 }, void 0, false, {
                     fileName: "src/UI/sections/Overlay/Label.tsx",
-                    lineNumber: 50,
+                    lineNumber: 48,
                     columnNumber: 9
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 46,
+                lineNumber: 44,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Overlay/Label.tsx",
-        lineNumber: 26,
+        lineNumber: 24,
         columnNumber: 5
     }, undefined);
 };
-_s(Label, "VERmnmQJKKLYMB3IDR49MMrFLfk=", false, function() {
+_s(Label, "9F1spJIPXE+uILgesUIURFIyXh8=", false, function() {
     return [
         (0, _store.useAppState),
         (0, _store.useAppState)
@@ -68171,6 +67953,220 @@ $RefreshReg$(_c, "EditProjectModal");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"5aREB":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$7858.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Pieces", ()=>Pieces);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _store = require("../store");
+var _piece = require("./Piece");
+var _s = $RefreshSig$();
+const Pieces = ()=>{
+    _s();
+    const pieces = (0, _store.useAppState)((state)=>state.pieces);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "rounded-lg bg-stone-200 min-h-24 bg-white p-2",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: [
+                    "Pieces (",
+                    pieces.length,
+                    ")"
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 16,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+                className: "flex flex-row text-xs relative gap-2 overflow-auto",
+                children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
+                        piece: piece
+                    }, piece.id, false, {
+                        fileName: "src/UI/inventory/Pieces.tsx",
+                        lineNumber: 19,
+                        columnNumber: 11
+                    }, undefined))
+            }, void 0, false, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 17,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/inventory/Pieces.tsx",
+        lineNumber: 15,
+        columnNumber: 5
+    }, undefined);
+}; // export const Pieces = (props:PiecesProps) => {
+ //   const pieces = useAppState((state) => state.pieces);
+ //   const thumbnailRef = useRef<HTMLCanvasElement>(null);
+ //   return (
+ //     <ul style={ulStyle} className="rounded-lg bg-stone-200 min-h-24 flex flex-row">
+ //       { pieces.map((piece:Piece) => {
+ //         if (thumbnailRef.current) {
+ //           console.log('drawing', piece.name)
+ //           drawPieceThumbnail(piece, thumbnailRef.current);
+ //         };
+ //         return (
+ //           <li className="my-auto mx-2">
+ //             <canvas className="max-h-12" ref={thumbnailRef}></canvas>
+ //             {piece.name}
+ //           </li>)
+ //       })}
+ //     </ul>
+ //   )
+ // }
+ // const ulStyle = {
+ // }
+_s(Pieces, "ZT9fPOpsR3+GOhOXE1hjJb0GtmU=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
+_c = Pieces;
+var _c;
+$RefreshReg$(_c, "Pieces");
+
+  $parcel$ReactRefreshHelpers$7858.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","./Piece":"40lLH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"40lLH":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$0d5a = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$0d5a.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PieceComponent", ()=>PieceComponent);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _drawPieceThumbnail = require("../../2D/rendering/drawPieceThumbnail");
+var _ci = require("react-icons/ci");
+var _store = require("../store");
+var _s = $RefreshSig$(), _s1 = $RefreshSig$();
+const PieceComponent = ({ piece })=>{
+    _s();
+    const thumbnailRef = (0, _react.useRef)(null);
+    const [editing, setEditing] = (0, _react.useState)(false);
+    const setPieceName = (0, _store.useAppState)((state)=>state.setPieceName);
+    const onSave = (newName)=>{
+        setPieceName(piece.id, newName);
+        setEditing(false);
+    };
+    (0, _react.useEffect)(()=>{
+        if (thumbnailRef.current) (0, _drawPieceThumbnail.drawPieceThumbnail)(piece, thumbnailRef.current);
+    }, [
+        piece
+    ]);
+    function handleClick() {
+        editing == true ? setEditing(false) : setEditing(true);
+    }
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+        className: "my-auto max-w-24",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
+                className: "max-h-12 border border-stone-400",
+                ref: thumbnailRef
+            }, void 0, false, {
+                fileName: "src/UI/inventory/Piece.tsx",
+                lineNumber: 30,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex-row flex justify-center items-center",
+                children: [
+                    editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(EditPieceNameAttr, {
+                        piece: piece,
+                        onSave: onSave
+                    }, void 0, false, {
+                        fileName: "src/UI/inventory/Piece.tsx",
+                        lineNumber: 32,
+                        columnNumber: 22
+                    }, undefined),
+                    !editing && piece.name,
+                    !editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {
+                        onClick: handleClick
+                    }, void 0, false, {
+                        fileName: "src/UI/inventory/Piece.tsx",
+                        lineNumber: 34,
+                        columnNumber: 23
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/inventory/Piece.tsx",
+                lineNumber: 31,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/inventory/Piece.tsx",
+        lineNumber: 29,
+        columnNumber: 5
+    }, undefined);
+};
+_s(PieceComponent, "7wkZWaLVLPq6vYXMB8n6NMlecw0=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
+_c = PieceComponent;
+const EditPieceNameAttr = ({ piece, onSave })=>{
+    _s1();
+    const [newName, setNewName] = (0, _react.useState)(piece.name);
+    const inputRef = (0, _react.useRef)(null);
+    (0, _react.useEffect)(()=>{
+        if (inputRef.current) {
+            inputRef.current.focus();
+            inputRef.current.select();
+        }
+    }, []);
+    const handleChange = (e)=>{
+        console.log(e);
+        setNewName(e.target.value);
+    };
+    const handleKeyDown = (e)=>{
+        if (e.key === "Enter") onSave(newName);
+        if (e.key === "Backspace" || e.key === "Delete") setNewName(e.target.value.slice(0, -1));
+    };
+    const handleBlur = ()=>{
+        onSave(newName);
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+        type: "text",
+        ref: inputRef,
+        value: newName,
+        onChange: handleChange,
+        onKeyDown: handleKeyDown,
+        onBlur: handleBlur,
+        className: "w-full"
+    }, void 0, false, {
+        fileName: "src/UI/inventory/Piece.tsx",
+        lineNumber: 71,
+        columnNumber: 5
+    }, undefined);
+};
+_s1(EditPieceNameAttr, "gsrx4r5om27wpSK3FvdyFfcHfks=");
+_c1 = EditPieceNameAttr;
+var _c, _c1;
+$RefreshReg$(_c, "PieceComponent");
+$RefreshReg$(_c1, "EditPieceNameAttr");
+
+  $parcel$ReactRefreshHelpers$0d5a.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../2D/rendering/drawPieceThumbnail":"1Jt5c","react-icons/ci":"7bNnY","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["aQL8O","kMAEo","4aBH6"], "4aBH6", "parcelRequire94c2")
 
 //# sourceMappingURL=index.2d3ace14.js.map

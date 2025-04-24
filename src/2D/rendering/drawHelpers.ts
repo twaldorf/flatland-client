@@ -3,7 +3,7 @@ import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBo
 import { computeCentroid } from "../geometry/centroid";
 import { getBuffer } from "./getBuffer";
 
-export function drawHelpers() {
+export function drawGrainlines() {
   console.log('drawing helpers')
   const { canvas, context } = getBuffer('helpers');
   if (state.tool.name === 'grainline') {
@@ -23,7 +23,7 @@ export function drawHelpers() {
   }
 }
 
-export function applyHelpers() {
+export function applyGrainlines() {
   const obj = state.c_buffers.get('helpers');
   if (obj && obj.canvas.width > 0) state.context.drawImage(obj.canvas, 0, 0);
 }

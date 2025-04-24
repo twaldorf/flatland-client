@@ -19,6 +19,7 @@ export interface State {
 
   // Project info like title, author, lastUpdated, etc
   projectInfo: ProjectInfo;
+  pieces: Map<string, Piece>;
 
   // ## State shared between editor and canvas
   pointerDown: boolean;
@@ -159,6 +160,7 @@ export interface Piece {
   name: string;
   thumb: HTMLCanvasElement;
   canvas: OffscreenCanvas;
+  angle: number;
   // name is also the key to thhe thumbnail map
   // area: number;
 }

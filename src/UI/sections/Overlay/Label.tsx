@@ -10,9 +10,9 @@ const Label = () => {
   const clearLabel = useAppState((state) => state.clearLabel);
 
   const grainlineRef = useRef(null);
+  const labelRef = useRef(null);
 
   const handleGrainlineClick = () => {
-    grainlineRef.current.focus();
     pushCommand(new ChangeToolCommand('grainline'));
   }
 
@@ -20,16 +20,14 @@ const Label = () => {
 
   const { point, piece } = label;
 
-  console.log(label, 'label')
-
   return (
     <div
       className="absolute gap-2 flex flex-row bg-gray-800 text-white px-3 py-2 rounded shadow-md"
+      ref={labelRef}
       style={{
-        // left: 0, right: 0
-        left: `${point.x / 2}px`,
-        top: `${point.y / 2}px`,
-        transform: "translate(-50%, -100%)", // Centers above the point
+        left: `${Math.max(12, point.x / 2)}px`,
+        top: `${Math.max(0, point.y / 2)}px`,
+        transform: "translate(0, -100%)", // Centers above the point
       }}
     >
       <div>

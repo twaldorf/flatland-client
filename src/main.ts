@@ -13,11 +13,24 @@ import { SPEED } from './2D/settings/factors';
 
 // This file initializes 2D and 3D canvases and runs the global update loop (which processes all Commands for the canvases)
 
+const renderFlags = {
+  renderer3dAlive: false,
+  renderer2dAlive: false,
+  commandsUp: true,
+}
+
+// Initialize renderloop
+export function initUpdate() {
+  // Explore feature flags
+  update();
+}
+
 // 2D initialization
 export function initCanvas(ref:HTMLCanvasElement) {
   // Get a reference to the canvas element and its rendering context
   const canvas = ref;
   state.canvas = canvas;
+  console.log('canvas init')
 
   const context = canvas.getContext( "2d" );
   if (!context) {
@@ -26,8 +39,6 @@ export function initCanvas(ref:HTMLCanvasElement) {
   state.context = context;
 
   context?.clearRect(0, 0, canvas.width, canvas.height);
-
-  var lastPoint = { x: 0, y: 0 };
 
   initializeHotkeys();
   state.tool.initializeEvents();
@@ -42,14 +53,20 @@ export function initCanvas(ref:HTMLCanvasElement) {
     // scaling removed, may need to add if this becomes a problem?
     
     drawCanvasSetup();
+    renderFlags.renderer2dAlive = true;
 
   }
-
   return { canvasRef: state.canvas };
+
 }
 
 // 3D initialization
 export function initScene(canvas:HTMLCanvasElement) {
+  // Bail if no canvas has been passed
+  if (!canvas) {
+    return false;
+  }
+
   state.renderer = new THREE.WebGLRenderer( { canvas } );
   const renderer = state.renderer;
   renderer.setSize( window.innerWidth / 2, window.innerWidth / 2 );
@@ -89,8 +106,8 @@ export function initScene(canvas:HTMLCanvasElement) {
   state.pointerDown = false;
 
   // kick off update
+  renderFlags.renderer3dAlive = true;
   renderer.render(state.scene, state.camera);
-  update();
   return { threeRef: parent };
 }
 
@@ -100,50 +117,58 @@ const interval = 1/30;
 
 // Render and global command processing loop
 function update() {
+  if (renderFlags.commandsUp) {
+    executeCommands();
+  }
   const { pointer, camera, scene, renderer, raycaster } = state;
-  const [ mesh, line ] = state.objects;
-  executeCommands();
+
   requestAnimationFrame( update );
+
   dt += state.clock.getDelta();
   
-  if (mouseOverCanvas(state) === true && dt > interval && state.c_shapes.length > 0) {
-    updateXPBD(dt * SPEED);
-    dt = 0;
+  if (renderFlags.renderer3dAlive) {
+    // Physics loop
+    if (mouseOverCanvas(state) === true && dt > interval && state.c_shapes.length > 0) {
+      updateXPBD(dt * SPEED);
+      dt = 0;
 
-    // update the picking ray with the camera and pointer position 
-    camera.updateMatrixWorld();
-    raycaster.setFromCamera( pointer, camera );
-    
-    const intersects = raycaster.intersectObjects( state.objects );
-    state.intersects = intersects;
-    
-    if ( intersects.length > 0 ) {
-      const intersect = intersects[ 0 ];
-      // This is a good example of attribute management but is no longer used
-      // TODO move this or file it away in documentation
-      // const face = intersect.face;
+      // update the picking ray with the camera and pointer position 
+      camera.updateMatrixWorld();
+      raycaster.setFromCamera( pointer, camera );
       
-      // const linePosition = line.geometry.attributes.position;
-      // const meshPosition = mesh.geometry.attributes.position;
+      const intersects = raycaster.intersectObjects( state.objects );
+      state.intersects = intersects;
       
-      // linePosition.copyAt( 0, meshPosition, face.a );
-      // linePosition.copyAt( 1, meshPosition, face.b );
-      // linePosition.copyAt( 2, meshPosition, face.c );
-      // linePosition.copyAt( 3, meshPosition, face.a );
-      
-      // mesh.updateMatrix(); 
-      
-      // line.geometry.applyMatrix4( mesh.matrix );
-      
-      // line.visible = true;
-      
-    } else {
-      // line.visible = false;
+      if ( intersects.length > 0 ) {
+        const intersect = intersects[ 0 ];
+        // This is a good example of attribute management but is no longer used
+        // TODO move this or file it away in documentation
+        // const face = intersect.face;
+        
+        // const linePosition = line.geometry.attributes.position;
+        // const meshPosition = mesh.geometry.attributes.position;
+        
+        // linePosition.copyAt( 0, meshPosition, face.a );
+        // linePosition.copyAt( 1, meshPosition, face.b );
+        // linePosition.copyAt( 2, meshPosition, face.c );
+        // linePosition.copyAt( 3, meshPosition, face.a );
+        
+        // mesh.updateMatrix(); 
+        
+        // line.geometry.applyMatrix4( mesh.matrix );
+        
+        // line.visible = true;
+        
+      } else {
+        // line.visible = false;
+      }
     }
   }
 
-  state.camera_controls.update();
-  renderer.render( scene, camera );
+  if (renderFlags.renderer3dAlive) {
+    state.camera_controls.update();
+    renderer.render( scene, camera );
+  }
 
 }
 

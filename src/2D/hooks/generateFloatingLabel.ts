@@ -9,9 +9,9 @@ export const generateFloatingLabel = (shapeIndex:number):void => {
   const box = getShapeBoundingRect(state.c_shapes[shapeIndex]);
   const dim = getShapeDimensions(state.c_shapes[shapeIndex]);
   const rect = state.canvas.getBoundingClientRect();
+
+  // Generate a point in the upper left hand corner of the shape in windowspace
   const labelPoint = new Vector2(box.x0 + rect.x, box.y0 + rect.y);
-  
-  console.log(box);
   
   const pieceIndex = useAppState.getState().pieces.findIndex((piece) => piece.shapeIndex == shapeIndex);
   

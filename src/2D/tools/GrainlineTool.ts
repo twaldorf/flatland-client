@@ -7,7 +7,7 @@ import { useAppState } from "../../UI/store";
 
 export type GrainlineToolState = 
   | { type: "idle" }
-  | { type: "drawing"; }
+  | { type: "drawing"; angle: number }
 
 export class GrainlineTool implements ToolBase {
   // Tool state object stores tool mechanical state, no data
@@ -57,13 +57,13 @@ export class GrainlineTool implements ToolBase {
 
   // Tool event management
   private onMouseDown(e: MouseEvent) {
-    const pos = cLocalizePoint(e.clientX, e.clientY);
-    state.pointer = pos;
-    const hitIndex = findNearestPoint(pos, state.c_points);
+    // const pos = cLocalizePoint(e.clientX, e.clientY);
+    // state.pointer = pos;
+    // const hitIndex = findNearestPoint(pos, state.c_points);
 
     switch (this.__state.type) {
       case "idle":
-        console.log('hey')
+      this.transition({type: 'drawing', angle:0});
       break;
 
       default:
@@ -78,6 +78,10 @@ export class GrainlineTool implements ToolBase {
     state.pointer = pos;
 
     this.setPointer(state.pointer);
+
+    switch (this.__state.type) {
+
+    }
 
   }
 

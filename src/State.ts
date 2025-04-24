@@ -61,6 +61,8 @@ export const state:State = {
 
   c_zoomfactor: 1,
 
+  pieces: new Map(),
+
   projectInfo: {
     title: 'untitled',
     author: 'unknown',
