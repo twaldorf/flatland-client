@@ -1,12 +1,10 @@
 import { create } from 'zustand';
 import { Piece, ProjectInfo, Tool, ToolName } from '../types';
 import { Vector2 } from 'three';
-import { PathToolCommand } from '../2D/commands/PathToolCommand';
 import { pushCommand } from '../Command';
 import { GenericAddPointCommand } from '../2D/commands/Generic/GenericAddPointCommand';
 import { GenericDeletePointCommand } from '../2D/commands/Generic/GenericDeletePointCommand';
 import { GenericUpdatePointCommand } from '../2D/commands/Generic/GenericUpdatePointCommand';
-import { MouseEventHandler } from 'react';
 
 interface Label {
   point: Vector2;
@@ -15,32 +13,50 @@ interface Label {
 
 type ModalName = null | "Edit Project Info" | "New Project" | "Open Project";
 
+// Store state "header" file
 interface AppState {
+
+  // Hide all store-managed UI components
+  resetUI: () => void;
+
+  // Store which tool is in use, if any
   selectedTool: ToolName;
   setSelectedTool: (tool: ToolName) => void;
 
+  // Store the current open project
   activeProjectTitle: string;
   setActiveProjectTitle: (title: string) => void;
 
+  // Store a list of all projects
+  // v1: Only one project is open at a time
   openProjectTitles: string[];
   // addOpenProjectTitle: (title: string) => void;
 
+  // Store the currently active modal
+  // Modals are responsible for rendering themselves
   modal: ModalName;
   showModal: (modal: ModalName) => void;
   hideModal: () => void;
 
+  // Store all pieces associated with the project
+  // v1: Only pieces associated with the project are available
+  // v1.1: Pieces associated with other projects are also available
   pieces: Piece[];
   addPiece: (piece: Piece) => void;
   setPieceName: (pieceId: Piece["id"], newName: Piece["name"]) => void;
   
+  // Manage the control panel (label) associated with a piece
   labelPiece: (labelPoint: Vector2, piece: Piece) => void;
   clearLabel: () => void;
   label: Label | undefined;
   
+  // Store the current pointer position within the 2D canvas
   pointer: Vector2;
   tool: { name: string };
   setPointer: (point: Vector2) => void;
 
+  // Sync the currently-selected shape geometry
+  // CRUD points 'remotely'
   // This point logic will be replaced by the global message system, however, the local broker logic will look very similar to this
   shapePoints: Vector2[];
   syncShapePoints: (points: Vector2[]) => void;
@@ -48,9 +64,16 @@ interface AppState {
   updatePoint: (index: number, point: Vector2) => void;
   deletePoint: (index: number) => void;
   insertPoint: (index: number, point: Vector2) => void;
+
 }
 
-export const useAppState = create<AppState>((set) => ({
+export const useAppState = create<AppState>((set, get) => ({
+
+  resetUI: () => {
+    get().hideModal();
+    get().clearLabel();
+  },
+
   selectedTool: 'path',
   setSelectedTool: (tool) => set({ selectedTool: tool }),
 

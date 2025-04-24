@@ -13,6 +13,7 @@ export type ToolState = {
 
 export function changeTool(newState:ToolState) {
   state.tool.dismountEvents();
+  useAppState.getState().resetUI();
   switch (newState.type) {
     case "path":
         state.tool = new PathTool();

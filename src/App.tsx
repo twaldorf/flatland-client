@@ -41,9 +41,9 @@ const App: React.FC = () => {
   </div>
 
 
-  <div className="grid grid-cols-2 flex-1 overflow-hidden">
+  <div className="grid grid-cols-4 flex-1 overflow-hidden">
     {/* Left column */}
-    <section className="relative flex flex-col bg-white p-3 overflow-hidden">
+    <section className="relative flex flex-col bg-white p-3 overflow-hidden col-span-3">
       <Toolbar />
       <CursorInfo />
       <ShapeInfo />

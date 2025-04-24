@@ -18640,10 +18640,10 @@ const App = ()=>{
                 columnNumber: 3
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "grid grid-cols-2 flex-1 overflow-hidden",
+                className: "grid grid-cols-4 flex-1 overflow-hidden",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                        className: "relative flex flex-col bg-white p-3 overflow-hidden",
+                        className: "relative flex flex-col bg-white p-3 overflow-hidden col-span-3",
                         children: [
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                                 fileName: "src/App.tsx",
@@ -50921,7 +50921,11 @@ var _command = require("../Command");
 var _genericAddPointCommand = require("../2D/commands/Generic/GenericAddPointCommand");
 var _genericDeletePointCommand = require("../2D/commands/Generic/GenericDeletePointCommand");
 var _genericUpdatePointCommand = require("../2D/commands/Generic/GenericUpdatePointCommand");
-const useAppState = (0, _zustand.create)((set)=>({
+const useAppState = (0, _zustand.create)((set, get)=>({
+        resetUI: ()=>{
+            get().hideModal();
+            get().clearLabel();
+        },
         selectedTool: 'path',
         setSelectedTool: (tool)=>set({
                 selectedTool: tool
@@ -51301,6 +51305,7 @@ var _pathTool = require("./PathTool");
 var _selectTool = require("./SelectTool");
 function changeTool(newState) {
     (0, _state.state).tool.dismountEvents();
+    (0, _store.useAppState).getState().resetUI();
     switch(newState.type){
         case "path":
             (0, _state.state).tool = new (0, _pathTool.PathTool)();
