@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Piece, ProjectInfo, Tool, ToolName } from '../types';
+import { Piece, ToolName } from '../types';
 import { Vector2 } from 'three';
 import { pushCommand } from '../Command';
 import { GenericAddPointCommand } from '../2D/commands/Generic/GenericAddPointCommand';

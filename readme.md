@@ -19,7 +19,9 @@ Planned and described features are detailed in the product documentation.
 
 - Canvas + WebGL (Three.js): Rasterized drawing and simulation workspace
 
-## State Management
+- Parcel: Building and asset management
+
+## State
 
 Currently, the project uses two state stores:
 
@@ -27,7 +29,7 @@ Currently, the project uses two state stores:
 
 - Singleton state object for rasterized and canvas state (tools, geometry, selections, etc.)
 
-All state changes should (and mostly do) use a Command pattern to operate. All commands are placed in a queue and processed in the order in which they are received by the global event loop, allowing robust undo/redo functionality and general tractability. In the future, communication between these (and all separate parts of the application) will be replaced by a global message broadcast and brokers.
+All canvas state changes use a Command pattern to operate. All commands are placed in a queue and processed in the order in which they are received by the global event loop, allowing robust undo/redo functionality and general tractability. In the future, communication between these (and all separate parts of the application) will be replaced by a global message broadcast and brokers.
 
 ## Geometry
 
@@ -37,7 +39,7 @@ In the future, OpenCascade.js may replace the internal representation as a compl
 
 ## Physics
 
-Currently, a basic Position-Based Dynamics (PBD) solver is in place for a simple softbody effect with triangulated "polygonal shells"?
+Currently, a basic Position-Based Dynamics (PBD) solver is in place for a simple softbody effect with triangulated polygonal shells
 
 Much of the work of simulation is generating feasible constraints from polygonal and implicit geometries and allowing users to plan and "sew" seams together to create constraints programmatically
 

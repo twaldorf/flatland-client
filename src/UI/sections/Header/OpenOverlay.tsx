@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import { state } from "../../../State"
 import { drawCanvasFromState } from "../../../2D/rendering/canvas";
 import { useAppState } from "../../store";
+import { pushCommand } from "../../../Command";
+import { LoadProjectCommand } from "../../commands/LoadProjectCommand";
 
 
 export const OpenProjectOverlay = () => {
@@ -20,12 +22,8 @@ export const OpenProjectOverlay = () => {
   }, []);
 
   const loadProject = (key: string) => {
-    const json = localStorage.getItem(key);
-    console.log(json)
-    if (!json) return
-    const data = json;
-    state.deserialize(data);
-    drawCanvasFromState(state);
+    pushCommand(new LoadProjectCommand(key));
+    // TODO: Add result (value based on a broadcast message from broker) toast
     hideModal();
   }
 

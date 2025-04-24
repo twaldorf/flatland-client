@@ -67390,9 +67390,9 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "OpenProjectOverlay", ()=>OpenProjectOverlay);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
-var _state = require("../../../State");
-var _canvas = require("../../../2D/rendering/canvas");
 var _store = require("../../store");
+var _command = require("../../../Command");
+var _loadProjectCommand = require("../../commands/LoadProjectCommand");
 var _s = $RefreshSig$();
 const OpenProjectOverlay = ()=>{
     _s();
@@ -67407,12 +67407,8 @@ const OpenProjectOverlay = ()=>{
         }
     }, []);
     const loadProject = (key)=>{
-        const json = localStorage.getItem(key);
-        console.log(json);
-        if (!json) return;
-        const data = json;
-        (0, _state.state).deserialize(data);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
+        (0, _command.pushCommand)(new (0, _loadProjectCommand.LoadProjectCommand)(key));
+        // TODO: Add result (value based on a broadcast message from broker) toast
         hideModal();
     };
     if (open === 'Open Project') return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -67425,7 +67421,7 @@ const OpenProjectOverlay = ()=>{
                     children: "Open Project"
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                    lineNumber: 36,
+                    lineNumber: 34,
                     columnNumber: 11
                 }, undefined),
                 keys.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -67433,7 +67429,7 @@ const OpenProjectOverlay = ()=>{
                     children: "No saved projects."
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                    lineNumber: 38,
+                    lineNumber: 36,
                     columnNumber: 13
                 }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
                     className: "space-y-2",
@@ -67444,17 +67440,17 @@ const OpenProjectOverlay = ()=>{
                                 children: key.replace("flatland-project-", "")
                             }, void 0, false, {
                                 fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                                lineNumber: 43,
+                                lineNumber: 41,
                                 columnNumber: 19
                             }, undefined)
                         }, key, false, {
                             fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                            lineNumber: 42,
+                            lineNumber: 40,
                             columnNumber: 17
                         }, undefined))
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                    lineNumber: 40,
+                    lineNumber: 38,
                     columnNumber: 13
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -67463,18 +67459,18 @@ const OpenProjectOverlay = ()=>{
                     children: "Cancel"
                 }, void 0, false, {
                     fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-                    lineNumber: 53,
+                    lineNumber: 51,
                     columnNumber: 11
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-            lineNumber: 35,
+            lineNumber: 33,
             columnNumber: 9
         }, undefined)
     }, void 0, false, {
         fileName: "src/UI/sections/Header/OpenOverlay.tsx",
-        lineNumber: 34,
+        lineNumber: 32,
         columnNumber: 7
     }, undefined);
     else return null;
@@ -67494,7 +67490,29 @@ $RefreshReg$(_c, "OpenProjectOverlay");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../State":"83rpN","../../../2D/rendering/canvas":"fjxS8","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"hPbLI":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../Command":"efiIE","../../commands/LoadProjectCommand":"53Ggr"}],"53Ggr":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "LoadProjectCommand", ()=>LoadProjectCommand);
+var _canvas = require("../../2D/rendering/canvas");
+var _state = require("../../State");
+class LoadProjectCommand {
+    constructor(key){
+        this.key = key;
+    }
+    do() {
+        const json = localStorage.getItem(this.key);
+        if (!json) return;
+        const data = json;
+        (0, _state.state).deserialize(data);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+    // No undo for load
+    }
+}
+
+},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hPbLI":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$6d9c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
