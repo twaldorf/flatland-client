@@ -14,6 +14,7 @@ import { NewProjectModal } from "./UI/sections/Header/NewProjectModal";
 import { pushCommand } from "./Command";
 import { NewProjectCommand } from "./UI/commands/NewProjectCommand";
 import { EditProjectModal } from "./UI/sections/Header/EditProjectModal";
+import { SaveAsProjectModal } from "./UI/sections/Header/SaveAsProjectModal";
 
 const App: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -36,6 +37,7 @@ const App: React.FC = () => {
     <OpenProjectOverlay />
     <NewProjectModal />
     <EditProjectModal />
+    <SaveAsProjectModal />
     <Header />
     <Tabs />
   </div>

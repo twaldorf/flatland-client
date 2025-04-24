@@ -11,7 +11,7 @@ interface Label {
   piece: Piece;
 }
 
-type ModalName = null | "Edit Project Info" | "New Project" | "Open Project";
+type ModalName = null | "Edit Project Info" | "New Project" | "Open Project" | "Save As Project";
 
 // Store state "header" file
 interface AppState {

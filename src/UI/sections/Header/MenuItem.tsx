@@ -2,10 +2,11 @@ import { useState } from "react";
 
 interface MenuItemProps {
   label: string;
-  options: { name: string; action: () => void }[];
+  options: { name: string; action: () => void; }[];
 }
 
 const MenuItem = ({ label, options }: MenuItemProps) => {
+  // TODO: Refactor to use store instead of local state
   const [open, setOpen] = useState(false);
 
   return (

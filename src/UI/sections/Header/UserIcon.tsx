@@ -31,7 +31,7 @@ export const UserIcon = ({ user, onLogin, onLogout }: UserIconProps) => {
       ) : (
         <button
           onClick={onLogin}
-          className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700"
+          className="px-4 py-2 text-white bg-gray-300 hover:bg-blue-700"
         >
           Log In
         </button>

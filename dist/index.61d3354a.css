@@ -19,6 +19,7 @@
     --color-gray-300: oklch(.872 .01 258.338);
     --color-gray-400: oklch(.707 .022 261.325);
     --color-gray-500: oklch(.551 .027 264.364);
+    --color-gray-600: oklch(.446 .03 256.802);
     --color-gray-700: oklch(.373 .034 259.733);
     --color-gray-800: oklch(.278 .033 256.848);
     --color-stone-100: oklch(.97 .001 106.424);
@@ -481,8 +482,20 @@
     display: inline-block;
   }
 
+  .h-1\/2 {
+    height: 50%;
+  }
+
   .h-8 {
     height: calc(var(--spacing) * 8);
+  }
+
+  .h-24 {
+    height: calc(var(--spacing) * 24);
+  }
+
+  .h-25 {
+    height: calc(var(--spacing) * 25);
   }
 
   .h-full {
@@ -493,8 +506,36 @@
     height: 100vh;
   }
 
+  .max-h-1\/2 {
+    max-height: 50%;
+  }
+
+  .max-h-2\/3 {
+    max-height: 66.6667%;
+  }
+
   .max-h-12 {
     max-height: calc(var(--spacing) * 12);
+  }
+
+  .max-h-23 {
+    max-height: calc(var(--spacing) * 23);
+  }
+
+  .max-h-25 {
+    max-height: calc(var(--spacing) * 25);
+  }
+
+  .max-h-50 {
+    max-height: calc(var(--spacing) * 50);
+  }
+
+  .max-h-62 {
+    max-height: calc(var(--spacing) * 62);
+  }
+
+  .max-h-76 {
+    max-height: calc(var(--spacing) * 76);
   }
 
   .min-h-24 {
@@ -629,6 +670,10 @@
     overflow-x: auto;
   }
 
+  .overflow-y-auto {
+    overflow-y: auto;
+  }
+
   .rounded {
     border-radius: .25rem;
   }
@@ -659,6 +704,10 @@
     border-bottom-width: 2px;
   }
 
+  .border-blue-400 {
+    border-color: var(--color-blue-400);
+  }
+
   .border-blue-500 {
     border-color: var(--color-blue-500);
   }
@@ -675,6 +724,10 @@
     border-color: var(--color-stone-400);
   }
 
+  .border-transparent {
+    border-color: #0000;
+  }
+
   .border-white {
     border-color: var(--color-white);
   }
@@ -689,6 +742,10 @@
 
   .bg-black\/50 {
     background-color: color-mix(in oklab, var(--color-black) 50%, transparent);
+  }
+
+  .bg-blue-100 {
+    background-color: var(--color-blue-100);
   }
 
   .bg-blue-300 {
@@ -709,6 +766,14 @@
 
   .bg-gray-200 {
     background-color: var(--color-gray-200);
+  }
+
+  .bg-gray-300 {
+    background-color: var(--color-gray-300);
+  }
+
+  .bg-gray-600 {
+    background-color: var(--color-gray-600);
   }
 
   .bg-gray-800 {
