@@ -1,3 +1,4 @@
+import { drawCanvasFromState } from "../../2D/rendering/canvas";
 import { Command } from "../../Command"
 import { state } from "../../State"
 import { ProjectInfo } from "../../types";
@@ -16,6 +17,7 @@ export class NewProjectCommand implements Command {
     state.clear() // define this on your state singleton
     useAppState.getState().setActiveProjectTitle(this.projectInfo.title);
     state.projectInfo = this.projectInfo;
+    drawCanvasFromState(state);
   }
 
   undo() {

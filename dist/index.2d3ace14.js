@@ -67771,6 +67771,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "NewProjectCommand", ()=>NewProjectCommand);
 parcelHelpers.export(exports, "DownloadProjectCommand", ()=>DownloadProjectCommand);
+var _canvas = require("../../2D/rendering/canvas");
 var _state = require("../../State");
 var _store = require("../store");
 class NewProjectCommand {
@@ -67783,6 +67784,7 @@ class NewProjectCommand {
         ;
         (0, _store.useAppState).getState().setActiveProjectTitle(this.projectInfo.title);
         (0, _state.state).projectInfo = this.projectInfo;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
         (0, _state.state).deserialize(this.previousState);
@@ -67808,7 +67810,7 @@ class DownloadProjectCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../store":"l1Ff7"}],"gSpmT":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../store":"l1Ff7","../../2D/rendering/canvas":"fjxS8"}],"gSpmT":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$b0e6 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
