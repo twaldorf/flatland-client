@@ -18722,7 +18722,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./Command":"efiIE","./UI/commands/NewProjectCommand":"eoWAT","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/inventory/Pieces":"5aREB","./UI/sections/Header/SaveAsProjectModal":"lPxKp"}],"jeorp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/tools/Toolbar":"2W72B","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/inventory/Pieces":"5aREB","./UI/sections/Overlay/Label":"SPMyB","./UI/sections/Overlay/CursorInfo":"bSDlR","./UI/sections/Overlay/ShapeInfo":"dkMF4","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./Command":"efiIE","./UI/commands/NewProjectCommand":"eoWAT","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Header/SaveAsProjectModal":"lPxKp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"jeorp":[function(require,module,exports,__globalThis) {
 // Controller module
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -49703,6 +49703,7 @@ const state = {
         doubleClick: false
     },
     clock: new (0, _three.Clock)(true),
+    c_grainlines: new Map(),
     context: null,
     c_preview_context: null,
     c_preview_canvas: null,
@@ -50112,7 +50113,6 @@ var _drawSelections = require("./drawSelections");
 var _drawRulers = require("./drawRulers");
 var _drawCursorPreview = require("./drawCursorPreview");
 var _drawMeasurements = require("./drawMeasurements");
-var _drawHelpers = require("./drawHelpers");
 function drawCanvasSetup() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
     (0, _state.state).context.fillRect(0, 0, (0, _state.state).canvas.width, (0, _state.state).canvas.height);
@@ -50127,8 +50127,7 @@ function drawCanvasFromState(state) {
     (0, _drawPoints.drawPoints)(state);
     (0, _drawCursorPreview.drawCursorPreview)(state.pointer);
     (0, _drawMeasurements.drawMeasurements)(state);
-    // drawShapes();
-    (0, _drawHelpers.drawGrainlines)();
+// drawShapes();
 }
 function redrawCanvas() {
     erase();
@@ -50138,7 +50137,6 @@ function redrawCanvas() {
     // applyShapes();
     (0, _drawCursorPreview.applyCursorPreview)();
     (0, _drawMeasurements.applyMeasurements)();
-    (0, _drawHelpers.applyGrainlines)();
 }
 function erase() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
@@ -50155,7 +50153,7 @@ function point(index) {
     return (0, _state.state).c_points[index];
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","./drawCursorPreview":"12vmI","./drawMeasurements":"aqmR1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawHelpers":"4gSYT"}],"eQ9g7":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","./drawCursorPreview":"12vmI","./drawMeasurements":"aqmR1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
@@ -50265,6 +50263,7 @@ parcelHelpers.export(exports, "applyPaths", ()=>applyPaths);
 var _state = require("../../State");
 var _boundingBox = require("../geometry/boundingBox");
 var _drawArrayOfPointIndices = require("./drawArrayOfPointIndices");
+var _drawGrainlines = require("./drawGrainlines");
 var _drawPolygonFromPointIndices = require("./drawPolygonFromPointIndices");
 var _getBuffer = require("./getBuffer");
 const drawPaths = (state)=>{
@@ -50279,8 +50278,9 @@ const drawPaths = (state)=>{
         (0, _drawArrayOfPointIndices.drawArrayOfPointIndices)(points, context);
     });
     if (state.c_shapes.length > 0) // draw shapes
-    state.c_shapes.forEach((shapeArr)=>{
+    state.c_shapes.forEach((shapeArr, shapeIndex)=>{
         drawShape(shapeArr, context);
+        (0, _drawGrainlines.drawGrainOnShape)(shapeIndex, context);
     });
     state.context.drawImage(canvas, 0, 0);
 };
@@ -50296,8 +50296,11 @@ function applyPaths() {
     const obj = (0, _state.state).c_buffers.get('paths');
     if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
+function drawGrainlines(shapeIndex, context) {
+    throw new Error("Function not implemented.");
+}
 
-},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawArrayOfPointIndices":"1cqZx","./drawPolygonFromPointIndices":"2ROJq","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3SCvR":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawArrayOfPointIndices":"1cqZx","./drawPolygonFromPointIndices":"2ROJq","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawGrainlines":"8S5xA"}],"3SCvR":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Given an array of point indices which make up a shape,
@@ -50422,7 +50425,34 @@ function drawPolygonFromOffsetPointIndices(points, xoffset, yoffset, context) {
     }
 }
 
-},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
+},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8S5xA":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// export function drawGrainlines() {
+// const { canvas, context } = getBuffer('grainlines');
+// canvas.width = state.canvas.width;
+// canvas.height = state.canvas.height;
+//   state.grainlines.forEach((grainline) => {
+// context.moveTo(grainline.x, grainline.y);
+// context.lineTo(grainline.x + Math.cos(grainline.angle), grainline.y + Math.sin(grainline.angle));
+// context.stroke();
+//   });
+// }
+parcelHelpers.export(exports, "drawGrainOnShape", ()=>drawGrainOnShape);
+var _state = require("../../State");
+function drawGrainOnShape(shapeIndex, context) {
+    // const { canvas, context } = getBuffer('grainlines');
+    // canvas.width = state.canvas.width;
+    // canvas.height = state.canvas.height;
+    const grainline = (0, _state.state).c_grainlines.get(shapeIndex);
+    if (grainline) {
+        context.moveTo(grainline.position.x, grainline.position.y);
+        context.lineTo(grainline.position.x + Math.cos(grainline.angle) * 100, grainline.position.y + Math.sin(grainline.angle) * 100);
+        context.stroke();
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawSelections", ()=>drawSelections);
@@ -50606,56 +50636,7 @@ function applyMeasurements() {
     if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
 
-},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4gSYT":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawGrainlines", ()=>drawGrainlines);
-parcelHelpers.export(exports, "applyGrainlines", ()=>applyGrainlines);
-var _state = require("../../State");
-var _centroid = require("../geometry/centroid");
-var _getBuffer = require("./getBuffer");
-function drawGrainlines() {
-    console.log('drawing helpers');
-    const { canvas, context } = (0, _getBuffer.getBuffer)('helpers');
-    if ((0, _state.state).tool.name === 'grainline') {
-        canvas.width = (0, _state.state).canvas.width;
-        canvas.height = (0, _state.state).canvas.height;
-        context.fillStyle = 'black';
-        const rad = 10;
-        (0, _state.state).c_selected_shapes.forEach((shapeIndex)=>{
-            const shape = (0, _state.state).c_shapes[shapeIndex];
-            const centroid = (0, _centroid.computeCentroid)(shape);
-            context.beginPath();
-            context.arc(centroid.x, centroid.y, rad, 0, 2 * Math.PI);
-            context.fill();
-        // state.context.drawImage(canvas, centroid.x, centroid.y);
-        });
-        (0, _state.state).context.drawImage(canvas, 0, 0);
-    }
-}
-function applyGrainlines() {
-    const obj = (0, _state.state).c_buffers.get('helpers');
-    if (obj && obj.canvas.width > 0) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
-}
-
-},{"../../State":"83rpN","../geometry/centroid":"gsjQg","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gsjQg":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
-var _three = require("three");
-var _state = require("../../State");
-function computeCentroid(indices) {
-    if (indices.length === 0) return new (0, _three.Vector2)();
-    const centroid = new (0, _three.Vector2)();
-    for (const index of indices){
-        const point = (0, _state.state).c_points[index];
-        centroid.add(point);
-    }
-    centroid.divideScalar(indices.length);
-    return centroid;
-}
-
-},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aI2tH":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aI2tH":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
@@ -51342,7 +51323,146 @@ function changeTool(newState) {
     (0, _state.state).tool.initializeEvents();
 }
 
-},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./GrainlineTool":"jR44c"}],"3Zp6S":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _cLocalizePoint = require("../pointer/cLocalizePoint");
+var _store = require("../../UI/store");
+var _drawDrawPreview = require("../rendering/drawDrawPreview");
+var _command = require("../../Command");
+var _grainlineToolCreateGrainlineCommand = require("../commands/GrainlineToolCreateGrainlineCommand");
+var _isPointInPolygon = require("../geometry/isPointInPolygon");
+class GrainlineTool {
+    constructor(){
+        // Tool state object stores tool mechanical state, no data
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = 'grainline';
+        this.setPointer = (0, _store.useAppState).getState().setPointer;
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+        this.angle = 0;
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    }
+    get state() {
+        return this.__state;
+    }
+    // Tool state management
+    transition(newState) {
+        console.log(`Tool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    // Tool event management
+    onMouseDown(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        // state.pointer = pos;
+        const selectedShapeIndex = this.checkForShapeOverlap(pos);
+        if (selectedShapeIndex > -1) switch(this.__state.type){
+            case "idle":
+                this.transition({
+                    type: 'drawing',
+                    originPos: pos
+                });
+                break;
+            default:
+                break;
+        }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    onMouseMove(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
+        this.setPointer((0, _state.state).pointer);
+        switch(this.__state.type){
+            case "drawing":
+                this.angle = pos.angleTo(this.__state.originPos);
+                (0, _drawDrawPreview.drawDrawPreview)(this.__state.originPos, pos);
+        }
+    }
+    onMouseUp(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        switch(this.__state.type){
+            case "drawing":
+                this.angle = pos.angleTo(this.__state.originPos);
+                (0, _command.pushCommand)(new (0, _grainlineToolCreateGrainlineCommand.GrainlineToolCreateGrainlineCommand)(this.__state.originPos, (0, _state.state).c_selected_shapes[0], this.angle));
+        }
+        this.transition({
+            type: "idle"
+        });
+    }
+    checkForShapeOverlap(pos) {
+        let value = -1;
+        (0, _state.state).c_shapes.forEach((shape, index)=>{
+            const shapePoints = shape.map((pointIndex)=>(0, _state.state).c_points[pointIndex]);
+            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) value = index;
+        });
+        return value;
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/isPointInPolygon":"aOEKs"}],"5NqY4":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GrainlineToolCreateGrainlineCommand", ()=>GrainlineToolCreateGrainlineCommand);
+var _state = require("../../State");
+class GrainlineToolCreateGrainlineCommand {
+    constructor(position, shapeIndex, angle){
+        this.shapeIndex = shapeIndex;
+        this.grainline = {
+            position,
+            angle
+        };
+    }
+    do() {
+        (0, _state.state).c_grainlines.set(this.shapeIndex, this.grainline);
+    }
+    undo() {
+        (0, _state.state).c_grainlines.delete(this.shapeIndex);
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/**
+ * Checks if a point is inside a polygon using the ray-casting algorithm.
+ * @param point The point to check.
+ * @param polygon An array of Vector2 points defining the closed shape.
+ * @returns `true` if the point is inside the polygon, `false` otherwise.
+ */ parcelHelpers.export(exports, "isPointInPolygon", ()=>isPointInPolygon);
+function isPointInPolygon(point, polygon) {
+    let inside = false;
+    const n = polygon.length;
+    for(let i = 0, j = n - 1; i < n; j = i++){
+        const xi = polygon[i].x, yi = polygon[i].y;
+        const xj = polygon[j].x, yj = polygon[j].y;
+        // Check if point is between polygon edges
+        const intersect = yi > point.y !== yj > point.y && point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi;
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
@@ -52220,28 +52340,6 @@ const MathUtils = {
     denormalize: denormalize
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-/**
- * Checks if a point is inside a polygon using the ray-casting algorithm.
- * @param point The point to check.
- * @param polygon An array of Vector2 points defining the closed shape.
- * @returns `true` if the point is inside the polygon, `false` otherwise.
- */ parcelHelpers.export(exports, "isPointInPolygon", ()=>isPointInPolygon);
-function isPointInPolygon(point, polygon) {
-    let inside = false;
-    const n = polygon.length;
-    for(let i = 0, j = n - 1; i < n; j = i++){
-        const xi = polygon[i].x, yi = polygon[i].y;
-        const xj = polygon[j].x, yj = polygon[j].y;
-        // Check if point is between polygon edges
-        const intersect = yi > point.y !== yj > point.y && point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi;
-        if (intersect) inside = !inside;
-    }
-    return inside;
-}
-
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2adoe":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -52516,79 +52614,7 @@ class DrawPreviewsCommand {
     }
 }
 
-},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _store = require("../../UI/store");
-class GrainlineTool {
-    constructor(){
-        // Tool state object stores tool mechanical state, no data
-        this.__state = {
-            type: "idle"
-        };
-        // Tool name
-        this.name = 'grainline';
-        this.setPointer = (0, _store.useAppState).getState().setPointer;
-        this.__listeners = {
-            down: this.onMouseDown.bind(this),
-            move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this)
-        };
-        this.angle = 0;
-    }
-    initializeEvents() {
-        const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.__listeners.down);
-        canvas.addEventListener("mousemove", this.__listeners.move);
-        canvas.addEventListener("mouseup", this.__listeners.up);
-    }
-    dismountEvents() {
-        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
-        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
-        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
-    }
-    get state() {
-        return this.__state;
-    }
-    // Tool state management
-    transition(newState) {
-        console.log(`Tool state: ${this.__state.type} \u{2192} ${newState.type}`);
-        this.__state = newState;
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    // Tool event management
-    onMouseDown(e) {
-        // const pos = cLocalizePoint(e.clientX, e.clientY);
-        // state.pointer = pos;
-        // const hitIndex = findNearestPoint(pos, state.c_points);
-        switch(this.__state.type){
-            case "idle":
-                this.transition({
-                    type: 'drawing',
-                    angle: 0
-                });
-                break;
-            default:
-                break;
-        }
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    onMouseMove(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        (0, _state.state).pointer = pos;
-        this.setPointer((0, _state.state).pointer);
-        this.__state.type;
-    }
-    onMouseUp(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
+},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
@@ -67035,7 +67061,221 @@ $RefreshReg$(_c, "Tabs");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY"}],"SPMyB":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","react-icons/ci":"7bNnY","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"5aREB":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$7858.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Pieces", ()=>Pieces);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _store = require("../store");
+var _piece = require("./Piece");
+var _s = $RefreshSig$();
+const Pieces = ()=>{
+    _s();
+    const pieces = (0, _store.useAppState)((state)=>state.pieces);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "rounded-lg bg-stone-200 min-h-24 bg-white p-2",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: [
+                    "Pieces (",
+                    pieces.length,
+                    ")"
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 16,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+                className: "flex flex-row text-xs relative gap-2 overflow-auto",
+                children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
+                        piece: piece
+                    }, piece.id, false, {
+                        fileName: "src/UI/inventory/Pieces.tsx",
+                        lineNumber: 19,
+                        columnNumber: 11
+                    }, undefined))
+            }, void 0, false, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 17,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/inventory/Pieces.tsx",
+        lineNumber: 15,
+        columnNumber: 5
+    }, undefined);
+}; // export const Pieces = (props:PiecesProps) => {
+ //   const pieces = useAppState((state) => state.pieces);
+ //   const thumbnailRef = useRef<HTMLCanvasElement>(null);
+ //   return (
+ //     <ul style={ulStyle} className="rounded-lg bg-stone-200 min-h-24 flex flex-row">
+ //       { pieces.map((piece:Piece) => {
+ //         if (thumbnailRef.current) {
+ //           console.log('drawing', piece.name)
+ //           drawPieceThumbnail(piece, thumbnailRef.current);
+ //         };
+ //         return (
+ //           <li className="my-auto mx-2">
+ //             <canvas className="max-h-12" ref={thumbnailRef}></canvas>
+ //             {piece.name}
+ //           </li>)
+ //       })}
+ //     </ul>
+ //   )
+ // }
+ // const ulStyle = {
+ // }
+_s(Pieces, "ZT9fPOpsR3+GOhOXE1hjJb0GtmU=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
+_c = Pieces;
+var _c;
+$RefreshReg$(_c, "Pieces");
+
+  $parcel$ReactRefreshHelpers$7858.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","./Piece":"40lLH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"40lLH":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$0d5a = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$0d5a.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PieceComponent", ()=>PieceComponent);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _drawPieceThumbnail = require("../../2D/rendering/drawPieceThumbnail");
+var _ci = require("react-icons/ci");
+var _store = require("../store");
+var _s = $RefreshSig$(), _s1 = $RefreshSig$();
+const PieceComponent = ({ piece })=>{
+    _s();
+    const thumbnailRef = (0, _react.useRef)(null);
+    const [editing, setEditing] = (0, _react.useState)(false);
+    const setPieceName = (0, _store.useAppState)((state)=>state.setPieceName);
+    const onSave = (newName)=>{
+        setPieceName(piece.id, newName);
+        setEditing(false);
+    };
+    (0, _react.useEffect)(()=>{
+        if (thumbnailRef.current) (0, _drawPieceThumbnail.drawPieceThumbnail)(piece, thumbnailRef.current);
+    }, [
+        piece
+    ]);
+    function handleClick() {
+        editing == true ? setEditing(false) : setEditing(true);
+    }
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+        className: "my-auto max-w-24",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
+                className: "max-h-12 border border-stone-400",
+                ref: thumbnailRef
+            }, void 0, false, {
+                fileName: "src/UI/inventory/Piece.tsx",
+                lineNumber: 30,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex-row flex justify-center items-center",
+                children: [
+                    editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(EditPieceNameAttr, {
+                        piece: piece,
+                        onSave: onSave
+                    }, void 0, false, {
+                        fileName: "src/UI/inventory/Piece.tsx",
+                        lineNumber: 32,
+                        columnNumber: 22
+                    }, undefined),
+                    !editing && piece.name,
+                    !editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {
+                        onClick: handleClick
+                    }, void 0, false, {
+                        fileName: "src/UI/inventory/Piece.tsx",
+                        lineNumber: 34,
+                        columnNumber: 23
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/inventory/Piece.tsx",
+                lineNumber: 31,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/inventory/Piece.tsx",
+        lineNumber: 29,
+        columnNumber: 5
+    }, undefined);
+};
+_s(PieceComponent, "7wkZWaLVLPq6vYXMB8n6NMlecw0=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
+_c = PieceComponent;
+const EditPieceNameAttr = ({ piece, onSave })=>{
+    _s1();
+    const [newName, setNewName] = (0, _react.useState)(piece.name);
+    const inputRef = (0, _react.useRef)(null);
+    (0, _react.useEffect)(()=>{
+        if (inputRef.current) {
+            inputRef.current.focus();
+            inputRef.current.select();
+        }
+    }, []);
+    const handleChange = (e)=>{
+        console.log(e);
+        setNewName(e.target.value);
+    };
+    const handleKeyDown = (e)=>{
+        if (e.key === "Enter") onSave(newName);
+        if (e.key === "Backspace" || e.key === "Delete") setNewName(e.target.value.slice(0, -1));
+    };
+    const handleBlur = ()=>{
+        onSave(newName);
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+        type: "text",
+        ref: inputRef,
+        value: newName,
+        onChange: handleChange,
+        onKeyDown: handleKeyDown,
+        onBlur: handleBlur,
+        className: "w-full"
+    }, void 0, false, {
+        fileName: "src/UI/inventory/Piece.tsx",
+        lineNumber: 71,
+        columnNumber: 5
+    }, undefined);
+};
+_s1(EditPieceNameAttr, "gsrx4r5om27wpSK3FvdyFfcHfks=");
+_c1 = EditPieceNameAttr;
+var _c, _c1;
+$RefreshReg$(_c, "PieceComponent");
+$RefreshReg$(_c1, "EditPieceNameAttr");
+
+  $parcel$ReactRefreshHelpers$0d5a.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../2D/rendering/drawPieceThumbnail":"1Jt5c","react-icons/ci":"7bNnY","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"SPMyB":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$cd8f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67155,7 +67395,7 @@ $RefreshReg$(_c, "Label");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react-icons/ci":"7bNnY","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","react":"21dqq"}],"bSDlR":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","../../store":"l1Ff7","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"bSDlR":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$1b5e = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67172,7 +67412,6 @@ const CursorInfo = ()=>{
     const pointerX = (0, _store.useAppState)((state)=>state.pointer.x);
     const pointerY = (0, _store.useAppState)((state)=>state.pointer.y);
     const toolName = (0, _store.useAppState)((state)=>state.selectedTool);
-    console.log(toolName);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "absolute bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md pointer-events-none bottom-3 right-3 w-2/10",
         children: [
@@ -67180,7 +67419,7 @@ const CursorInfo = ()=>{
                 children: toolName
             }, void 0, false, {
                 fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 11,
+                lineNumber: 10,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -67190,7 +67429,7 @@ const CursorInfo = ()=>{
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 12,
+                lineNumber: 11,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -67200,13 +67439,13 @@ const CursorInfo = ()=>{
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 13,
+                lineNumber: 12,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-        lineNumber: 10,
+        lineNumber: 9,
         columnNumber: 5
     }, undefined);
 };
@@ -67528,7 +67767,7 @@ $RefreshReg$(_c, "OpenProjectOverlay");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../Command":"efiIE","../../commands/LoadProjectCommand":"53Ggr"}],"53Ggr":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","../../../Command":"efiIE","../../commands/LoadProjectCommand":"53Ggr","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"53Ggr":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "LoadProjectCommand", ()=>LoadProjectCommand);
@@ -67766,7 +68005,7 @@ $RefreshReg$(_c, "NewProjectModal");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../Command":"efiIE","../../commands/NewProjectCommand":"eoWAT"}],"eoWAT":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","../../../Command":"efiIE","../../commands/NewProjectCommand":"eoWAT","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"eoWAT":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "NewProjectCommand", ()=>NewProjectCommand);
@@ -67810,7 +68049,7 @@ class DownloadProjectCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../store":"l1Ff7","../../2D/rendering/canvas":"fjxS8"}],"gSpmT":[function(require,module,exports,__globalThis) {
+},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gSpmT":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$b0e6 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -68016,221 +68255,7 @@ $RefreshReg$(_c, "EditProjectModal");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"5aREB":[function(require,module,exports,__globalThis) {
-var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$7858.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Pieces", ()=>Pieces);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _store = require("../store");
-var _piece = require("./Piece");
-var _s = $RefreshSig$();
-const Pieces = ()=>{
-    _s();
-    const pieces = (0, _store.useAppState)((state)=>state.pieces);
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "rounded-lg bg-stone-200 min-h-24 bg-white p-2",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
-                children: [
-                    "Pieces (",
-                    pieces.length,
-                    ")"
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 16,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-                className: "flex flex-row text-xs relative gap-2 overflow-auto",
-                children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
-                        piece: piece
-                    }, piece.id, false, {
-                        fileName: "src/UI/inventory/Pieces.tsx",
-                        lineNumber: 19,
-                        columnNumber: 11
-                    }, undefined))
-            }, void 0, false, {
-                fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 17,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/inventory/Pieces.tsx",
-        lineNumber: 15,
-        columnNumber: 5
-    }, undefined);
-}; // export const Pieces = (props:PiecesProps) => {
- //   const pieces = useAppState((state) => state.pieces);
- //   const thumbnailRef = useRef<HTMLCanvasElement>(null);
- //   return (
- //     <ul style={ulStyle} className="rounded-lg bg-stone-200 min-h-24 flex flex-row">
- //       { pieces.map((piece:Piece) => {
- //         if (thumbnailRef.current) {
- //           console.log('drawing', piece.name)
- //           drawPieceThumbnail(piece, thumbnailRef.current);
- //         };
- //         return (
- //           <li className="my-auto mx-2">
- //             <canvas className="max-h-12" ref={thumbnailRef}></canvas>
- //             {piece.name}
- //           </li>)
- //       })}
- //     </ul>
- //   )
- // }
- // const ulStyle = {
- // }
-_s(Pieces, "ZT9fPOpsR3+GOhOXE1hjJb0GtmU=", false, function() {
-    return [
-        (0, _store.useAppState)
-    ];
-});
-_c = Pieces;
-var _c;
-$RefreshReg$(_c, "Pieces");
-
-  $parcel$ReactRefreshHelpers$7858.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","./Piece":"40lLH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"40lLH":[function(require,module,exports,__globalThis) {
-var $parcel$ReactRefreshHelpers$0d5a = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$0d5a.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "PieceComponent", ()=>PieceComponent);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _react = require("react");
-var _drawPieceThumbnail = require("../../2D/rendering/drawPieceThumbnail");
-var _ci = require("react-icons/ci");
-var _store = require("../store");
-var _s = $RefreshSig$(), _s1 = $RefreshSig$();
-const PieceComponent = ({ piece })=>{
-    _s();
-    const thumbnailRef = (0, _react.useRef)(null);
-    const [editing, setEditing] = (0, _react.useState)(false);
-    const setPieceName = (0, _store.useAppState)((state)=>state.setPieceName);
-    const onSave = (newName)=>{
-        setPieceName(piece.id, newName);
-        setEditing(false);
-    };
-    (0, _react.useEffect)(()=>{
-        if (thumbnailRef.current) (0, _drawPieceThumbnail.drawPieceThumbnail)(piece, thumbnailRef.current);
-    }, [
-        piece
-    ]);
-    function handleClick() {
-        editing == true ? setEditing(false) : setEditing(true);
-    }
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-        className: "my-auto max-w-24",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
-                className: "max-h-12 border border-stone-400",
-                ref: thumbnailRef
-            }, void 0, false, {
-                fileName: "src/UI/inventory/Piece.tsx",
-                lineNumber: 30,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "flex-row flex justify-center items-center",
-                children: [
-                    editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(EditPieceNameAttr, {
-                        piece: piece,
-                        onSave: onSave
-                    }, void 0, false, {
-                        fileName: "src/UI/inventory/Piece.tsx",
-                        lineNumber: 32,
-                        columnNumber: 22
-                    }, undefined),
-                    !editing && piece.name,
-                    !editing && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {
-                        onClick: handleClick
-                    }, void 0, false, {
-                        fileName: "src/UI/inventory/Piece.tsx",
-                        lineNumber: 34,
-                        columnNumber: 23
-                    }, undefined)
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/inventory/Piece.tsx",
-                lineNumber: 31,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/inventory/Piece.tsx",
-        lineNumber: 29,
-        columnNumber: 5
-    }, undefined);
-};
-_s(PieceComponent, "7wkZWaLVLPq6vYXMB8n6NMlecw0=", false, function() {
-    return [
-        (0, _store.useAppState)
-    ];
-});
-_c = PieceComponent;
-const EditPieceNameAttr = ({ piece, onSave })=>{
-    _s1();
-    const [newName, setNewName] = (0, _react.useState)(piece.name);
-    const inputRef = (0, _react.useRef)(null);
-    (0, _react.useEffect)(()=>{
-        if (inputRef.current) {
-            inputRef.current.focus();
-            inputRef.current.select();
-        }
-    }, []);
-    const handleChange = (e)=>{
-        console.log(e);
-        setNewName(e.target.value);
-    };
-    const handleKeyDown = (e)=>{
-        if (e.key === "Enter") onSave(newName);
-        if (e.key === "Backspace" || e.key === "Delete") setNewName(e.target.value.slice(0, -1));
-    };
-    const handleBlur = ()=>{
-        onSave(newName);
-    };
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-        type: "text",
-        ref: inputRef,
-        value: newName,
-        onChange: handleChange,
-        onKeyDown: handleKeyDown,
-        onBlur: handleBlur,
-        className: "w-full"
-    }, void 0, false, {
-        fileName: "src/UI/inventory/Piece.tsx",
-        lineNumber: 71,
-        columnNumber: 5
-    }, undefined);
-};
-_s1(EditPieceNameAttr, "gsrx4r5om27wpSK3FvdyFfcHfks=");
-_c1 = EditPieceNameAttr;
-var _c, _c1;
-$RefreshReg$(_c, "PieceComponent");
-$RefreshReg$(_c1, "EditPieceNameAttr");
-
-  $parcel$ReactRefreshHelpers$0d5a.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../2D/rendering/drawPieceThumbnail":"1Jt5c","react-icons/ci":"7bNnY","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"lPxKp":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../store":"l1Ff7","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"lPxKp":[function(require,module,exports,__globalThis) {
 var $parcel$ReactRefreshHelpers$38e8 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;

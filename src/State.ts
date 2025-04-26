@@ -34,6 +34,9 @@ export const state:State = {
   },
   
   clock: new Clock(true),
+
+
+  c_grainlines: new Map(),
   
   context: null,
   c_preview_context: null,

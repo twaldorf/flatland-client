@@ -111,6 +111,9 @@ export interface State {
   // Map of all points used in measurement
   c_measure_points: Map<string, Vector2>;
 
+  // Map of all grainlines to their associated shapeArray indices
+  c_grainlines: Map<number, Grainline>;
+
   // Scale factor manipulated by the user through zoom functionality
   c_zoomfactor: number;
 
@@ -153,6 +156,11 @@ export type Tool = PathTool | SelectTool | MeasureTool | GrainlineTool;
 export type ToolName = "path" | "select" | "measure" | "grainline";
 
 export type DrawableEntity = Vector2 | Vector2[];
+
+export interface Grainline {
+  angle: number;
+  position: Vector2;
+}
 
 export interface Piece {
   id: string;

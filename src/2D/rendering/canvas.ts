@@ -9,7 +9,6 @@ import { drawSelections } from "./drawSelections";
 import { drawYRuler, drawGridRuler } from "./drawRulers";
 import { applyCursorPreview, drawCursorPreview } from "./drawCursorPreview";
 import { applyMeasurements, drawMeasurements } from "./drawMeasurements";
-import { applyGrainlines, drawGrainlines } from "./drawHelpers";
 
 export function drawCanvasSetup() {
   state.context.fillStyle = c_bgColor;
@@ -27,7 +26,6 @@ export function drawCanvasFromState(state:State):void {
   drawCursorPreview(state.pointer);
   drawMeasurements(state);
   // drawShapes();
-  drawGrainlines();
 }
 
 export function redrawCanvas():void {
@@ -38,7 +36,6 @@ export function redrawCanvas():void {
   // applyShapes();
   applyCursorPreview();
   applyMeasurements();
-  applyGrainlines();
 }
 
 function erase() {

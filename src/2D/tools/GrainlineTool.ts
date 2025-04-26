@@ -4,10 +4,15 @@ import { drawCanvasFromState } from "../rendering/canvas";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { findNearestPoint } from "../geometry/findNearestPoint";
 import { useAppState } from "../../UI/store";
+import { Vector2 } from "three";
+import { drawDrawPreview } from "../rendering/drawDrawPreview";
+import { pushCommand } from "../../Command";
+import { GrainlineToolCreateGrainlineCommand } from "../commands/GrainlineToolCreateGrainlineCommand";
+import { isPointInPolygon } from "../geometry/isPointInPolygon";
 
 export type GrainlineToolState = 
   | { type: "idle" }
-  | { type: "drawing"; angle: number }
+  | { type: "drawing"; originPos: Vector2 }
 
 export class GrainlineTool implements ToolBase {
   // Tool state object stores tool mechanical state, no data
@@ -16,7 +21,7 @@ export class GrainlineTool implements ToolBase {
   // Tool name
   readonly name:string = 'grainline';
 
-  // Current angle of grainline in radians where 0 and 2PI is the "top" i.e. north of the unit circle
+  // Last set angle of grainline in radians where 0 and 2PI is the "top" i.e. north of the unit circle
   private angle:number;
   
   private setPointer = useAppState.getState().setPointer;
@@ -57,17 +62,20 @@ export class GrainlineTool implements ToolBase {
 
   // Tool event management
   private onMouseDown(e: MouseEvent) {
-    // const pos = cLocalizePoint(e.clientX, e.clientY);
+    const pos = cLocalizePoint(e.clientX, e.clientY);
     // state.pointer = pos;
-    // const hitIndex = findNearestPoint(pos, state.c_points);
+    const selectedShapeIndex = this.checkForShapeOverlap(pos);
 
-    switch (this.__state.type) {
-      case "idle":
-      this.transition({type: 'drawing', angle:0});
-      break;
+    if (selectedShapeIndex > -1) {
 
-      default:
-        break;
+      switch (this.__state.type) {
+        case "idle":
+          this.transition({ type: 'drawing', originPos: pos });
+          break;
+          
+        default:
+          break;
+      }
     }
 
     drawCanvasFromState(state);
@@ -80,13 +88,32 @@ export class GrainlineTool implements ToolBase {
     this.setPointer(state.pointer);
 
     switch (this.__state.type) {
-
+      case "drawing":
+        this.angle = pos.angleTo(this.__state.originPos);
+        drawDrawPreview(this.__state.originPos, pos);
     }
 
   }
 
   private onMouseUp(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
+    switch (this.__state.type) {
+      case "drawing":
+        this.angle = pos.angleTo(this.__state.originPos);
+        pushCommand(new GrainlineToolCreateGrainlineCommand(this.__state.originPos, state.c_selected_shapes[0], this.angle));
+    }
+    this.transition({ type: "idle" });
+  }
+
+  public checkForShapeOverlap(pos:Vector2):number {
+    let value = -1;
+    state.c_shapes.forEach((shape, index) => {
+      const shapePoints = shape.map((pointIndex) => state.c_points[pointIndex]);
+      if (isPointInPolygon(pos, shapePoints)) {
+        value = index;
+      }
+    });
+    return value;
   }
 
 }

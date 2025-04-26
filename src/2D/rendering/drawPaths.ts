@@ -2,6 +2,7 @@ import { state } from "../../State";
 import { State } from "../../types";
 import { getShapeBoundingRect } from "../geometry/boundingBox";
 import { drawArrayOfPointIndices } from "./drawArrayOfPointIndices";
+import { drawGrainOnShape } from "./drawGrainlines";
 import { drawPolygonFromOffsetPointIndices, drawPolygonFromPointIndices } from "./drawPolygonFromPointIndices";
 import { getBuffer } from "./getBuffer";
 
@@ -24,8 +25,9 @@ export const drawPaths = (state: State) => {
 
   if (state.c_shapes.length > 0) {
     // draw shapes
-    state.c_shapes.forEach((shapeArr) => {
-      drawShape(shapeArr,context) 
+    state.c_shapes.forEach((shapeArr, shapeIndex) => {
+      drawShape(shapeArr,context);
+      drawGrainOnShape(shapeIndex, context);
     });
   }
 
@@ -45,3 +47,7 @@ export function applyPaths() {
   const obj = state.c_buffers.get('paths');
   if (obj) state.context.drawImage(obj.canvas, 0, 0);
 }
+function drawGrainlines(shapeIndex: number, context: OffscreenCanvasRenderingContext2D) {
+  throw new Error("Function not implemented.");
+}
+

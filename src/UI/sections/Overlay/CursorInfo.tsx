@@ -4,7 +4,6 @@ const CursorInfo = () => {
   const pointerX = useAppState((state) => state.pointer.x);
   const pointerY = useAppState((state) => state.pointer.y);
   const toolName = useAppState((state) => state.selectedTool);
-  console.log(toolName)
 
   return (
     <div className="absolute bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md pointer-events-none bottom-3 right-3 w-2/10">
