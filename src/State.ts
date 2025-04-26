@@ -35,8 +35,14 @@ export const state:State = {
   
   clock: new Clock(true),
 
-
   c_grainlines: new Map(),
+  updateGrainlinePos (index:number, pos:Vector2) {
+    const gl = this.c_grainlines.get(index);
+    if (gl) {
+      gl.position = pos;
+      this.c_grainlines.set(index, gl);
+    }
+  },
   
   context: null,
   c_preview_context: null,
@@ -101,7 +107,6 @@ export const state:State = {
   deserialize(stringObj:string):void {
     const serializedObj = JSON.parse(stringObj);
     if (serializedObj.version == this.version) {
-      console.log('version match, loading objects', serializedObj)
       this.c_pointmap = new Map(serializedObj.c_pointmap.map(([k, [x, y]]) => [k, new Vector2(x, y)]));
       this.c_points = serializedObj.c_points.map(([x, y]) => new Vector2(x, y));
       this.c_paths = serializedObj.c_paths;

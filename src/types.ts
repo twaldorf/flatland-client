@@ -113,6 +113,8 @@ export interface State {
 
   // Map of all grainlines to their associated shapeArray indices
   c_grainlines: Map<number, Grainline>;
+  // Setter for grainline positions (shape centroids often change)
+  updateGrainlinePos: (index:number, pos:Vector2) => void;
 
   // Scale factor manipulated by the user through zoom functionality
   c_zoomfactor: number;
@@ -158,7 +160,10 @@ export type ToolName = "path" | "select" | "measure" | "grainline";
 export type DrawableEntity = Vector2 | Vector2[];
 
 export interface Grainline {
+  // Angle between 0 and 2PI in radians, from noon as 0
   angle: number;
+
+  // Must be the centroid of the shape
   position: Vector2;
 }
 

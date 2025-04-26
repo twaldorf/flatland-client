@@ -49704,6 +49704,13 @@ const state = {
     },
     clock: new (0, _three.Clock)(true),
     c_grainlines: new Map(),
+    updateGrainlinePos (index, pos) {
+        const gl = this.c_grainlines.get(index);
+        if (gl) {
+            gl.position = pos;
+            this.c_grainlines.set(index, gl);
+        }
+    },
     context: null,
     c_preview_context: null,
     c_preview_canvas: null,
@@ -49766,7 +49773,6 @@ const state = {
     deserialize (stringObj) {
         const serializedObj = JSON.parse(stringObj);
         if (serializedObj.version == this.version) {
-            console.log('version match, loading objects', serializedObj);
             this.c_pointmap = new Map(serializedObj.c_pointmap.map(([k, [x, y]])=>[
                     k,
                     new (0, _three.Vector2)(x, y)
@@ -50300,7 +50306,7 @@ function drawGrainlines(shapeIndex, context) {
     throw new Error("Function not implemented.");
 }
 
-},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawArrayOfPointIndices":"1cqZx","./drawPolygonFromPointIndices":"2ROJq","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawGrainlines":"8S5xA"}],"3SCvR":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawArrayOfPointIndices":"1cqZx","./drawGrainlines":"8S5xA","./drawPolygonFromPointIndices":"2ROJq","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3SCvR":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Given an array of point indices which make up a shape,
@@ -50384,7 +50390,34 @@ function drawArrayOfPointIndices(points, context) {
     _.stroke();
 }
 
-},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2ROJq":[function(require,module,exports,__globalThis) {
+},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8S5xA":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// export function drawGrainlines() {
+// const { canvas, context } = getBuffer('grainlines');
+// canvas.width = state.canvas.width;
+// canvas.height = state.canvas.height;
+//   state.grainlines.forEach((grainline) => {
+// context.moveTo(grainline.x, grainline.y);
+// context.lineTo(grainline.x + Math.cos(grainline.angle), grainline.y + Math.sin(grainline.angle));
+// context.stroke();
+//   });
+// }
+parcelHelpers.export(exports, "drawGrainOnShape", ()=>drawGrainOnShape);
+var _state = require("../../State");
+function drawGrainOnShape(shapeIndex, context) {
+    // const { canvas, context } = getBuffer('grainlines');
+    // canvas.width = state.canvas.width;
+    // canvas.height = state.canvas.height;
+    const grainline = (0, _state.state).c_grainlines.get(shapeIndex);
+    if (grainline) {
+        context.moveTo(grainline.position.x, grainline.position.y);
+        context.lineTo(grainline.position.x + Math.cos(grainline.angle) * 100, grainline.position.y + Math.sin(grainline.angle) * 100);
+        context.stroke();
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2ROJq":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawPolygonFromPointIndices", ()=>drawPolygonFromPointIndices);
@@ -50425,34 +50458,7 @@ function drawPolygonFromOffsetPointIndices(points, xoffset, yoffset, context) {
     }
 }
 
-},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8S5xA":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-// export function drawGrainlines() {
-// const { canvas, context } = getBuffer('grainlines');
-// canvas.width = state.canvas.width;
-// canvas.height = state.canvas.height;
-//   state.grainlines.forEach((grainline) => {
-// context.moveTo(grainline.x, grainline.y);
-// context.lineTo(grainline.x + Math.cos(grainline.angle), grainline.y + Math.sin(grainline.angle));
-// context.stroke();
-//   });
-// }
-parcelHelpers.export(exports, "drawGrainOnShape", ()=>drawGrainOnShape);
-var _state = require("../../State");
-function drawGrainOnShape(shapeIndex, context) {
-    // const { canvas, context } = getBuffer('grainlines');
-    // canvas.width = state.canvas.width;
-    // canvas.height = state.canvas.height;
-    const grainline = (0, _state.state).c_grainlines.get(shapeIndex);
-    if (grainline) {
-        context.moveTo(grainline.position.x, grainline.position.y);
-        context.lineTo(grainline.position.x + Math.cos(grainline.angle) * 100, grainline.position.y + Math.sin(grainline.angle) * 100);
-        context.stroke();
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
+},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawSelections", ()=>drawSelections);
@@ -51331,6 +51337,7 @@ var _state = require("../../State");
 var _canvas = require("../rendering/canvas");
 var _cLocalizePoint = require("../pointer/cLocalizePoint");
 var _store = require("../../UI/store");
+var _three = require("three");
 var _drawDrawPreview = require("../rendering/drawDrawPreview");
 var _command = require("../../Command");
 var _grainlineToolCreateGrainlineCommand = require("../commands/GrainlineToolCreateGrainlineCommand");
@@ -51343,6 +51350,7 @@ class GrainlineTool {
         };
         // Tool name
         this.name = 'grainline';
+        this.unitVector = new (0, _three.Vector2)(0, -1);
         this.setPointer = (0, _store.useAppState).getState().setPointer;
         this.__listeners = {
             down: this.onMouseDown.bind(this),
@@ -51394,15 +51402,15 @@ class GrainlineTool {
         this.setPointer((0, _state.state).pointer);
         switch(this.__state.type){
             case "drawing":
-                this.angle = pos.angleTo(this.__state.originPos);
                 (0, _drawDrawPreview.drawDrawPreview)(this.__state.originPos, pos);
+                break;
         }
     }
     onMouseUp(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         switch(this.__state.type){
             case "drawing":
-                this.angle = pos.angleTo(this.__state.originPos);
+                this.angle = this.angleFromNoon(pos, this.__state.originPos);
                 (0, _command.pushCommand)(new (0, _grainlineToolCreateGrainlineCommand.GrainlineToolCreateGrainlineCommand)(this.__state.originPos, (0, _state.state).c_selected_shapes[0], this.angle));
         }
         this.transition({
@@ -51417,30 +51425,58 @@ class GrainlineTool {
         });
         return value;
     }
+    angleFromNoon(vector, origin) {
+        vector = vector.sub(origin);
+        let baseAngle = Math.atan2(vector.y, vector.x);
+        let ang = baseAngle;
+        // Map to [0, 2pi]
+        if (ang < 0) ang += 2 * Math.PI;
+        return ang;
+    }
 }
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/isPointInPolygon":"aOEKs"}],"5NqY4":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","../geometry/isPointInPolygon":"aOEKs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu"}],"5NqY4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "GrainlineToolCreateGrainlineCommand", ()=>GrainlineToolCreateGrainlineCommand);
 var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _centroid = require("../geometry/centroid");
 class GrainlineToolCreateGrainlineCommand {
     constructor(position, shapeIndex, angle){
         this.shapeIndex = shapeIndex;
         this.grainline = {
-            position,
+            position: (0, _centroid.computeCentroid)((0, _state.state).c_shapes[shapeIndex]),
             angle
         };
     }
     do() {
         (0, _state.state).c_grainlines.set(this.shapeIndex, this.grainline);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
         (0, _state.state).c_grainlines.delete(this.shapeIndex);
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg"}],"gsjQg":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
+var _three = require("three");
+var _state = require("../../State");
+function computeCentroid(indices) {
+    if (indices.length === 0) return new (0, _three.Vector2)();
+    const centroid = new (0, _three.Vector2)();
+    for (const index of indices){
+        const point = (0, _state.state).c_points[index];
+        centroid.add(point);
+    }
+    centroid.divideScalar(indices.length);
+    return centroid;
+}
+
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -52346,6 +52382,7 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectToolMoveShapeCommand", ()=>SelectToolMoveShapeCommand);
 var _state = require("../../State");
 var _canvas = require("../rendering/canvas");
+var _centroid = require("../geometry/centroid");
 class SelectToolMoveShapeCommand {
     constructor(shapeIndex, from, to){
         this.shapeIndex = shapeIndex;
@@ -52365,6 +52402,7 @@ class SelectToolMoveShapeCommand {
             const after = (0, _state.state).c_points[i];
             (0, _state.state).c_pointmap.set(i, after);
         });
+        (0, _state.state).updateGrainlinePos(this.shapeIndex, (0, _centroid.computeCentroid)((0, _state.state).c_shapes[this.shapeIndex]));
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
@@ -52375,7 +52413,7 @@ class SelectToolMoveShapeCommand {
     }
 }
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lpYSP":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/centroid":"gsjQg"}],"lpYSP":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Protected, only to be used by Command

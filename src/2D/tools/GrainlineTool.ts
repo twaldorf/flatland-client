@@ -1,10 +1,10 @@
 import { ToolBase } from "../../types";
 import { state } from "../../State";
-import { drawCanvasFromState } from "../rendering/canvas";
+import { drawCanvasFromState, redrawCanvas } from "../rendering/canvas";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { findNearestPoint } from "../geometry/findNearestPoint";
 import { useAppState } from "../../UI/store";
-import { Vector2 } from "three";
+import { Vector, Vector2 } from "three";
 import { drawDrawPreview } from "../rendering/drawDrawPreview";
 import { pushCommand } from "../../Command";
 import { GrainlineToolCreateGrainlineCommand } from "../commands/GrainlineToolCreateGrainlineCommand";
@@ -20,6 +20,8 @@ export class GrainlineTool implements ToolBase {
 
   // Tool name
   readonly name:string = 'grainline';
+
+  private unitVector:Vector2 = new Vector2(0, -1);
 
   // Last set angle of grainline in radians where 0 and 2PI is the "top" i.e. north of the unit circle
   private angle:number;
@@ -89,8 +91,8 @@ export class GrainlineTool implements ToolBase {
 
     switch (this.__state.type) {
       case "drawing":
-        this.angle = pos.angleTo(this.__state.originPos);
         drawDrawPreview(this.__state.originPos, pos);
+        break;
     }
 
   }
@@ -99,7 +101,7 @@ export class GrainlineTool implements ToolBase {
     const pos = cLocalizePoint(e.clientX, e.clientY);
     switch (this.__state.type) {
       case "drawing":
-        this.angle = pos.angleTo(this.__state.originPos);
+        this.angle = this.angleFromNoon(pos, this.__state.originPos);
         pushCommand(new GrainlineToolCreateGrainlineCommand(this.__state.originPos, state.c_selected_shapes[0], this.angle));
     }
     this.transition({ type: "idle" });
@@ -114,6 +116,17 @@ export class GrainlineTool implements ToolBase {
       }
     });
     return value;
+  }
+
+  private angleFromNoon(vector:Vector2, origin:Vector2) {
+    vector = vector.sub(origin);
+    let baseAngle = Math.atan2(vector.y, vector.x);
+  
+    let ang = baseAngle;
+
+    // Map to [0, 2pi]
+    if (ang < 0) ang += 2 * Math.PI;
+    return ang;
   }
 
 }

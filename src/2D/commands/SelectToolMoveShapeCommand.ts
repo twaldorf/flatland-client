@@ -2,6 +2,7 @@ import { Vector2 } from "three";
 import { Command } from "../../Command";
 import { state } from "../../State";
 import { drawCanvasFromState } from "../rendering/canvas";
+import { computeCentroid } from "../geometry/centroid";
 
 export class SelectToolMoveShapeCommand implements Command {
   private shapeIndex:number;
@@ -28,6 +29,8 @@ export class SelectToolMoveShapeCommand implements Command {
       const after = state.c_points[i];
       state.c_pointmap.set(i, after);
     });
+
+    state.updateGrainlinePos( this.shapeIndex, computeCentroid( state.c_shapes[ this.shapeIndex ] ) );
     drawCanvasFromState(state);
   }
 
