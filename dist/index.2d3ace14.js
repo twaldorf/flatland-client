@@ -49827,7 +49827,6 @@ var _command = require("../../Command");
 var _pathToolMovePointCommand = require("../commands/PathToolMovePointCommand");
 var _cLocalizePoint = require("../pointer/cLocalizePoint");
 var _findNearestPoint = require("../geometry/findNearestPoint");
-var _pathToolCommand = require("../commands/PathToolCommand");
 var _pathToolSelectCommand = require("../commands/PathToolSelectCommand");
 var _pathToolDeselectCommand = require("../commands/PathToolDeselectCommand");
 var _pathToolClosePathCommand = require("../commands/PathToolClosePathCommand");
@@ -49853,6 +49852,7 @@ class PathTool {
         this.__length = 0;
         this.__currentPathIndex = -1;
     }
+    // Not implemented: stateful tool swapping (for redo)
     applyState(state) {
         this.__state = state;
     }
@@ -49895,7 +49895,7 @@ class PathTool {
             pathIndex
         };
     }
-    // Protected, to be used only by a Command
+    // To be used only by a Command
     /**
   @param {number} i - The index of the point within the shape or path
   @param {Vector2} v - The point to be inserted into the shape or path
@@ -49919,7 +49919,7 @@ class PathTool {
             pathIndex
         };
     }
-    // Protected, to be used by a Command
+    // To be used by a Command
     /**
   @param {number} i - The index of the point within the global point array
   @param {number} pi - The index of the path within the global path array
@@ -49939,25 +49939,28 @@ class PathTool {
     onMouseDown(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         (0, _state.state).pointer = pos;
-        const hitIndex = (0, _findNearestPoint.findNearestPoint)(pos, (0, _state.state).c_points);
+        var hitIndex = null;
+        if (this.__geometryId) hitIndex = (0, _findNearestPoint.findNearestGeometryPoint)(pos, [
+            (0, _state.state).c_geometryMap.get(this.__geometryId)
+        ]);
         switch(this.__state.type){
             case "drawing":
                 // Case: Close the path and connect to the first point in the shape if there three or more points
-                if (hitIndex == (0, _state.state).c_paths[this.__currentPathIndex][0]) {
+                if (hitIndex && hitIndex == (0, _state.state).c_geometryMap.get(this.__geometryId)?.pointIds[0]) {
                     (0, _command.pushCommand)(new (0, _pathToolClosePathCommand.PathToolClosePathCommand)((0, _state.state).c_paths[this.__currentPathIndex]));
                     this.transition({
                         type: 'idle'
                     });
                 } else if (hitIndex != null && (0, _state.state).c_paths[this.__currentPathIndex].indexOf(hitIndex) > -1) (0, _command.pushCommand)(new (0, _pathToolRemovePointCommand.PathToolRemovePointCommand)(this.__currentPathIndex, hitIndex));
-                else {
-                    (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, pos));
-                    this.transition({
-                        type: "drawing new point",
-                        currentPathIndex: this.__currentPathIndex,
-                        newPointIndex: (0, _state.state).c_points.length,
-                        mouseDownPos: pos
-                    });
-                }
+                else // TODO: simply do not do this
+                // Why: we'd like to be able to make the first point a bezier. Perhaps every point is actually a bezier?? that would be quite clean tbh let's try it
+                // pushCommand( new PathToolCommand(this, pos) );
+                this.transition({
+                    type: "drawing new point",
+                    currentPathIndex: this.__currentPathIndex,
+                    newPointIndex: (0, _state.state).c_points.length,
+                    mouseDownPos: pos
+                });
                 break;
             case "selecting":
                 if ((0, _state.state).c_selected.length == 0) // Case: no points are selected
@@ -49981,12 +49984,15 @@ class PathTool {
                 });
                 else {
                     // Begin drawing
+                    // This logic is being removed by bezier functionality
+                    // TODO: Add new point draw preview bubble
                     this.__currentPathIndex = (0, _state.state).c_shapes.length;
-                    console.log(this.__currentPathIndex);
-                    (0, _command.pushCommand)(new (0, _pathToolCommand.PathToolCommand)(this, pos));
+                    // pushCommand( new PathToolCommand(this, pos) );
                     this.transition({
-                        type: 'drawing',
-                        currentPathIndex: this.__currentPathIndex
+                        type: 'drawing new point',
+                        currentPathIndex: this.__currentPathIndex,
+                        newPointIndex: 0,
+                        mouseDownPos: pos
                     });
                     // Clear selected shapes, the incoming path is FIGURATIVELY the 'active' path
                     (0, _state.state).c_selected_shapes = [];
@@ -50057,11 +50063,16 @@ class PathTool {
             case "drawing new point":
                 // Move to draw Preview logic
                 // Case: this is the first point in the path
-                var from;
-                if (this.__length == 0) from = (0, _state.state).c_points[this.__state.newPointIndex];
-                else // Case: this is not the first point in the path, get the position of the last point
-                from = (0, _state.state).c_points[(0, _state.state).c_paths[this.__currentPathIndex][this.__length]];
+                // var from;
+                // if (this.__length == 0) {
+                //   from = state.c_points[ this.__state.newPointIndex ];
+                //   console.log('FROM', from)
+                // } else {
+                //   // Case: this is not the first point in the path, get the position of the last point
+                //   from = state.c_points[ state.c_paths[ this.__currentPathIndex ][ this.__length] ];
+                // }
                 if (this.__geometryId == null) {
+                    console.log('NEW GEOMETRY');
                     this.__geometryId = (0, _state.genGeoId)();
                     (0, _command.pushCommand)(new (0, _pathToolAddBezierCommand.PathToolAddBezierCommand)(this.__geometryId, this.__state.mouseDownPos, pos));
                 } else {
@@ -50130,7 +50141,7 @@ class PathTool {
     }
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","../../UI/store":"l1Ff7","../commands/PathToolAddBezierCommand":"97NAc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dci9b":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","../../UI/store":"l1Ff7","../commands/PathToolAddBezierCommand":"97NAc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dci9b":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "rad", ()=>rad);
@@ -50975,7 +50986,9 @@ const cLocalizePoint = (sx, sy)=>{
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "findNearestPoint", ()=>findNearestPoint);
+parcelHelpers.export(exports, "findNearestGeometryPoint", ()=>findNearestGeometryPoint);
 var _interface = require("../settings/interface");
+var _state = require("../../State");
 function findNearestPoint(pos, points) {
     let closestIndex = null;
     let closestDist = Infinity;
@@ -50988,31 +51001,176 @@ function findNearestPoint(pos, points) {
     });
     return closestIndex;
 }
+function findNearestGeometryPoint(pos, geometries) {
+    let nearestId = null;
+    let minDistSq = Infinity;
+    for (const geom of geometries)for (const pointId of geom.pointIds){
+        const pt = (0, _state.state).c_pointsMap.get(pointId);
+        if (!pt) continue;
+        const dx = pt.x - pos.x;
+        const dy = pt.y - pos.y;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < minDistSq) {
+            minDistSq = distSq;
+            nearestId = pointId;
+        }
+    }
+    return nearestId;
+}
 
-},{"../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bGlHe":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../State":"83rpN"}],"jtaot":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "PathToolCommand", ()=>PathToolCommand);
-var _store = require("../../UI/store");
-class PathToolCommand {
-    constructor(tool, point){
-        this.tool = tool;
-        this.__point = point;
-        this.__index = -1;
-        this.__pathIndex = -1;
+parcelHelpers.export(exports, "PathToolSelectCommand", ()=>PathToolSelectCommand);
+var _state = require("../../State");
+class PathToolSelectCommand {
+    constructor(index){
+        this.__index = index;
+        this.__point = (0, _state.state).tool.getPointByIndex(index);
     }
     do() {
-        const indices = this.tool.addPointToCurrentPath(this.__point);
-        this.__index = indices.pointIndex;
-        this.__pathIndex = indices.pathIndex;
-        (0, _store.useAppState).getState().addShapePoint(this.__point);
+        (0, _state.state).context.fillStyle = 'blue';
+        (0, _state.state).context.fillRect(this.__point.x, this.__point.y, 10, 10);
+        // In PathTool.ts
+        (0, _state.state).tool.selectPoint(this.__index);
     }
     undo() {
-        this.tool.removePointFromPath(this.__index, this.__pathIndex);
+        (0, _state.state).tool.removePointFromSelection(this.__point);
     }
 }
 
-},{"../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fE5SE":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathToolDeselectCommand", ()=>PathToolDeselectCommand);
+var _state = require("../../State");
+class PathToolDeselectCommand {
+    constructor(){
+        this.__selections = (0, _state.state).c_selected;
+    }
+    do() {
+        (0, _state.state).tool.deselect();
+    }
+    undo() {
+        this.__selections.forEach((index)=>{
+            (0, _state.state).tool.selectPoint(index);
+        });
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4pXyd":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathToolClosePathCommand", ()=>PathToolClosePathCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _changeTool = require("../tools/changeTool");
+var _polygon = require("../../3D/geometry/polygon");
+var _store = require("../../UI/store");
+var _drawPieceThumbnail = require("../rendering/drawPieceThumbnail");
+var _mathUtils = require("three/src/math/MathUtils");
+class PathToolClosePathCommand {
+    constructor(path){
+        this.path = [
+            ...path
+        ];
+        this.pathIndex = -1;
+        this.shapeIndex = -1;
+    }
+    // Close the path and move its points from c_paths to c_shapes
+    do() {
+        if (this.path.length < 3) return;
+        // c_activePath is the path index of the currently drawing/selected path
+        // Close path
+        (0, _state.state).c_paths[(0, _state.state).c_activePath].push(this.path[0]);
+        // Save shape and remove shape from paths list
+        this.shapeIndex = (0, _state.state).c_shapes.push((0, _state.state).c_paths.splice((0, _state.state).c_activePath, 1)[0]) - 1;
+        // set active shape to the completed shape
+        (0, _state.state).c_selected_shapes = [
+            this.shapeIndex
+        ];
+        // Update UI pieces list
+        const piece = {
+            name: `piece${(0, _store.useAppState).getState().pieces.length}`,
+            shapeIndex: this.shapeIndex,
+            id: (0, _mathUtils.generateUUID)(),
+            canvas: null,
+            thumb: null
+        };
+        piece.canvas = (0, _drawPieceThumbnail.generatePieceThumbnail)(piece);
+        (0, _store.useAppState).getState().addPiece(piece);
+        // Store index
+        this.pathIndex = (0, _state.state).c_activePath;
+        // Clear active path
+        (0, _state.state).c_activePath = -1;
+        (0, _changeTool.changeTool)({
+            type: 'select'
+        });
+        // Demo: create polygon
+        const shape = (0, _polygon.createPolygonPlane)(this.path);
+        console.log(shape);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // Remove shape from shapes
+        (0, _state.state).c_shapes.splice(this.shapeIndex, 1);
+        // Send path without closing point to paths, set active index
+        (0, _state.state).c_activePath = (0, _state.state).c_paths.push(this.path) - 1;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../tools/changeTool":"kXHtP","../../3D/geometry/polygon":"9OqtZ","../../UI/store":"l1Ff7","../rendering/drawPieceThumbnail":"1Jt5c","three/src/math/MathUtils":"cuzU2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kXHtP":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "changeTool", ()=>changeTool);
+var _state = require("../../State");
+var _store = require("../../UI/store");
+var _canvas = require("../rendering/canvas");
+var _grainlineTool = require("./GrainlineTool");
+var _measureTool = require("./MeasureTool");
+var _pathTool = require("./PathTool");
+var _selectTool = require("./SelectTool");
+function changeTool(toolState) {
+    // name is required, all other properties optional
+    // Context: this needs to be the tool name but it should also accept entire tool state wholesale for the purposes of undo
+    const newToolName = toolState.name;
+    const importedState = toolState.state;
+    console.log(toolState.name);
+    (0, _state.state).tool.dismountEvents();
+    (0, _store.useAppState).getState().resetUI();
+    switch(newToolName){
+        case "path":
+            (0, _state.state).tool = new (0, _pathTool.PathTool)();
+            (0, _store.useAppState).getState().setSelectedTool("path");
+            if (importedState) (0, _state.state).tool.applyState(importedState);
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "select":
+            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            (0, _store.useAppState).getState().setSelectedTool("select");
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "measure":
+            (0, _state.state).tool = new (0, _measureTool.MeasureTool)();
+            (0, _store.useAppState).getState().setSelectedTool("measure");
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "grainline":
+            (0, _state.state).tool = new (0, _grainlineTool.GrainlineTool)();
+            (0, _store.useAppState).getState().setSelectedTool("grainline");
+            (0, _canvas.redrawCanvas)();
+            break;
+        default:
+            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            (0, _store.useAppState).getState().setSelectedTool("select");
+            (0, _canvas.redrawCanvas)();
+            break;
+    }
+    (0, _state.state).tool.initializeEvents();
+}
+
+},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useAppState", ()=>useAppState);
@@ -51291,159 +51449,7 @@ class GenericUpdatePointCommand {
     }
 }
 
-},{"../../../State":"83rpN","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jtaot":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "PathToolSelectCommand", ()=>PathToolSelectCommand);
-var _state = require("../../State");
-class PathToolSelectCommand {
-    constructor(index){
-        this.__index = index;
-        this.__point = (0, _state.state).tool.getPointByIndex(index);
-    }
-    do() {
-        (0, _state.state).context.fillStyle = 'blue';
-        (0, _state.state).context.fillRect(this.__point.x, this.__point.y, 10, 10);
-        // In PathTool.ts
-        (0, _state.state).tool.selectPoint(this.__index);
-    }
-    undo() {
-        (0, _state.state).tool.removePointFromSelection(this.__point);
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fE5SE":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "PathToolDeselectCommand", ()=>PathToolDeselectCommand);
-var _state = require("../../State");
-class PathToolDeselectCommand {
-    constructor(){
-        this.__selections = (0, _state.state).c_selected;
-    }
-    do() {
-        (0, _state.state).tool.deselect();
-    }
-    undo() {
-        this.__selections.forEach((index)=>{
-            (0, _state.state).tool.selectPoint(index);
-        });
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4pXyd":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "PathToolClosePathCommand", ()=>PathToolClosePathCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _changeTool = require("../tools/changeTool");
-var _polygon = require("../../3D/geometry/polygon");
-var _store = require("../../UI/store");
-var _drawPieceThumbnail = require("../rendering/drawPieceThumbnail");
-var _mathUtils = require("three/src/math/MathUtils");
-class PathToolClosePathCommand {
-    constructor(path){
-        this.path = [
-            ...path
-        ];
-        this.pathIndex = -1;
-        this.shapeIndex = -1;
-    }
-    // Close the path and move its points from c_paths to c_shapes
-    do() {
-        if (this.path.length < 3) return;
-        // c_activePath is the path index of the currently drawing/selected path
-        // Close path
-        (0, _state.state).c_paths[(0, _state.state).c_activePath].push(this.path[0]);
-        // Save shape and remove shape from paths list
-        this.shapeIndex = (0, _state.state).c_shapes.push((0, _state.state).c_paths.splice((0, _state.state).c_activePath, 1)[0]) - 1;
-        // set active shape to the completed shape
-        (0, _state.state).c_selected_shapes = [
-            this.shapeIndex
-        ];
-        // Update UI pieces list
-        const piece = {
-            name: `piece${(0, _store.useAppState).getState().pieces.length}`,
-            shapeIndex: this.shapeIndex,
-            id: (0, _mathUtils.generateUUID)(),
-            canvas: null,
-            thumb: null
-        };
-        piece.canvas = (0, _drawPieceThumbnail.generatePieceThumbnail)(piece);
-        (0, _store.useAppState).getState().addPiece(piece);
-        // Store index
-        this.pathIndex = (0, _state.state).c_activePath;
-        // Clear active path
-        (0, _state.state).c_activePath = -1;
-        (0, _changeTool.changeTool)({
-            type: 'select'
-        });
-        // Demo: create polygon
-        const shape = (0, _polygon.createPolygonPlane)(this.path);
-        console.log(shape);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        // Remove shape from shapes
-        (0, _state.state).c_shapes.splice(this.shapeIndex, 1);
-        // Send path without closing point to paths, set active index
-        (0, _state.state).c_activePath = (0, _state.state).c_paths.push(this.path) - 1;
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../tools/changeTool":"kXHtP","../../3D/geometry/polygon":"9OqtZ","../../UI/store":"l1Ff7","../rendering/drawPieceThumbnail":"1Jt5c","three/src/math/MathUtils":"cuzU2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kXHtP":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "changeTool", ()=>changeTool);
-var _state = require("../../State");
-var _store = require("../../UI/store");
-var _canvas = require("../rendering/canvas");
-var _grainlineTool = require("./GrainlineTool");
-var _measureTool = require("./MeasureTool");
-var _pathTool = require("./PathTool");
-var _selectTool = require("./SelectTool");
-function changeTool(toolState) {
-    // name is required, all other properties optional
-    // Context: this needs to be the tool name but it should also accept entire tool state wholesale for the purposes of undo
-    const newToolName = toolState.name;
-    const importedState = toolState.state;
-    console.log(toolState.name);
-    (0, _state.state).tool.dismountEvents();
-    (0, _store.useAppState).getState().resetUI();
-    switch(newToolName){
-        case "path":
-            (0, _state.state).tool = new (0, _pathTool.PathTool)();
-            (0, _store.useAppState).getState().setSelectedTool("path");
-            if (importedState) (0, _state.state).tool.applyState(importedState);
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "select":
-            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
-            (0, _store.useAppState).getState().setSelectedTool("select");
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "measure":
-            (0, _state.state).tool = new (0, _measureTool.MeasureTool)();
-            (0, _store.useAppState).getState().setSelectedTool("measure");
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "grainline":
-            (0, _state.state).tool = new (0, _grainlineTool.GrainlineTool)();
-            (0, _store.useAppState).getState().setSelectedTool("grainline");
-            (0, _canvas.redrawCanvas)();
-            break;
-        default:
-            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
-            (0, _store.useAppState).getState().setSelectedTool("select");
-            (0, _canvas.redrawCanvas)();
-            break;
-    }
-    (0, _state.state).tool.initializeEvents();
-}
-
-},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports,__globalThis) {
+},{"../../../State":"83rpN","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);

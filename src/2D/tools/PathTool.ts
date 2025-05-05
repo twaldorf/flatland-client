@@ -1,5 +1,5 @@
 import { Vector, Vector2 } from "three";
-import { State, Tool, ToolBase } from "../../types";
+import { Geometry2D, State, Tool, ToolBase } from "../../types";
 import { selectionRadius } from "../settings/interface";
 import { genGeoId, state } from "../../State";
 import { drawCanvasFromState } from "../rendering/canvas";
@@ -8,7 +8,7 @@ import { drawSelectionMovePreview } from "../rendering/drawSelectionMovePreview"
 import { pushCommand } from "../../Command";
 import { PathToolMovePointCommand } from "../commands/PathToolMovePointCommand";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
-import { findNearestPoint } from "../geometry/findNearestPoint";
+import { findNearestGeometryPoint, findNearestPoint } from "../geometry/findNearestPoint";
 import { PathToolCommand } from "../commands/PathToolCommand";
 import { PathToolSelectCommand } from "../commands/PathToolSelectCommand";
 import { PathToolDeselectCommand } from "../commands/PathToolDeselectCommand";
@@ -55,6 +55,7 @@ export class PathTool implements ToolBase {
     this.__currentPathIndex = -1;
   }
 
+  // Not implemented: stateful tool swapping (for redo)
   public applyState (state: ToolBase['state']):void {
     this.__state = state;
   };
@@ -105,7 +106,7 @@ export class PathTool implements ToolBase {
     return { pointIndex, pathIndex };
   }
 
-  // Protected, to be used only by a Command
+  // To be used only by a Command
   /**
   @param {number} i - The index of the point within the shape or path
   @param {Vector2} v - The point to be inserted into the shape or path
@@ -134,7 +135,7 @@ export class PathTool implements ToolBase {
     return { pointIndex: gPointIndex, pathIndex };
   }
 
-  // Protected, to be used by a Command
+  // To be used by a Command
   /**
   @param {number} i - The index of the point within the global point array
   @param {number} pi - The index of the path within the global path array
@@ -157,26 +158,26 @@ export class PathTool implements ToolBase {
   private onMouseDown(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
     state.pointer = pos;
-    const hitIndex = findNearestPoint(pos, state.c_points);
+
+    var hitIndex = null;
+    if (this.__geometryId) {
+      hitIndex = findNearestGeometryPoint(pos, [state.c_geometryMap.get(this.__geometryId) as Geometry2D]);
+    }
 
     switch (this.__state.type) {
       case "drawing":
         // Case: Close the path and connect to the first point in the shape if there three or more points
-        if (hitIndex == state.c_paths[this.__currentPathIndex][0]) { 
+        if (hitIndex && hitIndex == state.c_geometryMap.get(this.__geometryId)?.pointIds[0]) { 
           pushCommand( new PathToolClosePathCommand( state.c_paths[this.__currentPathIndex] ) );
           this.transition({
             type: 'idle'
           }); 
         } else if ( hitIndex != null && state.c_paths[ this.__currentPathIndex ].indexOf( hitIndex ) > -1 ) {
           pushCommand( new PathToolRemovePointCommand( this.__currentPathIndex, hitIndex ));
-          // pushCommand( new PathToolSelectCommand( hitIndex ) );
-          // this.transition({
-          //   type: 'selecting',
-          //   selectedIndices: [ hitIndex ],
-          //   hitIndex
-          // })
         } else {
-          pushCommand( new PathToolCommand(this, pos) );
+          // TODO: simply do not do this
+          // Why: we'd like to be able to make the first point a bezier. Perhaps every point is actually a bezier?? that would be quite clean tbh let's try it
+          // pushCommand( new PathToolCommand(this, pos) );
           this.transition({
             type: "drawing new point",
             currentPathIndex: this.__currentPathIndex,
@@ -214,12 +215,15 @@ export class PathTool implements ToolBase {
           });
         } else {
           // Begin drawing
+          // This logic is being removed by bezier functionality
+          // TODO: Add new point draw preview bubble
           this.__currentPathIndex = state.c_shapes.length;
-          console.log(this.__currentPathIndex)
-          pushCommand( new PathToolCommand(this, pos) );
+          // pushCommand( new PathToolCommand(this, pos) );
           this.transition( {
-            type: 'drawing',
-            currentPathIndex: this.__currentPathIndex
+            type: 'drawing new point',
+            currentPathIndex: this.__currentPathIndex,
+            newPointIndex: 0, // TODO: resolve this
+            mouseDownPos: pos,
           } );
           // Clear selected shapes, the incoming path is FIGURATIVELY the 'active' path
           state.c_selected_shapes = [];
@@ -250,7 +254,7 @@ export class PathTool implements ToolBase {
         break;
 
       case "drawing new point":
-        // draw preview
+        // update draw preview
         break;
 
       case "drawing":
@@ -311,15 +315,17 @@ export class PathTool implements ToolBase {
       case "drawing new point":
         // Move to draw Preview logic
         // Case: this is the first point in the path
-        var from;
-        if (this.__length == 0) {
-          from = state.c_points[ this.__state.newPointIndex ];
-        } else {
-          // Case: this is not the first point in the path, get the position of the last point
-          from = state.c_points[ state.c_paths[ this.__currentPathIndex ][ this.__length] ];
-        }
+        // var from;
+        // if (this.__length == 0) {
+        //   from = state.c_points[ this.__state.newPointIndex ];
+        //   console.log('FROM', from)
+        // } else {
+        //   // Case: this is not the first point in the path, get the position of the last point
+        //   from = state.c_points[ state.c_paths[ this.__currentPathIndex ][ this.__length] ];
+        // }
 
         if (this.__geometryId == null) {
+          console.log('NEW GEOMETRY')
           this.__geometryId = genGeoId();
           pushCommand(new PathToolAddBezierCommand(this.__geometryId, this.__state.mouseDownPos, pos));
         } else {
