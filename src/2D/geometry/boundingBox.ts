@@ -1,5 +1,6 @@
 import { Vector2 } from "three";
 import { state } from "../../State";
+import { Geometry2D, BezierPoint } from "../../types";
 
 // Given an array of point indices which make up a shape,
 // Return a bounding rect within the coordinate space (i.e. not normalized)
@@ -27,6 +28,44 @@ export function getShapeBoundingRect(shapeArr: number[]): { x0: number, y0: numb
   }
 
   return { x0, y0, x1, y1 };
+}
+
+export function getGeometryBoundingRect(
+  shape: Geometry2D
+): { x0: number; y0: number; x1: number; y1: number } {
+  const ids = shape.pointIds;
+  if (!ids || ids.length === 0) {
+    throw new Error(`Geometry ${shape.id} has no points.`);
+  }
+
+  let x0 =  Infinity;
+  let y0 =  Infinity;
+  let x1 = -Infinity;
+  let y1 = -Infinity;
+
+  for (const pid of ids) {
+    const pt = state.c_pointsMap.get(pid);
+    if (!pt) {
+      throw new Error(`Unknown point id "${pid}" in geometry "${shape.id}".`);
+    }
+
+    // unwrap Vector2 vs. BezierPoint
+    const { x, y } = isBezierPoint(pt)
+      ? pt.to
+      : pt;
+
+    x0 = Math.min(x0, x);
+    y0 = Math.min(y0, y);
+    x1 = Math.max(x1, x);
+    y1 = Math.max(y1, y);
+  }
+
+  return { x0, y0, x1, y1 };
+}
+
+// Type guard for BezierPoint
+function isBezierPoint(pt: Vector2 | BezierPoint): pt is BezierPoint {
+  return (pt as BezierPoint).to !== undefined;
 }
 
 // Overload stand-in for Map of points, not necessarily closed shapes

@@ -1,73 +1,70 @@
-import { Vector2, Vector2Tuple } from "three";
+import { generateUUID } from "three/src/math/MathUtils";
+import { createPolygonPlane } from "../../3D/geometry/polygon";
 import { Command } from "../../Command";
 import { state } from "../../State";
-import { drawCanvasFromState } from "../rendering/canvas";
-import { changeTool } from "../tools/changeTool";
-import { createPolygonPlane } from "../../3D/geometry/polygon";
+import { Geometry2D, Piece } from "../../types";
 import { useAppState } from "../../UI/store";
+import { drawCanvasFromState } from "../rendering/canvas";
 import { generatePieceThumbnail } from "../rendering/drawPieceThumbnail";
-import { generateUUID } from "three/src/math/MathUtils";
-import { Piece } from "../../types";
+
 
 export class PathToolClosePathCommand implements Command {
-  private path: number[]; // This is the path without the closing point
-  private pathIndex: number;
-  private shapeIndex: number;
+  private geomId: string;
+  private pieceId: string | null = null;
 
-  constructor(path: number[]) {
-    this.path = [...path];
-    this.pathIndex = -1;
-    this.shapeIndex = -1;
+  constructor(geomId:string) {
+    this.geomId = geomId;
   }
 
-  // Close the path and move its points from c_paths to c_shapes
   do() {
-    if (this.path.length < 3) return;
+    const geom = state.c_geometryMap.get(this.geomId);
+    if (!geom || geom.pointIds.length < 3) return;
 
-    // c_activePath is the path index of the currently drawing/selected path
+    // Close the loop by repeating the first point
+    geom.pointIds.push(geom.pointIds[0]);
+    geom.type = "shape";
+    state.c_geometryMap.set(this.geomId, geom);
 
-    // Close path
-    state.c_paths[ state.c_activePath ].push(this.path[0]);
+    // Select the geometry
+    state.c_selected_geometries = [this.geomId];
 
-    // Save shape and remove shape from paths list
-    this.shapeIndex = state.c_shapes.push( state.c_paths.splice( state.c_activePath, 1 )[0] ) - 1;
-
-    // set active shape to the completed shape
-    state.c_selected_shapes = [ this.shapeIndex ];
-
-    // Update UI pieces list
-    const piece:Piece = { 
+    // Register Piece
+    const piece: Piece = {
+      id: generateUUID(),
       name: `piece${useAppState.getState().pieces.length}`,
-      shapeIndex: this.shapeIndex, id:generateUUID(),
-      canvas: null, 
-      thumb: null
+      shapeId: this.geomId,
+      canvas: null!,
+      thumb: null!,
+      angle: 0,
     };
 
+    // generate thumbnail (mutation) & register with UI store
     piece.canvas = generatePieceThumbnail(piece);
     useAppState.getState().addPiece(piece);
+    this.pieceId = piece.id;
 
-    // Store index
-    this.pathIndex = state.c_activePath;
-
-    // Clear active path
-    state.c_activePath = -1;
-
-    changeTool( { type: 'select' } );
-
-    // Demo: create polygon
-    const shape = createPolygonPlane(this.path);
-    console.log(shape)
-
-    drawCanvasFromState( state );
+    drawCanvasFromState(state);
   }
 
   undo() {
-    // Remove shape from shapes
-    state.c_shapes.splice(this.shapeIndex, 1);
+    const geom = state.c_geometryMap.get(this.geomId);
+    if (!geom) return;
 
-    // Send path without closing point to paths, set active index
-    state.c_activePath = state.c_paths.push( this.path ) - 1;
+    // 1) Re-open the path
+    geom.pointIds.pop();
+    geom.type = "path";
+    state.c_geometryMap.set(this.geomId, geom);
 
+    // 2) Un-select
+    state.c_selected_geometries = [];
+
+    // 3) Remove the piece we added
+    if (this.pieceId) {
+      // useAppState.getState().removePiece(this.pieceId);
+      this.pieceId = null;
+    }
+
+    // 4) Redraw
     drawCanvasFromState(state);
   }
 }

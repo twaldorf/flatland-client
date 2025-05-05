@@ -49947,7 +49947,7 @@ class PathTool {
             case "drawing":
                 // Case: Close the path and connect to the first point in the shape if there three or more points
                 if (hitIndex && hitIndex == (0, _state.state).c_geometryMap.get(this.__geometryId)?.pointIds[0]) {
-                    (0, _command.pushCommand)(new (0, _pathToolClosePathCommand.PathToolClosePathCommand)((0, _state.state).c_paths[this.__currentPathIndex]));
+                    (0, _command.pushCommand)(new (0, _pathToolClosePathCommand.PathToolClosePathCommand)(this.__geometryId));
                     this.transition({
                         type: 'idle'
                     });
@@ -50316,41 +50316,144 @@ function getOnscreenBuffer(bufferId) {
 },{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lgYVM":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+/** stroke + fill the closed polygon through these IDs */ // function drawPolygonFromPointIds(
+//   ids: string[],
+//   ctx: CanvasRenderingContext2D
+// ) {
+//   if (ids.length < 2) return;
+//   drawArrayOfPointIds(ids, ctx);
+//   ctx.closePath();
+//   ctx.fill();
+//   ctx.stroke();
+// }
+parcelHelpers.export(exports, "drawPolygonFromPointIds", ()=>drawPolygonFromPointIds);
 parcelHelpers.export(exports, "drawPaths", ()=>drawPaths);
-parcelHelpers.export(exports, "drawShape", ()=>drawShape);
-parcelHelpers.export(exports, "drawShapeNormalized", ()=>drawShapeNormalized);
+/** legacy helper—now just re-composites the paths buffer */ // export function applyPaths() {
+//   const buf = state.c_buffers.get("paths");
+//   if (buf) state.context.drawImage(buf.canvas, 0, 0);
+// }
+/** draw a single shape geometry (outline + fill) */ parcelHelpers.export(exports, "drawShape", ()=>drawShape);
+/** draw a shape—but normalized so its top‐left is at (0,0) */ parcelHelpers.export(exports, "drawShapeNormalized", ()=>drawShapeNormalized);
+// // Draw paths AND shapes
+// export const drawPaths = (state: State) => {
+//   const { canvas, context } = getBuffer('paths');
+//   canvas.width = state.canvas.width;
+//   canvas.height = state.canvas.height;
+//   const _ = context;
+//   // Make sure this is not a copy op
+//   const paths = state.c_paths;
+//   paths.forEach((points, i) => {
+//     // points is the array of point indices within state.c_points, i is the path index, not important
+//     drawArrayOfPointIndices(points, context);
+//   });
+//   if (state.c_shapes.length > 0) {
+//     // draw shapes
+//     state.c_shapes.forEach((shapeArr, shapeIndex) => {
+//       drawShape(shapeArr,context);
+//       drawGrainOnShape(shapeIndex, context);
+//     });
+//   }
+//   state.context.drawImage(canvas, 0, 0);
+// };
+// export function drawShape(shapeArr:number[], context:OffscreenCanvasRenderingContext2D) {
+//   drawArrayOfPointIndices(shapeArr, context);
+//   drawPolygonFromPointIndices(shapeArr, context);
+// }
+// export function drawShapeNormalized(shapeArr:number[], context:OffscreenCanvasRenderingContext2D|CanvasRenderingContext2D) {
+//   const box = getShapeBoundingRect(shapeArr);
+//   drawPolygonFromOffsetPointIndices(shapeArr, -box.x0, -box.y0, context);
+// }
 parcelHelpers.export(exports, "applyPaths", ()=>applyPaths);
 var _state = require("../../State");
 var _boundingBox = require("../geometry/boundingBox");
-var _drawArrayOfPointIndices = require("./drawArrayOfPointIndices");
 var _drawGrainlines = require("./drawGrainlines");
-var _drawPolygonFromPointIndices = require("./drawPolygonFromPointIndices");
 var _getBuffer = require("./getBuffer");
-const drawPaths = (state)=>{
-    const { canvas, context } = (0, _getBuffer.getBuffer)('paths');
-    canvas.width = state.canvas.width;
-    canvas.height = state.canvas.height;
-    const _ = context;
-    // Make sure this is not a copy op
-    const paths = state.c_paths;
-    paths.forEach((points, i)=>{
-        // points is the array of point indices within state.c_points, i is the path index, not important
-        (0, _drawArrayOfPointIndices.drawArrayOfPointIndices)(points, context);
-    });
-    if (state.c_shapes.length > 0) // draw shapes
-    state.c_shapes.forEach((shapeArr, shapeIndex)=>{
-        drawShape(shapeArr, context);
-        (0, _drawGrainlines.drawGrainOnShape)(shapeIndex, context);
-    });
-    state.context.drawImage(canvas, 0, 0);
-};
-function drawShape(shapeArr, context) {
-    (0, _drawArrayOfPointIndices.drawArrayOfPointIndices)(shapeArr, context);
-    (0, _drawPolygonFromPointIndices.drawPolygonFromPointIndices)(shapeArr, context);
+//— helpers —//
+function isBezierPoint(pt) {
+    return pt.to !== undefined;
 }
-function drawShapeNormalized(shapeArr, context) {
-    const box = (0, _boundingBox.getShapeBoundingRect)(shapeArr);
-    (0, _drawPolygonFromPointIndices.drawPolygonFromOffsetPointIndices)(shapeArr, -box.x0, -box.y0, context);
+function getCoord(id) {
+    const pt = (0, _state.state).c_pointsMap.get(id);
+    if (!pt) throw new Error(`Unknown point id "${id}"`);
+    return isBezierPoint(pt) ? pt.to : pt;
+}
+/** stroke a polyline through the given point-IDs */ function drawArrayOfPointIds(ids, ctx) {
+    if (!ids.length) return;
+    const first = getCoord(ids[0]);
+    ctx.beginPath();
+    ctx.moveTo(first.x, first.y);
+    for(let i = 1; i < ids.length; i++){
+        const p = getCoord(ids[i]);
+        ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+}
+function drawPolygonFromPointIds(ids, ctx) {
+    if (ids.length < 2) return;
+    // fetch the first point to see which flavor we need
+    const first = (0, _state.state).c_pointsMap.get(ids[0]);
+    if (!first) throw new Error(`Unknown point ID ${ids[0]}`);
+    ctx.beginPath();
+    if (isBezierPoint(first)) // ─────── Bézier loop ───────
+    ids.forEach((pid, i)=>{
+        const bp = (0, _state.state).c_pointsMap.get(pid);
+        if (i === 0) ctx.moveTo(bp.from.x, bp.from.y);
+        else {
+            const prev = (0, _state.state).c_pointsMap.get(ids[i - 1]);
+            ctx.bezierCurveTo(prev.c1.x, prev.c1.y, bp.c2.x, bp.c2.y, bp.to.x, bp.to.y);
+        }
+    });
+    else {
+        // ─────── Straight‐line loop ───────
+        const p0 = first;
+        ctx.moveTo(p0.x, p0.y);
+        for(let i = 1; i < ids.length; i++){
+            const p = (0, _state.state).c_pointsMap.get(ids[i]);
+            if (!p) throw new Error(`Unknown point ID ${ids[i]}`);
+            ctx.lineTo(p.x, p.y);
+        }
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+}
+/** same as above but offset all points by (dx,dy) */ function drawPolygonFromOffsetPointIds(ids, dx, dy, ctx) {
+    if (ids.length < 2) return;
+    const first = getCoord(ids[0]);
+    ctx.beginPath();
+    ctx.moveTo(first.x + dx, first.y + dy);
+    for(let i = 1; i < ids.length; i++){
+        const p = getCoord(ids[i]);
+        ctx.lineTo(p.x + dx, p.y + dy);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+}
+const drawPaths = (st)=>{
+    const { canvas, context: bufferCtx } = (0, _getBuffer.getBuffer)("paths");
+    // match main canvas size
+    bufferCtx.canvas.width = st.canvas.width;
+    bufferCtx.canvas.height = st.canvas.height;
+    // 1) draw all open paths
+    for (const geom of st.c_geometryMap.values())if (geom.type === "path") drawArrayOfPointIds(geom.pointIds, bufferCtx);
+    // 2) draw all closed shapes (and their grainlines)
+    for (const geom of st.c_geometryMap.values())if (geom.type === "shape") {
+        // outline + fill
+        drawPolygonFromPointIds(geom.pointIds, bufferCtx);
+        // grain overlay
+        (0, _drawGrainlines.drawGrainOnShape)(geom.id, bufferCtx);
+    }
+    // 3) composite into main ctx
+    st.context.drawImage(bufferCtx.canvas, 0, 0);
+};
+function drawShape(geom, ctx) {
+    drawArrayOfPointIds(geom.pointIds, ctx);
+    drawPolygonFromPointIds(geom.pointIds, ctx);
+}
+function drawShapeNormalized(geom, ctx) {
+    const { x0, y0 } = (0, _boundingBox.getGeometryBoundingRect)(geom);
+    drawPolygonFromOffsetPointIds(geom.pointIds, -x0, -y0, ctx);
 }
 function applyPaths() {
     const obj = (0, _state.state).c_buffers.get('paths');
@@ -50360,13 +50463,41 @@ function drawGrainlines(shapeIndex, context) {
     throw new Error("Function not implemented.");
 }
 
-},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawArrayOfPointIndices":"1cqZx","./drawGrainlines":"8S5xA","./drawPolygonFromPointIndices":"2ROJq","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3SCvR":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./drawGrainlines":"8S5xA","./getBuffer":"7bBl8","../geometry/boundingBox":"3SCvR"}],"8S5xA":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// export function drawGrainlines() {
+// const { canvas, context } = getBuffer('grainlines');
+// canvas.width = state.canvas.width;
+// canvas.height = state.canvas.height;
+//   state.grainlines.forEach((grainline) => {
+// context.moveTo(grainline.x, grainline.y);
+// context.lineTo(grainline.x + Math.cos(grainline.angle), grainline.y + Math.sin(grainline.angle));
+// context.stroke();
+//   });
+// }
+parcelHelpers.export(exports, "drawGrainOnShape", ()=>drawGrainOnShape);
+var _state = require("../../State");
+function drawGrainOnShape(shapeIndex, context) {
+    // const { canvas, context } = getBuffer('grainlines');
+    // canvas.width = state.canvas.width;
+    // canvas.height = state.canvas.height;
+    const grainline = (0, _state.state).c_grainlines.get(shapeIndex);
+    if (grainline) {
+        context.moveTo(grainline.position.x, grainline.position.y);
+        context.lineTo(grainline.position.x + Math.cos(grainline.angle - (2 * Math.PI + Math.PI / 2)) * 100, grainline.position.y + Math.sin(grainline.angle - (2 * Math.PI + Math.PI / 2)) * 100);
+        context.stroke();
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3SCvR":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Given an array of point indices which make up a shape,
 // Return a bounding rect within the coordinate space (i.e. not normalized)
 // In the form of x0, y0: upper left and x1, y1: bottom right
 parcelHelpers.export(exports, "getShapeBoundingRect", ()=>getShapeBoundingRect);
+parcelHelpers.export(exports, "getGeometryBoundingRect", ()=>getGeometryBoundingRect);
 // Overload stand-in for Map of points, not necessarily closed shapes
 parcelHelpers.export(exports, "getMapShapeBoundingRect", ()=>getMapShapeBoundingRect);
 // Given an array of point indices making up a shape (where the points are in state.c_points:number[]),
@@ -50392,6 +50523,34 @@ function getShapeBoundingRect(shapeArr) {
         x1,
         y1
     };
+}
+function getGeometryBoundingRect(shape) {
+    const ids = shape.pointIds;
+    if (!ids || ids.length === 0) throw new Error(`Geometry ${shape.id} has no points.`);
+    let x0 = Infinity;
+    let y0 = Infinity;
+    let x1 = -Infinity;
+    let y1 = -Infinity;
+    for (const pid of ids){
+        const pt = (0, _state.state).c_pointsMap.get(pid);
+        if (!pt) throw new Error(`Unknown point id "${pid}" in geometry "${shape.id}".`);
+        // unwrap Vector2 vs. BezierPoint
+        const { x, y } = isBezierPoint(pt) ? pt.to : pt;
+        x0 = Math.min(x0, x);
+        y0 = Math.min(y0, y);
+        x1 = Math.max(x1, x);
+        y1 = Math.max(y1, y);
+    }
+    return {
+        x0,
+        y0,
+        x1,
+        y1
+    };
+}
+// Type guard for BezierPoint
+function isBezierPoint(pt) {
+    return pt.to !== undefined;
 }
 function getMapShapeBoundingRect(shapeMap) {
     const points = Array.from(shapeMap.values());
@@ -50424,95 +50583,7 @@ function getMapShapeDimensions(shapeMap) {
     };
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1cqZx":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawArrayOfPointIndices", ()=>drawArrayOfPointIndices);
-var _canvas = require("./canvas");
-function drawArrayOfPointIndices(points, context) {
-    const _ = context;
-    if (points.length > 0) {
-        _.beginPath();
-        _.strokeStyle = 'black';
-        const firstPoint = (0, _canvas.point)(points[0]);
-        _.moveTo(firstPoint.x, firstPoint.y);
-        for(let i = 1; i < points.length; ++i){
-            _.lineTo((0, _canvas.point)(points[i]).x, (0, _canvas.point)(points[i]).y);
-            _.moveTo((0, _canvas.point)(points[i]).x, (0, _canvas.point)(points[i]).y);
-        }
-    }
-    _.stroke();
-}
-
-},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8S5xA":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-// export function drawGrainlines() {
-// const { canvas, context } = getBuffer('grainlines');
-// canvas.width = state.canvas.width;
-// canvas.height = state.canvas.height;
-//   state.grainlines.forEach((grainline) => {
-// context.moveTo(grainline.x, grainline.y);
-// context.lineTo(grainline.x + Math.cos(grainline.angle), grainline.y + Math.sin(grainline.angle));
-// context.stroke();
-//   });
-// }
-parcelHelpers.export(exports, "drawGrainOnShape", ()=>drawGrainOnShape);
-var _state = require("../../State");
-function drawGrainOnShape(shapeIndex, context) {
-    // const { canvas, context } = getBuffer('grainlines');
-    // canvas.width = state.canvas.width;
-    // canvas.height = state.canvas.height;
-    const grainline = (0, _state.state).c_grainlines.get(shapeIndex);
-    if (grainline) {
-        context.moveTo(grainline.position.x, grainline.position.y);
-        context.lineTo(grainline.position.x + Math.cos(grainline.angle - (2 * Math.PI + Math.PI / 2)) * 100, grainline.position.y + Math.sin(grainline.angle - (2 * Math.PI + Math.PI / 2)) * 100);
-        context.stroke();
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2ROJq":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawPolygonFromPointIndices", ()=>drawPolygonFromPointIndices);
-parcelHelpers.export(exports, "drawPolygonFromOffsetPointIndices", ()=>drawPolygonFromOffsetPointIndices);
-var _canvas = require("./canvas");
-function drawPolygonFromPointIndices(points, context) {
-    const _ = context;
-    if (points.length > 0) {
-        _.beginPath();
-        _.fillStyle = '#B9C4EC';
-        _.strokeStyle = 'black';
-        const firstPoint = (0, _canvas.point)(points[0]);
-        _.moveTo(firstPoint.x, firstPoint.y);
-        for(let i = 1; i < points.length; ++i){
-            const p = (0, _canvas.point)(points[i]);
-            _.lineTo(p.x, p.y);
-        }
-        _.lineTo(firstPoint.x, firstPoint.y);
-        _.fill();
-        _.stroke();
-    }
-}
-function drawPolygonFromOffsetPointIndices(points, xoffset, yoffset, context) {
-    const _ = context;
-    if (points.length > 0) {
-        _.beginPath();
-        _.fillStyle = '#B9C4EC';
-        _.strokeStyle = 'black';
-        const firstPoint = (0, _canvas.point)(points[0]);
-        _.moveTo(firstPoint.x + xoffset, firstPoint.y + yoffset);
-        for(let i = 1; i < points.length; ++i){
-            const p = (0, _canvas.point)(points[i]);
-            _.lineTo(p.x + xoffset, p.y + yoffset);
-        }
-        _.lineTo(firstPoint.x + xoffset, firstPoint.y + yoffset);
-        _.fill();
-        _.stroke();
-    }
-}
-
-},{"./canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawSelections", ()=>drawSelections);
@@ -51003,12 +51074,13 @@ function findNearestPoint(pos, points) {
 }
 function findNearestGeometryPoint(pos, geometries) {
     let nearestId = null;
-    let minDistSq = Infinity;
+    let minDistSq = (0, _interface.selectionRadius);
     for (const geom of geometries)for (const pointId of geom.pointIds){
         const pt = (0, _state.state).c_pointsMap.get(pointId);
+        console.log(pt);
         if (!pt) continue;
-        const dx = pt.x - pos.x;
-        const dy = pt.y - pos.y;
+        const dx = pt.to.x - pos.x;
+        const dy = pt.to.y - pos.y;
         const distSq = dx * dx + dy * dy;
         if (distSq < minDistSq) {
             minDistSq = distSq;
@@ -51062,985 +51134,60 @@ class PathToolDeselectCommand {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolClosePathCommand", ()=>PathToolClosePathCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _changeTool = require("../tools/changeTool");
-var _polygon = require("../../3D/geometry/polygon");
-var _store = require("../../UI/store");
-var _drawPieceThumbnail = require("../rendering/drawPieceThumbnail");
 var _mathUtils = require("three/src/math/MathUtils");
+var _state = require("../../State");
+var _store = require("../../UI/store");
+var _canvas = require("../rendering/canvas");
+var _drawPieceThumbnail = require("../rendering/drawPieceThumbnail");
 class PathToolClosePathCommand {
-    constructor(path){
-        this.path = [
-            ...path
-        ];
-        this.pathIndex = -1;
-        this.shapeIndex = -1;
+    constructor(geomId){
+        this.pieceId = null;
+        this.geomId = geomId;
     }
-    // Close the path and move its points from c_paths to c_shapes
     do() {
-        if (this.path.length < 3) return;
-        // c_activePath is the path index of the currently drawing/selected path
-        // Close path
-        (0, _state.state).c_paths[(0, _state.state).c_activePath].push(this.path[0]);
-        // Save shape and remove shape from paths list
-        this.shapeIndex = (0, _state.state).c_shapes.push((0, _state.state).c_paths.splice((0, _state.state).c_activePath, 1)[0]) - 1;
-        // set active shape to the completed shape
-        (0, _state.state).c_selected_shapes = [
-            this.shapeIndex
+        const geom = (0, _state.state).c_geometryMap.get(this.geomId);
+        if (!geom || geom.pointIds.length < 3) return;
+        // Close the loop by repeating the first point
+        geom.pointIds.push(geom.pointIds[0]);
+        geom.type = "shape";
+        (0, _state.state).c_geometryMap.set(this.geomId, geom);
+        // Select the geometry
+        (0, _state.state).c_selected_geometries = [
+            this.geomId
         ];
-        // Update UI pieces list
+        // Register Piece
         const piece = {
-            name: `piece${(0, _store.useAppState).getState().pieces.length}`,
-            shapeIndex: this.shapeIndex,
             id: (0, _mathUtils.generateUUID)(),
+            name: `piece${(0, _store.useAppState).getState().pieces.length}`,
+            shapeId: this.geomId,
             canvas: null,
-            thumb: null
+            thumb: null,
+            angle: 0
         };
+        // generate thumbnail (mutation) & register with UI store
         piece.canvas = (0, _drawPieceThumbnail.generatePieceThumbnail)(piece);
         (0, _store.useAppState).getState().addPiece(piece);
-        // Store index
-        this.pathIndex = (0, _state.state).c_activePath;
-        // Clear active path
-        (0, _state.state).c_activePath = -1;
-        (0, _changeTool.changeTool)({
-            type: 'select'
-        });
-        // Demo: create polygon
-        const shape = (0, _polygon.createPolygonPlane)(this.path);
-        console.log(shape);
+        this.pieceId = piece.id;
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
-        // Remove shape from shapes
-        (0, _state.state).c_shapes.splice(this.shapeIndex, 1);
-        // Send path without closing point to paths, set active index
-        (0, _state.state).c_activePath = (0, _state.state).c_paths.push(this.path) - 1;
+        const geom = (0, _state.state).c_geometryMap.get(this.geomId);
+        if (!geom) return;
+        // 1) Re-open the path
+        geom.pointIds.pop();
+        geom.type = "path";
+        (0, _state.state).c_geometryMap.set(this.geomId, geom);
+        // 2) Un-select
+        (0, _state.state).c_selected_geometries = [];
+        // 3) Remove the piece we added
+        if (this.pieceId) // useAppState.getState().removePiece(this.pieceId);
+        this.pieceId = null;
+        // 4) Redraw
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
 }
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../tools/changeTool":"kXHtP","../../3D/geometry/polygon":"9OqtZ","../../UI/store":"l1Ff7","../rendering/drawPieceThumbnail":"1Jt5c","three/src/math/MathUtils":"cuzU2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kXHtP":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "changeTool", ()=>changeTool);
-var _state = require("../../State");
-var _store = require("../../UI/store");
-var _canvas = require("../rendering/canvas");
-var _grainlineTool = require("./GrainlineTool");
-var _measureTool = require("./MeasureTool");
-var _pathTool = require("./PathTool");
-var _selectTool = require("./SelectTool");
-function changeTool(toolState) {
-    // name is required, all other properties optional
-    // Context: this needs to be the tool name but it should also accept entire tool state wholesale for the purposes of undo
-    const newToolName = toolState.name;
-    const importedState = toolState.state;
-    console.log(toolState.name);
-    (0, _state.state).tool.dismountEvents();
-    (0, _store.useAppState).getState().resetUI();
-    switch(newToolName){
-        case "path":
-            (0, _state.state).tool = new (0, _pathTool.PathTool)();
-            (0, _store.useAppState).getState().setSelectedTool("path");
-            if (importedState) (0, _state.state).tool.applyState(importedState);
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "select":
-            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
-            (0, _store.useAppState).getState().setSelectedTool("select");
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "measure":
-            (0, _state.state).tool = new (0, _measureTool.MeasureTool)();
-            (0, _store.useAppState).getState().setSelectedTool("measure");
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "grainline":
-            (0, _state.state).tool = new (0, _grainlineTool.GrainlineTool)();
-            (0, _store.useAppState).getState().setSelectedTool("grainline");
-            (0, _canvas.redrawCanvas)();
-            break;
-        default:
-            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
-            (0, _store.useAppState).getState().setSelectedTool("select");
-            (0, _canvas.redrawCanvas)();
-            break;
-    }
-    (0, _state.state).tool.initializeEvents();
-}
-
-},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "useAppState", ()=>useAppState);
-var _zustand = require("zustand");
-var _three = require("three");
-var _command = require("../Command");
-var _genericAddPointCommand = require("../2D/commands/Generic/GenericAddPointCommand");
-var _genericDeletePointCommand = require("../2D/commands/Generic/GenericDeletePointCommand");
-var _genericUpdatePointCommand = require("../2D/commands/Generic/GenericUpdatePointCommand");
-const useAppState = (0, _zustand.create)((set, get)=>({
-        resetUI: ()=>{
-            get().hideModal();
-            get().clearLabel();
-        },
-        selectedTool: 'path',
-        setSelectedTool: (tool)=>set({
-                selectedTool: tool
-            }),
-        activeProjectTitle: 'untitled',
-        setActiveProjectTitle: (title)=>{
-            set((state)=>({
-                    activeProjectTitle: title,
-                    openProjectTitles: [
-                        title
-                    ]
-                }));
-        },
-        openProjectTitles: [],
-        setOpenProjectTitles: (i)=>set({
-                openProjectTitles: i
-            }),
-        modal: null,
-        showModal: (modal)=>set({
-                modal
-            }),
-        hideModal: ()=>set({
-                modal: null
-            }),
-        pieces: [],
-        addPiece: (piece)=>{
-            set((state)=>({
-                    pieces: [
-                        ...state.pieces,
-                        piece
-                    ]
-                }));
-        },
-        setPieceName: (pieceId, newName)=>{
-            set((state)=>({
-                    pieces: state.pieces.map((piece)=>piece.id === pieceId ? {
-                            ...piece,
-                            name: newName
-                        } : piece)
-                }));
-        },
-        label: undefined,
-        labelPiece: (labelPoint, piece)=>{
-            set((state)=>({
-                    label: {
-                        point: labelPoint,
-                        piece: piece
-                    }
-                }));
-        },
-        clearLabel: ()=>{
-            set((state)=>({
-                    label: undefined
-                }));
-        },
-        pointer: new (0, _three.Vector2)(0, 0),
-        tool: {
-            name: "select"
-        },
-        setPointer: (point)=>{
-            set({
-                pointer: point
-            });
-        },
-        shapePoints: [],
-        syncShapePoints: (points)=>{
-            set({
-                shapePoints: points
-            });
-        },
-        addShapePoint: (point)=>{
-            set((state)=>({
-                    shapePoints: [
-                        ...state.shapePoints,
-                        point
-                    ]
-                }));
-        },
-        updatePoint: (index, point)=>set((state)=>{
-                (0, _command.pushCommand)(new (0, _genericUpdatePointCommand.GenericUpdatePointCommand)(index, point));
-                const points = [
-                    ...state.shapePoints
-                ];
-                points[index] = point;
-                return {
-                    shapePoints: points
-                };
-            }),
-        deletePoint: (index)=>set((state)=>{
-                (0, _command.pushCommand)(new (0, _genericDeletePointCommand.GenericDeletePointCommand)(index));
-                const points = state.shapePoints.filter((_, i)=>i !== index);
-                return {
-                    shapePoints: points
-                };
-            }),
-        insertPoint: (index, point)=>set((state)=>{
-                // points.splice(index + 1, 0, point);
-                (0, _command.pushCommand)(new (0, _genericAddPointCommand.GenericAddPointCommand)(index + 1, point));
-                const points = [
-                    ...state.shapePoints
-                ];
-                return {
-                    shapePoints: points
-                };
-            })
-    }));
-
-},{"zustand":"cPNyt","three":"ktPTu","../Command":"efiIE","../2D/commands/Generic/GenericAddPointCommand":"4JRAF","../2D/commands/Generic/GenericDeletePointCommand":"3jXya","../2D/commands/Generic/GenericUpdatePointCommand":"2wHUw","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cPNyt":[function(require,module,exports,__globalThis) {
-'use strict';
-var vanilla = require("a19f4edd89926025");
-var react = require("a0cacd268d6bf882");
-Object.keys(vanilla).forEach(function(k) {
-    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
-        enumerable: true,
-        get: function() {
-            return vanilla[k];
-        }
-    });
-});
-Object.keys(react).forEach(function(k) {
-    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
-        enumerable: true,
-        get: function() {
-            return react[k];
-        }
-    });
-});
-
-},{"a19f4edd89926025":"2SLIN","a0cacd268d6bf882":"fhDSt"}],"2SLIN":[function(require,module,exports,__globalThis) {
-'use strict';
-const createStoreImpl = (createState)=>{
-    let state;
-    const listeners = /* @__PURE__ */ new Set();
-    const setState = (partial, replace)=>{
-        const nextState = typeof partial === "function" ? partial(state) : partial;
-        if (!Object.is(nextState, state)) {
-            const previousState = state;
-            state = (replace != null ? replace : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
-            listeners.forEach((listener)=>listener(state, previousState));
-        }
-    };
-    const getState = ()=>state;
-    const getInitialState = ()=>initialState;
-    const subscribe = (listener)=>{
-        listeners.add(listener);
-        return ()=>listeners.delete(listener);
-    };
-    const api = {
-        setState,
-        getState,
-        getInitialState,
-        subscribe
-    };
-    const initialState = state = createState(setState, getState, api);
-    return api;
-};
-const createStore = (createState)=>createState ? createStoreImpl(createState) : createStoreImpl;
-exports.createStore = createStore;
-
-},{}],"fhDSt":[function(require,module,exports,__globalThis) {
-'use strict';
-var React = require("6a69048f974f8971");
-var vanilla = require("985957b117977eb9");
-const identity = (arg)=>arg;
-function useStore(api, selector = identity) {
-    const slice = React.useSyncExternalStore(api.subscribe, ()=>selector(api.getState()), ()=>selector(api.getInitialState()));
-    React.useDebugValue(slice);
-    return slice;
-}
-const createImpl = (createState)=>{
-    const api = vanilla.createStore(createState);
-    const useBoundStore = (selector)=>useStore(api, selector);
-    Object.assign(useBoundStore, api);
-    return useBoundStore;
-};
-const create = (createState)=>createState ? createImpl(createState) : createImpl;
-exports.create = create;
-exports.useStore = useStore;
-
-},{"6a69048f974f8971":"21dqq","985957b117977eb9":"2SLIN"}],"4JRAF":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GenericAddPointCommand", ()=>GenericAddPointCommand);
-var _store = require("../../../UI/store");
-var _state = require("../../../State");
-class GenericAddPointCommand {
-    constructor(index, point){
-        this.tool = null;
-        this.__point = point;
-        this.__index = index;
-        this.__pathIndex = -1;
-    }
-    do() {
-        switch((0, _state.state).tool.name){
-            case 'path':
-                const t = (0, _state.state).tool;
-                const indices = t.insertPointIntoCurrentPath(this.__index, this.__point);
-                this.__index = indices.pointIndex;
-                this.__pathIndex = indices.pathIndex;
-                (0, _store.useAppState).getState().addShapePoint(this.__point);
-        }
-    }
-    undo() {
-        this.tool?.removePointFromPath(this.__index, this.__pathIndex);
-    }
-}
-
-},{"../../../UI/store":"l1Ff7","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3jXya":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GenericDeletePointCommand", ()=>GenericDeletePointCommand);
-var _state = require("../../../State");
-class GenericDeletePointCommand {
-    /**
-  @param {number} pointIndex - Index of the point within the current path
-  */ constructor(pointIndex){
-        // Pick active path, as with all generic commands
-        this.pathIndex = (0, _state.state).c_activePath;
-        // Find the right globalPointIndex from the current path
-        this.pointIndex = (0, _state.state).c_paths[this.pathIndex][pointIndex];
-        // Store previous state
-        this.previousPathState = [
-            ...(0, _state.state).c_paths[this.pathIndex]
-        ];
-    }
-    do() {
-        const path = (0, _state.state).c_paths[this.pathIndex];
-        // Ensure the path exists and contains the point
-        if (!path || path.length <= 1) return; // Prevent removing too many points
-        (0, _state.state).c_paths[this.pathIndex] = path.filter((value, index)=>value !== this.pointIndex);
-        (0, _state.state).c_pointmap.delete(this.pointIndex);
-    }
-    undo() {
-        (0, _state.state).c_paths[this.pathIndex] = [
-            ...this.previousPathState
-        ];
-    }
-}
-
-},{"../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2wHUw":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GenericUpdatePointCommand", ()=>GenericUpdatePointCommand);
-var _state = require("../../../State");
-var _canvas = require("../../rendering/canvas");
-class GenericUpdatePointCommand {
-    constructor(index, point){
-        this.tool = null;
-        this.point = point;
-        this.lIndex = index;
-        this.pathIndex = (0, _state.state).c_activePath;
-        this.gIndex = (0, _state.state).c_paths[this.pathIndex][this.lIndex];
-        this.oldPoint = (0, _state.state).c_points[this.gIndex];
-    }
-    do() {
-        (0, _state.state).c_pointmap.set(this.gIndex, this.point);
-        (0, _state.state).c_points[this.gIndex] = this.point;
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_pointmap.set(this.gIndex, this.oldPoint);
-    }
-}
-
-},{"../../../State":"83rpN","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _store = require("../../UI/store");
-var _three = require("three");
-var _drawDrawPreview = require("../rendering/drawDrawPreview");
-var _command = require("../../Command");
-var _grainlineToolCreateGrainlineCommand = require("../commands/GrainlineToolCreateGrainlineCommand");
-var _isPointInPolygon = require("../geometry/isPointInPolygon");
-var _changeToolCommand = require("../commands/ChangeToolCommand");
-class GrainlineTool {
-    constructor(){
-        // Tool state object stores tool mechanical state, no data
-        this.__state = {
-            type: "idle"
-        };
-        // Tool name
-        this.name = 'grainline';
-        this.unitVector = new (0, _three.Vector2)(0, -1);
-        this.setPointer = (0, _store.useAppState).getState().setPointer;
-        this.__listeners = {
-            down: this.onMouseDown.bind(this),
-            move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this)
-        };
-        this.angle = 0;
-    }
-    initializeEvents() {
-        const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.__listeners.down);
-        canvas.addEventListener("mousemove", this.__listeners.move);
-        canvas.addEventListener("mouseup", this.__listeners.up);
-    }
-    dismountEvents() {
-        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
-        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
-        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
-    }
-    get state() {
-        return this.__state;
-    }
-    // Tool state management
-    transition(newState) {
-        console.log(`Tool state: ${this.__state.type} \u{2192} ${newState.type}`);
-        this.__state = newState;
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    // Tool event management
-    onMouseDown(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        // state.pointer = pos;
-        const selectedShapeIndex = this.checkForShapeOverlap(pos);
-        if (selectedShapeIndex > -1) switch(this.__state.type){
-            case "idle":
-                this.transition({
-                    type: 'drawing',
-                    originPos: pos
-                });
-                break;
-            default:
-                break;
-        }
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    onMouseMove(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        (0, _state.state).pointer = pos;
-        this.setPointer((0, _state.state).pointer);
-        switch(this.__state.type){
-            case "drawing":
-                (0, _drawDrawPreview.drawDrawPreview)(this.__state.originPos, pos, `${Math.round(180 * this.angleFromNoon(pos, this.__state.originPos) / Math.PI)}\xb0`);
-                break;
-        }
-    }
-    onMouseUp(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        switch(this.__state.type){
-            case "drawing":
-                this.angle = this.angleFromNoon(pos, this.__state.originPos);
-                (0, _command.pushCommand)(new (0, _grainlineToolCreateGrainlineCommand.GrainlineToolCreateGrainlineCommand)(this.__state.originPos, (0, _state.state).c_selected_shapes[0], this.angle));
-        }
-        this.transition({
-            type: "idle"
-        });
-        (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)('select'));
-    }
-    checkForShapeOverlap(pos) {
-        let value = -1;
-        (0, _state.state).c_shapes.forEach((shape, index)=>{
-            const shapePoints = shape.map((pointIndex)=>(0, _state.state).c_points[pointIndex]);
-            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) value = index;
-        });
-        return value;
-    }
-    angleFromNoon(vector, origin) {
-        vector = vector.clone().sub(origin);
-        let baseAngle = Math.atan2(vector.y, vector.x);
-        let ang = baseAngle + Math.PI / 2;
-        // Map to [0, 2pi]
-        if (ang < 0) ang += 2 * Math.PI;
-        return ang;
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","three":"ktPTu","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","../geometry/isPointInPolygon":"aOEKs","../commands/ChangeToolCommand":"i5Ou7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5NqY4":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GrainlineToolCreateGrainlineCommand", ()=>GrainlineToolCreateGrainlineCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _centroid = require("../geometry/centroid");
-class GrainlineToolCreateGrainlineCommand {
-    constructor(position, shapeIndex, angle){
-        this.shapeIndex = shapeIndex;
-        this.grainline = {
-            position: (0, _centroid.computeCentroid)((0, _state.state).c_shapes[shapeIndex]),
-            angle
-        };
-    }
-    do() {
-        (0, _state.state).c_grainlines.set(this.shapeIndex, this.grainline);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_grainlines.delete(this.shapeIndex);
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gsjQg":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
-var _three = require("three");
-var _state = require("../../State");
-function computeCentroid(indices) {
-    if (indices.length === 0) return new (0, _three.Vector2)();
-    const centroid = new (0, _three.Vector2)();
-    for (const index of indices){
-        const point = (0, _state.state).c_points[index];
-        centroid.add(point);
-    }
-    centroid.divideScalar(indices.length);
-    return centroid;
-}
-
-},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-/**
- * Checks if a point is inside a polygon using the ray-casting algorithm.
- * @param point The point to check.
- * @param polygon An array of Vector2 points defining the closed shape.
- * @returns `true` if the point is inside the polygon, `false` otherwise.
- */ parcelHelpers.export(exports, "isPointInPolygon", ()=>isPointInPolygon);
-function isPointInPolygon(point, polygon) {
-    let inside = false;
-    const n = polygon.length;
-    for(let i = 0, j = n - 1; i < n; j = i++){
-        const xi = polygon[i].x, yi = polygon[i].y;
-        const xj = polygon[j].x, yj = polygon[j].y;
-        // Check if point is between polygon edges
-        const intersect = yi > point.y !== yj > point.y && point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi;
-        if (intersect) inside = !inside;
-    }
-    return inside;
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
-var _changeTool = require("../tools/changeTool");
-class ChangeToolCommand {
-    // private lastToolState: ToolBase["state"];
-    constructor(type){
-        this.__type = type;
-    // this.lastToolState = state.tool.__state; // Not implemented: stateful tool swapping (for redo)
-    }
-    do() {
-        (0, _changeTool.changeTool)({
-            name: this.__type
-        });
-    }
-    undo() {
-        (0, _changeTool.changeTool)({
-            name: this.__type
-        });
-        console.log('Undo not yet implemented for ChangeToolCommand');
-    }
-}
-
-},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
-var _command = require("../../Command");
-var _state = require("../../State");
-var _measureToolAddPointCommand = require("../commands/MeasureToolAddPointCommand");
-var _measureToolClosePathCommand = require("../commands/MeasureToolClosePathCommand");
-var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _canvas = require("../rendering/canvas");
-var _drawDrawPreview = require("../rendering/drawDrawPreview");
-class MeasureTool {
-    constructor(){
-        this.__state = {
-            type: "idle"
-        };
-        // Tool name
-        this.name = 'measure';
-        this.__listeners = {
-            down: this.onMouseDown.bind(this),
-            move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this)
-        };
-        this.__length = 0;
-    }
-    initializeEvents() {
-        const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.__listeners.down);
-        canvas.addEventListener("mousemove", this.__listeners.move);
-        canvas.addEventListener("mouseup", this.__listeners.up);
-    }
-    dismountEvents() {
-        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
-        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
-        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
-    }
-    // Tool state management
-    transition(newState) {
-        console.log(`MeasureTool state: ${this.__state.type} \u{2192} ${newState.type}`);
-        this.__state = newState;
-    }
-    // Tool event management
-    onMouseDown(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        (0, _state.state).pointer = pos;
-        switch(this.__state.type){
-            case "idle":
-                this.transition({
-                    type: 'drawing',
-                    currentPathIndex: (0, _state.state).c_measure_paths.length
-                });
-                (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, (0, _state.state).c_measure_paths.length));
-                break;
-            case "drawing":
-                if ((0, _state.state).altDown) (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, this.__state.currentPathIndex));
-                else {
-                    (0, _command.pushCommand)(new (0, _measureToolClosePathCommand.MeasureToolClosePathCommand)(pos, this.__state.currentPathIndex));
-                    this.transition({
-                        type: 'idle'
-                    });
-                }
-                break;
-            default:
-                break;
-        }
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    onMouseMove(e) {
-        switch(this.__state.type){
-            case "idle":
-                break;
-            case "drawing":
-                if ((0, _state.state).c_measure_paths[this.__state.currentPathIndex]) (0, _drawDrawPreview.drawDrawPreview)((0, _state.state).c_measure_points.get((0, _state.state).c_measure_paths[this.__state.currentPathIndex][0]), (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY));
-                break;
-            default:
-                break;
-        }
-    }
-    onMouseUp(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        this.__state.type;
-    // drawCanvasFromState(state);
-    }
-    get state() {
-        return this.__state;
-    }
-}
-
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../commands/MeasureToolClosePathCommand":"aINj4","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1IlS2":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MeasureToolAddPointCommand", ()=>MeasureToolAddPointCommand);
-var _three = require("three");
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class MeasureToolAddPointCommand {
-    constructor(pos, pathIndex){
-        this.pos = new (0, _three.Vector2)();
-        this.pos.copy(pos);
-        this.currentPathIndex = pathIndex;
-        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
-    }
-    do() {
-        (0, _state.state).c_measure_points.set(this.key, this.pos);
-        if (!(0, _state.state).c_measure_paths[this.currentPathIndex]) (0, _state.state).c_measure_paths[this.currentPathIndex] = [];
-        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_measure_points.delete(this.key);
-    }
-}
-
-},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aINj4":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MeasureToolClosePathCommand", ()=>MeasureToolClosePathCommand);
-var _three = require("three");
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class MeasureToolClosePathCommand {
-    constructor(pos, pathIndex){
-        this.pos = new (0, _three.Vector2)();
-        this.pos.copy(pos);
-        this.currentPathIndex = pathIndex;
-        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
-    }
-    do() {
-        (0, _state.state).c_measure_points.set(this.key, this.pos);
-        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_measure_points.delete(this.key);
-    }
-}
-
-},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jISwe":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectTool", ()=>SelectTool);
-var _command = require("../../Command");
-var _state = require("../../State");
-var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _selectToolShapeCommand = require("../commands/SelectToolShapeCommand");
-var _isPointInPolygon = require("../geometry/isPointInPolygon");
-var _selectToolMoveShapeCommand = require("../commands/SelectToolMoveShapeCommand");
-var _common = require("./common");
-var _selectToolPointCommand = require("../commands/SelectToolPointCommand");
-var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
-var _canvas = require("../rendering/canvas");
-var _deleteShapeCommand = require("../commands/DeleteShapeCommand");
-var _lineIntersection = require("../geometry/lineIntersection");
-var _selectToolSelectLineCommand = require("../commands/SelectToolSelectLineCommand");
-var _selectToolAddShapeCommand = require("../commands/SelectToolAddShapeCommand");
-var _selectToolDeselectLinesCommand = require("../commands/SelectToolDeselectLinesCommand");
-var _drawPreviewsCommand = require("../commands/Rendering/DrawPreviewsCommand");
-class SelectTool {
-    constructor(){
-        // Tool state object stores tool mechanical state
-        this.__state = {
-            type: "idle"
-        };
-        // Tool name
-        this.name = 'select';
-        this.__listeners = {
-            down: this.onMouseDown.bind(this),
-            move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this),
-            dblclick: this.onDoubleClick.bind(this)
-        };
-    }
-    initializeEvents() {
-        const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.__listeners.down);
-        canvas.addEventListener("mousemove", this.__listeners.move);
-        canvas.addEventListener("mouseup", this.__listeners.up);
-        canvas.addEventListener("dblclick", this.__listeners.dblclick);
-    }
-    dismountEvents() {
-        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
-        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
-        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
-        (0, _state.state).canvas.removeEventListener("dblclick", this.__listeners.dblclick);
-    }
-    // Tool state updater
-    transition(newState) {
-        console.log(`SelectTool state: ${this.__state.type} \u{2192} ${newState.type}`);
-        this.__state = newState;
-    }
-    // Select tool event management
-    onMouseDown(e) {
-        const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
-        const hitIndex = (0, _common.checkPointOverlap)(clickPos);
-        const lineHit = (0, _lineIntersection.checkLineIntersection)(clickPos);
-        console.log(lineHit);
-        (0, _state.state).pointerDown = true;
-        if (selectedShapeIndex >= 0 || hitIndex && hitIndex >= 0 || lineHit != null) switch(this.__state.type){
-            case "idle":
-                if (hitIndex && hitIndex > -1) {
-                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
-                    this.transition({
-                        type: "selecting_points",
-                        selectedPointIndices: [
-                            hitIndex
-                        ]
-                    });
-                } else if (lineHit) {
-                    (0, _command.pushCommand)(new (0, _selectToolSelectLineCommand.SelectToolSelectLineCommand)(lineHit));
-                    this.transition({
-                        type: "selecting_lines",
-                        selectedLineHits: [
-                            lineHit
-                        ]
-                    });
-                } else if (selectedShapeIndex > -1) {
-                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
-                    this.transition({
-                        type: "selecting",
-                        selectedShapeIndex
-                    });
-                }
-                break;
-            case "selecting":
-                if ((0, _state.state).shiftDown) {
-                    if (selectedShapeIndex > -1) // not sufficient
-                    (0, _command.pushCommand)(new (0, _selectToolAddShapeCommand.SelectToolAddShapeCommand)(selectedShapeIndex));
-                } else if (selectedShapeIndex > -1) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
-                break;
-            case "selecting_points":
-                if (hitIndex && hitIndex > -1) {
-                    if ((0, _state.state).shiftDown) {
-                        if ((0, _state.state).c_selected.indexOf(hitIndex) === -1) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
-                    } else if ((0, _state.state).c_selected.indexOf(hitIndex) === -1) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
-                } else if (!(0, _state.state).shiftDown) {
-                    (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
-                    this.transition({
-                        type: "idle"
-                    });
-                }
-                break;
-            case "selecting_lines":
-                // Hit Point
-                if (hitIndex && hitIndex > -1) {
-                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
-                    this.transition({
-                        type: "selecting_points",
-                        selectedPointIndices: [
-                            hitIndex
-                        ]
-                    });
-                // Hit Line
-                } else if (lineHit) {
-                    if ((0, _state.state).shiftDown) // refact to append to line array
-                    (0, _command.pushCommand)(new (0, _selectToolSelectLineCommand.SelectToolSelectLineCommand)(lineHit));
-                    else {
-                        (0, _command.pushCommand)(new (0, _selectToolDeselectLinesCommand.SelectToolDeselectLinesCommand)());
-                        (0, _command.pushCommand)(new (0, _selectToolSelectLineCommand.SelectToolSelectLineCommand)(lineHit));
-                    }
-                } else if (selectedShapeIndex > -1) {
-                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
-                    this.transition({
-                        type: "selecting",
-                        selectedShapeIndex
-                    });
-                }
-                break;
-        }
-        else {
-            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
-            this.transition({
-                type: "idle"
-            });
-        }
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    checkForShapeOverlap(pos) {
-        let value = -1;
-        (0, _state.state).c_shapes.forEach((shape, index)=>{
-            const shapePoints = shape.map((pointIndex)=>(0, _state.state).c_points[pointIndex]);
-            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) value = index;
-        });
-        return value;
-    }
-    onMouseMove(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        switch(this.__state.type){
-            case 'moving':
-                (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
-                break;
-            case 'selecting':
-                if ((0, _state.state).pointerDown == true) {
-                    (0, _state.state).c_move_from = pos;
-                    (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
-                    this.transition({
-                        type: 'moving',
-                        selectedShapeIndex: this.__state.selectedShapeIndex,
-                        startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
-                    });
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    onMouseUp(e) {
-        (0, _state.state).pointerDown = false;
-        switch(this.__state.type){
-            case "moving":
-                const endPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-                const shapeIndex = this.__state.selectedShapeIndex;
-                const startPos = this.__state.startPos;
-                (0, _command.pushCommand)(new (0, _selectToolMoveShapeCommand.SelectToolMoveShapeCommand)(shapeIndex, startPos, endPos));
-                this.transition({
-                    type: 'idle'
-                });
-                break;
-        }
-    }
-    onDoubleClick(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-    // TODO: use this for isolation mode
-    }
-    onKeyDown(e) {
-        switch(this.state.type){
-            case "selecting":
-                console.log('keypress', e);
-                // case "selecting_points":
-                if (e.code === 'Backspace' || e.code === 'Delete') {
-                    if ((0, _state.state).c_selected_shapes.length > 0) (0, _command.pushCommand)(new (0, _deleteShapeCommand.DeleteShapeCommand)(this.state.selectedShapeIndex));
-                }
-                this.transition({
-                    type: "idle"
-                });
-                break;
-        }
-    }
-    deselect() {
-        console.error('Not implemented for the Select tool');
-    }
-    get state() {
-        return this.__state;
-    }
-}
-
-},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s","../commands/SelectToolSelectLineCommand":"aamTt","../commands/SelectToolAddShapeCommand":"fcLPE","../commands/SelectToolDeselectLinesCommand":"fcEzj","../commands/Rendering/DrawPreviewsCommand":"4QHCH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
-var _state = require("../../State");
-var _generateFloatingLabel = require("../hooks/generateFloatingLabel");
-class SelectToolShapeCommand {
-    constructor(shapeIndex){
-        this.shapeIndex = shapeIndex;
-        this.previousSelection = (0, _state.state).c_selected_shapes;
-    }
-    do() {
-        (0, _state.state).c_selected_shapes = [
-            this.shapeIndex
-        ];
-        // state.c_pointmap = new Map()
-        console.log(`Shape ${this.shapeIndex} selected.`);
-        (0, _generateFloatingLabel.generateFloatingLabel)(this.shapeIndex);
-    }
-    undo() {
-        (0, _state.state).c_selected_shapes = this.previousSelection;
-        console.log(`Selection reverted to shape ${this.previousSelection}`);
-    }
-}
-
-},{"../../State":"83rpN","../hooks/generateFloatingLabel":"gIlKq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gIlKq":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "generateFloatingLabel", ()=>generateFloatingLabel);
-var _three = require("three");
-var _mathUtils = require("three/src/math/MathUtils");
-var _state = require("../../State");
-var _store = require("../../UI/store");
-var _boundingBox = require("../geometry/boundingBox");
-const generateFloatingLabel = (shapeIndex)=>{
-    const box = (0, _boundingBox.getShapeBoundingRect)((0, _state.state).c_shapes[shapeIndex]);
-    const dim = (0, _boundingBox.getShapeDimensions)((0, _state.state).c_shapes[shapeIndex]);
-    const rect = (0, _state.state).canvas.getBoundingClientRect();
-    // Generate a point in the upper left hand corner of the shape in windowspace
-    const labelPoint = new (0, _three.Vector2)(box.x0 + rect.x, box.y0 + rect.y);
-    const pieceIndex = (0, _store.useAppState).getState().pieces.findIndex((piece)=>piece.shapeIndex == shapeIndex);
-    let piece;
-    if (pieceIndex < 0) piece = {
-        id: (0, _mathUtils.generateUUID)(),
-        shapeIndex: shapeIndex
-    };
-    else piece = (0, _store.useAppState).getState().pieces[pieceIndex];
-    (0, _store.useAppState).getState().labelPiece(labelPoint, piece);
-};
-
-},{"three":"ktPTu","three/src/math/MathUtils":"cuzU2","../../State":"83rpN","../../UI/store":"l1Ff7","../geometry/boundingBox":"3SCvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cuzU2":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three/src/math/MathUtils":"cuzU2","../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","../rendering/drawPieceThumbnail":"1Jt5c"}],"cuzU2":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "DEG2RAD", ()=>DEG2RAD);
@@ -52522,1944 +51669,286 @@ const MathUtils = {
     denormalize: denormalize
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2adoe":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l1Ff7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolMoveShapeCommand", ()=>SelectToolMoveShapeCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _centroid = require("../geometry/centroid");
-class SelectToolMoveShapeCommand {
-    constructor(shapeIndex, from, to){
-        this.shapeIndex = shapeIndex;
-        this.__from = from.clone();
-        this.__to = to.clone();
-        this.__diff = this.__to.clone().sub(this.__from);
-    }
-    do() {
-        const cloneShape = [
-            ...(0, _state.state).c_shapes[this.shapeIndex]
-        ];
-        // Remove the last element (which is also the first element) to prevent double translation
-        cloneShape.pop();
-        cloneShape.forEach((i)=>{
-            const before = (0, _state.state).c_points[i].clone();
-            (0, _state.state).c_points[i] = (0, _state.state).c_points[i].clone().add(this.__diff);
-            const after = (0, _state.state).c_points[i];
-            (0, _state.state).c_pointmap.set(i, after);
-        });
-        (0, _state.state).updateGrainlinePos(this.shapeIndex, (0, _centroid.computeCentroid)((0, _state.state).c_shapes[this.shapeIndex]));
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_shapes[this.shapeIndex].forEach((i)=>{
-            (0, _state.state).c_points[i].sub(this.__diff); // Reverse the movement
-        });
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-}
+parcelHelpers.export(exports, "useAppState", ()=>useAppState);
+var _zustand = require("zustand");
+var _three = require("three");
+var _command = require("../Command");
+var _genericAddPointCommand = require("../2D/commands/Generic/GenericAddPointCommand");
+var _genericDeletePointCommand = require("../2D/commands/Generic/GenericDeletePointCommand");
+var _genericUpdatePointCommand = require("../2D/commands/Generic/GenericUpdatePointCommand");
+const useAppState = (0, _zustand.create)((set, get)=>({
+        resetUI: ()=>{
+            get().hideModal();
+            get().clearLabel();
+        },
+        selectedTool: 'path',
+        setSelectedTool: (tool)=>set({
+                selectedTool: tool
+            }),
+        activeProjectTitle: 'untitled',
+        setActiveProjectTitle: (title)=>{
+            set((state)=>({
+                    activeProjectTitle: title,
+                    openProjectTitles: [
+                        title
+                    ]
+                }));
+        },
+        openProjectTitles: [],
+        setOpenProjectTitles: (i)=>set({
+                openProjectTitles: i
+            }),
+        modal: null,
+        showModal: (modal)=>set({
+                modal
+            }),
+        hideModal: ()=>set({
+                modal: null
+            }),
+        pieces: [],
+        addPiece: (piece)=>{
+            set((state)=>({
+                    pieces: [
+                        ...state.pieces,
+                        piece
+                    ]
+                }));
+        },
+        setPieceName: (pieceId, newName)=>{
+            set((state)=>({
+                    pieces: state.pieces.map((piece)=>piece.id === pieceId ? {
+                            ...piece,
+                            name: newName
+                        } : piece)
+                }));
+        },
+        label: undefined,
+        labelPiece: (labelPoint, piece)=>{
+            set((state)=>({
+                    label: {
+                        point: labelPoint,
+                        piece: piece
+                    }
+                }));
+        },
+        clearLabel: ()=>{
+            set((state)=>({
+                    label: undefined
+                }));
+        },
+        pointer: new (0, _three.Vector2)(0, 0),
+        tool: {
+            name: "select"
+        },
+        setPointer: (point)=>{
+            set({
+                pointer: point
+            });
+        },
+        shapePoints: [],
+        syncShapePoints: (points)=>{
+            set({
+                shapePoints: points
+            });
+        },
+        addShapePoint: (point)=>{
+            set((state)=>({
+                    shapePoints: [
+                        ...state.shapePoints,
+                        point
+                    ]
+                }));
+        },
+        updatePoint: (index, point)=>set((state)=>{
+                (0, _command.pushCommand)(new (0, _genericUpdatePointCommand.GenericUpdatePointCommand)(index, point));
+                const points = [
+                    ...state.shapePoints
+                ];
+                points[index] = point;
+                return {
+                    shapePoints: points
+                };
+            }),
+        deletePoint: (index)=>set((state)=>{
+                (0, _command.pushCommand)(new (0, _genericDeletePointCommand.GenericDeletePointCommand)(index));
+                const points = state.shapePoints.filter((_, i)=>i !== index);
+                return {
+                    shapePoints: points
+                };
+            }),
+        insertPoint: (index, point)=>set((state)=>{
+                // points.splice(index + 1, 0, point);
+                (0, _command.pushCommand)(new (0, _genericAddPointCommand.GenericAddPointCommand)(index + 1, point));
+                const points = [
+                    ...state.shapePoints
+                ];
+                return {
+                    shapePoints: points
+                };
+            })
+    }));
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lpYSP":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-// Protected, only to be used by Command
-parcelHelpers.export(exports, "selectPoint", ()=>selectPoint);
-// Protected, only to be used by Command
-parcelHelpers.export(exports, "deselect", ()=>deselect);
-// Protected, only to be used by Command
-parcelHelpers.export(exports, "removePointFromSelection", ()=>removePointFromSelection);
-parcelHelpers.export(exports, "getPointByIndex", ()=>getPointByIndex);
-parcelHelpers.export(exports, "__indexIsNotSelected", ()=>__indexIsNotSelected);
-parcelHelpers.export(exports, "checkPointOverlap", ()=>checkPointOverlap);
-parcelHelpers.export(exports, "checkPathOverlap", ()=>checkPathOverlap);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _interface = require("../settings/interface");
-function selectPoint(index) {
-    if (!(0, _state.state).c_selected.includes(index)) {
-        (0, _state.state).c_selected.push(index);
-        console.log((0, _state.state).c_selected);
-    }
-}
-function deselect() {
-    (0, _state.state).c_selected = [];
-    (0, _canvas.drawCanvasFromState)((0, _state.state));
-}
-function removePointFromSelection(v) {
-    const i = (0, _state.state).c_selected.findIndex((index)=>v.equals((0, _state.state).c_points[index]));
-    (0, _state.state).c_selected.splice(i, 1);
-}
-function getPointByIndex(index) {
-    return (0, _state.state).c_points[index];
-}
-function __indexIsNotSelected(index) {
-    const result = (0, _state.state).c_selected.findIndex((i)=>{
-        return i == index;
-    });
-    return result === -1;
-}
-function checkPointOverlap(v) {
-    for(let i = 0; i < (0, _state.state).c_points.length; ++i){
-        if ((0, _state.state).c_points[i].distanceTo(v) < (0, _interface.selectionRadius)) return i;
-    }
-    return undefined;
-}
-function checkPathOverlap(v) {
-    return true;
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"97SwH":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolPointCommand", ()=>SelectToolPointCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class SelectToolPointCommand {
-    constructor(index){
-        this.__index = index;
-    }
-    do() {
-        (0, _state.state).c_selected.push(this.__index);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_selected.pop();
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"35eIL":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolDeselectAllCommand", ()=>SelectToolDeselectAllCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class SelectToolDeselectAllCommand {
-    constructor(){
-        this.old_selected = (0, _state.state).c_selected;
-        this.old_selected_lines = (0, _state.state).c_selected_lines;
-        this.old_selected_shapes = (0, _state.state).c_selected_shapes;
-    }
-    do() {
-        (0, _state.state).c_selected = [];
-        (0, _state.state).c_selected_lines = [];
-        (0, _state.state).c_selected_shapes = [];
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_selected = this.old_selected;
-        (0, _state.state).c_selected_lines = this.old_selected_lines;
-        (0, _state.state).c_selected_shapes = this.old_selected_shapes;
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3BS11":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DeleteShapeCommand", ()=>DeleteShapeCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class DeleteShapeCommand {
-    constructor(shapeIndex){
-        this.__shapeIndex = shapeIndex;
-    }
-    do() {
-        (0, _state.state).c_shapes[this.__shapeIndex].forEach((pointIndex)=>{
-            // Delete points from the active point map
-            (0, _state.state).c_pointmap.delete(pointIndex);
-        });
-        // Remove shape from the list of shapes
-        (0, _state.state).c_shapes.splice(this.__shapeIndex, 1);
-        console.log('deleted shape ', this.__shapeIndex);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        // TODO: Implement DeleteShapeCommand undo
-        console.log("Undo function for DeleteshapeCommand not implemented");
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jIp1s":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "pointLineIntersection", ()=>pointLineIntersection);
-parcelHelpers.export(exports, "checkLineIntersection", ()=>checkLineIntersection);
-var _interface = require("../settings/interface");
-var _state = require("../../State");
-function pointLineIntersection(point, v0, v1) {
-    // Ensure v0 is always the leftmost point
-    let p0 = v0.x > v1.x ? v1.clone() : v0.clone();
-    let p1 = v0.x > v1.x ? v0.clone() : v1.clone();
-    // Bounding box check
-    const minX = Math.min(p0.x, p1.x) - (0, _interface.rad) * 2;
-    const maxX = Math.max(p0.x, p1.x) + (0, _interface.rad) * 2;
-    const minY = Math.min(p0.y, p1.y) - (0, _interface.rad) * 2;
-    const maxY = Math.max(p0.y, p1.y) + (0, _interface.rad) * 2;
-    if (!(point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY)) return false;
-    // Compute line equation: y = mx + b
-    const dx = p1.x - p0.x;
-    if (dx === 0) // Vertical line case
-    return Math.abs(point.x - p0.x) < (0, _interface.rad) * 2;
-    const m = (p1.y - p0.y) / dx;
-    const b = p0.y - m * p0.x;
-    // Check if the point lies close to the line within a tolerance
-    const epsilon = (0, _interface.rad) * 2;
-    return Math.abs(point.y - (m * point.x + b)) < epsilon;
-}
-function checkLineIntersection(pos) {
-    var result = null;
-    (0, _state.state).c_shapes.forEach((shapeArr, index)=>{
-        console.log(shapeArr);
-        for(let i = 0; i < shapeArr.length - 1; ++i){
-            const p0 = (0, _state.state).c_points[shapeArr[i]];
-            const p1 = (0, _state.state).c_points[shapeArr[(i + 1) % (shapeArr.length - 1)]];
-            if (pointLineIntersection(pos, p0, p1)) result = {
-                shapeIndex: index,
-                lineStartIndex: i
-            };
+},{"zustand":"cPNyt","three":"ktPTu","../Command":"efiIE","../2D/commands/Generic/GenericAddPointCommand":"4JRAF","../2D/commands/Generic/GenericDeletePointCommand":"3jXya","../2D/commands/Generic/GenericUpdatePointCommand":"2wHUw","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cPNyt":[function(require,module,exports,__globalThis) {
+'use strict';
+var vanilla = require("a19f4edd89926025");
+var react = require("a0cacd268d6bf882");
+Object.keys(vanilla).forEach(function(k) {
+    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
+        enumerable: true,
+        get: function() {
+            return vanilla[k];
         }
     });
-    return result;
-}
-
-},{"../settings/interface":"dci9b","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aamTt":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolSelectLineCommand", ()=>SelectToolSelectLineCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class SelectToolSelectLineCommand {
-    constructor(lineHit){
-        this.lineHit = lineHit;
-        this.previousSelection = (0, _state.state).c_selected_lines;
-    }
-    do() {
-        (0, _state.state).c_selected_lines = [
-            ...(0, _state.state).c_selected_lines,
-            this.lineHit
-        ];
-        console.log('state.c_selected_lines', (0, _state.state).c_selected_lines);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_selected_lines = this.previousSelection;
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fcLPE":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolAddShapeCommand", ()=>SelectToolAddShapeCommand);
-var _state = require("../../State");
-class SelectToolAddShapeCommand {
-    constructor(shapeIndex){
-        this.shapeIndex = shapeIndex;
-    }
-    do() {
-        (0, _state.state).c_selected_shapes.push(this.shapeIndex);
-    }
-    undo() {
-        (0, _state.state).c_selected_shapes.pop(); // could  be a splice for better accuracy but I really depend on this being rather clean overall so I don't think this is a huge risk
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fcEzj":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolDeselectLinesCommand", ()=>SelectToolDeselectLinesCommand);
-var _state = require("../../State");
-class SelectToolDeselectLinesCommand {
-    constructor(){
-        this.last = (0, _state.state).c_selected_lines;
-    }
-    do() {
-        (0, _state.state).c_selected_lines = [];
-    }
-    undo() {
-        (0, _state.state).c_selected_lines = this.last;
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4QHCH":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DrawPreviewsCommand", ()=>DrawPreviewsCommand);
-var _drawSelectionMovePreview = require("../../rendering/drawSelectionMovePreview");
-var _canvas = require("../../rendering/canvas");
-class DrawPreviewsCommand {
-    constructor(pos){
-        this.pos = pos;
-    }
-    do() {
-        (0, _canvas.redrawCanvas)();
-        (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(this.pos);
-    }
-    undo() {
-    // do render commands have an undo?
-    }
-}
-
-},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OqtZ":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "createPolygonPlane", ()=>createPolygonPlane);
-var _three = require("three");
-var _state = require("../../State");
-var _xpbdTypes = require("../simulation/xpbdTypes");
-var _threeSubdivide = require("three-subdivide");
-var _bufferGeometryUtils = require("three/examples/jsm/utils/BufferGeometryUtils");
-var _stretchConstraints = require("./mueller/stretchConstraints");
-const createPolygonPlane = (path)=>{
-    const points = path.map((index)=>{
-        return (0, _state.state).c_points[index].clone();
+});
+Object.keys(react).forEach(function(k) {
+    if (k !== 'default' && !Object.prototype.hasOwnProperty.call(exports, k)) Object.defineProperty(exports, k, {
+        enumerable: true,
+        get: function() {
+            return react[k];
+        }
     });
-    // Add the offset point in the beginning of the array
-    const offsetPoint = points[0];
-    points.reverse();
-    points.push(offsetPoint);
-    points.reverse();
-    const iterations = 2;
-    const params = {
-        split: true,
-        uvSmooth: false,
-        preserveEdges: false,
-        flatOnly: true,
-        maxTriangles: 1024
+});
+
+},{"a19f4edd89926025":"2SLIN","a0cacd268d6bf882":"fhDSt"}],"2SLIN":[function(require,module,exports,__globalThis) {
+'use strict';
+const createStoreImpl = (createState)=>{
+    let state;
+    const listeners = /* @__PURE__ */ new Set();
+    const setState = (partial, replace)=>{
+        const nextState = typeof partial === "function" ? partial(state) : partial;
+        if (!Object.is(nextState, state)) {
+            const previousState = state;
+            state = (replace != null ? replace : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
+            listeners.forEach((listener)=>listener(state, previousState));
+        }
     };
-    const shape = new _three.Shape(points);
-    const geometry = new _three.ShapeGeometry(shape);
-    let subgeometry = (0, _threeSubdivide.LoopSubdivision).modify(geometry, iterations, params);
-    subgeometry = _bufferGeometryUtils.mergeVertices(subgeometry);
-    const material = new _three.MeshBasicMaterial({
-        color: 0x000000,
-        side: _three.DoubleSide,
-        wireframe: true
-    });
-    const mesh = new _three.Mesh(subgeometry, material);
-    mesh.scale.set(0.01, 0.01, 0.01);
-    (0, _state.state).scene.add(mesh);
-    // Array of floats, each position is three floats (x,y,z)
-    const positions = subgeometry.getAttribute('position').array;
-    // Position attribute, for position.setXYZ(i, x, y, z) updating
-    const position = subgeometry.getAttribute('position');
-    // Array of integers making up triangles, each triangle is three ints
-    const indices = subgeometry.getIndex().array;
-    // Remove offset element from points array
-    points.reverse();
-    points.pop();
-    points.reverse();
-    // Generate particles from real points
-    for(let i = 0; i < positions.length / 3; ++i){
-        let point = {
-            x: positions[i * 3],
-            y: positions[i * 3 + 1],
-            z: positions[i * 3 + 2]
-        };
-        const particle = {
-            position: new _three.Vector3(point.x, point.y, 0),
-            positionArray: position,
-            positionIndex: i,
-            invMass: .1,
-            previousPosition: new _three.Vector3(0, 0, 0),
-            predicted: new _three.Vector3(0, 0, 0),
-            velocity: new _three.Vector3(0, 0, 0),
-            geometry: subgeometry
-        };
-        (0, _state.state).particles.push(particle);
-    }
-    (0, _state.state).particles[0].velocity = new _three.Vector3(-10, 10, 100);
-    function generateDistanceConstraintBetweenPointIds(id0, id1) {
-        const p1 = new _three.Vector3(positions[id0 * 3], positions[id0 * 3 + 1], positions[id0 * 3 + 2]);
-        const p2 = new _three.Vector3(positions[id1 * 3], positions[id1 * 3 + 1], positions[id1 * 3 + 2]);
-        const constraint1 = new (0, _xpbdTypes.DistanceConstraint)(id0, id1, 3, p1.distanceTo(p2), .1);
-        (0, _state.state).constraints.push(constraint1);
-        constraintPointIds.push([
-            id0,
-            id1
-        ]);
-    }
-    // List of paired points
-    const constraintPointIds = [];
-    const { edgeIds } = (0, _stretchConstraints.generateTriPairIds)(indices);
-    for(let index = 0; index < edgeIds.length - 1; index++){
-        // build this into an adjacency matrix to reduce redundancy
-        const i = edgeIds[index];
-        const j = edgeIds[index + 1];
-        const ids = [
-            i,
-            j
-        ];
-        ids.sort((a, b)=>a - b);
-        // If the points do not already have a distance constraint
-        if (constraintPointIds.find((pair)=>pair[0] == ids[0] && pair[1] == ids[1]) === undefined && i * 3 + 5 < indices.length - 1) generateDistanceConstraintBetweenPointIds(ids[0], ids[1]);
-    }
-    (0, _state.state).testObject = mesh;
-    return mesh;
+    const getState = ()=>state;
+    const getInitialState = ()=>initialState;
+    const subscribe = (listener)=>{
+        listeners.add(listener);
+        return ()=>listeners.delete(listener);
+    };
+    const api = {
+        setState,
+        getState,
+        getInitialState,
+        subscribe
+    };
+    const initialState = state = createState(setState, getState, api);
+    return api;
 };
+const createStore = (createState)=>createState ? createStoreImpl(createState) : createStoreImpl;
+exports.createStore = createStore;
 
-},{"three":"ktPTu","../../State":"83rpN","../simulation/xpbdTypes":"4aPO7","three-subdivide":"e6vhA","three/examples/jsm/utils/BufferGeometryUtils":"5o7x9","./mueller/stretchConstraints":"4gI9y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4aPO7":[function(require,module,exports,__globalThis) {
+},{}],"fhDSt":[function(require,module,exports,__globalThis) {
+'use strict';
+var React = require("6a69048f974f8971");
+var vanilla = require("985957b117977eb9");
+const identity = (arg)=>arg;
+function useStore(api, selector = identity) {
+    const slice = React.useSyncExternalStore(api.subscribe, ()=>selector(api.getState()), ()=>selector(api.getInitialState()));
+    React.useDebugValue(slice);
+    return slice;
+}
+const createImpl = (createState)=>{
+    const api = vanilla.createStore(createState);
+    const useBoundStore = (selector)=>useStore(api, selector);
+    Object.assign(useBoundStore, api);
+    return useBoundStore;
+};
+const create = (createState)=>createState ? createImpl(createState) : createImpl;
+exports.create = create;
+exports.useStore = useStore;
+
+},{"6a69048f974f8971":"21dqq","985957b117977eb9":"2SLIN"}],"4JRAF":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DistanceConstraint", ()=>DistanceConstraint);
-var _three = require("three");
-class DistanceConstraint {
-    constructor(p1, p2, stride, restLength, compliance){
-        this.p1 = p1;
-        this.p2 = p2;
-        this.stride = stride;
-        this.restLength = restLength;
-        this.compliance = compliance;
-        this.lambda = 0;
-        this.delta = new _three.Vector3(0, 0, 0);
+parcelHelpers.export(exports, "GenericAddPointCommand", ()=>GenericAddPointCommand);
+var _store = require("../../../UI/store");
+var _state = require("../../../State");
+class GenericAddPointCommand {
+    constructor(index, point){
+        this.tool = null;
+        this.__point = point;
+        this.__index = index;
+        this.__pathIndex = -1;
     }
-    // XPBD constraint solve method.
-    // deltaTime is the simulation time step.
-    solve(deltaTime, particleObject) {
-        const { particles } = particleObject;
-        const p_i = particles[this.p1].predicted;
-        const p_j = particles[this.p2].predicted;
-        const w_i = particles[this.p1].invMass;
-        const w_j = particles[this.p2].invMass;
-        // This could be included in the constraint instead of creating a new vector!
-        this.delta.subVectors(p_i, p_j);
-        const currentDist = this.delta.length();
-        if (currentDist === 0) return;
-        const C = currentDist - this.restLength;
-        const wSum = w_i + w_j;
-        // compliance term scaled by dt^2, should be almost infinite
-        const alpha = this.compliance / (deltaTime * deltaTime);
-        // lambda
-        const dlambda = -C / (wSum + alpha);
-        // Apply the correction scaled by the normalized gradient.
-        const correction = this.delta.normalize().multiplyScalar(dlambda);
-        if (w_i > 0) p_i.addScaledVector(correction, w_i);
-        if (w_j > 0) p_j.addScaledVector(correction, -w_j);
+    do() {
+        switch((0, _state.state).tool.name){
+            case 'path':
+                const t = (0, _state.state).tool;
+                const indices = t.insertPointIntoCurrentPath(this.__index, this.__point);
+                this.__index = indices.pointIndex;
+                this.__pathIndex = indices.pathIndex;
+                (0, _store.useAppState).getState().addShapePoint(this.__point);
+        }
+    }
+    undo() {
+        this.tool?.removePointFromPath(this.__index, this.__pathIndex);
     }
 }
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"e6vhA":[function(require,module,exports,__globalThis) {
+},{"../../../UI/store":"l1Ff7","../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3jXya":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "LoopSubdivision", ()=>(0, _loopSubdivisionJs.LoopSubdivision));
-var _loopSubdivisionJs = require("./LoopSubdivision.js");
-
-},{"./LoopSubdivision.js":"8Owuz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Owuz":[function(require,module,exports,__globalThis) {
-/**
- * @description Loop Subdivision Surface
- * @about       Smooth subdivision surface modifier for use with three.js BufferGeometry.
- * @author      Stephens Nunnally <@stevinz>
- * @license     MIT - Copyright (c) 2022 Stephens Nunnally
- * @source      https://github.com/stevinz/three-subdivide
- */ /////////////////////////////////////////////////////////////////////////////////////
-//
-//  Functions
-//      modify              Applies Loop subdivision to BufferGeometry, returns new BufferGeometry
-//      edgeSplit           Splits all triangles at edges shared by coplanar triangles
-//      flat                One iteration of Loop subdivision, without point averaging
-//      smooth              One iteration of Loop subdivision, with point averaging
-//
-//  Info
-//      This modifier uses the Loop (Charles Loop, 1987) subdivision surface algorithm to smooth
-//      modern three.js BufferGeometry.
-//
-//      At one point, three.js included a subdivision surface modifier in the extended examples (see bottom
-//      of file for links), it was removed in r125. The modifier was originally based on the Catmull-Clark
-//      algorithm, which works best for geometry with convex coplanar n-gon faces. In three.js r60 the modifier
-//      was changed to utilize the Loop algorithm. The Loop algorithm was designed to work better with triangle
-//      based meshes.
-//
-//      The Loop algorithm, however, doesn't always provide uniform results as the vertices are
-//      skewed toward the most used vertex positions. A triangle based box (e.g. BoxGeometry for example) will
-//      tend to favor the corners. To alleviate this issue, this implementation includes an initial pass to split
-//      coplanar faces at their shared edges. It starts by splitting along the longest shared edge first, and then
-//      from that midpoint it splits to any remaining coplanar shared edges.
-//
-//      Also by default, this implementation inserts new uv coordinates, but does not average them using the Loop
-//      algorithm. In some cases (often in flat geometries) this will produce undesired results, a
-//      noticeable tearing will occur. In such cases, try passing 'uvSmooth' as true to enable uv averaging.
-//
-//  Note(s)
-//      - This modifier returns a new BufferGeometry instance, it does not dispose() of the old geometry.
-//
-//      - This modifier returns a NonIndexed geometry. An Indexed geometry can be created by using the
-//        BufferGeometryUtils.mergeVertices() function, see:
-//        https://threejs.org/docs/?q=buffer#examples/en/utils/BufferGeometryUtils.mergeVertices
-//
-//      - This modifier works best with geometry whose triangles share edges AND edge vertices. See diagram below.
-//
-//          OKAY          NOT OKAY
-//            O              O
-//           /|\            / \
-//          / | \          /   \
-//         /  |  \        /     \
-//        O---O---O      O---O---O
-//         \  |  /        \  |  /
-//          \ | /          \ | /
-//           \|/            \|/
-//            O              O
-//
-//  Reference(s)
-//      - Subdivision Surfaces
-//          https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/thesis-10.pdf
-//          https://en.wikipedia.org/wiki/Loop_subdivision_surface
-//          https://cseweb.ucsd.edu/~alchern/teaching/cse167_fa21/6-3Surfaces.pdf
-//
-//      - Original three.js SubdivisionModifier, r124 (Loop)
-//          https://github.com/mrdoob/three.js/blob/r124/examples/jsm/modifiers/SubdivisionModifier.js
-//
-//      - Original three.js SubdivisionModifier, r59 (Catmull-Clark)
-//          https://github.com/mrdoob/three.js/blob/r59/examples/js/modifiers/SubdivisionModifier.js
-//
-/////////////////////////////////////////////////////////////////////////////////////
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-/////////////////////////////////////////////////////////////////////////////////////
-/////   Loop Subdivision Surface
-/////////////////////////////////////////////////////////////////////////////////////
-/** Loop subdivision surface modifier for use with modern three.js BufferGeometry */ parcelHelpers.export(exports, "LoopSubdivision", ()=>LoopSubdivision);
-var _three = require("three");
-///// Constants
-const POSITION_DECIMALS = 2;
-///// Local Variables
-const _average = new _three.Vector3();
-const _center = new _three.Vector3();
-const _midpoint = new _three.Vector3();
-const _normal = new _three.Vector3();
-const _temp = new _three.Vector3();
-const _vector0 = new _three.Vector3(); // .Vector4();
-const _vector1 = new _three.Vector3(); // .Vector4();
-const _vector2 = new _three.Vector3(); // .Vector4();
-const _vec0to1 = new _three.Vector3();
-const _vec1to2 = new _three.Vector3();
-const _vec2to0 = new _three.Vector3();
-const _position = [
-    new _three.Vector3(),
-    new _three.Vector3(),
-    new _three.Vector3()
-];
-const _vertex = [
-    new _three.Vector3(),
-    new _three.Vector3(),
-    new _three.Vector3()
-];
-const _triangle = new _three.Triangle();
-class LoopSubdivision {
-    /////////////////////////////////////////////////////////////////////////////////////
-    /////   Modify
-    ////////////////////
+parcelHelpers.export(exports, "GenericDeletePointCommand", ()=>GenericDeletePointCommand);
+var _state = require("../../../State");
+class GenericDeletePointCommand {
     /**
-     * Applies Loop subdivision modifier to geometry
-     *
-     * @param {Object} bufferGeometry - Three.js geometry to be subdivided
-     * @param {Number} iterations - How many times to run subdividion
-     * @param {Object} params - Optional parameters object, see below
-     * @returns {Object} Returns new, subdivided, three.js BufferGeometry object
-     *
-     * Optional Parameters Object
-     * @param {Boolean} split - Should coplanar faces be divided along shared edges before running Loop subdivision?
-     * @param {Boolean} uvSmooth - Should UV values be averaged during subdivision?
-     * @param {Boolean} preserveEdges - Should edges / breaks in geometry be ignored during subdivision?
-     * @param {Boolean} flatOnly - If true, subdivision generates triangles, but does not modify positions
-     * @param {Number} maxTriangles - If geometry contains more than this many triangles, subdivision will not continue
-     * @param {Number} weight - How much to weigh favoring heavy corners vs favoring Loop's formula
-     */ static modify(bufferGeometry, iterations = 1, params = {}) {
-        if (arguments.length > 3) console.warn(`LoopSubdivision.modify() now uses a parameter object. See readme for more info!`);
-        if (typeof params !== 'object') params = {};
-        ///// Parameters
-        if (params.split === undefined) params.split = true;
-        if (params.uvSmooth === undefined) params.uvSmooth = false;
-        if (params.preserveEdges === undefined) params.preserveEdges = false;
-        if (params.flatOnly === undefined) params.flatOnly = false;
-        if (params.maxTriangles === undefined) params.maxTriangles = Infinity;
-        if (params.weight === undefined) params.weight = 1;
-        if (isNaN(params.weight) || !isFinite(params.weight)) params.weight = 1;
-        params.weight = Math.max(0, Math.min(1, params.weight));
-        ///// Geometries
-        if (!verifyGeometry(bufferGeometry)) return bufferGeometry;
-        let modifiedGeometry = bufferGeometry.clone();
-        ///// Presplit
-        if (params.split) {
-            const splitGeometry = LoopSubdivision.edgeSplit(modifiedGeometry);
-            modifiedGeometry.dispose();
-            modifiedGeometry = splitGeometry;
-        }
-        ///// Apply Subdivision
-        for(let i = 0; i < iterations; i++){
-            let currentTriangles = modifiedGeometry.attributes.position.count / 3;
-            if (currentTriangles < params.maxTriangles) {
-                let subdividedGeometry;
-                // Subdivide
-                if (params.flatOnly) subdividedGeometry = LoopSubdivision.flat(modifiedGeometry, params);
-                else subdividedGeometry = LoopSubdivision.smooth(modifiedGeometry, params);
-                // Copy and Resize Groups
-                modifiedGeometry.groups.forEach((group)=>{
-                    subdividedGeometry.addGroup(group.start * 4, group.count * 4, group.materialIndex);
-                });
-                // Clean Up
-                modifiedGeometry.dispose();
-                modifiedGeometry = subdividedGeometry;
-            }
-        }
-        ///// Return New Geometry
-        return modifiedGeometry;
+  @param {number} pointIndex - Index of the point within the current path
+  */ constructor(pointIndex){
+        // Pick active path, as with all generic commands
+        this.pathIndex = (0, _state.state).c_activePath;
+        // Find the right globalPointIndex from the current path
+        this.pointIndex = (0, _state.state).c_paths[this.pathIndex][pointIndex];
+        // Store previous state
+        this.previousPathState = [
+            ...(0, _state.state).c_paths[this.pathIndex]
+        ];
     }
-    /////////////////////////////////////////////////////////////////////////////////////
-    /////   Split Hypotenuse
-    ////////////////////
-    /**
-     * Applies one iteration of split subdivision. Splits all triangles at edges shared by coplanar triangles.
-     * Starts by splitting at longest shared edge, followed by splitting from that new center edge point to the
-     * center of any other shared edges.
-     */ static edgeSplit(geometry) {
-        ///// Geometries
-        if (!verifyGeometry(geometry)) return geometry;
-        const existing = geometry.index !== null ? geometry.toNonIndexed() : geometry.clone();
-        const split = new _three.BufferGeometry();
-        ///// Attributes
-        const attributeList = gatherAttributes(existing);
-        const vertexCount = existing.attributes.position.count;
-        const posAttribute = existing.getAttribute('position');
-        const norAttribute = existing.getAttribute('normal');
-        const edgeHashToTriangle = {};
-        const triangleEdgeHashes = [];
-        const edgeLength = {};
-        const triangleExist = [];
-        ///// Edges
-        for(let i = 0; i < vertexCount; i += 3){
-            // Positions
-            _vector0.fromBufferAttribute(posAttribute, i + 0);
-            _vector1.fromBufferAttribute(posAttribute, i + 1);
-            _vector2.fromBufferAttribute(posAttribute, i + 2);
-            _normal.fromBufferAttribute(norAttribute, i);
-            const vecHash0 = hashFromVector(_vector0);
-            const vecHash1 = hashFromVector(_vector1);
-            const vecHash2 = hashFromVector(_vector2);
-            // Verify Area
-            const triangleSize = _triangle.set(_vector0, _vector1, _vector2).getArea();
-            triangleExist.push(!fuzzy(triangleSize, 0));
-            if (!triangleExist[i / 3]) {
-                triangleEdgeHashes.push([]);
-                continue;
-            }
-            // Calculate Normals
-            calcNormal(_normal, _vector0, _vector1, _vector2);
-            const normalHash = hashFromVector(_normal);
-            // Vertex Hashes
-            const hashes = [
-                `${vecHash0}_${vecHash1}_${normalHash}`,
-                `${vecHash1}_${vecHash0}_${normalHash}`,
-                `${vecHash1}_${vecHash2}_${normalHash}`,
-                `${vecHash2}_${vecHash1}_${normalHash}`,
-                `${vecHash2}_${vecHash0}_${normalHash}`,
-                `${vecHash0}_${vecHash2}_${normalHash}`
-            ];
-            // Store Edge Hashes
-            const index = i / 3;
-            for(let j = 0; j < hashes.length; j++){
-                // Attach Triangle Index to Edge Hash
-                if (!edgeHashToTriangle[hashes[j]]) edgeHashToTriangle[hashes[j]] = [];
-                edgeHashToTriangle[hashes[j]].push(index);
-                // Edge Length
-                if (!edgeLength[hashes[j]]) {
-                    if (j === 0 || j === 1) edgeLength[hashes[j]] = _vector0.distanceTo(_vector1);
-                    if (j === 2 || j === 3) edgeLength[hashes[j]] = _vector1.distanceTo(_vector2);
-                    if (j === 4 || j === 5) edgeLength[hashes[j]] = _vector2.distanceTo(_vector0);
-                }
-            }
-            // Triangle Edge Reference
-            triangleEdgeHashes.push([
-                hashes[0],
-                hashes[2],
-                hashes[4]
-            ]);
-        }
-        ///// Build Geometry, Set Attributes
-        attributeList.forEach((attributeName)=>{
-            const attribute = existing.getAttribute(attributeName);
-            if (!attribute) return;
-            const floatArray = splitAttribute(attribute, attributeName);
-            split.setAttribute(attributeName, new _three.BufferAttribute(floatArray, attribute.itemSize));
-        });
-        ///// Morph Attributes
-        const morphAttributes = existing.morphAttributes;
-        for(const attributeName in morphAttributes){
-            const array = [];
-            const morphAttribute = morphAttributes[attributeName];
-            // Process Array of Float32BufferAttributes
-            for(let i = 0, l = morphAttribute.length; i < l; i++){
-                if (morphAttribute[i].count !== vertexCount) continue;
-                const floatArray = splitAttribute(morphAttribute[i], attributeName, true);
-                array.push(new _three.BufferAttribute(floatArray, morphAttribute[i].itemSize));
-            }
-            split.morphAttributes[attributeName] = array;
-        }
-        split.morphTargetsRelative = existing.morphTargetsRelative;
-        // Clean Up, Return New Geometry
-        existing.dispose();
-        return split;
-        // Loop Subdivide Function
-        function splitAttribute(attribute, attributeName, morph = false) {
-            const newTriangles = 4; /* maximum number of new triangles */ 
-            const arrayLength = vertexCount * attribute.itemSize * newTriangles;
-            const floatArray = new attribute.array.constructor(arrayLength);
-            const processGroups = attributeName === 'position' && !morph && existing.groups.length > 0;
-            let groupStart = undefined, groupMaterial = undefined;
-            let index = 0;
-            let skipped = 0;
-            let step = attribute.itemSize;
-            for(let i = 0; i < vertexCount; i += 3){
-                // Verify Triangle is Valid
-                if (!triangleExist[i / 3]) {
-                    skipped += 3;
-                    continue;
-                }
-                // Get Triangle Points
-                _vector0.fromBufferAttribute(attribute, i + 0);
-                _vector1.fromBufferAttribute(attribute, i + 1);
-                _vector2.fromBufferAttribute(attribute, i + 2);
-                // Check for Shared Edges
-                const existingIndex = i / 3;
-                const edgeHash0to1 = triangleEdgeHashes[existingIndex][0];
-                const edgeHash1to2 = triangleEdgeHashes[existingIndex][1];
-                const edgeHash2to0 = triangleEdgeHashes[existingIndex][2];
-                const edgeCount0to1 = edgeHashToTriangle[edgeHash0to1].length;
-                const edgeCount1to2 = edgeHashToTriangle[edgeHash1to2].length;
-                const edgeCount2to0 = edgeHashToTriangle[edgeHash2to0].length;
-                const sharedCount = edgeCount0to1 + edgeCount1to2 + edgeCount2to0 - 3;
-                // New Index (Before New Triangles, used for Groups)
-                const loopStartIndex = index * 3 / step / 3;
-                // No Shared Edges
-                if (sharedCount === 0) {
-                    setTriangle(floatArray, index, step, _vector0, _vector1, _vector2);
-                    index += step * 3;
-                // Shared Edges
-                } else {
-                    const length0to1 = edgeLength[edgeHash0to1];
-                    const length1to2 = edgeLength[edgeHash1to2];
-                    const length2to0 = edgeLength[edgeHash2to0];
-                    // Add New Triangle Positions
-                    if ((length0to1 > length1to2 || edgeCount1to2 <= 1) && (length0to1 > length2to0 || edgeCount2to0 <= 1) && edgeCount0to1 > 1) {
-                        _center.copy(_vector0).add(_vector1).divideScalar(2.0);
-                        if (edgeCount2to0 > 1) {
-                            _midpoint.copy(_vector2).add(_vector0).divideScalar(2.0);
-                            setTriangle(floatArray, index, step, _vector0, _center, _midpoint);
-                            index += step * 3;
-                            setTriangle(floatArray, index, step, _center, _vector2, _midpoint);
-                            index += step * 3;
-                        } else {
-                            setTriangle(floatArray, index, step, _vector0, _center, _vector2);
-                            index += step * 3;
-                        }
-                        if (edgeCount1to2 > 1) {
-                            _midpoint.copy(_vector1).add(_vector2).divideScalar(2.0);
-                            setTriangle(floatArray, index, step, _center, _vector1, _midpoint);
-                            index += step * 3;
-                            setTriangle(floatArray, index, step, _midpoint, _vector2, _center);
-                            index += step * 3;
-                        } else {
-                            setTriangle(floatArray, index, step, _vector1, _vector2, _center);
-                            index += step * 3;
-                        }
-                    } else if ((length1to2 > length2to0 || edgeCount2to0 <= 1) && edgeCount1to2 > 1) {
-                        _center.copy(_vector1).add(_vector2).divideScalar(2.0);
-                        if (edgeCount0to1 > 1) {
-                            _midpoint.copy(_vector0).add(_vector1).divideScalar(2.0);
-                            setTriangle(floatArray, index, step, _center, _midpoint, _vector1);
-                            index += step * 3;
-                            setTriangle(floatArray, index, step, _midpoint, _center, _vector0);
-                            index += step * 3;
-                        } else {
-                            setTriangle(floatArray, index, step, _vector1, _center, _vector0);
-                            index += step * 3;
-                        }
-                        if (edgeCount2to0 > 1) {
-                            _midpoint.copy(_vector2).add(_vector0).divideScalar(2.0);
-                            setTriangle(floatArray, index, step, _center, _vector2, _midpoint);
-                            index += step * 3;
-                            setTriangle(floatArray, index, step, _midpoint, _vector0, _center);
-                            index += step * 3;
-                        } else {
-                            setTriangle(floatArray, index, step, _vector2, _vector0, _center);
-                            index += step * 3;
-                        }
-                    } else if (edgeCount2to0 > 1) {
-                        _center.copy(_vector2).add(_vector0).divideScalar(2.0);
-                        if (edgeCount1to2 > 1) {
-                            _midpoint.copy(_vector1).add(_vector2).divideScalar(2.0);
-                            setTriangle(floatArray, index, step, _vector2, _center, _midpoint);
-                            index += step * 3;
-                            setTriangle(floatArray, index, step, _center, _vector1, _midpoint);
-                            index += step * 3;
-                        } else {
-                            setTriangle(floatArray, index, step, _vector2, _center, _vector1);
-                            index += step * 3;
-                        }
-                        if (edgeCount0to1 > 1) {
-                            _midpoint.copy(_vector0).add(_vector1).divideScalar(2.0);
-                            setTriangle(floatArray, index, step, _vector0, _midpoint, _center);
-                            index += step * 3;
-                            setTriangle(floatArray, index, step, _midpoint, _vector1, _center);
-                            index += step * 3;
-                        } else {
-                            setTriangle(floatArray, index, step, _vector0, _vector1, _center);
-                            index += step * 3;
-                        }
-                    } else {
-                        setTriangle(floatArray, index, step, _vector0, _vector1, _vector2);
-                        index += step * 3;
-                    }
-                }
-                // Process Groups
-                if (processGroups) existing.groups.forEach((group)=>{
-                    if (group.start === i - skipped) {
-                        if (groupStart !== undefined && groupMaterial !== undefined) split.addGroup(groupStart, loopStartIndex - groupStart, groupMaterial);
-                        groupStart = loopStartIndex;
-                        groupMaterial = group.materialIndex;
-                    }
-                });
-                // Reset Skipped Triangle Counter
-                skipped = 0;
-            }
-            // Resize Array
-            const reducedCount = index * 3 / step;
-            const reducedArray = new attribute.array.constructor(reducedCount);
-            for(let i = 0; i < reducedCount; i++)reducedArray[i] = floatArray[i];
-            // Final Group
-            if (processGroups && groupStart !== undefined && groupMaterial !== undefined) split.addGroup(groupStart, index * 3 / step / 3 - groupStart, groupMaterial);
-            return reducedArray;
-        }
+    do() {
+        const path = (0, _state.state).c_paths[this.pathIndex];
+        // Ensure the path exists and contains the point
+        if (!path || path.length <= 1) return; // Prevent removing too many points
+        (0, _state.state).c_paths[this.pathIndex] = path.filter((value, index)=>value !== this.pointIndex);
+        (0, _state.state).c_pointmap.delete(this.pointIndex);
     }
-    /////////////////////////////////////////////////////////////////////////////////////
-    /////   Flat
-    ////////////////////
-    /** Applies one iteration of Loop (flat) subdivision (1 triangle split into 4 triangles) */ static flat(geometry, params = {}) {
-        ///// Geometries
-        if (!verifyGeometry(geometry)) return geometry;
-        const existing = geometry.index !== null ? geometry.toNonIndexed() : geometry.clone();
-        const loop = new _three.BufferGeometry();
-        ///// Attributes
-        const attributeList = gatherAttributes(existing);
-        const vertexCount = existing.attributes.position.count;
-        ///// Build Geometry
-        attributeList.forEach((attributeName)=>{
-            const attribute = existing.getAttribute(attributeName);
-            if (!attribute) return;
-            loop.setAttribute(attributeName, LoopSubdivision.flatAttribute(attribute, vertexCount, params));
-        });
-        ///// Morph Attributes
-        const morphAttributes = existing.morphAttributes;
-        for(const attributeName in morphAttributes){
-            const array = [];
-            const morphAttribute = morphAttributes[attributeName];
-            // Process Array of Float32BufferAttributes
-            for(let i = 0, l = morphAttribute.length; i < l; i++){
-                if (morphAttribute[i].count !== vertexCount) continue;
-                array.push(LoopSubdivision.flatAttribute(morphAttribute[i], vertexCount, params));
-            }
-            loop.morphAttributes[attributeName] = array;
-        }
-        loop.morphTargetsRelative = existing.morphTargetsRelative;
-        ///// Clean Up
-        existing.dispose();
-        return loop;
+    undo() {
+        (0, _state.state).c_paths[this.pathIndex] = [
+            ...this.previousPathState
+        ];
     }
-    static flatAttribute(attribute, vertexCount, params = {}) {
-        const newTriangles = 4;
-        const arrayLength = vertexCount * attribute.itemSize * newTriangles;
-        const floatArray = new attribute.array.constructor(arrayLength);
-        let index = 0;
-        let step = attribute.itemSize;
-        for(let i = 0; i < vertexCount; i += 3){
-            // Original Vertices
-            _vector0.fromBufferAttribute(attribute, i + 0);
-            _vector1.fromBufferAttribute(attribute, i + 1);
-            _vector2.fromBufferAttribute(attribute, i + 2);
-            // Midpoints
-            _vec0to1.copy(_vector0).add(_vector1).divideScalar(2.0);
-            _vec1to2.copy(_vector1).add(_vector2).divideScalar(2.0);
-            _vec2to0.copy(_vector2).add(_vector0).divideScalar(2.0);
-            // Add New Triangle Positions
-            setTriangle(floatArray, index, step, _vector0, _vec0to1, _vec2to0);
-            index += step * 3;
-            setTriangle(floatArray, index, step, _vector1, _vec1to2, _vec0to1);
-            index += step * 3;
-            setTriangle(floatArray, index, step, _vector2, _vec2to0, _vec1to2);
-            index += step * 3;
-            setTriangle(floatArray, index, step, _vec0to1, _vec1to2, _vec2to0);
-            index += step * 3;
-        }
-        return new _three.BufferAttribute(floatArray, attribute.itemSize);
-    }
-    /////////////////////////////////////////////////////////////////////////////////////
-    /////   Smooth
-    ////////////////////
-    /** Applies one iteration of Loop (smooth) subdivision (1 triangle split into 4 triangles) */ static smooth(geometry, params = {}) {
-        if (typeof params !== 'object') params = {};
-        ///// Parameters
-        if (params.uvSmooth === undefined) params.uvSmooth = false;
-        if (params.preserveEdges === undefined) params.preserveEdges = false;
-        ///// Geometries
-        if (!verifyGeometry(geometry)) return geometry;
-        const existing = geometry.index !== null ? geometry.toNonIndexed() : geometry.clone();
-        const flat = LoopSubdivision.flat(existing, params);
-        const loop = new _three.BufferGeometry();
-        ///// Attributes
-        const attributeList = gatherAttributes(existing);
-        const vertexCount = existing.attributes.position.count;
-        const posAttribute = existing.getAttribute('position');
-        const flatPosition = flat.getAttribute('position');
-        const hashToIndex = {}; // Position hash mapped to index values of same position
-        const existingNeighbors = {}; // Position hash mapped to existing vertex neighbors
-        const flatOpposites = {}; // Position hash mapped to new edge point opposites
-        const existingEdges = {};
-        function addNeighbor(posHash, neighborHash, index) {
-            if (!existingNeighbors[posHash]) existingNeighbors[posHash] = {};
-            if (!existingNeighbors[posHash][neighborHash]) existingNeighbors[posHash][neighborHash] = [];
-            existingNeighbors[posHash][neighborHash].push(index);
-        }
-        function addOpposite(posHash, index) {
-            if (!flatOpposites[posHash]) flatOpposites[posHash] = [];
-            flatOpposites[posHash].push(index);
-        }
-        function addEdgePoint(posHash, edgeHash) {
-            if (!existingEdges[posHash]) existingEdges[posHash] = new Set();
-            existingEdges[posHash].add(edgeHash);
-        }
-        ///// Existing Vertex Hashes
-        for(let i = 0; i < vertexCount; i += 3){
-            const posHash0 = hashFromVector(_vertex[0].fromBufferAttribute(posAttribute, i + 0));
-            const posHash1 = hashFromVector(_vertex[1].fromBufferAttribute(posAttribute, i + 1));
-            const posHash2 = hashFromVector(_vertex[2].fromBufferAttribute(posAttribute, i + 2));
-            // Neighbors (of Existing Geometry)
-            addNeighbor(posHash0, posHash1, i + 1);
-            addNeighbor(posHash0, posHash2, i + 2);
-            addNeighbor(posHash1, posHash0, i + 0);
-            addNeighbor(posHash1, posHash2, i + 2);
-            addNeighbor(posHash2, posHash0, i + 0);
-            addNeighbor(posHash2, posHash1, i + 1);
-            // Opposites (of new FlatSubdivided vertices)
-            _vec0to1.copy(_vertex[0]).add(_vertex[1]).divideScalar(2.0);
-            _vec1to2.copy(_vertex[1]).add(_vertex[2]).divideScalar(2.0);
-            _vec2to0.copy(_vertex[2]).add(_vertex[0]).divideScalar(2.0);
-            const hash0to1 = hashFromVector(_vec0to1);
-            const hash1to2 = hashFromVector(_vec1to2);
-            const hash2to0 = hashFromVector(_vec2to0);
-            addOpposite(hash0to1, i + 2);
-            addOpposite(hash1to2, i + 0);
-            addOpposite(hash2to0, i + 1);
-            // Track Edges for 'edgePreserve'
-            addEdgePoint(posHash0, hash0to1);
-            addEdgePoint(posHash0, hash2to0);
-            addEdgePoint(posHash1, hash0to1);
-            addEdgePoint(posHash1, hash1to2);
-            addEdgePoint(posHash2, hash1to2);
-            addEdgePoint(posHash2, hash2to0);
-        }
-        ///// Flat Position to Index Map
-        for(let i = 0; i < flat.attributes.position.count; i++){
-            const posHash = hashFromVector(_temp.fromBufferAttribute(flatPosition, i));
-            if (!hashToIndex[posHash]) hashToIndex[posHash] = [];
-            hashToIndex[posHash].push(i);
-        }
-        ///// Build Geometry, Set Attributes
-        attributeList.forEach((attributeName)=>{
-            const existingAttribute = existing.getAttribute(attributeName);
-            const flattenedAttribute = flat.getAttribute(attributeName);
-            if (existingAttribute === undefined || flattenedAttribute === undefined) return;
-            const floatArray = subdivideAttribute(attributeName, existingAttribute, flattenedAttribute);
-            loop.setAttribute(attributeName, new _three.BufferAttribute(floatArray, flattenedAttribute.itemSize));
-        });
-        ///// Morph Attributes
-        const morphAttributes = existing.morphAttributes;
-        for(const attributeName in morphAttributes){
-            const array = [];
-            const morphAttribute = morphAttributes[attributeName];
-            // Process Array of Float32BufferAttributes
-            for(let i = 0, l = morphAttribute.length; i < l; i++){
-                if (morphAttribute[i].count !== vertexCount) continue;
-                const existingAttribute = morphAttribute[i];
-                const flattenedAttribute = LoopSubdivision.flatAttribute(morphAttribute[i], morphAttribute[i].count, params);
-                const floatArray = subdivideAttribute(attributeName, existingAttribute, flattenedAttribute);
-                array.push(new _three.BufferAttribute(floatArray, flattenedAttribute.itemSize));
-            }
-            loop.morphAttributes[attributeName] = array;
-        }
-        loop.morphTargetsRelative = existing.morphTargetsRelative;
-        ///// Clean Up
-        flat.dispose();
-        existing.dispose();
-        return loop;
-        //////////
-        // Loop Subdivide Function
-        function subdivideAttribute(attributeName, existingAttribute, flattenedAttribute) {
-            const arrayLength = flat.attributes.position.count * flattenedAttribute.itemSize;
-            const floatArray = new existingAttribute.array.constructor(arrayLength);
-            // Process Triangles
-            let index = 0;
-            for(let i = 0; i < flat.attributes.position.count; i += 3){
-                // Process Triangle Points
-                for(let v = 0; v < 3; v++){
-                    if (attributeName === 'uv' && !params.uvSmooth) _vertex[v].fromBufferAttribute(flattenedAttribute, i + v);
-                    else if (attributeName === 'normal') {
-                        _position[v].fromBufferAttribute(flatPosition, i + v);
-                        const positionHash = hashFromVector(_position[v]);
-                        const positions = hashToIndex[positionHash];
-                        const k = Object.keys(positions).length;
-                        const beta = 0.75 / k;
-                        const startWeight = 1.0 - beta * k;
-                        _vertex[v].fromBufferAttribute(flattenedAttribute, i + v);
-                        _vertex[v].multiplyScalar(startWeight);
-                        positions.forEach((positionIndex)=>{
-                            _average.fromBufferAttribute(flattenedAttribute, positionIndex);
-                            _average.multiplyScalar(beta);
-                            _vertex[v].add(_average);
-                        });
-                    } else {
-                        _vertex[v].fromBufferAttribute(flattenedAttribute, i + v);
-                        _position[v].fromBufferAttribute(flatPosition, i + v);
-                        const positionHash = hashFromVector(_position[v]);
-                        const neighbors = existingNeighbors[positionHash];
-                        const opposites = flatOpposites[positionHash];
-                        ///// Adjust Source Vertex
-                        if (neighbors) {
-                            // Check Edges have even Opposite Points
-                            if (params.preserveEdges) {
-                                const edgeSet = existingEdges[positionHash];
-                                let hasPair = true;
-                                for (const edgeHash of edgeSet)if (flatOpposites[edgeHash].length % 2 !== 0) hasPair = false;
-                                if (!hasPair) continue;
-                            }
-                            // Number of Neighbors
-                            const k = Object.keys(neighbors).length;
-                            ///// Loop's Formula
-                            const beta = 1 / k * (5 / 8 - Math.pow(3 / 8 + 1 / 4 * Math.cos(2 * Math.PI / k), 2));
-                            ///// Warren's Formula
-                            // const beta = (k > 3) ? 3 / (8 * k) : ((k === 3) ? 3 / 16 : 0);
-                            ///// Stevinz' Formula
-                            // const beta = 0.5 / k;
-                            ///// Corners
-                            const heavy = 1 / k / k;
-                            ///// Interpolate Beta -> Heavy
-                            const weight = lerp(heavy, beta, params.weight);
-                            ///// Average with Neighbors
-                            const startWeight = 1.0 - weight * k;
-                            _vertex[v].multiplyScalar(startWeight);
-                            for(let neighborHash in neighbors){
-                                const neighborIndices = neighbors[neighborHash];
-                                _average.set(0, 0, 0);
-                                for(let j = 0; j < neighborIndices.length; j++)_average.add(_temp.fromBufferAttribute(existingAttribute, neighborIndices[j]));
-                                _average.divideScalar(neighborIndices.length);
-                                _average.multiplyScalar(weight);
-                                _vertex[v].add(_average);
-                            }
-                        ///// Newly Added Edge Vertex
-                        } else if (opposites && opposites.length === 2) {
-                            const k = opposites.length;
-                            const beta = 0.125; /* 1/8 */ 
-                            const startWeight = 1.0 - beta * k;
-                            _vertex[v].multiplyScalar(startWeight);
-                            opposites.forEach((oppositeIndex)=>{
-                                _average.fromBufferAttribute(existingAttribute, oppositeIndex);
-                                _average.multiplyScalar(beta);
-                                _vertex[v].add(_average);
-                            });
-                        }
-                    }
-                }
-                // Add New Triangle Position
-                setTriangle(floatArray, index, flattenedAttribute.itemSize, _vertex[0], _vertex[1], _vertex[2]);
-                index += flattenedAttribute.itemSize * 3;
-            }
-            return floatArray;
-        }
-    }
-}
-/////////////////////////////////////////////////////////////////////////////////////
-/////   Local Functions, Hash
-/////////////////////////////////////////////////////////////////////////////////////
-const _positionShift = Math.pow(10, POSITION_DECIMALS);
-/** Compares two numbers to see if they're almost the same */ function fuzzy(a, b, tolerance = 0.00001) {
-    return a < b + tolerance && a > b - tolerance;
-}
-/** Generates hash strong from Number */ function hashFromNumber(num, shift = _positionShift) {
-    let roundedNumber = round(num * shift);
-    if (roundedNumber == 0) roundedNumber = 0; /* prevent -0 (signed 0 can effect Math.atan2(), etc.) */ 
-    return `${roundedNumber}`;
-}
-/** Generates hash strong from Vector3 */ function hashFromVector(vector, shift = _positionShift) {
-    return `${hashFromNumber(vector.x, shift)},${hashFromNumber(vector.y, shift)},${hashFromNumber(vector.z, shift)}`;
-}
-function lerp(x, y, t) {
-    return (1 - t) * x + t * y;
-}
-function round(x) {
-    return x + (x > 0 ? 0.5 : -0.5) << 0;
-}
-/////////////////////////////////////////////////////////////////////////////////////
-/////   Local Functions, Geometry
-/////////////////////////////////////////////////////////////////////////////////////
-function calcNormal(target, vec1, vec2, vec3) {
-    _temp.subVectors(vec1, vec2);
-    target.subVectors(vec2, vec3);
-    target.cross(_temp).normalize();
-}
-function gatherAttributes(geometry) {
-    const desired = [
-        'position',
-        'normal',
-        'uv'
-    ];
-    const contains = Object.keys(geometry.attributes);
-    const attributeList = Array.from(new Set(desired.concat(contains)));
-    return attributeList;
-}
-function setTriangle(positions, index, step, vec0, vec1, vec2) {
-    if (step >= 1) {
-        positions[index + 0 + step * 0] = vec0.x;
-        positions[index + 0 + step * 1] = vec1.x;
-        positions[index + 0 + step * 2] = vec2.x;
-    }
-    if (step >= 2) {
-        positions[index + 1 + step * 0] = vec0.y;
-        positions[index + 1 + step * 1] = vec1.y;
-        positions[index + 1 + step * 2] = vec2.y;
-    }
-    if (step >= 3) {
-        positions[index + 2 + step * 0] = vec0.z;
-        positions[index + 2 + step * 1] = vec1.z;
-        positions[index + 2 + step * 2] = vec2.z;
-    }
-    if (step >= 4) {
-        positions[index + 3 + step * 0] = vec0.w;
-        positions[index + 3 + step * 1] = vec1.w;
-        positions[index + 3 + step * 2] = vec2.w;
-    }
-}
-function verifyGeometry(geometry) {
-    if (geometry === undefined) {
-        console.warn(`LoopSubdivision: Geometry provided is undefined`);
-        return false;
-    }
-    if (!geometry.isBufferGeometry) {
-        console.warn(`LoopSubdivision: Geometry provided is not 'BufferGeometry' type`);
-        return false;
-    }
-    if (geometry.attributes.position === undefined) {
-        console.warn(`LoopSubdivision: Geometry provided missing required 'position' attribute`);
-        return false;
-    }
-    if (geometry.attributes.normal === undefined) geometry.computeVertexNormals();
-    return true;
 }
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5o7x9":[function(require,module,exports,__globalThis) {
+},{"../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2wHUw":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-/**
- * @param {BufferAttribute}
- * @return {BufferAttribute}
- */ parcelHelpers.export(exports, "deepCloneAttribute", ()=>deepCloneAttribute);
-// returns a new, non-interleaved version of the provided attribute
-parcelHelpers.export(exports, "deinterleaveAttribute", ()=>deinterleaveAttribute);
-// deinterleaves all attributes on the geometry
-parcelHelpers.export(exports, "deinterleaveGeometry", ()=>deinterleaveGeometry);
-parcelHelpers.export(exports, "computeMikkTSpaceTangents", ()=>computeMikkTSpaceTangents);
-parcelHelpers.export(exports, "mergeGeometries", ()=>mergeGeometries);
-parcelHelpers.export(exports, "mergeBufferGeometries", ()=>mergeBufferGeometries);
-parcelHelpers.export(exports, "mergeAttributes", ()=>mergeAttributes);
-parcelHelpers.export(exports, "mergeBufferAttributes", ()=>mergeBufferAttributes);
-parcelHelpers.export(exports, "interleaveAttributes", ()=>interleaveAttributes);
-parcelHelpers.export(exports, "estimateBytesUsed", ()=>estimateBytesUsed);
-parcelHelpers.export(exports, "mergeVertices", ()=>mergeVertices);
-parcelHelpers.export(exports, "toTrianglesDrawMode", ()=>toTrianglesDrawMode);
-parcelHelpers.export(exports, "computeMorphedAttributes", ()=>computeMorphedAttributes);
-parcelHelpers.export(exports, "mergeGroups", ()=>mergeGroups);
-parcelHelpers.export(exports, "toCreasedNormals", ()=>toCreasedNormals);
-var _three = require("three");
-function computeMikkTSpaceTangents(geometry, MikkTSpace, negateSign = true) {
-    if (!MikkTSpace || !MikkTSpace.isReady) throw new Error('BufferGeometryUtils: Initialized MikkTSpace library required.');
-    if (!geometry.hasAttribute('position') || !geometry.hasAttribute('normal') || !geometry.hasAttribute('uv')) throw new Error('BufferGeometryUtils: Tangents require "position", "normal", and "uv" attributes.');
-    function getAttributeArray(attribute) {
-        if (attribute.normalized || attribute.isInterleavedBufferAttribute) {
-            const dstArray = new Float32Array(attribute.count * attribute.itemSize);
-            for(let i = 0, j = 0; i < attribute.count; i++){
-                dstArray[j++] = attribute.getX(i);
-                dstArray[j++] = attribute.getY(i);
-                if (attribute.itemSize > 2) dstArray[j++] = attribute.getZ(i);
-            }
-            return dstArray;
-        }
-        if (attribute.array instanceof Float32Array) return attribute.array;
-        return new Float32Array(attribute.array);
+parcelHelpers.export(exports, "GenericUpdatePointCommand", ()=>GenericUpdatePointCommand);
+var _state = require("../../../State");
+var _canvas = require("../../rendering/canvas");
+class GenericUpdatePointCommand {
+    constructor(index, point){
+        this.tool = null;
+        this.point = point;
+        this.lIndex = index;
+        this.pathIndex = (0, _state.state).c_activePath;
+        this.gIndex = (0, _state.state).c_paths[this.pathIndex][this.lIndex];
+        this.oldPoint = (0, _state.state).c_points[this.gIndex];
     }
-    // MikkTSpace algorithm requires non-indexed input.
-    const _geometry = geometry.index ? geometry.toNonIndexed() : geometry;
-    // Compute vertex tangents.
-    const tangents = MikkTSpace.generateTangents(getAttributeArray(_geometry.attributes.position), getAttributeArray(_geometry.attributes.normal), getAttributeArray(_geometry.attributes.uv));
-    // Texture coordinate convention of glTF differs from the apparent
-    // default of the MikkTSpace library; .w component must be flipped.
-    if (negateSign) for(let i = 3; i < tangents.length; i += 4)tangents[i] *= -1;
-    //
-    _geometry.setAttribute('tangent', new (0, _three.BufferAttribute)(tangents, 4));
-    if (geometry !== _geometry) geometry.copy(_geometry);
-    return geometry;
-}
-/**
- * @param  {Array<BufferGeometry>} geometries
- * @param  {Boolean} useGroups
- * @return {BufferGeometry}
- */ function mergeGeometries(geometries, useGroups = false) {
-    const isIndexed = geometries[0].index !== null;
-    const attributesUsed = new Set(Object.keys(geometries[0].attributes));
-    const morphAttributesUsed = new Set(Object.keys(geometries[0].morphAttributes));
-    const attributes = {};
-    const morphAttributes = {};
-    const morphTargetsRelative = geometries[0].morphTargetsRelative;
-    const mergedGeometry = new (0, _three.BufferGeometry)();
-    let offset = 0;
-    for(let i = 0; i < geometries.length; ++i){
-        const geometry = geometries[i];
-        let attributesCount = 0;
-        // ensure that all geometries are indexed, or none
-        if (isIndexed !== (geometry.index !== null)) {
-            console.error('THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index ' + i + '. All geometries must have compatible attributes; make sure index attribute exists among all geometries, or in none of them.');
-            return null;
-        }
-        // gather attributes, exit early if they're different
-        for(const name in geometry.attributes){
-            if (!attributesUsed.has(name)) {
-                console.error('THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index ' + i + '. All geometries must have compatible attributes; make sure "' + name + '" attribute exists among all geometries, or in none of them.');
-                return null;
-            }
-            if (attributes[name] === undefined) attributes[name] = [];
-            attributes[name].push(geometry.attributes[name]);
-            attributesCount++;
-        }
-        // ensure geometries have the same number of attributes
-        if (attributesCount !== attributesUsed.size) {
-            console.error('THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index ' + i + '. Make sure all geometries have the same number of attributes.');
-            return null;
-        }
-        // gather morph attributes, exit early if they're different
-        if (morphTargetsRelative !== geometry.morphTargetsRelative) {
-            console.error('THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index ' + i + '. .morphTargetsRelative must be consistent throughout all geometries.');
-            return null;
-        }
-        for(const name in geometry.morphAttributes){
-            if (!morphAttributesUsed.has(name)) {
-                console.error('THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index ' + i + '.  .morphAttributes must be consistent throughout all geometries.');
-                return null;
-            }
-            if (morphAttributes[name] === undefined) morphAttributes[name] = [];
-            morphAttributes[name].push(geometry.morphAttributes[name]);
-        }
-        if (useGroups) {
-            let count;
-            if (isIndexed) count = geometry.index.count;
-            else if (geometry.attributes.position !== undefined) count = geometry.attributes.position.count;
-            else {
-                console.error('THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index ' + i + '. The geometry must have either an index or a position attribute');
-                return null;
-            }
-            mergedGeometry.addGroup(offset, count, i);
-            offset += count;
-        }
+    do() {
+        (0, _state.state).c_pointmap.set(this.gIndex, this.point);
+        (0, _state.state).c_points[this.gIndex] = this.point;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
-    // merge indices
-    if (isIndexed) {
-        let indexOffset = 0;
-        const mergedIndex = [];
-        for(let i = 0; i < geometries.length; ++i){
-            const index = geometries[i].index;
-            for(let j = 0; j < index.count; ++j)mergedIndex.push(index.getX(j) + indexOffset);
-            indexOffset += geometries[i].attributes.position.count;
-        }
-        mergedGeometry.setIndex(mergedIndex);
+    undo() {
+        (0, _state.state).c_pointmap.set(this.gIndex, this.oldPoint);
     }
-    // merge attributes
-    for(const name in attributes){
-        const mergedAttribute = mergeAttributes(attributes[name]);
-        if (!mergedAttribute) {
-            console.error('THREE.BufferGeometryUtils: .mergeGeometries() failed while trying to merge the ' + name + ' attribute.');
-            return null;
-        }
-        mergedGeometry.setAttribute(name, mergedAttribute);
-    }
-    // merge morph attributes
-    for(const name in morphAttributes){
-        const numMorphTargets = morphAttributes[name][0].length;
-        if (numMorphTargets === 0) break;
-        mergedGeometry.morphAttributes = mergedGeometry.morphAttributes || {};
-        mergedGeometry.morphAttributes[name] = [];
-        for(let i = 0; i < numMorphTargets; ++i){
-            const morphAttributesToMerge = [];
-            for(let j = 0; j < morphAttributes[name].length; ++j)morphAttributesToMerge.push(morphAttributes[name][j][i]);
-            const mergedMorphAttribute = mergeAttributes(morphAttributesToMerge);
-            if (!mergedMorphAttribute) {
-                console.error('THREE.BufferGeometryUtils: .mergeGeometries() failed while trying to merge the ' + name + ' morphAttribute.');
-                return null;
-            }
-            mergedGeometry.morphAttributes[name].push(mergedMorphAttribute);
-        }
-    }
-    return mergedGeometry;
-}
-/**
- * @param {Array<BufferAttribute>} attributes
- * @return {BufferAttribute}
- */ function mergeAttributes(attributes) {
-    let TypedArray;
-    let itemSize;
-    let normalized;
-    let gpuType = -1;
-    let arrayLength = 0;
-    for(let i = 0; i < attributes.length; ++i){
-        const attribute = attributes[i];
-        if (attribute.isInterleavedBufferAttribute) {
-            console.error('THREE.BufferGeometryUtils: .mergeAttributes() failed. InterleavedBufferAttributes are not supported.');
-            return null;
-        }
-        if (TypedArray === undefined) TypedArray = attribute.array.constructor;
-        if (TypedArray !== attribute.array.constructor) {
-            console.error('THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.array must be of consistent array types across matching attributes.');
-            return null;
-        }
-        if (itemSize === undefined) itemSize = attribute.itemSize;
-        if (itemSize !== attribute.itemSize) {
-            console.error('THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.itemSize must be consistent across matching attributes.');
-            return null;
-        }
-        if (normalized === undefined) normalized = attribute.normalized;
-        if (normalized !== attribute.normalized) {
-            console.error('THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.normalized must be consistent across matching attributes.');
-            return null;
-        }
-        if (gpuType === -1) gpuType = attribute.gpuType;
-        if (gpuType !== attribute.gpuType) {
-            console.error('THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.gpuType must be consistent across matching attributes.');
-            return null;
-        }
-        arrayLength += attribute.array.length;
-    }
-    const array = new TypedArray(arrayLength);
-    let offset = 0;
-    for(let i = 0; i < attributes.length; ++i){
-        array.set(attributes[i].array, offset);
-        offset += attributes[i].array.length;
-    }
-    const result = new (0, _three.BufferAttribute)(array, itemSize, normalized);
-    if (gpuType !== undefined) result.gpuType = gpuType;
-    return result;
-}
-function deepCloneAttribute(attribute) {
-    if (attribute.isInstancedInterleavedBufferAttribute || attribute.isInterleavedBufferAttribute) return deinterleaveAttribute(attribute);
-    if (attribute.isInstancedBufferAttribute) return new (0, _three.InstancedBufferAttribute)().copy(attribute);
-    return new (0, _three.BufferAttribute)().copy(attribute);
-}
-/**
- * @param {Array<BufferAttribute>} attributes
- * @return {Array<InterleavedBufferAttribute>}
- */ function interleaveAttributes(attributes) {
-    // Interleaves the provided attributes into an InterleavedBuffer and returns
-    // a set of InterleavedBufferAttributes for each attribute
-    let TypedArray;
-    let arrayLength = 0;
-    let stride = 0;
-    // calculate the length and type of the interleavedBuffer
-    for(let i = 0, l = attributes.length; i < l; ++i){
-        const attribute = attributes[i];
-        if (TypedArray === undefined) TypedArray = attribute.array.constructor;
-        if (TypedArray !== attribute.array.constructor) {
-            console.error('AttributeBuffers of different types cannot be interleaved');
-            return null;
-        }
-        arrayLength += attribute.array.length;
-        stride += attribute.itemSize;
-    }
-    // Create the set of buffer attributes
-    const interleavedBuffer = new (0, _three.InterleavedBuffer)(new TypedArray(arrayLength), stride);
-    let offset = 0;
-    const res = [];
-    const getters = [
-        'getX',
-        'getY',
-        'getZ',
-        'getW'
-    ];
-    const setters = [
-        'setX',
-        'setY',
-        'setZ',
-        'setW'
-    ];
-    for(let j = 0, l = attributes.length; j < l; j++){
-        const attribute = attributes[j];
-        const itemSize = attribute.itemSize;
-        const count = attribute.count;
-        const iba = new (0, _three.InterleavedBufferAttribute)(interleavedBuffer, itemSize, offset, attribute.normalized);
-        res.push(iba);
-        offset += itemSize;
-        // Move the data for each attribute into the new interleavedBuffer
-        // at the appropriate offset
-        for(let c = 0; c < count; c++)for(let k = 0; k < itemSize; k++)iba[setters[k]](c, attribute[getters[k]](c));
-    }
-    return res;
-}
-function deinterleaveAttribute(attribute) {
-    const cons = attribute.data.array.constructor;
-    const count = attribute.count;
-    const itemSize = attribute.itemSize;
-    const normalized = attribute.normalized;
-    const array = new cons(count * itemSize);
-    let newAttribute;
-    if (attribute.isInstancedInterleavedBufferAttribute) newAttribute = new (0, _three.InstancedBufferAttribute)(array, itemSize, normalized, attribute.meshPerAttribute);
-    else newAttribute = new (0, _three.BufferAttribute)(array, itemSize, normalized);
-    for(let i = 0; i < count; i++){
-        newAttribute.setX(i, attribute.getX(i));
-        if (itemSize >= 2) newAttribute.setY(i, attribute.getY(i));
-        if (itemSize >= 3) newAttribute.setZ(i, attribute.getZ(i));
-        if (itemSize >= 4) newAttribute.setW(i, attribute.getW(i));
-    }
-    return newAttribute;
-}
-function deinterleaveGeometry(geometry) {
-    const attributes = geometry.attributes;
-    const morphTargets = geometry.morphTargets;
-    const attrMap = new Map();
-    for(const key in attributes){
-        const attr = attributes[key];
-        if (attr.isInterleavedBufferAttribute) {
-            if (!attrMap.has(attr)) attrMap.set(attr, deinterleaveAttribute(attr));
-            attributes[key] = attrMap.get(attr);
-        }
-    }
-    for(const key in morphTargets){
-        const attr = morphTargets[key];
-        if (attr.isInterleavedBufferAttribute) {
-            if (!attrMap.has(attr)) attrMap.set(attr, deinterleaveAttribute(attr));
-            morphTargets[key] = attrMap.get(attr);
-        }
-    }
-}
-/**
- * @param {Array<BufferGeometry>} geometry
- * @return {number}
- */ function estimateBytesUsed(geometry) {
-    // Return the estimated memory used by this geometry in bytes
-    // Calculate using itemSize, count, and BYTES_PER_ELEMENT to account
-    // for InterleavedBufferAttributes.
-    let mem = 0;
-    for(const name in geometry.attributes){
-        const attr = geometry.getAttribute(name);
-        mem += attr.count * attr.itemSize * attr.array.BYTES_PER_ELEMENT;
-    }
-    const indices = geometry.getIndex();
-    mem += indices ? indices.count * indices.itemSize * indices.array.BYTES_PER_ELEMENT : 0;
-    return mem;
-}
-/**
- * @param {BufferGeometry} geometry
- * @param {number} tolerance
- * @return {BufferGeometry}
- */ function mergeVertices(geometry, tolerance = 1e-4) {
-    tolerance = Math.max(tolerance, Number.EPSILON);
-    // Generate an index buffer if the geometry doesn't have one, or optimize it
-    // if it's already available.
-    const hashToIndex = {};
-    const indices = geometry.getIndex();
-    const positions = geometry.getAttribute('position');
-    const vertexCount = indices ? indices.count : positions.count;
-    // next value for triangle indices
-    let nextIndex = 0;
-    // attributes and new attribute arrays
-    const attributeNames = Object.keys(geometry.attributes);
-    const tmpAttributes = {};
-    const tmpMorphAttributes = {};
-    const newIndices = [];
-    const getters = [
-        'getX',
-        'getY',
-        'getZ',
-        'getW'
-    ];
-    const setters = [
-        'setX',
-        'setY',
-        'setZ',
-        'setW'
-    ];
-    // Initialize the arrays, allocating space conservatively. Extra
-    // space will be trimmed in the last step.
-    for(let i = 0, l = attributeNames.length; i < l; i++){
-        const name = attributeNames[i];
-        const attr = geometry.attributes[name];
-        tmpAttributes[name] = new (0, _three.BufferAttribute)(new attr.array.constructor(attr.count * attr.itemSize), attr.itemSize, attr.normalized);
-        const morphAttr = geometry.morphAttributes[name];
-        if (morphAttr) tmpMorphAttributes[name] = new (0, _three.BufferAttribute)(new morphAttr.array.constructor(morphAttr.count * morphAttr.itemSize), morphAttr.itemSize, morphAttr.normalized);
-    }
-    // convert the error tolerance to an amount of decimal places to truncate to
-    const decimalShift = Math.log10(1 / tolerance);
-    const shiftMultiplier = Math.pow(10, decimalShift);
-    for(let i = 0; i < vertexCount; i++){
-        const index = indices ? indices.getX(i) : i;
-        // Generate a hash for the vertex attributes at the current index 'i'
-        let hash = '';
-        for(let j = 0, l = attributeNames.length; j < l; j++){
-            const name = attributeNames[j];
-            const attribute = geometry.getAttribute(name);
-            const itemSize = attribute.itemSize;
-            for(let k = 0; k < itemSize; k++)// double tilde truncates the decimal value
-            hash += `${~~(attribute[getters[k]](index) * shiftMultiplier)},`;
-        }
-        // Add another reference to the vertex if it's already
-        // used by another index
-        if (hash in hashToIndex) newIndices.push(hashToIndex[hash]);
-        else {
-            // copy data to the new index in the temporary attributes
-            for(let j = 0, l = attributeNames.length; j < l; j++){
-                const name = attributeNames[j];
-                const attribute = geometry.getAttribute(name);
-                const morphAttr = geometry.morphAttributes[name];
-                const itemSize = attribute.itemSize;
-                const newarray = tmpAttributes[name];
-                const newMorphArrays = tmpMorphAttributes[name];
-                for(let k = 0; k < itemSize; k++){
-                    const getterFunc = getters[k];
-                    const setterFunc = setters[k];
-                    newarray[setterFunc](nextIndex, attribute[getterFunc](index));
-                    if (morphAttr) for(let m = 0, ml = morphAttr.length; m < ml; m++)newMorphArrays[m][setterFunc](nextIndex, morphAttr[m][getterFunc](index));
-                }
-            }
-            hashToIndex[hash] = nextIndex;
-            newIndices.push(nextIndex);
-            nextIndex++;
-        }
-    }
-    // generate result BufferGeometry
-    const result = geometry.clone();
-    for(const name in geometry.attributes){
-        const tmpAttribute = tmpAttributes[name];
-        result.setAttribute(name, new (0, _three.BufferAttribute)(tmpAttribute.array.slice(0, nextIndex * tmpAttribute.itemSize), tmpAttribute.itemSize, tmpAttribute.normalized));
-        if (!(name in tmpMorphAttributes)) continue;
-        for(let j = 0; j < tmpMorphAttributes[name].length; j++){
-            const tmpMorphAttribute = tmpMorphAttributes[name][j];
-            result.morphAttributes[name][j] = new (0, _three.BufferAttribute)(tmpMorphAttribute.array.slice(0, nextIndex * tmpMorphAttribute.itemSize), tmpMorphAttribute.itemSize, tmpMorphAttribute.normalized);
-        }
-    }
-    // indices
-    result.setIndex(newIndices);
-    return result;
-}
-/**
- * @param {BufferGeometry} geometry
- * @param {number} drawMode
- * @return {BufferGeometry}
- */ function toTrianglesDrawMode(geometry, drawMode) {
-    if (drawMode === (0, _three.TrianglesDrawMode)) {
-        console.warn('THREE.BufferGeometryUtils.toTrianglesDrawMode(): Geometry already defined as triangles.');
-        return geometry;
-    }
-    if (drawMode === (0, _three.TriangleFanDrawMode) || drawMode === (0, _three.TriangleStripDrawMode)) {
-        let index = geometry.getIndex();
-        // generate index if not present
-        if (index === null) {
-            const indices = [];
-            const position = geometry.getAttribute('position');
-            if (position !== undefined) {
-                for(let i = 0; i < position.count; i++)indices.push(i);
-                geometry.setIndex(indices);
-                index = geometry.getIndex();
-            } else {
-                console.error('THREE.BufferGeometryUtils.toTrianglesDrawMode(): Undefined position attribute. Processing not possible.');
-                return geometry;
-            }
-        }
-        //
-        const numberOfTriangles = index.count - 2;
-        const newIndices = [];
-        if (drawMode === (0, _three.TriangleFanDrawMode)) // gl.TRIANGLE_FAN
-        for(let i = 1; i <= numberOfTriangles; i++){
-            newIndices.push(index.getX(0));
-            newIndices.push(index.getX(i));
-            newIndices.push(index.getX(i + 1));
-        }
-        else {
-            // gl.TRIANGLE_STRIP
-            for(let i = 0; i < numberOfTriangles; i++)if (i % 2 === 0) {
-                newIndices.push(index.getX(i));
-                newIndices.push(index.getX(i + 1));
-                newIndices.push(index.getX(i + 2));
-            } else {
-                newIndices.push(index.getX(i + 2));
-                newIndices.push(index.getX(i + 1));
-                newIndices.push(index.getX(i));
-            }
-        }
-        if (newIndices.length / 3 !== numberOfTriangles) console.error('THREE.BufferGeometryUtils.toTrianglesDrawMode(): Unable to generate correct amount of triangles.');
-        // build final geometry
-        const newGeometry = geometry.clone();
-        newGeometry.setIndex(newIndices);
-        newGeometry.clearGroups();
-        return newGeometry;
-    } else {
-        console.error('THREE.BufferGeometryUtils.toTrianglesDrawMode(): Unknown draw mode:', drawMode);
-        return geometry;
-    }
-}
-/**
- * Calculates the morphed attributes of a morphed/skinned BufferGeometry.
- * Helpful for Raytracing or Decals.
- * @param {Mesh | Line | Points} object An instance of Mesh, Line or Points.
- * @return {Object} An Object with original position/normal attributes and morphed ones.
- */ function computeMorphedAttributes(object) {
-    const _vA = new (0, _three.Vector3)();
-    const _vB = new (0, _three.Vector3)();
-    const _vC = new (0, _three.Vector3)();
-    const _tempA = new (0, _three.Vector3)();
-    const _tempB = new (0, _three.Vector3)();
-    const _tempC = new (0, _three.Vector3)();
-    const _morphA = new (0, _three.Vector3)();
-    const _morphB = new (0, _three.Vector3)();
-    const _morphC = new (0, _three.Vector3)();
-    function _calculateMorphedAttributeData(object, attribute, morphAttribute, morphTargetsRelative, a, b, c, modifiedAttributeArray) {
-        _vA.fromBufferAttribute(attribute, a);
-        _vB.fromBufferAttribute(attribute, b);
-        _vC.fromBufferAttribute(attribute, c);
-        const morphInfluences = object.morphTargetInfluences;
-        if (morphAttribute && morphInfluences) {
-            _morphA.set(0, 0, 0);
-            _morphB.set(0, 0, 0);
-            _morphC.set(0, 0, 0);
-            for(let i = 0, il = morphAttribute.length; i < il; i++){
-                const influence = morphInfluences[i];
-                const morph = morphAttribute[i];
-                if (influence === 0) continue;
-                _tempA.fromBufferAttribute(morph, a);
-                _tempB.fromBufferAttribute(morph, b);
-                _tempC.fromBufferAttribute(morph, c);
-                if (morphTargetsRelative) {
-                    _morphA.addScaledVector(_tempA, influence);
-                    _morphB.addScaledVector(_tempB, influence);
-                    _morphC.addScaledVector(_tempC, influence);
-                } else {
-                    _morphA.addScaledVector(_tempA.sub(_vA), influence);
-                    _morphB.addScaledVector(_tempB.sub(_vB), influence);
-                    _morphC.addScaledVector(_tempC.sub(_vC), influence);
-                }
-            }
-            _vA.add(_morphA);
-            _vB.add(_morphB);
-            _vC.add(_morphC);
-        }
-        if (object.isSkinnedMesh) {
-            object.applyBoneTransform(a, _vA);
-            object.applyBoneTransform(b, _vB);
-            object.applyBoneTransform(c, _vC);
-        }
-        modifiedAttributeArray[a * 3 + 0] = _vA.x;
-        modifiedAttributeArray[a * 3 + 1] = _vA.y;
-        modifiedAttributeArray[a * 3 + 2] = _vA.z;
-        modifiedAttributeArray[b * 3 + 0] = _vB.x;
-        modifiedAttributeArray[b * 3 + 1] = _vB.y;
-        modifiedAttributeArray[b * 3 + 2] = _vB.z;
-        modifiedAttributeArray[c * 3 + 0] = _vC.x;
-        modifiedAttributeArray[c * 3 + 1] = _vC.y;
-        modifiedAttributeArray[c * 3 + 2] = _vC.z;
-    }
-    const geometry = object.geometry;
-    const material = object.material;
-    let a, b, c;
-    const index = geometry.index;
-    const positionAttribute = geometry.attributes.position;
-    const morphPosition = geometry.morphAttributes.position;
-    const morphTargetsRelative = geometry.morphTargetsRelative;
-    const normalAttribute = geometry.attributes.normal;
-    const morphNormal = geometry.morphAttributes.position;
-    const groups = geometry.groups;
-    const drawRange = geometry.drawRange;
-    let i, j, il, jl;
-    let group;
-    let start, end;
-    const modifiedPosition = new Float32Array(positionAttribute.count * positionAttribute.itemSize);
-    const modifiedNormal = new Float32Array(normalAttribute.count * normalAttribute.itemSize);
-    if (index !== null) {
-        // indexed buffer geometry
-        if (Array.isArray(material)) for(i = 0, il = groups.length; i < il; i++){
-            group = groups[i];
-            start = Math.max(group.start, drawRange.start);
-            end = Math.min(group.start + group.count, drawRange.start + drawRange.count);
-            for(j = start, jl = end; j < jl; j += 3){
-                a = index.getX(j);
-                b = index.getX(j + 1);
-                c = index.getX(j + 2);
-                _calculateMorphedAttributeData(object, positionAttribute, morphPosition, morphTargetsRelative, a, b, c, modifiedPosition);
-                _calculateMorphedAttributeData(object, normalAttribute, morphNormal, morphTargetsRelative, a, b, c, modifiedNormal);
-            }
-        }
-        else {
-            start = Math.max(0, drawRange.start);
-            end = Math.min(index.count, drawRange.start + drawRange.count);
-            for(i = start, il = end; i < il; i += 3){
-                a = index.getX(i);
-                b = index.getX(i + 1);
-                c = index.getX(i + 2);
-                _calculateMorphedAttributeData(object, positionAttribute, morphPosition, morphTargetsRelative, a, b, c, modifiedPosition);
-                _calculateMorphedAttributeData(object, normalAttribute, morphNormal, morphTargetsRelative, a, b, c, modifiedNormal);
-            }
-        }
-    } else {
-        // non-indexed buffer geometry
-        if (Array.isArray(material)) for(i = 0, il = groups.length; i < il; i++){
-            group = groups[i];
-            start = Math.max(group.start, drawRange.start);
-            end = Math.min(group.start + group.count, drawRange.start + drawRange.count);
-            for(j = start, jl = end; j < jl; j += 3){
-                a = j;
-                b = j + 1;
-                c = j + 2;
-                _calculateMorphedAttributeData(object, positionAttribute, morphPosition, morphTargetsRelative, a, b, c, modifiedPosition);
-                _calculateMorphedAttributeData(object, normalAttribute, morphNormal, morphTargetsRelative, a, b, c, modifiedNormal);
-            }
-        }
-        else {
-            start = Math.max(0, drawRange.start);
-            end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-            for(i = start, il = end; i < il; i += 3){
-                a = i;
-                b = i + 1;
-                c = i + 2;
-                _calculateMorphedAttributeData(object, positionAttribute, morphPosition, morphTargetsRelative, a, b, c, modifiedPosition);
-                _calculateMorphedAttributeData(object, normalAttribute, morphNormal, morphTargetsRelative, a, b, c, modifiedNormal);
-            }
-        }
-    }
-    const morphedPositionAttribute = new (0, _three.Float32BufferAttribute)(modifiedPosition, 3);
-    const morphedNormalAttribute = new (0, _three.Float32BufferAttribute)(modifiedNormal, 3);
-    return {
-        positionAttribute: positionAttribute,
-        normalAttribute: normalAttribute,
-        morphedPositionAttribute: morphedPositionAttribute,
-        morphedNormalAttribute: morphedNormalAttribute
-    };
-}
-function mergeGroups(geometry) {
-    if (geometry.groups.length === 0) {
-        console.warn('THREE.BufferGeometryUtils.mergeGroups(): No groups are defined. Nothing to merge.');
-        return geometry;
-    }
-    let groups = geometry.groups;
-    // sort groups by material index
-    groups = groups.sort((a, b)=>{
-        if (a.materialIndex !== b.materialIndex) return a.materialIndex - b.materialIndex;
-        return a.start - b.start;
-    });
-    // create index for non-indexed geometries
-    if (geometry.getIndex() === null) {
-        const positionAttribute = geometry.getAttribute('position');
-        const indices = [];
-        for(let i = 0; i < positionAttribute.count; i += 3)indices.push(i, i + 1, i + 2);
-        geometry.setIndex(indices);
-    }
-    // sort index
-    const index = geometry.getIndex();
-    const newIndices = [];
-    for(let i = 0; i < groups.length; i++){
-        const group = groups[i];
-        const groupStart = group.start;
-        const groupLength = groupStart + group.count;
-        for(let j = groupStart; j < groupLength; j++)newIndices.push(index.getX(j));
-    }
-    geometry.dispose(); // Required to force buffer recreation
-    geometry.setIndex(newIndices);
-    // update groups indices
-    let start = 0;
-    for(let i = 0; i < groups.length; i++){
-        const group = groups[i];
-        group.start = start;
-        start += group.count;
-    }
-    // merge groups
-    let currentGroup = groups[0];
-    geometry.groups = [
-        currentGroup
-    ];
-    for(let i = 1; i < groups.length; i++){
-        const group = groups[i];
-        if (currentGroup.materialIndex === group.materialIndex) currentGroup.count += group.count;
-        else {
-            currentGroup = group;
-            geometry.groups.push(currentGroup);
-        }
-    }
-    return geometry;
-}
-/**
- * Modifies the supplied geometry if it is non-indexed, otherwise creates a new,
- * non-indexed geometry. Returns the geometry with smooth normals everywhere except
- * faces that meet at an angle greater than the crease angle.
- *
- * @param {BufferGeometry} geometry
- * @param {number} [creaseAngle]
- * @return {BufferGeometry}
- */ function toCreasedNormals(geometry, creaseAngle = Math.PI / 3 /* 60 degrees */ ) {
-    const creaseDot = Math.cos(creaseAngle);
-    const hashMultiplier = (1 + 1e-10) * 1e2;
-    // reusable vectors
-    const verts = [
-        new (0, _three.Vector3)(),
-        new (0, _three.Vector3)(),
-        new (0, _three.Vector3)()
-    ];
-    const tempVec1 = new (0, _three.Vector3)();
-    const tempVec2 = new (0, _three.Vector3)();
-    const tempNorm = new (0, _three.Vector3)();
-    const tempNorm2 = new (0, _three.Vector3)();
-    // hashes a vector
-    function hashVertex(v) {
-        const x = ~~(v.x * hashMultiplier);
-        const y = ~~(v.y * hashMultiplier);
-        const z = ~~(v.z * hashMultiplier);
-        return `${x},${y},${z}`;
-    }
-    // BufferGeometry.toNonIndexed() warns if the geometry is non-indexed
-    // and returns the original geometry
-    const resultGeometry = geometry.index ? geometry.toNonIndexed() : geometry;
-    const posAttr = resultGeometry.attributes.position;
-    const vertexMap = {};
-    // find all the normals shared by commonly located vertices
-    for(let i = 0, l = posAttr.count / 3; i < l; i++){
-        const i3 = 3 * i;
-        const a = verts[0].fromBufferAttribute(posAttr, i3 + 0);
-        const b = verts[1].fromBufferAttribute(posAttr, i3 + 1);
-        const c = verts[2].fromBufferAttribute(posAttr, i3 + 2);
-        tempVec1.subVectors(c, b);
-        tempVec2.subVectors(a, b);
-        // add the normal to the map for all vertices
-        const normal = new (0, _three.Vector3)().crossVectors(tempVec1, tempVec2).normalize();
-        for(let n = 0; n < 3; n++){
-            const vert = verts[n];
-            const hash = hashVertex(vert);
-            if (!(hash in vertexMap)) vertexMap[hash] = [];
-            vertexMap[hash].push(normal);
-        }
-    }
-    // average normals from all vertices that share a common location if they are within the
-    // provided crease threshold
-    const normalArray = new Float32Array(posAttr.count * 3);
-    const normAttr = new (0, _three.BufferAttribute)(normalArray, 3, false);
-    for(let i = 0, l = posAttr.count / 3; i < l; i++){
-        // get the face normal for this vertex
-        const i3 = 3 * i;
-        const a = verts[0].fromBufferAttribute(posAttr, i3 + 0);
-        const b = verts[1].fromBufferAttribute(posAttr, i3 + 1);
-        const c = verts[2].fromBufferAttribute(posAttr, i3 + 2);
-        tempVec1.subVectors(c, b);
-        tempVec2.subVectors(a, b);
-        tempNorm.crossVectors(tempVec1, tempVec2).normalize();
-        // average all normals that meet the threshold and set the normal value
-        for(let n = 0; n < 3; n++){
-            const vert = verts[n];
-            const hash = hashVertex(vert);
-            const otherNormals = vertexMap[hash];
-            tempNorm2.set(0, 0, 0);
-            for(let k = 0, lk = otherNormals.length; k < lk; k++){
-                const otherNorm = otherNormals[k];
-                if (tempNorm.dot(otherNorm) > creaseDot) tempNorm2.add(otherNorm);
-            }
-            tempNorm2.normalize();
-            normAttr.setXYZ(i3 + n, tempNorm2.x, tempNorm2.y, tempNorm2.z);
-        }
-    }
-    resultGeometry.setAttribute('normal', normAttr);
-    return resultGeometry;
-}
-function mergeBufferGeometries(geometries, useGroups = false) {
-    console.warn('THREE.BufferGeometryUtils: mergeBufferGeometries() has been renamed to mergeGeometries().'); // @deprecated, r151
-    return mergeGeometries(geometries, useGroups);
-}
-function mergeBufferAttributes(attributes) {
-    console.warn('THREE.BufferGeometryUtils: mergeBufferAttributes() has been renamed to mergeAttributes().'); // @deprecated, r151
-    return mergeAttributes(attributes);
 }
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4gI9y":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-// from https://github.com/matthias-research/pages/blob/master/tenMinutePhysics/14-cloth.html#L148
-parcelHelpers.export(exports, "generateTriPairIds", ()=>generateTriPairIds);
-var _findTriNeighbors = require("./findTriNeighbors");
-function generateTriPairIds(faceTriIds) {
-    const neighbors = (0, _findTriNeighbors.findTriNeighbors)(faceTriIds);
-    var numTris = faceTriIds.length / 3;
-    var edgeIds = [];
-    var triPairIds = [];
-    for(var i = 0; i < numTris; i++)for(var j = 0; j < 3; j++){
-        var id0 = faceTriIds[3 * i + j];
-        var id1 = faceTriIds[3 * i + (j + 1) % 3];
-        // each edge only once
-        var n = neighbors[3 * i + j];
-        if (n < 0 || id0 < id1) {
-            edgeIds.push(id0);
-            edgeIds.push(id1);
-        }
-        // tri pair
-        if (n >= 0) {
-            // opposite ids
-            var ni = Math.floor(n / 3);
-            var nj = n % 3;
-            var id2 = faceTriIds[3 * i + (j + 2) % 3];
-            var id3 = faceTriIds[3 * ni + (nj + 2) % 3];
-            triPairIds.push(id0);
-            triPairIds.push(id1);
-            triPairIds.push(id2);
-            triPairIds.push(id3);
-        }
-    }
-    return {
-        triPairIds,
-        edgeIds
-    };
-}
-
-},{"./findTriNeighbors":"aDJEh","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aDJEh":[function(require,module,exports,__globalThis) {
-// from https://github.com/matthias-research/pages/blob/master/tenMinutePhysics/14-cloth.html#L148
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "findTriNeighbors", ()=>findTriNeighbors);
-function findTriNeighbors(triIds) {
-    // create common edges
-    var edges = [];
-    var numTris = triIds.length / 3;
-    for(var i = 0; i < numTris; i++)for(var j = 0; j < 3; j++){
-        var id0 = triIds[3 * i + j];
-        var id1 = triIds[3 * i + (j + 1) % 3];
-        edges.push({
-            id0: Math.min(id0, id1),
-            id1: Math.max(id0, id1),
-            edgeNr: 3 * i + j
-        });
-    }
-    // sort so common edges are next to each other
-    edges.sort((a, b)=>a.id0 < b.id0 || a.id0 == b.id0 && a.id1 < b.id1 ? -1 : 1);
-    // find matchign edges
-    const neighbors = new Float32Array(3 * numTris);
-    neighbors.fill(-1); // open edge
-    var nr = 0;
-    while(nr < edges.length){
-        var e0 = edges[nr];
-        nr++;
-        if (nr < edges.length) {
-            var e1 = edges[nr];
-            if (e0.id0 == e1.id0 && e0.id1 == e1.id1) {
-                neighbors[e0.edgeNr] = e1.edgeNr;
-                neighbors[e1.edgeNr] = e0.edgeNr;
-            }
-            nr++;
-        }
-    }
-    return neighbors;
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1Jt5c":[function(require,module,exports,__globalThis) {
+},{"../../../State":"83rpN","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1Jt5c":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Apply the thumbnail to the canvas
@@ -54476,14 +51965,14 @@ function drawPieceThumbnail(piece, canvas) {
 }
 function generatePieceThumbnail(piece) {
     const { context, canvas } = (0, _getBuffer.getBuffer)(`preview_${piece.name}`);
-    const box = (0, _boundingBox.getShapeBoundingRect)((0, _state.state).c_shapes[piece.shapeIndex]);
+    const box = (0, _boundingBox.getGeometryBoundingRect)((0, _state.state).c_geometryMap.get(piece.shapeId));
     canvas.width = box.x1 - box.x0 + 1;
     canvas.height = box.y1 - box.y0 + 1;
-    (0, _drawPaths.drawShapeNormalized)((0, _state.state).c_shapes[piece.shapeIndex], context);
+    (0, _drawPaths.drawShapeNormalized)((0, _state.state).c_geometryMap.get(piece.shapeId), context);
     return canvas;
 }
 
-},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawPaths":"lgYVM","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","./drawPaths":"lgYVM","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/boundingBox":"3SCvR"}],"8Yd53":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);
@@ -54822,7 +52311,924 @@ class SaveProjectCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
+var _changeTool = require("../tools/changeTool");
+class ChangeToolCommand {
+    // private lastToolState: ToolBase["state"];
+    constructor(type){
+        this.__type = type;
+    // this.lastToolState = state.tool.__state; // Not implemented: stateful tool swapping (for redo)
+    }
+    do() {
+        (0, _changeTool.changeTool)({
+            name: this.__type
+        });
+    }
+    undo() {
+        (0, _changeTool.changeTool)({
+            name: this.__type
+        });
+        console.log('Undo not yet implemented for ChangeToolCommand');
+    }
+}
+
+},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kXHtP":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "changeTool", ()=>changeTool);
+var _state = require("../../State");
+var _store = require("../../UI/store");
+var _canvas = require("../rendering/canvas");
+var _grainlineTool = require("./GrainlineTool");
+var _measureTool = require("./MeasureTool");
+var _pathTool = require("./PathTool");
+var _selectTool = require("./SelectTool");
+function changeTool(toolState) {
+    // name is required, all other properties optional
+    // Context: this needs to be the tool name but it should also accept entire tool state wholesale for the purposes of undo
+    const newToolName = toolState.name;
+    const importedState = toolState.state;
+    console.log(toolState.name);
+    (0, _state.state).tool.dismountEvents();
+    (0, _store.useAppState).getState().resetUI();
+    switch(newToolName){
+        case "path":
+            (0, _state.state).tool = new (0, _pathTool.PathTool)();
+            (0, _store.useAppState).getState().setSelectedTool("path");
+            if (importedState) (0, _state.state).tool.applyState(importedState);
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "select":
+            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            (0, _store.useAppState).getState().setSelectedTool("select");
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "measure":
+            (0, _state.state).tool = new (0, _measureTool.MeasureTool)();
+            (0, _store.useAppState).getState().setSelectedTool("measure");
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "grainline":
+            (0, _state.state).tool = new (0, _grainlineTool.GrainlineTool)();
+            (0, _store.useAppState).getState().setSelectedTool("grainline");
+            (0, _canvas.redrawCanvas)();
+            break;
+        default:
+            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            (0, _store.useAppState).getState().setSelectedTool("select");
+            (0, _canvas.redrawCanvas)();
+            break;
+    }
+    (0, _state.state).tool.initializeEvents();
+}
+
+},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _cLocalizePoint = require("../pointer/cLocalizePoint");
+var _store = require("../../UI/store");
+var _three = require("three");
+var _drawDrawPreview = require("../rendering/drawDrawPreview");
+var _command = require("../../Command");
+var _grainlineToolCreateGrainlineCommand = require("../commands/GrainlineToolCreateGrainlineCommand");
+var _isPointInPolygon = require("../geometry/isPointInPolygon");
+var _changeToolCommand = require("../commands/ChangeToolCommand");
+class GrainlineTool {
+    constructor(){
+        // Tool state object stores tool mechanical state, no data
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = 'grainline';
+        this.unitVector = new (0, _three.Vector2)(0, -1);
+        this.setPointer = (0, _store.useAppState).getState().setPointer;
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+        this.angle = 0;
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    }
+    get state() {
+        return this.__state;
+    }
+    // Tool state management
+    transition(newState) {
+        console.log(`Tool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    // Tool event management
+    onMouseDown(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        // state.pointer = pos;
+        const selectedShapeIndex = this.checkForShapeOverlap(pos);
+        if (selectedShapeIndex > -1) switch(this.__state.type){
+            case "idle":
+                this.transition({
+                    type: 'drawing',
+                    originPos: pos
+                });
+                break;
+            default:
+                break;
+        }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    onMouseMove(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
+        this.setPointer((0, _state.state).pointer);
+        switch(this.__state.type){
+            case "drawing":
+                (0, _drawDrawPreview.drawDrawPreview)(this.__state.originPos, pos, `${Math.round(180 * this.angleFromNoon(pos, this.__state.originPos) / Math.PI)}\xb0`);
+                break;
+        }
+    }
+    onMouseUp(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        switch(this.__state.type){
+            case "drawing":
+                this.angle = this.angleFromNoon(pos, this.__state.originPos);
+                (0, _command.pushCommand)(new (0, _grainlineToolCreateGrainlineCommand.GrainlineToolCreateGrainlineCommand)(this.__state.originPos, (0, _state.state).c_selected_shapes[0], this.angle));
+        }
+        this.transition({
+            type: "idle"
+        });
+        (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)('select'));
+    }
+    checkForShapeOverlap(pos) {
+        let value = -1;
+        (0, _state.state).c_shapes.forEach((shape, index)=>{
+            const shapePoints = shape.map((pointIndex)=>(0, _state.state).c_points[pointIndex]);
+            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) value = index;
+        });
+        return value;
+    }
+    angleFromNoon(vector, origin) {
+        vector = vector.clone().sub(origin);
+        let baseAngle = Math.atan2(vector.y, vector.x);
+        let ang = baseAngle + Math.PI / 2;
+        // Map to [0, 2pi]
+        if (ang < 0) ang += 2 * Math.PI;
+        return ang;
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","three":"ktPTu","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","../geometry/isPointInPolygon":"aOEKs","../commands/ChangeToolCommand":"i5Ou7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5NqY4":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GrainlineToolCreateGrainlineCommand", ()=>GrainlineToolCreateGrainlineCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _centroid = require("../geometry/centroid");
+class GrainlineToolCreateGrainlineCommand {
+    constructor(position, shapeIndex, angle){
+        this.shapeIndex = shapeIndex;
+        this.grainline = {
+            position: (0, _centroid.computeCentroid)((0, _state.state).c_shapes[shapeIndex]),
+            angle
+        };
+    }
+    do() {
+        (0, _state.state).c_grainlines.set(this.shapeIndex, this.grainline);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_grainlines.delete(this.shapeIndex);
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gsjQg":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
+var _three = require("three");
+var _state = require("../../State");
+function computeCentroid(indices) {
+    if (indices.length === 0) return new (0, _three.Vector2)();
+    const centroid = new (0, _three.Vector2)();
+    for (const index of indices){
+        const point = (0, _state.state).c_points[index];
+        centroid.add(point);
+    }
+    centroid.divideScalar(indices.length);
+    return centroid;
+}
+
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/**
+ * Checks if a point is inside a polygon using the ray-casting algorithm.
+ * @param point The point to check.
+ * @param polygon An array of Vector2 points defining the closed shape.
+ * @returns `true` if the point is inside the polygon, `false` otherwise.
+ */ parcelHelpers.export(exports, "isPointInPolygon", ()=>isPointInPolygon);
+function isPointInPolygon(point, polygon) {
+    let inside = false;
+    const n = polygon.length;
+    for(let i = 0, j = n - 1; i < n; j = i++){
+        const xi = polygon[i].x, yi = polygon[i].y;
+        const xj = polygon[j].x, yj = polygon[j].y;
+        // Check if point is between polygon edges
+        const intersect = yi > point.y !== yj > point.y && point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi;
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
+var _command = require("../../Command");
+var _state = require("../../State");
+var _measureToolAddPointCommand = require("../commands/MeasureToolAddPointCommand");
+var _measureToolClosePathCommand = require("../commands/MeasureToolClosePathCommand");
+var _cLocalizePoint = require("../pointer/cLocalizePoint");
+var _canvas = require("../rendering/canvas");
+var _drawDrawPreview = require("../rendering/drawDrawPreview");
+class MeasureTool {
+    constructor(){
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = 'measure';
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+        this.__length = 0;
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    }
+    // Tool state management
+    transition(newState) {
+        console.log(`MeasureTool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+    }
+    // Tool event management
+    onMouseDown(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
+        switch(this.__state.type){
+            case "idle":
+                this.transition({
+                    type: 'drawing',
+                    currentPathIndex: (0, _state.state).c_measure_paths.length
+                });
+                (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, (0, _state.state).c_measure_paths.length));
+                break;
+            case "drawing":
+                if ((0, _state.state).altDown) (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, this.__state.currentPathIndex));
+                else {
+                    (0, _command.pushCommand)(new (0, _measureToolClosePathCommand.MeasureToolClosePathCommand)(pos, this.__state.currentPathIndex));
+                    this.transition({
+                        type: 'idle'
+                    });
+                }
+                break;
+            default:
+                break;
+        }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    onMouseMove(e) {
+        switch(this.__state.type){
+            case "idle":
+                break;
+            case "drawing":
+                if ((0, _state.state).c_measure_paths[this.__state.currentPathIndex]) (0, _drawDrawPreview.drawDrawPreview)((0, _state.state).c_measure_points.get((0, _state.state).c_measure_paths[this.__state.currentPathIndex][0]), (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY));
+                break;
+            default:
+                break;
+        }
+    }
+    onMouseUp(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        this.__state.type;
+    // drawCanvasFromState(state);
+    }
+    get state() {
+        return this.__state;
+    }
+}
+
+},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../commands/MeasureToolClosePathCommand":"aINj4","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1IlS2":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "MeasureToolAddPointCommand", ()=>MeasureToolAddPointCommand);
+var _three = require("three");
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class MeasureToolAddPointCommand {
+    constructor(pos, pathIndex){
+        this.pos = new (0, _three.Vector2)();
+        this.pos.copy(pos);
+        this.currentPathIndex = pathIndex;
+        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
+    }
+    do() {
+        (0, _state.state).c_measure_points.set(this.key, this.pos);
+        if (!(0, _state.state).c_measure_paths[this.currentPathIndex]) (0, _state.state).c_measure_paths[this.currentPathIndex] = [];
+        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_measure_points.delete(this.key);
+    }
+}
+
+},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aINj4":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "MeasureToolClosePathCommand", ()=>MeasureToolClosePathCommand);
+var _three = require("three");
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class MeasureToolClosePathCommand {
+    constructor(pos, pathIndex){
+        this.pos = new (0, _three.Vector2)();
+        this.pos.copy(pos);
+        this.currentPathIndex = pathIndex;
+        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
+    }
+    do() {
+        (0, _state.state).c_measure_points.set(this.key, this.pos);
+        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_measure_points.delete(this.key);
+    }
+}
+
+},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jISwe":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectTool", ()=>SelectTool);
+var _command = require("../../Command");
+var _state = require("../../State");
+var _cLocalizePoint = require("../pointer/cLocalizePoint");
+var _selectToolShapeCommand = require("../commands/SelectToolShapeCommand");
+var _isPointInPolygon = require("../geometry/isPointInPolygon");
+var _selectToolMoveShapeCommand = require("../commands/SelectToolMoveShapeCommand");
+var _common = require("./common");
+var _selectToolPointCommand = require("../commands/SelectToolPointCommand");
+var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
+var _canvas = require("../rendering/canvas");
+var _deleteShapeCommand = require("../commands/DeleteShapeCommand");
+var _lineIntersection = require("../geometry/lineIntersection");
+var _selectToolSelectLineCommand = require("../commands/SelectToolSelectLineCommand");
+var _selectToolAddShapeCommand = require("../commands/SelectToolAddShapeCommand");
+var _selectToolDeselectLinesCommand = require("../commands/SelectToolDeselectLinesCommand");
+var _drawPreviewsCommand = require("../commands/Rendering/DrawPreviewsCommand");
+class SelectTool {
+    constructor(){
+        // Tool state object stores tool mechanical state
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = 'select';
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this),
+            dblclick: this.onDoubleClick.bind(this)
+        };
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+        canvas.addEventListener("dblclick", this.__listeners.dblclick);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+        (0, _state.state).canvas.removeEventListener("dblclick", this.__listeners.dblclick);
+    }
+    // Tool state updater
+    transition(newState) {
+        console.log(`SelectTool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+    }
+    // Select tool event management
+    onMouseDown(e) {
+        const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
+        const hitIndex = (0, _common.checkPointOverlap)(clickPos);
+        const lineHit = (0, _lineIntersection.checkLineIntersection)(clickPos);
+        console.log(lineHit);
+        (0, _state.state).pointerDown = true;
+        if (selectedShapeIndex >= 0 || hitIndex && hitIndex >= 0 || lineHit != null) switch(this.__state.type){
+            case "idle":
+                if (hitIndex && hitIndex > -1) {
+                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
+                    this.transition({
+                        type: "selecting_points",
+                        selectedPointIndices: [
+                            hitIndex
+                        ]
+                    });
+                } else if (lineHit) {
+                    (0, _command.pushCommand)(new (0, _selectToolSelectLineCommand.SelectToolSelectLineCommand)(lineHit));
+                    this.transition({
+                        type: "selecting_lines",
+                        selectedLineHits: [
+                            lineHit
+                        ]
+                    });
+                } else if (selectedShapeIndex > -1) {
+                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
+                    this.transition({
+                        type: "selecting",
+                        selectedShapeIndex
+                    });
+                }
+                break;
+            case "selecting":
+                if ((0, _state.state).shiftDown) {
+                    if (selectedShapeIndex > -1) // not sufficient
+                    (0, _command.pushCommand)(new (0, _selectToolAddShapeCommand.SelectToolAddShapeCommand)(selectedShapeIndex));
+                } else if (selectedShapeIndex > -1) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
+                break;
+            case "selecting_points":
+                if (hitIndex && hitIndex > -1) {
+                    if ((0, _state.state).shiftDown) {
+                        if ((0, _state.state).c_selected.indexOf(hitIndex) === -1) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
+                    } else if ((0, _state.state).c_selected.indexOf(hitIndex) === -1) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
+                } else if (!(0, _state.state).shiftDown) {
+                    (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
+                    this.transition({
+                        type: "idle"
+                    });
+                }
+                break;
+            case "selecting_lines":
+                // Hit Point
+                if (hitIndex && hitIndex > -1) {
+                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(hitIndex));
+                    this.transition({
+                        type: "selecting_points",
+                        selectedPointIndices: [
+                            hitIndex
+                        ]
+                    });
+                // Hit Line
+                } else if (lineHit) {
+                    if ((0, _state.state).shiftDown) // refact to append to line array
+                    (0, _command.pushCommand)(new (0, _selectToolSelectLineCommand.SelectToolSelectLineCommand)(lineHit));
+                    else {
+                        (0, _command.pushCommand)(new (0, _selectToolDeselectLinesCommand.SelectToolDeselectLinesCommand)());
+                        (0, _command.pushCommand)(new (0, _selectToolSelectLineCommand.SelectToolSelectLineCommand)(lineHit));
+                    }
+                } else if (selectedShapeIndex > -1) {
+                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedShapeIndex));
+                    this.transition({
+                        type: "selecting",
+                        selectedShapeIndex
+                    });
+                }
+                break;
+        }
+        else {
+            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
+            this.transition({
+                type: "idle"
+            });
+        }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    checkForShapeOverlap(pos) {
+        let value = -1;
+        (0, _state.state).c_shapes.forEach((shape, index)=>{
+            const shapePoints = shape.map((pointIndex)=>(0, _state.state).c_points[pointIndex]);
+            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) value = index;
+        });
+        return value;
+    }
+    onMouseMove(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        switch(this.__state.type){
+            case 'moving':
+                (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
+                break;
+            case 'selecting':
+                if ((0, _state.state).pointerDown == true) {
+                    (0, _state.state).c_move_from = pos;
+                    (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
+                    this.transition({
+                        type: 'moving',
+                        selectedShapeIndex: this.__state.selectedShapeIndex,
+                        startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
+                    });
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    onMouseUp(e) {
+        (0, _state.state).pointerDown = false;
+        switch(this.__state.type){
+            case "moving":
+                const endPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+                const shapeIndex = this.__state.selectedShapeIndex;
+                const startPos = this.__state.startPos;
+                (0, _command.pushCommand)(new (0, _selectToolMoveShapeCommand.SelectToolMoveShapeCommand)(shapeIndex, startPos, endPos));
+                this.transition({
+                    type: 'idle'
+                });
+                break;
+        }
+    }
+    onDoubleClick(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+    // TODO: use this for isolation mode
+    }
+    onKeyDown(e) {
+        switch(this.state.type){
+            case "selecting":
+                console.log('keypress', e);
+                // case "selecting_points":
+                if (e.code === 'Backspace' || e.code === 'Delete') {
+                    if ((0, _state.state).c_selected_shapes.length > 0) (0, _command.pushCommand)(new (0, _deleteShapeCommand.DeleteShapeCommand)(this.state.selectedShapeIndex));
+                }
+                this.transition({
+                    type: "idle"
+                });
+                break;
+        }
+    }
+    deselect() {
+        console.error('Not implemented for the Select tool');
+    }
+    get state() {
+        return this.__state;
+    }
+}
+
+},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","./common":"lpYSP","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../geometry/lineIntersection":"jIp1s","../commands/SelectToolSelectLineCommand":"aamTt","../commands/SelectToolAddShapeCommand":"fcLPE","../commands/SelectToolDeselectLinesCommand":"fcEzj","../commands/Rendering/DrawPreviewsCommand":"4QHCH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
+var _state = require("../../State");
+var _generateFloatingLabel = require("../hooks/generateFloatingLabel");
+class SelectToolShapeCommand {
+    constructor(shapeIndex){
+        this.shapeIndex = shapeIndex;
+        this.previousSelection = (0, _state.state).c_selected_shapes;
+    }
+    do() {
+        (0, _state.state).c_selected_shapes = [
+            this.shapeIndex
+        ];
+        // state.c_pointmap = new Map()
+        console.log(`Shape ${this.shapeIndex} selected.`);
+        (0, _generateFloatingLabel.generateFloatingLabel)(this.shapeIndex);
+    }
+    undo() {
+        (0, _state.state).c_selected_shapes = this.previousSelection;
+        console.log(`Selection reverted to shape ${this.previousSelection}`);
+    }
+}
+
+},{"../../State":"83rpN","../hooks/generateFloatingLabel":"gIlKq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gIlKq":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "generateFloatingLabel", ()=>generateFloatingLabel);
+var _three = require("three");
+var _mathUtils = require("three/src/math/MathUtils");
+var _state = require("../../State");
+var _store = require("../../UI/store");
+var _boundingBox = require("../geometry/boundingBox");
+const generateFloatingLabel = (shapeIndex)=>{
+    const box = (0, _boundingBox.getShapeBoundingRect)((0, _state.state).c_shapes[shapeIndex]);
+    const dim = (0, _boundingBox.getShapeDimensions)((0, _state.state).c_shapes[shapeIndex]);
+    const rect = (0, _state.state).canvas.getBoundingClientRect();
+    // Generate a point in the upper left hand corner of the shape in windowspace
+    const labelPoint = new (0, _three.Vector2)(box.x0 + rect.x, box.y0 + rect.y);
+    const pieceIndex = (0, _store.useAppState).getState().pieces.findIndex((piece)=>piece.shapeIndex == shapeIndex);
+    let piece;
+    if (pieceIndex < 0) piece = {
+        id: (0, _mathUtils.generateUUID)(),
+        shapeIndex: shapeIndex
+    };
+    else piece = (0, _store.useAppState).getState().pieces[pieceIndex];
+    (0, _store.useAppState).getState().labelPiece(labelPoint, piece);
+};
+
+},{"three":"ktPTu","three/src/math/MathUtils":"cuzU2","../../State":"83rpN","../../UI/store":"l1Ff7","../geometry/boundingBox":"3SCvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2adoe":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolMoveShapeCommand", ()=>SelectToolMoveShapeCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _centroid = require("../geometry/centroid");
+class SelectToolMoveShapeCommand {
+    constructor(shapeIndex, from, to){
+        this.shapeIndex = shapeIndex;
+        this.__from = from.clone();
+        this.__to = to.clone();
+        this.__diff = this.__to.clone().sub(this.__from);
+    }
+    do() {
+        const cloneShape = [
+            ...(0, _state.state).c_shapes[this.shapeIndex]
+        ];
+        // Remove the last element (which is also the first element) to prevent double translation
+        cloneShape.pop();
+        cloneShape.forEach((i)=>{
+            const before = (0, _state.state).c_points[i].clone();
+            (0, _state.state).c_points[i] = (0, _state.state).c_points[i].clone().add(this.__diff);
+            const after = (0, _state.state).c_points[i];
+            (0, _state.state).c_pointmap.set(i, after);
+        });
+        (0, _state.state).updateGrainlinePos(this.shapeIndex, (0, _centroid.computeCentroid)((0, _state.state).c_shapes[this.shapeIndex]));
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_shapes[this.shapeIndex].forEach((i)=>{
+            (0, _state.state).c_points[i].sub(this.__diff); // Reverse the movement
+        });
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lpYSP":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// Protected, only to be used by Command
+parcelHelpers.export(exports, "selectPoint", ()=>selectPoint);
+// Protected, only to be used by Command
+parcelHelpers.export(exports, "deselect", ()=>deselect);
+// Protected, only to be used by Command
+parcelHelpers.export(exports, "removePointFromSelection", ()=>removePointFromSelection);
+parcelHelpers.export(exports, "getPointByIndex", ()=>getPointByIndex);
+parcelHelpers.export(exports, "__indexIsNotSelected", ()=>__indexIsNotSelected);
+parcelHelpers.export(exports, "checkPointOverlap", ()=>checkPointOverlap);
+parcelHelpers.export(exports, "checkPathOverlap", ()=>checkPathOverlap);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _interface = require("../settings/interface");
+function selectPoint(index) {
+    if (!(0, _state.state).c_selected.includes(index)) {
+        (0, _state.state).c_selected.push(index);
+        console.log((0, _state.state).c_selected);
+    }
+}
+function deselect() {
+    (0, _state.state).c_selected = [];
+    (0, _canvas.drawCanvasFromState)((0, _state.state));
+}
+function removePointFromSelection(v) {
+    const i = (0, _state.state).c_selected.findIndex((index)=>v.equals((0, _state.state).c_points[index]));
+    (0, _state.state).c_selected.splice(i, 1);
+}
+function getPointByIndex(index) {
+    return (0, _state.state).c_points[index];
+}
+function __indexIsNotSelected(index) {
+    const result = (0, _state.state).c_selected.findIndex((i)=>{
+        return i == index;
+    });
+    return result === -1;
+}
+function checkPointOverlap(v) {
+    for(let i = 0; i < (0, _state.state).c_points.length; ++i){
+        if ((0, _state.state).c_points[i].distanceTo(v) < (0, _interface.selectionRadius)) return i;
+    }
+    return undefined;
+}
+function checkPathOverlap(v) {
+    return true;
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../settings/interface":"dci9b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"97SwH":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolPointCommand", ()=>SelectToolPointCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolPointCommand {
+    constructor(index){
+        this.__index = index;
+    }
+    do() {
+        (0, _state.state).c_selected.push(this.__index);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_selected.pop();
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"35eIL":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolDeselectAllCommand", ()=>SelectToolDeselectAllCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolDeselectAllCommand {
+    constructor(){
+        this.old_selected = (0, _state.state).c_selected;
+        this.old_selected_lines = (0, _state.state).c_selected_lines;
+        this.old_selected_shapes = (0, _state.state).c_selected_shapes;
+    }
+    do() {
+        (0, _state.state).c_selected = [];
+        (0, _state.state).c_selected_lines = [];
+        (0, _state.state).c_selected_shapes = [];
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_selected = this.old_selected;
+        (0, _state.state).c_selected_lines = this.old_selected_lines;
+        (0, _state.state).c_selected_shapes = this.old_selected_shapes;
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3BS11":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DeleteShapeCommand", ()=>DeleteShapeCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class DeleteShapeCommand {
+    constructor(shapeIndex){
+        this.__shapeIndex = shapeIndex;
+    }
+    do() {
+        (0, _state.state).c_shapes[this.__shapeIndex].forEach((pointIndex)=>{
+            // Delete points from the active point map
+            (0, _state.state).c_pointmap.delete(pointIndex);
+        });
+        // Remove shape from the list of shapes
+        (0, _state.state).c_shapes.splice(this.__shapeIndex, 1);
+        console.log('deleted shape ', this.__shapeIndex);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // TODO: Implement DeleteShapeCommand undo
+        console.log("Undo function for DeleteshapeCommand not implemented");
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jIp1s":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "pointLineIntersection", ()=>pointLineIntersection);
+parcelHelpers.export(exports, "checkLineIntersection", ()=>checkLineIntersection);
+var _interface = require("../settings/interface");
+var _state = require("../../State");
+function pointLineIntersection(point, v0, v1) {
+    // Ensure v0 is always the leftmost point
+    let p0 = v0.x > v1.x ? v1.clone() : v0.clone();
+    let p1 = v0.x > v1.x ? v0.clone() : v1.clone();
+    // Bounding box check
+    const minX = Math.min(p0.x, p1.x) - (0, _interface.rad) * 2;
+    const maxX = Math.max(p0.x, p1.x) + (0, _interface.rad) * 2;
+    const minY = Math.min(p0.y, p1.y) - (0, _interface.rad) * 2;
+    const maxY = Math.max(p0.y, p1.y) + (0, _interface.rad) * 2;
+    if (!(point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY)) return false;
+    // Compute line equation: y = mx + b
+    const dx = p1.x - p0.x;
+    if (dx === 0) // Vertical line case
+    return Math.abs(point.x - p0.x) < (0, _interface.rad) * 2;
+    const m = (p1.y - p0.y) / dx;
+    const b = p0.y - m * p0.x;
+    // Check if the point lies close to the line within a tolerance
+    const epsilon = (0, _interface.rad) * 2;
+    return Math.abs(point.y - (m * point.x + b)) < epsilon;
+}
+function checkLineIntersection(pos) {
+    var result = null;
+    (0, _state.state).c_shapes.forEach((shapeArr, index)=>{
+        console.log(shapeArr);
+        for(let i = 0; i < shapeArr.length - 1; ++i){
+            const p0 = (0, _state.state).c_points[shapeArr[i]];
+            const p1 = (0, _state.state).c_points[shapeArr[(i + 1) % (shapeArr.length - 1)]];
+            if (pointLineIntersection(pos, p0, p1)) result = {
+                shapeIndex: index,
+                lineStartIndex: i
+            };
+        }
+    });
+    return result;
+}
+
+},{"../settings/interface":"dci9b","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aamTt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolSelectLineCommand", ()=>SelectToolSelectLineCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolSelectLineCommand {
+    constructor(lineHit){
+        this.lineHit = lineHit;
+        this.previousSelection = (0, _state.state).c_selected_lines;
+    }
+    do() {
+        (0, _state.state).c_selected_lines = [
+            ...(0, _state.state).c_selected_lines,
+            this.lineHit
+        ];
+        console.log('state.c_selected_lines', (0, _state.state).c_selected_lines);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_selected_lines = this.previousSelection;
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fcLPE":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolAddShapeCommand", ()=>SelectToolAddShapeCommand);
+var _state = require("../../State");
+class SelectToolAddShapeCommand {
+    constructor(shapeIndex){
+        this.shapeIndex = shapeIndex;
+    }
+    do() {
+        (0, _state.state).c_selected_shapes.push(this.shapeIndex);
+    }
+    undo() {
+        (0, _state.state).c_selected_shapes.pop(); // could  be a splice for better accuracy but I really depend on this being rather clean overall so I don't think this is a huge risk
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fcEzj":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolDeselectLinesCommand", ()=>SelectToolDeselectLinesCommand);
+var _state = require("../../State");
+class SelectToolDeselectLinesCommand {
+    constructor(){
+        this.last = (0, _state.state).c_selected_lines;
+    }
+    do() {
+        (0, _state.state).c_selected_lines = [];
+    }
+    undo() {
+        (0, _state.state).c_selected_lines = this.last;
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4QHCH":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DrawPreviewsCommand", ()=>DrawPreviewsCommand);
+var _drawSelectionMovePreview = require("../../rendering/drawSelectionMovePreview");
+var _canvas = require("../../rendering/canvas");
+class DrawPreviewsCommand {
+    constructor(pos){
+        this.pos = pos;
+    }
+    do() {
+        (0, _canvas.redrawCanvas)();
+        (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(this.pos);
+    }
+    undo() {
+    // do render commands have an undo?
+    }
+}
+
+},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);

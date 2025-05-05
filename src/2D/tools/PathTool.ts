@@ -168,7 +168,7 @@ export class PathTool implements ToolBase {
       case "drawing":
         // Case: Close the path and connect to the first point in the shape if there three or more points
         if (hitIndex && hitIndex == state.c_geometryMap.get(this.__geometryId)?.pointIds[0]) { 
-          pushCommand( new PathToolClosePathCommand( state.c_paths[this.__currentPathIndex] ) );
+          pushCommand( new PathToolClosePathCommand( this.__geometryId ) );
           this.transition({
             type: 'idle'
           }); 

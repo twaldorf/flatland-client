@@ -1,7 +1,7 @@
 import { Ref } from "react";
 import { state } from "../../State";
 import { Piece } from "../../types";
-import { getShapeBoundingRect } from "../geometry/boundingBox";
+import { getGeometryBoundingRect, getShapeBoundingRect } from "../geometry/boundingBox";
 import { drawShapeNormalized } from "./drawPaths";
 import { getBuffer, getOnscreenBuffer } from "./getBuffer";
 
@@ -17,13 +17,13 @@ export function drawPieceThumbnail(piece:Piece, canvas: HTMLCanvasElement) {
 export function generatePieceThumbnail( piece:Piece ) {
   const { context, canvas } = getBuffer(`preview_${piece.name}`);
 
-  const box = getShapeBoundingRect(state.c_shapes[piece.shapeIndex]);
+  const box = getGeometryBoundingRect( state.c_geometryMap.get(piece.shapeId) );
 
   canvas.width = box.x1 - box.x0 + 1;
 
   canvas.height = box.y1 - box.y0 + 1;
 
-  drawShapeNormalized(state.c_shapes[piece.shapeIndex], context);
+  drawShapeNormalized( state.c_geometryMap.get(piece.shapeId), context);
 
   return canvas;
 }

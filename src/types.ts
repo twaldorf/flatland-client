@@ -101,8 +101,8 @@ export interface State {
   // Array of LineHits, lines that are currently selected
   c_selected_lines: Array<LineHit>;
 
-  // Array of selected Geometries for use in rendering and collection
-  c_selected_geometries: Array<Geometry2D>;
+  // Array of selected Geometries (via ID strings0for use in rendering and collection
+  c_selected_geometries: Array<string>;
 
   // Array of closed paths (shapes)
   // Shapes are moved from the paths array into the shapes array
@@ -188,7 +188,7 @@ export interface Grainline {
 
 export interface Piece {
   id: string;
-  shapeIndex: number;
+  shapeId: string;
   name: string;
   thumb: HTMLCanvasElement;
   canvas: OffscreenCanvas;
