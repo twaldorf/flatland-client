@@ -7,7 +7,7 @@ import { getBuffer } from "./getBuffer";
 import { c_bgColor } from "../../UI/colors/colors";
 
 
-export function drawDrawPreview(from: Vector2, to: Vector2): void {
+export function drawDrawPreview(from: Vector2, to: Vector2, metric1?:string, metric2?:string): void {
   // Find the vertical and horizontal distances between the points
   const h = Math.max(Math.abs(from.y - to.y), 1);
   const w = Math.max(Math.abs(from.x - to.x), 1);
@@ -47,7 +47,12 @@ export function drawDrawPreview(from: Vector2, to: Vector2): void {
   ctx.stroke();
 
   ctx.font = 'bold 22px sans-serif';
-  ctx.fillText(`${Math.round(from.distanceTo(to)) / cf_canvas_to_inch / 2}in`, w / 2 - 5, h / 2 - 5);
+  if (!metric1 && !metric1) {
+    ctx.fillText(`${Math.round(from.distanceTo(to)) / cf_canvas_to_inch / 2}in`, w / 2 - 5, h / 2 - 5);
+  }
+  if (metric1) {
+    ctx.fillText(`${metric1}`, w / 2 - 5, h / 2 - 5); 
+  }
 
   redrawCanvas();
   state.context.drawImage(canvas, originX, originY);

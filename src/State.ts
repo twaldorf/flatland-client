@@ -1,7 +1,15 @@
 import { Camera, Clock, Face, Group, Raycaster, Scene, Vector2 } from "three";
-import { BufferBundle, BufferType, State } from "./types";
+import { BezierPoint, BufferBundle, BufferType, State } from "./types";
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
+import { generateUUID } from "three/src/math/MathUtils";
+
+export function genPointId() {
+  return generateUUID();
+}
+export function genGeoId() {
+  return generateUUID();
+}
 
 export const state:State = {
   version: '0.1',
@@ -52,11 +60,16 @@ export const state:State = {
   tool: new PathTool(),
   c_points: [],
   c_pointmap: new Map(),
+
+  c_pointsMap: new Map(),
+  c_geometryMap: new Map(),
+
   c_paths: [],
   c_selected: [],
   c_shapes: [],
   c_selected_shapes: [],
   c_selected_lines: [],
+  c_selected_geometries: [],
   c_measure_path: [],
   c_measure_paths: [],
   c_measure_points: new Map(),
@@ -76,6 +89,12 @@ export const state:State = {
     title: 'untitled',
     author: 'unknown',
     lastUpdated: new Date(),
+  },
+
+  addGeometryPoint(v:Vector2 | BezierPoint) {
+    const id = genPointId();
+    this.c_pointsMap.set(id, v);
+    return id;
   },
 
   serialize():string {

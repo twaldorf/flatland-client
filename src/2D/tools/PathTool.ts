@@ -1,7 +1,7 @@
 import { Vector, Vector2 } from "three";
 import { State, Tool, ToolBase } from "../../types";
 import { selectionRadius } from "../settings/interface";
-import { state } from "../../State";
+import { genGeoId, state } from "../../State";
 import { drawCanvasFromState } from "../rendering/canvas";
 import { drawDrawPreview } from "../rendering/drawDrawPreview";
 import { drawSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
@@ -15,11 +15,12 @@ import { PathToolDeselectCommand } from "../commands/PathToolDeselectCommand";
 import { PathToolClosePathCommand } from "../commands/PathToolClosePathCommand";
 import { PathToolRemovePointCommand } from "../commands/PathToolRemovePointCommand";
 import { useAppState } from "../../UI/store";
+import { PathToolAddBezierCommand } from "../commands/PathToolAddBezierCommand";
 
 export type PathToolState = 
   | { type: "idle" }
   | { type: "drawing"; currentPathIndex: number }
-  | { type: "drawing new point"; currentPathIndex: number, newPointIndex: number }
+  | { type: "drawing new point"; currentPathIndex: number, newPointIndex: number, mouseDownPos: Vector2 }
   | { type: "moving new point"; index: number, startPos: Vector2 }
   // | { type: "hovering"; hoveredIndex: number } // hovering will have to be handled elsewhere
   | { type: "moving"; selectedIndices: number[]; startPos: Vector2 }
@@ -27,13 +28,16 @@ export type PathToolState =
 
 export class PathTool implements ToolBase {
   // Path tool state object stores tool mechanical state, no data
-  private __state:PathToolState = { type: "idle" };
+  readonly __state:PathToolState = { type: "idle" };
 
   // Tool name
   readonly name:string = 'path';
 
   // Index of current path within c_paths
   private __currentPathIndex: number;
+
+  // Current geometryId
+  public __geometryId: string | null = null;
 
   // Number of points in the current path
   private __length: number;
@@ -49,6 +53,14 @@ export class PathTool implements ToolBase {
   constructor() {
     this.__length = 0;
     this.__currentPathIndex = -1;
+  }
+
+  public applyState (state: ToolBase['state']):void {
+    this.__state = state;
+  };
+
+  public setGeometryId(id:string) {
+    this.__geometryId = id;
   }
 
   public initializeEvents() {
@@ -168,7 +180,8 @@ export class PathTool implements ToolBase {
           this.transition({
             type: "drawing new point",
             currentPathIndex: this.__currentPathIndex,
-            newPointIndex: state.c_points.length
+            newPointIndex: state.c_points.length,
+            mouseDownPos: pos,
           });
         }
 
@@ -237,11 +250,7 @@ export class PathTool implements ToolBase {
         break;
 
       case "drawing new point":
-        this.transition({
-          type: "moving new point",
-          index: this.__state.newPointIndex,
-          startPos: pos,
-        }); 
+        // draw preview
         break;
 
       case "drawing":
@@ -300,6 +309,30 @@ export class PathTool implements ToolBase {
         break;
 
       case "drawing new point":
+        // Move to draw Preview logic
+        // Case: this is the first point in the path
+        var from;
+        if (this.__length == 0) {
+          from = state.c_points[ this.__state.newPointIndex ];
+        } else {
+          // Case: this is not the first point in the path, get the position of the last point
+          from = state.c_points[ state.c_paths[ this.__currentPathIndex ][ this.__length] ];
+        }
+
+        if (this.__geometryId == null) {
+          this.__geometryId = genGeoId();
+          pushCommand(new PathToolAddBezierCommand(this.__geometryId, this.__state.mouseDownPos, pos));
+        } else {
+          const geo = state.c_geometryMap.get(this.__geometryId);
+          if (geo) {
+            const previousPointId = geo.pointIds[geo.pointIds.length - 1];
+            const previousPoint = state.c_pointsMap.get(previousPointId);
+            if (previousPoint) {
+              pushCommand(new PathToolAddBezierCommand(this.__geometryId, this.__state.mouseDownPos, pos, previousPoint)); 
+            }
+          }
+        }
+
         this.transition({
           type: "drawing",
           currentPathIndex: this.__currentPathIndex

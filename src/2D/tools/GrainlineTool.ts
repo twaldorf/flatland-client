@@ -9,6 +9,7 @@ import { drawDrawPreview } from "../rendering/drawDrawPreview";
 import { pushCommand } from "../../Command";
 import { GrainlineToolCreateGrainlineCommand } from "../commands/GrainlineToolCreateGrainlineCommand";
 import { isPointInPolygon } from "../geometry/isPointInPolygon";
+import { ChangeToolCommand } from "../commands/ChangeToolCommand";
 
 export type GrainlineToolState = 
   | { type: "idle" }
@@ -91,7 +92,9 @@ export class GrainlineTool implements ToolBase {
 
     switch (this.__state.type) {
       case "drawing":
-        drawDrawPreview(this.__state.originPos, pos);
+        drawDrawPreview(this.__state.originPos, pos, 
+          `${ Math.round( 180 * this.angleFromNoon(pos, this.__state.originPos) / Math.PI ) }°`
+        );
         break;
     }
 
@@ -105,6 +108,7 @@ export class GrainlineTool implements ToolBase {
         pushCommand(new GrainlineToolCreateGrainlineCommand(this.__state.originPos, state.c_selected_shapes[0], this.angle));
     }
     this.transition({ type: "idle" });
+    pushCommand(new ChangeToolCommand('select'));
   }
 
   public checkForShapeOverlap(pos:Vector2):number {
@@ -119,10 +123,10 @@ export class GrainlineTool implements ToolBase {
   }
 
   private angleFromNoon(vector:Vector2, origin:Vector2) {
-    vector = vector.sub(origin);
+    vector = vector.clone().sub(origin);
     let baseAngle = Math.atan2(vector.y, vector.x);
   
-    let ang = baseAngle;
+    let ang = baseAngle + (Math.PI / 2);
 
     // Map to [0, 2pi]
     if (ang < 0) ang += 2 * Math.PI;

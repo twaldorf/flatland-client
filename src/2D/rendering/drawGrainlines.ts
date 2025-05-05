@@ -22,8 +22,8 @@ export function drawGrainOnShape(shapeIndex: number, context: OffscreenCanvasRen
   if (grainline) {
     context.moveTo(grainline.position.x, grainline.position.y);
     context.lineTo(
-      grainline.position.x + Math.cos(grainline.angle) * 100, 
-      grainline.position.y + Math.sin(grainline.angle) * 100
+      grainline.position.x + Math.cos(grainline.angle - (2 * Math.PI + Math.PI/2)) * 100, 
+      grainline.position.y + Math.sin(grainline.angle - (2 * Math.PI + Math.PI/2)) * 100
     );
     context.stroke();
   }

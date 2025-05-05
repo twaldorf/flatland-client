@@ -4,7 +4,6 @@ import { PathTool, PathToolState } from "./2D/tools/PathTool";
 import { Command } from "./Command";
 import { SelectTool, SelectToolState } from "./2D/tools/SelectTool";
 import { DistanceConstraint, Particle } from "./3D/simulation/xpbdTypes";
-import { ToolState } from "./2D/tools/changeTool";
 import { LineHit } from "./2D/geometry/lineIntersection";
 import { MeasureTool, MeasureToolState } from "./2D/tools/MeasureTool";
 import { GrainlineTool, GrainlineToolState } from "./2D/tools/GrainlineTool";
@@ -65,21 +64,29 @@ export interface State {
   c_move_from: Vector2;
 
   // Making a selection (as opposed to creating a new mark)
-  // TODO: deprecated
+  // Deprecated
   cSelecting: boolean;
 
   // Store the pending selection for execution on mouseUp
-  // TODO: deprecated ?
+  // Deprecated
   pendingSelection: Command;
 
-  // All points on the canvas
+  // All points on the canvas, flattened for rendering
+  // Deprecated
   c_points: Array<Vector2>;
 
-  // Map of active points
+  // Map of active points, deprecated
   // Pairs an index in the point array with a vector2 for convenience
   // These points are all 'active', i.e. they have not been deleted and contribute to shapes or paths
   // These points are not necessarily selected
   c_pointmap: Map<number, Vector2>;
+
+  // New pointmap to account for Beziers
+  c_pointsMap: Map<string, Point>;
+  addGeometryPoint: (v: Vector2 | BezierPoint) => string;
+
+  // Map of all geometries
+  c_geometryMap: Map<string, Geometry2D>,
 
   // 2D Array of all paths composed by the indices of each path member vertices
   c_paths: Array<Array<number>>;
@@ -93,6 +100,9 @@ export interface State {
 
   // Array of LineHits, lines that are currently selected
   c_selected_lines: Array<LineHit>;
+
+  // Array of selected Geometries for use in rendering and collection
+  c_selected_geometries: Array<Geometry2D>;
 
   // Array of closed paths (shapes)
   // Shapes are moved from the paths array into the shapes array
@@ -130,6 +140,14 @@ export interface State {
 
 }
 
+export interface Geometry2D {
+  type: string,
+  id: string,
+  pointIds: string[],
+}
+
+type Point = BezierPoint | Vector2;
+
 type Mode = 'default' | 
             'group-select';
 
@@ -145,6 +163,7 @@ export interface ToolBase {
   name: string;
   initializeEvents: Function;
   dismountEvents: Function;
+  applyState: (state:ToolBase['state']) => void;
   readonly state: PathToolState | SelectToolState | MeasureToolState | GrainlineToolState;
 }
 
@@ -186,4 +205,11 @@ interface RawPointer {
 interface Controls {
   waitForDoubleClick: boolean;
   doubleClick: boolean;
+}
+
+export interface BezierPoint {
+  from: Vector2;
+  to: Vector2;
+  c1: Vector2;
+  c2: Vector2;
 }

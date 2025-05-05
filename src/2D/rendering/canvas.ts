@@ -9,6 +9,9 @@ import { drawSelections } from "./drawSelections";
 import { drawYRuler, drawGridRuler } from "./drawRulers";
 import { applyCursorPreview, drawCursorPreview } from "./drawCursorPreview";
 import { applyMeasurements, drawMeasurements } from "./drawMeasurements";
+import { applyBeziers, drawBeziers } from "./drawBeziers";
+
+// 2D Canvas Renderer
 
 export function drawCanvasSetup() {
   state.context.fillStyle = c_bgColor;
@@ -21,6 +24,7 @@ export function drawCanvasSetup() {
 export function drawCanvasFromState(state:State):void {
   erase();
   drawPaths(state);
+  drawBeziers(state);
   drawSelections(state);
   drawPoints(state);
   drawCursorPreview(state.pointer);
@@ -33,6 +37,7 @@ export function redrawCanvas():void {
   applyGridRuler();
   applyPoints();
   applyPaths();
+  applyBeziers(state.context);
   // applyShapes();
   applyCursorPreview();
   applyMeasurements();

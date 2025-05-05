@@ -49672,9 +49672,18 @@ class OrbitControls extends (0, _three.EventDispatcher) {
 },{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"83rpN":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "genPointId", ()=>genPointId);
+parcelHelpers.export(exports, "genGeoId", ()=>genGeoId);
 parcelHelpers.export(exports, "state", ()=>state);
 var _three = require("three");
 var _pathTool = require("./2D/tools/PathTool");
+var _mathUtils = require("three/src/math/MathUtils");
+function genPointId() {
+    return (0, _mathUtils.generateUUID)();
+}
+function genGeoId() {
+    return (0, _mathUtils.generateUUID)();
+}
 const state = {
     version: '0.1',
     pointer: new (0, _three.Vector2),
@@ -49719,11 +49728,14 @@ const state = {
     tool: new (0, _pathTool.PathTool)(),
     c_points: [],
     c_pointmap: new Map(),
+    c_pointsMap: new Map(),
+    c_geometryMap: new Map(),
     c_paths: [],
     c_selected: [],
     c_shapes: [],
     c_selected_shapes: [],
     c_selected_lines: [],
+    c_selected_geometries: [],
     c_measure_path: [],
     c_measure_paths: [],
     c_measure_points: new Map(),
@@ -49740,6 +49752,11 @@ const state = {
         title: 'untitled',
         author: 'unknown',
         lastUpdated: new Date()
+    },
+    addGeometryPoint (v) {
+        const id = genPointId();
+        this.c_pointsMap.set(id, v);
+        return id;
     },
     serialize () {
         const { version, c_pointmap, c_points, c_paths, c_measure_paths, c_measure_points, c_shapes } = this;
@@ -49797,7 +49814,7 @@ const state = {
     }
 };
 
-},{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","three/src/math/MathUtils":"cuzU2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathTool", ()=>PathTool);
@@ -49816,6 +49833,7 @@ var _pathToolDeselectCommand = require("../commands/PathToolDeselectCommand");
 var _pathToolClosePathCommand = require("../commands/PathToolClosePathCommand");
 var _pathToolRemovePointCommand = require("../commands/PathToolRemovePointCommand");
 var _store = require("../../UI/store");
+var _pathToolAddBezierCommand = require("../commands/PathToolAddBezierCommand");
 class PathTool {
     constructor(){
         // Path tool state object stores tool mechanical state, no data
@@ -49824,6 +49842,8 @@ class PathTool {
         };
         // Tool name
         this.name = 'path';
+        // Current geometryId
+        this.__geometryId = null;
         this.setPointer = (0, _store.useAppState).getState().setPointer;
         this.__listeners = {
             down: this.onMouseDown.bind(this),
@@ -49832,6 +49852,12 @@ class PathTool {
         };
         this.__length = 0;
         this.__currentPathIndex = -1;
+    }
+    applyState(state) {
+        this.__state = state;
+    }
+    setGeometryId(id) {
+        this.__geometryId = id;
     }
     initializeEvents() {
         const canvas = (0, _state.state).canvas;
@@ -49928,7 +49954,8 @@ class PathTool {
                     this.transition({
                         type: "drawing new point",
                         currentPathIndex: this.__currentPathIndex,
-                        newPointIndex: (0, _state.state).c_points.length
+                        newPointIndex: (0, _state.state).c_points.length,
+                        mouseDownPos: pos
                     });
                 }
                 break;
@@ -49984,11 +50011,6 @@ class PathTool {
                 });
                 break;
             case "drawing new point":
-                this.transition({
-                    type: "moving new point",
-                    index: this.__state.newPointIndex,
-                    startPos: pos
-                });
                 break;
             case "drawing":
                 if ((0, _state.state).c_paths.length > 0) {
@@ -50033,6 +50055,23 @@ class PathTool {
                 ];
                 break;
             case "drawing new point":
+                // Move to draw Preview logic
+                // Case: this is the first point in the path
+                var from;
+                if (this.__length == 0) from = (0, _state.state).c_points[this.__state.newPointIndex];
+                else // Case: this is not the first point in the path, get the position of the last point
+                from = (0, _state.state).c_points[(0, _state.state).c_paths[this.__currentPathIndex][this.__length]];
+                if (this.__geometryId == null) {
+                    this.__geometryId = (0, _state.genGeoId)();
+                    (0, _command.pushCommand)(new (0, _pathToolAddBezierCommand.PathToolAddBezierCommand)(this.__geometryId, this.__state.mouseDownPos, pos));
+                } else {
+                    const geo = (0, _state.state).c_geometryMap.get(this.__geometryId);
+                    if (geo) {
+                        const previousPointId = geo.pointIds[geo.pointIds.length - 1];
+                        const previousPoint = (0, _state.state).c_pointsMap.get(previousPointId);
+                        if (previousPoint) (0, _command.pushCommand)(new (0, _pathToolAddBezierCommand.PathToolAddBezierCommand)(this.__geometryId, this.__state.mouseDownPos, pos, previousPoint));
+                    }
+                }
                 this.transition({
                     type: "drawing",
                     currentPathIndex: this.__currentPathIndex
@@ -50091,21 +50130,22 @@ class PathTool {
     }
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dci9b":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","../rendering/drawSelectionMovePreview":"jMLdr","../../Command":"efiIE","../commands/PathToolMovePointCommand":"5n0lO","../pointer/cLocalizePoint":"3rhkZ","../geometry/findNearestPoint":"8deBQ","../commands/PathToolCommand":"bGlHe","../commands/PathToolSelectCommand":"jtaot","../commands/PathToolDeselectCommand":"fE5SE","../commands/PathToolClosePathCommand":"4pXyd","../commands/PathToolRemovePointCommand":"8Yd53","../../UI/store":"l1Ff7","../commands/PathToolAddBezierCommand":"97NAc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dci9b":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "rad", ()=>rad);
 parcelHelpers.export(exports, "selectionRadius", ()=>selectionRadius);
 parcelHelpers.export(exports, "rulerWidth", ()=>rulerWidth);
 parcelHelpers.export(exports, "rulerHeight", ()=>rulerHeight);
-const rad = 4;
-const selectionRadius = 10;
+const rad = 8;
+const selectionRadius = 20;
 const rulerWidth = 10;
 const rulerHeight = 0;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fjxS8":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+// 2D Canvas Renderer
 parcelHelpers.export(exports, "drawCanvasSetup", ()=>drawCanvasSetup);
 parcelHelpers.export(exports, "drawCanvasFromState", ()=>drawCanvasFromState);
 parcelHelpers.export(exports, "redrawCanvas", ()=>redrawCanvas);
@@ -50119,6 +50159,7 @@ var _drawSelections = require("./drawSelections");
 var _drawRulers = require("./drawRulers");
 var _drawCursorPreview = require("./drawCursorPreview");
 var _drawMeasurements = require("./drawMeasurements");
+var _drawBeziers = require("./drawBeziers");
 function drawCanvasSetup() {
     (0, _state.state).context.fillStyle = (0, _colors.c_bgColor);
     (0, _state.state).context.fillRect(0, 0, (0, _state.state).canvas.width, (0, _state.state).canvas.height);
@@ -50129,6 +50170,7 @@ function drawCanvasSetup() {
 function drawCanvasFromState(state) {
     erase();
     (0, _drawPaths.drawPaths)(state);
+    (0, _drawBeziers.drawBeziers)(state);
     (0, _drawSelections.drawSelections)(state);
     (0, _drawPoints.drawPoints)(state);
     (0, _drawCursorPreview.drawCursorPreview)(state.pointer);
@@ -50140,6 +50182,7 @@ function redrawCanvas() {
     applyGridRuler();
     (0, _drawPoints.applyPoints)();
     (0, _drawPaths.applyPaths)();
+    (0, _drawBeziers.applyBeziers)((0, _state.state).context);
     // applyShapes();
     (0, _drawCursorPreview.applyCursorPreview)();
     (0, _drawMeasurements.applyMeasurements)();
@@ -50159,7 +50202,7 @@ function point(index) {
     return (0, _state.state).c_points[index];
 }
 
-},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","./drawCursorPreview":"12vmI","./drawMeasurements":"aqmR1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
+},{"../settings/interface":"dci9b","../../State":"83rpN","../../UI/colors/colors":"eQ9g7","./drawPoints":"4BAnR","./drawPaths":"lgYVM","./drawSelections":"ifoPt","./drawRulers":"h76tE","./drawCursorPreview":"12vmI","./drawMeasurements":"aqmR1","./drawBeziers":"6OCsl","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eQ9g7":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "c_bgColor", ()=>c_bgColor);
@@ -50412,7 +50455,7 @@ function drawGrainOnShape(shapeIndex, context) {
     const grainline = (0, _state.state).c_grainlines.get(shapeIndex);
     if (grainline) {
         context.moveTo(grainline.position.x, grainline.position.y);
-        context.lineTo(grainline.position.x + Math.cos(grainline.angle) * 100, grainline.position.y + Math.sin(grainline.angle) * 100);
+        context.lineTo(grainline.position.x + Math.cos(grainline.angle - (2 * Math.PI + Math.PI / 2)) * 100, grainline.position.y + Math.sin(grainline.angle - (2 * Math.PI + Math.PI / 2)) * 100);
         context.stroke();
     }
 }
@@ -50642,7 +50685,71 @@ function applyMeasurements() {
     if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
 }
 
-},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aI2tH":[function(require,module,exports,__globalThis) {
+},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6OCsl":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawBeziers", ()=>drawBeziers);
+parcelHelpers.export(exports, "applyBeziers", ()=>applyBeziers);
+var _interface = require("../settings/interface");
+var _getBuffer = require("./getBuffer");
+var _geometryIsSelected = require("./utils/geometryIsSelected");
+function drawBeziers(state) {
+    const { canvas, context } = (0, _getBuffer.getBuffer)('beziers');
+    canvas.width = state.canvas.width;
+    canvas.height = state.canvas.height;
+    state.c_geometryMap.forEach((geometry)=>{
+        if (geometry.type === 'bezier') {
+            const pointIds = geometry.pointIds;
+            context.beginPath();
+            pointIds.forEach((pid, index)=>{
+                const point = state.c_pointsMap.get(pid);
+                if (index === 0) context.moveTo(point.from.x, point.from.y);
+                else {
+                    const lastPoint = state.c_pointsMap.get(pointIds[index - 1]);
+                    context.bezierCurveTo(lastPoint.c1.x, lastPoint.c1.y, point.c2.x, point.c2.y, point.to.x, point.to.y);
+                }
+                context.stroke();
+                context.fillRect(point.from.x, point.from.y, 5, 5);
+                context.fillRect(point.to.x, point.to.y, 5, 5);
+                context.fillStyle = 'red';
+                context.fillRect(point.c1.x, point.c1.y, (0, _interface.rad), (0, _interface.rad));
+                context.fillStyle = 'blue';
+                context.fillRect(point.c2.x, point.c2.y, (0, _interface.rad), (0, _interface.rad));
+            });
+            if ((0, _geometryIsSelected.geometryIsSelected)(geometry.id)) pointIds.forEach((pid)=>{
+                const point = state.c_pointsMap.get(pid);
+                context.setLineDash([
+                    5,
+                    5
+                ]);
+                context.stroke();
+                context.moveTo(point.to.x, point.to.y);
+                context.lineTo(point.c2.x, point.c2.y);
+                context.moveTo(point.to.x, point.to.y);
+                context.lineTo(point.c1.x, point.c1.y);
+                context.setLineDash([]);
+            });
+        }
+    });
+    state.context.drawImage(canvas, 0, 0);
+}
+function applyBeziers(ctx) {
+    const { context, canvas } = (0, _getBuffer.getBuffer)('beziers');
+    if (context && canvas && canvas.width > 0 && canvas.height > 0) ctx.drawImage(canvas, 0, 0);
+}
+
+},{"./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../settings/interface":"dci9b","./utils/geometryIsSelected":"kiVpu"}],"kiVpu":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "geometryIsSelected", ()=>geometryIsSelected);
+var _state = require("../../../State");
+function geometryIsSelected(gId) {
+    return (0, _state.state).c_selected_geometries.some((selected)=>{
+        if (gId === selected.id) return true;
+    });
+}
+
+},{"../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aI2tH":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawDrawPreview", ()=>drawDrawPreview);
@@ -50651,7 +50758,7 @@ var _factors = require("../settings/factors");
 var _interface = require("../settings/interface");
 var _canvas = require("./canvas");
 var _getBuffer = require("./getBuffer");
-function drawDrawPreview(from, to) {
+function drawDrawPreview(from, to, metric1, metric2) {
     // Find the vertical and horizontal distances between the points
     const h = Math.max(Math.abs(from.y - to.y), 1);
     const w = Math.max(Math.abs(from.x - to.x), 1);
@@ -50681,7 +50788,8 @@ function drawDrawPreview(from, to) {
     }
     ctx.stroke();
     ctx.font = 'bold 22px sans-serif';
-    ctx.fillText(`${Math.round(from.distanceTo(to)) / (0, _factors.cf_canvas_to_inch) / 2}in`, w / 2 - 5, h / 2 - 5);
+    if (!metric1 && !metric1) ctx.fillText(`${Math.round(from.distanceTo(to)) / (0, _factors.cf_canvas_to_inch) / 2}in`, w / 2 - 5, h / 2 - 5);
+    if (metric1) ctx.fillText(`${metric1}`, w / 2 - 5, h / 2 - 5);
     (0, _canvas.redrawCanvas)();
     (0, _state.state).context.drawImage(canvas, originX, originY);
 }
@@ -51296,13 +51404,19 @@ var _grainlineTool = require("./GrainlineTool");
 var _measureTool = require("./MeasureTool");
 var _pathTool = require("./PathTool");
 var _selectTool = require("./SelectTool");
-function changeTool(newState) {
+function changeTool(toolState) {
+    // name is required, all other properties optional
+    // Context: this needs to be the tool name but it should also accept entire tool state wholesale for the purposes of undo
+    const newToolName = toolState.name;
+    const importedState = toolState.state;
+    console.log(toolState.name);
     (0, _state.state).tool.dismountEvents();
     (0, _store.useAppState).getState().resetUI();
-    switch(newState.type){
+    switch(newToolName){
         case "path":
             (0, _state.state).tool = new (0, _pathTool.PathTool)();
             (0, _store.useAppState).getState().setSelectedTool("path");
+            if (importedState) (0, _state.state).tool.applyState(importedState);
             (0, _canvas.redrawCanvas)();
             break;
         case "select":
@@ -51342,6 +51456,7 @@ var _drawDrawPreview = require("../rendering/drawDrawPreview");
 var _command = require("../../Command");
 var _grainlineToolCreateGrainlineCommand = require("../commands/GrainlineToolCreateGrainlineCommand");
 var _isPointInPolygon = require("../geometry/isPointInPolygon");
+var _changeToolCommand = require("../commands/ChangeToolCommand");
 class GrainlineTool {
     constructor(){
         // Tool state object stores tool mechanical state, no data
@@ -51402,7 +51517,7 @@ class GrainlineTool {
         this.setPointer((0, _state.state).pointer);
         switch(this.__state.type){
             case "drawing":
-                (0, _drawDrawPreview.drawDrawPreview)(this.__state.originPos, pos);
+                (0, _drawDrawPreview.drawDrawPreview)(this.__state.originPos, pos, `${Math.round(180 * this.angleFromNoon(pos, this.__state.originPos) / Math.PI)}\xb0`);
                 break;
         }
     }
@@ -51416,6 +51531,7 @@ class GrainlineTool {
         this.transition({
             type: "idle"
         });
+        (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)('select'));
     }
     checkForShapeOverlap(pos) {
         let value = -1;
@@ -51426,16 +51542,16 @@ class GrainlineTool {
         return value;
     }
     angleFromNoon(vector, origin) {
-        vector = vector.sub(origin);
+        vector = vector.clone().sub(origin);
         let baseAngle = Math.atan2(vector.y, vector.x);
-        let ang = baseAngle;
+        let ang = baseAngle + Math.PI / 2;
         // Map to [0, 2pi]
         if (ang < 0) ang += 2 * Math.PI;
         return ang;
     }
 }
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","../geometry/isPointInPolygon":"aOEKs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","three":"ktPTu"}],"5NqY4":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","../../UI/store":"l1Ff7","three":"ktPTu","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","../geometry/isPointInPolygon":"aOEKs","../commands/ChangeToolCommand":"i5Ou7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5NqY4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "GrainlineToolCreateGrainlineCommand", ()=>GrainlineToolCreateGrainlineCommand);
@@ -51459,7 +51575,7 @@ class GrainlineToolCreateGrainlineCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg"}],"gsjQg":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gsjQg":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
@@ -51498,7 +51614,31 @@ function isPointInPolygon(point, polygon) {
     return inside;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
+var _changeTool = require("../tools/changeTool");
+class ChangeToolCommand {
+    // private lastToolState: ToolBase["state"];
+    constructor(type){
+        this.__type = type;
+    // this.lastToolState = state.tool.__state; // Not implemented: stateful tool swapping (for redo)
+    }
+    do() {
+        (0, _changeTool.changeTool)({
+            name: this.__type
+        });
+    }
+    undo() {
+        (0, _changeTool.changeTool)({
+            name: this.__type
+        });
+        console.log('Undo not yet implemented for ChangeToolCommand');
+    }
+}
+
+},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
@@ -52413,7 +52553,7 @@ class SelectToolMoveShapeCommand {
     }
 }
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/centroid":"gsjQg"}],"lpYSP":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lpYSP":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Protected, only to be used by Command
@@ -54367,7 +54507,51 @@ class PathToolRemovePointCommand {
     }
 }
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"97NAc":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PathToolAddBezierCommand", ()=>PathToolAddBezierCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class PathToolAddBezierCommand {
+    constructor(geometryId, anchor, pos, prev){
+        this.anchor = anchor;
+        this.pos = pos;
+        this.geometryId = geometryId;
+        if (prev) this.prevPoint = prev;
+        else // If this is the first point, the origin is the anchor
+        this.prevPoint = {
+            to: anchor
+        };
+    }
+    do() {
+        const backHandle = this.pos.clone().rotateAround(this.anchor, Math.PI);
+        // Bezier point object containing Indices
+        const bPoint = {
+            to: this.anchor,
+            c1: this.pos,
+            c2: backHandle,
+            from: this.prevPoint.to
+        };
+        const id = (0, _state.state).addGeometryPoint(bPoint);
+        var geometry = (0, _state.state).c_geometryMap.get(this.geometryId);
+        if (!geometry) geometry = {
+            type: 'bezier',
+            pointIds: []
+        };
+        geometry.pointIds = [
+            ...geometry.pointIds,
+            id
+        ];
+        (0, _state.state).c_geometryMap.set(this.geometryId, geometry);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        console.log('not yet implemented');
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../rendering/canvas":"fjxS8"}],"11Ir4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Pointer Events for 3D canvas
@@ -54632,27 +54816,7 @@ class SaveProjectCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
-var _changeTool = require("../tools/changeTool");
-class ChangeToolCommand {
-    constructor(type){
-        this.__type = type;
-    }
-    do() {
-        (0, _changeTool.changeTool)({
-            type: this.__type
-        });
-    }
-    undo() {
-        // TODO
-        console.log('Undo not yet implemented for ChangeToolCommand');
-    }
-}
-
-},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);

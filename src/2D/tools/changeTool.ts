@@ -1,5 +1,5 @@
 import { state } from "../../State";
-import { ToolName } from "../../types";
+import { ToolBase, ToolName } from "../../types";
 import { useAppState } from "../../UI/store";
 import { redrawCanvas } from "../rendering/canvas";
 import { GrainlineTool } from "./GrainlineTool";
@@ -7,19 +7,25 @@ import { MeasureTool } from "./MeasureTool";
 import { PathTool } from "./PathTool";
 import { SelectTool } from "./SelectTool";
 
-export type ToolState = {
-  type: ToolName;
-}
+export function changeTool(toolState: { name: string } & Partial<Omit<ToolBase, 'name'>>) {
+  // name is required, all other properties optional
 
-export function changeTool(newState:ToolState) {
+  // Context: this needs to be the tool name but it should also accept entire tool state wholesale for the purposes of undo
+  const newToolName = toolState.name;
+  const importedState = toolState.state;
+
+  console.log(toolState.name)
   
   state.tool.dismountEvents();
   useAppState.getState().resetUI();
 
-  switch (newState.type) {
+  switch (newToolName) {
     case "path":
         state.tool = new PathTool();
         useAppState.getState().setSelectedTool("path");
+        if (importedState) {
+          state.tool.applyState(importedState);
+        }
         redrawCanvas();
         break;
         
