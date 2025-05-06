@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 import { pushCommand } from "../../Command";
 import { state } from "../../State";
-import { ToolBase, ToolName } from "../../types";
+import { BezierPoint, Geometry2D, ToolBase, ToolName } from "../../types";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { SelectToolShapeCommand } from "../commands/SelectToolShapeCommand";
 import { isPointInPolygon } from "../geometry/isPointInPolygon";
@@ -19,6 +19,7 @@ import { SelectToolSelectLineCommand } from "../commands/SelectToolSelectLineCom
 import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand";
 import { SelectToolDeselectLinesCommand } from "../commands/SelectToolDeselectLinesCommand";
 import { DrawPreviewsCommand } from "../commands/Rendering/DrawPreviewsCommand";
+import { findNearestGeometryPoint } from "../geometry/findNearestPoint";
 
 export type SelectToolState = 
   | { type: "idle" }
@@ -71,13 +72,13 @@ export class SelectTool implements ToolBase {
   // Select tool event management
   private onMouseDown(e: MouseEvent) {
     const clickPos = cLocalizePoint(e.clientX, e.clientY);
-    const selectedShapeIndex = this.checkForShapeOverlap(clickPos);
-    const hitIndex = checkPointOverlap(clickPos);
+    const selectedGeomId = this.checkForShapeOverlap(clickPos);
+    const hitIndex = findNearestGeometryPoint(clickPos, Array.from(state.c_geometryMap.values()));
     const lineHit = checkLineIntersection(clickPos);
     console.log(lineHit)
     state.pointerDown = true;
 
-    if (selectedShapeIndex >= 0 || (hitIndex && hitIndex >= 0) || lineHit != null) {
+    if (selectedGeomId || (hitIndex && hitIndex >= 0) || lineHit != null) {
       switch (this.__state.type) {
         case "idle":
           if ( hitIndex && hitIndex > -1 ) {
@@ -175,15 +176,23 @@ export class SelectTool implements ToolBase {
     drawCanvasFromState(state);
   }
 
-  public checkForShapeOverlap(pos:Vector2):number {
-    let value = -1;
-    state.c_shapes.forEach((shape, index) => {
-      const shapePoints = shape.map((pointIndex) => state.c_points[pointIndex]);
+  public checkForShapeOverlap(pos:Vector2):string | null {
+    let foundId = null;
+
+    state.c_geometryMap.forEach((geom: Geometry2D, id:string) => {
+
+      const shapePoints = geom.pointIds.map((pointId:string) => {
+        const point = state.c_pointsMap.get(pointId) as BezierPoint;
+        return point.to;
+      });
+
       if (isPointInPolygon(pos, shapePoints)) {
-        value = index;
-      }
+        foundId = id;
+      };
+
     });
-    return value;
+
+    return foundId;
   }
 
   private onMouseMove(e: MouseEvent) {

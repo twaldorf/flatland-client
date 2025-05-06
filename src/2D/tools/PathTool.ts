@@ -1,8 +1,8 @@
 import { Vector, Vector2 } from "three";
-import { Geometry2D, State, Tool, ToolBase } from "../../types";
+import { BezierPoint, Geometry2D, Point, State, Tool, ToolBase } from "../../types";
 import { selectionRadius } from "../settings/interface";
 import { genGeoId, state } from "../../State";
-import { drawCanvasFromState } from "../rendering/canvas";
+import { drawCanvasFromState, redrawCanvas } from "../rendering/canvas";
 import { drawDrawPreview } from "../rendering/drawDrawPreview";
 import { drawSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
 import { pushCommand } from "../../Command";
@@ -16,19 +16,21 @@ import { PathToolClosePathCommand } from "../commands/PathToolClosePathCommand";
 import { PathToolRemovePointCommand } from "../commands/PathToolRemovePointCommand";
 import { useAppState } from "../../UI/store";
 import { PathToolAddBezierCommand } from "../commands/PathToolAddBezierCommand";
+import { drawNewPointPreview } from "../rendering/drawNewPointPreview";
+import { drawBezierHandlePreview } from "../rendering/drawBezierHandlePreview";
 
 export type PathToolState = 
   | { type: "idle" }
-  | { type: "drawing"; currentPathIndex: number }
-  | { type: "drawing new point"; currentPathIndex: number, newPointIndex: number, mouseDownPos: Vector2 }
-  | { type: "moving new point"; index: number, startPos: Vector2 }
+  | { type: "drawing"; geometryId: string }
+  | { type: "drawing new point", mouseDownPos: Vector2 }
+  | { type: "moving new point", index: number, startPos: Vector2 }
   // | { type: "hovering"; hoveredIndex: number } // hovering will have to be handled elsewhere
-  | { type: "moving"; selectedIndices: number[]; startPos: Vector2 }
-  | { type: "selecting"; selectedIndices: number[], hitIndex: number; }
+  | { type: "moving", selectedIndices: number[], startPos: Vector2 }
+  | { type: "selecting", selectedIndices: number[], hitIndex: number; }
 
 export class PathTool implements ToolBase {
   // Path tool state object stores tool mechanical state, no data
-  readonly __state:PathToolState = { type: "idle" };
+  public __state:PathToolState = { type: "idle" };
 
   // Tool name
   readonly name:string = 'path';
@@ -37,7 +39,7 @@ export class PathTool implements ToolBase {
   private __currentPathIndex: number;
 
   // Current geometryId
-  public __geometryId: string | null = null;
+  public __geometryId: string = genGeoId();
 
   // Number of points in the current path
   private __length: number;
@@ -159,31 +161,33 @@ export class PathTool implements ToolBase {
     const pos = cLocalizePoint(e.clientX, e.clientY);
     state.pointer = pos;
 
-    var hitIndex = null;
-    if (this.__geometryId) {
-      hitIndex = findNearestGeometryPoint(pos, [state.c_geometryMap.get(this.__geometryId) as Geometry2D]);
+    var hitId:string | null = null;
+    if (this.__geometryId && state.c_geometryMap.get(this.__geometryId)) {
+      hitId = findNearestGeometryPoint(pos, [state.c_geometryMap.get(this.__geometryId) as Geometry2D]);
     }
 
     switch (this.__state.type) {
       case "drawing":
         // Case: Close the path and connect to the first point in the shape if there three or more points
-        if (hitIndex && hitIndex == state.c_geometryMap.get(this.__geometryId)?.pointIds[0]) { 
+        if (hitId && hitId == state.c_geometryMap.get(this.__geometryId)?.pointIds[0]) { 
           pushCommand( new PathToolClosePathCommand( this.__geometryId ) );
           this.transition({
             type: 'idle'
           }); 
-        } else if ( hitIndex != null && state.c_paths[ this.__currentPathIndex ].indexOf( hitIndex ) > -1 ) {
-          pushCommand( new PathToolRemovePointCommand( this.__currentPathIndex, hitIndex ));
+        } else if ( 
+          hitId != null && 
+          state.c_geometryMap.get(this.__geometryId)?.pointIds.some( 
+            (id: string) => { return id === hitId } ) 
+          ) {
+            // Case: hit an existing point, remove it
+            pushCommand( new PathToolRemovePointCommand( this.__geometryId, hitId ));
         } else {
-          // TODO: simply do not do this
-          // Why: we'd like to be able to make the first point a bezier. Perhaps every point is actually a bezier?? that would be quite clean tbh let's try it
-          // pushCommand( new PathToolCommand(this, pos) );
+          // Case: drawing a new point
           this.transition({
             type: "drawing new point",
-            currentPathIndex: this.__currentPathIndex,
-            newPointIndex: state.c_points.length,
             mouseDownPos: pos,
           });
+          drawNewPointPreview(pos);
         }
 
         break;
@@ -206,32 +210,29 @@ export class PathTool implements ToolBase {
         break;
 
       case "idle":
-        if (hitIndex != null) {
-          // Select the point
+        if (hitId != null) {
+          // STALE
           this.transition( {
             type: 'selecting', 
-            selectedIndices: [ hitIndex ],
-            hitIndex
+            selectedIndices: [ hitId ],
+            hitId
           });
         } else {
-          // Begin drawing
-          // This logic is being removed by bezier functionality
-          // TODO: Add new point draw preview bubble
-          this.__currentPathIndex = state.c_shapes.length;
-          // pushCommand( new PathToolCommand(this, pos) );
+
+          // Begin a new path
           this.transition( {
             type: 'drawing new point',
-            currentPathIndex: this.__currentPathIndex,
-            newPointIndex: 0, // TODO: resolve this
             mouseDownPos: pos,
           } );
-          // Clear selected shapes, the incoming path is FIGURATIVELY the 'active' path
-          state.c_selected_shapes = [];
+
+          drawNewPointPreview(pos);
+
+          // Clear selected shapes, the incoming path is FIGURATIVELY the active path
+          state.c_selected_geometries = []
         }
         break;
     }
-
-    drawCanvasFromState(state);
+    redrawCanvas();
   }
 
   private onMouseMove(e: MouseEvent) {
@@ -254,7 +255,15 @@ export class PathTool implements ToolBase {
         break;
 
       case "drawing new point":
-        // update draw preview
+        redrawCanvas();
+        if (state.c_geometryMap.get(this.__geometryId)?.pointIds.length > 0) {
+          const point = this.getLastPoint(this.__geometryId) as BezierPoint;
+          if (point) {
+            drawBezierHandlePreview(pos, this.__state.mouseDownPos, point.to, point.c1);
+          }
+        } else {
+          drawBezierHandlePreview(pos, this.__state.mouseDownPos);
+        }
         break;
 
       case "drawing":
@@ -269,10 +278,11 @@ export class PathTool implements ToolBase {
 
       case "idle":
         if (Math.random() < .1) {
-          const hitIndex = findNearestPoint(pos, state.c_points);
-          // if (hitIndex !== null) {
-          //   this.transition({ type: "hovering", hoveredIndex: hitIndex });
-          // }
+          const hitIndex = findNearestGeometryPoint(pos, [state.c_geometryMap.get(this.__geometryId)]);
+          if (hitIndex !== null) {
+
+            // this.transition({ type: "hovering", hoveredIndex: hitIndex });
+          }
         }
         break;
     }
@@ -315,18 +325,7 @@ export class PathTool implements ToolBase {
       case "drawing new point":
         // Move to draw Preview logic
         // Case: this is the first point in the path
-        // var from;
-        // if (this.__length == 0) {
-        //   from = state.c_points[ this.__state.newPointIndex ];
-        //   console.log('FROM', from)
-        // } else {
-        //   // Case: this is not the first point in the path, get the position of the last point
-        //   from = state.c_points[ state.c_paths[ this.__currentPathIndex ][ this.__length] ];
-        // }
-
-        if (this.__geometryId == null) {
-          console.log('NEW GEOMETRY')
-          this.__geometryId = genGeoId();
+        if (!state.c_geometryMap.get(this.__geometryId)) {
           pushCommand(new PathToolAddBezierCommand(this.__geometryId, this.__state.mouseDownPos, pos));
         } else {
           const geo = state.c_geometryMap.get(this.__geometryId);
@@ -341,7 +340,7 @@ export class PathTool implements ToolBase {
 
         this.transition({
           type: "drawing",
-          currentPathIndex: this.__currentPathIndex
+          geometryId: this.__geometryId,
         })
         break;
     }
@@ -353,55 +352,13 @@ export class PathTool implements ToolBase {
     return this.__state;
   }
 
-  // Protected, only to be used by Command
-  // Moved to common.ts
-  public selectPoint(index: number) {
-    if (!state.c_selected.includes(index)) {
-      state.c_selected.push(index);
-      console.log(state.c_selected)
+  getLastPoint (id:string):Point | undefined {
+    const geom = state.c_geometryMap.get(id);
+    if (geom) {
+      return state.c_pointsMap.get(geom.pointIds[geom.pointIds.length - 1]);
+    } else {
+      return undefined;
     }
   }
 
-  // Protected, only to be used by Command
-  // Moved to common.ts
-  public deselect() {
-    state.c_selected = [];
-    this.__currentPathIndex = -1;
-    this.__length = -1;
-    drawCanvasFromState(state);
-  }
-
-  // Protected, only to be used by Command
-  // Moved to common.ts
-  public removePointFromSelection( v: Vector2 ) {
-    const i = state.c_selected.findIndex(( index ) => v.equals(state.c_points[ index ]));
-    state.c_selected.splice( i, 1 );
-  }
-
-  // Moved to common.ts
-  public getPointByIndex(index:number):Vector2 {
-    return state.c_points[ index ];
-  }
-
-  // Moved to common.ts
-  private __indexIsNotSelected(index:number):boolean {
-    const result = state.c_selected.findIndex((i) => { return i == index });
-    return result === -1;
-  }
-
-  // Moved to common.ts
-  public checkPointOverlap(v:Vector2):number | undefined {
-    for (let i = 0; i < state.c_points.length; ++i) {
-      console.log(state.c_points[i].distanceTo(v), state.c_points.length)
-      if (state.c_points[i].distanceTo(v) < selectionRadius) {
-        return i;
-      }
-    }
-    return undefined;
-  }
-
-  // Moved to common.ts
-  public checkPathOverlap(v:Vector2): boolean {
-    return true;
-  }
 }

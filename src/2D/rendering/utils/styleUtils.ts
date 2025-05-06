@@ -20,6 +20,10 @@ export function setGrayFill(ctx: CanvasCtx, alpha = 0.5) {
   ctx.fillStyle = `rgba(128, 128, 128, ${alpha})`;
 }
 
+export function setNoFill(ctx: CanvasCtx) {
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+}
+
 // Outline styles
 
 // Solid stroke in given color & width
@@ -63,8 +67,8 @@ export function setSolidOutlineWithDarkFill(ctx: CanvasCtx) {
 
 /** A very light, thin line (e.g. for subtle grids) */
 export function setLightLine(ctx: CanvasCtx) {
-  ctx.strokeStyle = '#eee';
-  ctx.lineWidth   = 0.5;
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth   = 1;
   ctx.setLineDash([]);
 }
 

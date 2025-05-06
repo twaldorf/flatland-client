@@ -2,6 +2,7 @@ import { Vector2 } from "three";
 import { state } from "../../State";
 import { drawCanvasFromState } from "../rendering/canvas";
 import { selectionRadius } from "../settings/interface";
+import { Point } from "../../types";
 
 // Protected, only to be used by Command
 export function selectPoint(index: number) {
@@ -32,12 +33,13 @@ export function __indexIsNotSelected(index:number):boolean {
   return result === -1;
 }
 
-export function checkPointOverlap(v:Vector2):number | undefined {
-  for (let i = 0; i < state.c_points.length; ++i) {
+export function checkPointOverlap(v:Vector2):string | undefined {
+  state.c_pointsMap.forEach((point:Point, id: string) => {
     if (state.c_points[i].distanceTo(v) < selectionRadius) {
       return i;
     }
-  }
+
+  })
   return undefined;
 }
 

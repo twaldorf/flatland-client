@@ -10,6 +10,7 @@ import { drawYRuler, drawGridRuler } from "./drawRulers";
 import { applyCursorPreview, drawCursorPreview } from "./drawCursorPreview";
 import { applyMeasurements, drawMeasurements } from "./drawMeasurements";
 import { applyBeziers, drawBeziers } from "./drawBeziers";
+import { applyDrawPreviews } from "./drawNewPointPreview";
 
 // 2D Canvas Renderer
 
@@ -40,6 +41,7 @@ export function redrawCanvas():void {
   applyBeziers(state.context);
   // applyShapes();
   applyCursorPreview();
+  applyDrawPreviews();
   applyMeasurements();
 }
 

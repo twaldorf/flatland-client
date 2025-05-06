@@ -146,7 +146,7 @@ export interface Geometry2D {
   pointIds: string[],
 }
 
-type Point = BezierPoint | Vector2;
+export type Point = BezierPoint | Vector2;
 
 type Mode = 'default' | 
             'group-select';
@@ -154,6 +154,7 @@ type Mode = 'default' |
 export interface BufferBundle {
   canvas: OffscreenCanvas;
   context: OffscreenCanvasRenderingContext2D;
+  pos: Vector2;
 }
 
 export type BufferType = "preview" | "points" | "paths" | "shapes" | "grid" | "cursor_preview" | "shape_preview" | string;
