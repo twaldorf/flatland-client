@@ -65,11 +65,11 @@ export const state:State = {
   c_geometryMap: new Map(),
 
   c_paths: [],
-  c_selected: [],
+  c_selectedPoints: [],
   c_shapes: [],
   c_selected_shapes: [],
   c_selected_lines: [],
-  c_selected_geometries: [],
+  c_selectedGeometries: [],
   c_measure_path: [],
   c_measure_paths: [],
   c_measure_points: new Map(),

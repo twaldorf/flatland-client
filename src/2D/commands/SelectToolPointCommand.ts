@@ -4,19 +4,22 @@ import { state } from "../../State";
 import { drawCanvasFromState } from "../rendering/canvas";
 
 export class SelectToolPointCommand implements Command {
+  private __pointId:string;
   private __index:number;
 
-  constructor(index:number) {
-    this.__index = index;
+  constructor(pointId:string) {
+    this.__pointId = pointId;
+    this.__index = state.c_selectedPoints.length - 1;
   }
 
   do() {
-    state.c_selected.push(this.__index);
+    state.c_selectedPoints.push(this.__pointId);
     drawCanvasFromState(state);
   }
 
   undo() {
-    state.c_selected.pop();
+    state.c_selectedPoints.splice(this.__index, 1);
+    drawCanvasFromState(state);
   }
 
 }

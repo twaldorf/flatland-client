@@ -4,6 +4,8 @@ import { drawCanvasFromState, redrawCanvas } from "./canvas";
 import { getBuffer } from "./getBuffer";
 import { drawShape, drawShapeNormalized } from "./drawPaths";
 import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBox";
+import { getPointArray, getPointArrayFromIds } from "../geometry/getPointArrayFromGeometry2D";
+import { Geometry2D } from "../../types";
 
 
 export function drawSelectionMovePreview(pos: Vector2): void {
@@ -17,17 +19,34 @@ export function drawShapeSelectionMovePreview(pos: Vector2):void {
 
   const dif = state.c_move_from.clone().sub(pos);
 
-  const shapesArr = state.c_selected_shapes.map(i => state.c_shapes[i]).flat(2);
+  function collectGeometryPointIds(geometryIds:string[]) {
+    const geometryPointIdArrays = geometryIds.map((geomId:string) => state.c_geometryMap.get(geomId)?.pointIds);
 
-  const dim = getShapeDimensions(shapesArr);
+    const allPoints = geometryPointIdArrays.reduce((prev, curr, index, arr) => {
+      return [...prev, ...curr];
+    }, []);
 
-  const box = getShapeBoundingRect(shapesArr);
+    return allPoints;
+  }
+
+  console.log('VALUES', Array.from(state.c_selectedGeometries.values()));
+
+  const pointArray = 
+    getPointArrayFromIds( 
+      collectGeometryPointIds(
+        Array.from( state.c_selectedGeometries.values() )
+      )
+    );
+
+  const dim = getShapeDimensions( pointArray );
+
+  const box = getShapeBoundingRect( pointArray );
 
   canvas.width = dim.width;
   canvas.height = dim.height;
 
-  state.c_selected_shapes.forEach((shapeIndex:number) => {
-    drawShapeNormalized(state.c_shapes[shapeIndex], context);
+  state.c_selectedGeometries.forEach((geomId:string) => {
+    drawShapeNormalized(geomId, context);
   })
 
   state.context.drawImage(canvas, pos.x - (pos.x - box.x0) - dif.x, pos.y - (pos.y - box.y0) - dif.y);

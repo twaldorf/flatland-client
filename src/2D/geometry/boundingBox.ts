@@ -1,24 +1,22 @@
 import { Vector2 } from "three";
 import { state } from "../../State";
 import { Geometry2D, BezierPoint } from "../../types";
+import { point } from "../rendering/canvas";
 
 // Given an array of point indices which make up a shape,
 // Return a bounding rect within the coordinate space (i.e. not normalized)
 // In the form of x0, y0: upper left and x1, y1: bottom right
-export function getShapeBoundingRect(shapeArr: number[]): { x0: number, y0: number, x1: number, y1: number } {
-  if (shapeArr.length === 0) {
-    throw new Error("Shape array is empty.");
-  }
-
-  const points = shapeArr.map((index) => state.c_points[index]);
-
-  if (points.some((p) => !p)) {
-    throw new Error("Invalid point index in shape.");
+export function getShapeBoundingRect(
+  pointArray:Vector2[]
+): { x0: number, y0: number, x1: number, y1: number } 
+{
+  if (pointArray.length === 0) {
+    throw new Error("Point array is empty.");
   }
 
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
 
-  for (const point of points) {
+  for (const point of pointArray) {
     if (point) {
       x0 = Math.min(x0, point.x);
       y0 = Math.min(y0, point.y);
@@ -31,28 +29,18 @@ export function getShapeBoundingRect(shapeArr: number[]): { x0: number, y0: numb
 }
 
 export function getGeometryBoundingRect(
-  shape: Geometry2D
+  pointArray:Vector2[]
 ): { x0: number; y0: number; x1: number; y1: number } {
-  const ids = shape.pointIds;
-  if (!ids || ids.length === 0) {
-    throw new Error(`Geometry ${shape.id} has no points.`);
-  }
+
+  console.log(pointArray)
 
   let x0 =  Infinity;
   let y0 =  Infinity;
   let x1 = -Infinity;
   let y1 = -Infinity;
 
-  for (const pid of ids) {
-    const pt = state.c_pointsMap.get(pid);
-    if (!pt) {
-      throw new Error(`Unknown point id "${pid}" in geometry "${shape.id}".`);
-    }
-
-    // unwrap Vector2 vs. BezierPoint
-    const { x, y } = isBezierPoint(pt)
-      ? pt.to
-      : pt;
+  for (const pt of pointArray) {
+    const { x, y } = pt;
 
     x0 = Math.min(x0, x);
     y0 = Math.min(y0, y);
@@ -63,7 +51,7 @@ export function getGeometryBoundingRect(
   return { x0, y0, x1, y1 };
 }
 
-// Type guard for BezierPoint
+// Typeguard for BezierPoint
 function isBezierPoint(pt: Vector2 | BezierPoint): pt is BezierPoint {
   return (pt as BezierPoint).to !== undefined;
 }
@@ -88,8 +76,8 @@ export function getMapShapeBoundingRect(shapeMap: Map<string, Vector2>) {
 
 // Given an array of point indices making up a shape (where the points are in state.c_points:number[]),
 // return an object containing the width and height of the shape
-export function getShapeDimensions(shapeArr: number[]): { width: number, height: number } {
-  const { x0, y0, x1, y1 } = getShapeBoundingRect(shapeArr);
+export function getShapeDimensions(pointArray:Vector2[]): { width: number, height: number } {
+  const { x0, y0, x1, y1 } = getShapeBoundingRect(pointArray);
   return { width: x1 - x0, height: y1 - y0 };
 }
 

@@ -33,6 +33,7 @@ export function __indexIsNotSelected(index:number):boolean {
   return result === -1;
 }
 
+// Deprecated since moving away from flat arrays
 export function checkPointOverlap(v:Vector2):string | undefined {
   state.c_pointsMap.forEach((point:Point, id: string) => {
     if (state.c_points[i].distanceTo(v) < selectionRadius) {

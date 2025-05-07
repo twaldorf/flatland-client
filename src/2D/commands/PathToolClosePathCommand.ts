@@ -26,13 +26,13 @@ export class PathToolClosePathCommand implements Command {
     state.c_geometryMap.set(this.geomId, geom);
 
     // Select the geometry
-    state.c_selected_geometries = [this.geomId];
+    state.c_selectedGeometries = [this.geomId];
 
     // Register Piece
     const piece: Piece = {
       id: generateUUID(),
       name: `piece${useAppState.getState().pieces.length}`,
-      shapeId: this.geomId,
+      geometryId: this.geomId,
       canvas: null!,
       thumb: null!,
       angle: 0,

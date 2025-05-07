@@ -92,7 +92,7 @@ export interface State {
   c_paths: Array<Array<number>>;
 
   // All selected points on the canvas
-  c_selected: Array<number>;
+  c_selectedPoints: Array<string>;
 
   // All selected shapes on the canvas
   // Indices of elements in c_shapes
@@ -102,7 +102,7 @@ export interface State {
   c_selected_lines: Array<LineHit>;
 
   // Array of selected Geometries (via ID strings0for use in rendering and collection
-  c_selected_geometries: Array<string>;
+  c_selectedGeometries: Array<string>;
 
   // Array of closed paths (shapes)
   // Shapes are moved from the paths array into the shapes array
@@ -189,7 +189,7 @@ export interface Grainline {
 
 export interface Piece {
   id: string;
-  shapeId: string;
+  geometryId: string;
   name: string;
   thumb: HTMLCanvasElement;
   canvas: OffscreenCanvas;

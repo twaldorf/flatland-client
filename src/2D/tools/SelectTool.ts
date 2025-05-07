@@ -1,7 +1,7 @@
-import { Vector2 } from "three";
+import { Vector, Vector2 } from "three";
 import { pushCommand } from "../../Command";
 import { state } from "../../State";
-import { BezierPoint, Geometry2D, ToolBase, ToolName } from "../../types";
+import { BezierPoint, Geometry2D, Piece, ToolBase, ToolName } from "../../types";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { SelectToolShapeCommand } from "../commands/SelectToolShapeCommand";
 import { isPointInPolygon } from "../geometry/isPointInPolygon";
@@ -9,7 +9,7 @@ import { SelectToolMoveShapeCommand } from "../commands/SelectToolMoveShapeComma
 import { checkPointOverlap } from "./common";
 import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
 import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
-import { drawCanvasFromState, redrawCanvas } from "../rendering/canvas";
+import { drawCanvasFromState, point, redrawCanvas } from "../rendering/canvas";
 import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
 
 import { KeyboardEvent } from "react";
@@ -20,16 +20,19 @@ import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand
 import { SelectToolDeselectLinesCommand } from "../commands/SelectToolDeselectLinesCommand";
 import { DrawPreviewsCommand } from "../commands/Rendering/DrawPreviewsCommand";
 import { findNearestGeometryPoint } from "../geometry/findNearestPoint";
+import { isPointNearBezierGeometry } from "../geometry/bezierIntersection";
+import { rad } from "../settings/interface";
+import { SelectToolDeselectPointCommand } from "../commands/SelectToolDeselectPointCommand";
 
 export type SelectToolState = 
   | { type: "idle" }
   | { type: "hovering"; hoveredIndex: number }
-  | { type: "moving"; selectedShapeIndex: number; startPos: Vector2 }
+  | { type: "moving"; startPos: Vector2 }
   | { type: "mousedown"; mousePosition: Vector2 }
-  | { type: "selecting"; selectedShapeIndex: number }
-  | { type: "selecting_points"; selectedPointIndices: number[] }
-  | { type: "selecting_lines"; selectedLineHits: LineHit[] }
-  | { type: "editing_piece"; editingShapeIndex: number; piece: Piece }
+  | { type: "selecting"; }
+  | { type: "selecting points"; }
+  | { type: "selecting lines"; }
+  | { type: "editing piece"; editingGeometryId: string; piece: Piece }
 
 export class SelectTool implements ToolBase {
   // Tool state object stores tool mechanical state
@@ -56,6 +59,10 @@ export class SelectTool implements ToolBase {
     canvas.addEventListener("dblclick", this.__listeners.dblclick);
   }
 
+  public applyState = (state: ToolBase["state"]) => {
+    // Not implemented
+  };
+
   public dismountEvents() {
     state.canvas.removeEventListener('mousedown', this.__listeners.down);
     state.canvas.removeEventListener("mousemove", this.__listeners.move);
@@ -73,95 +80,95 @@ export class SelectTool implements ToolBase {
   private onMouseDown(e: MouseEvent) {
     const clickPos = cLocalizePoint(e.clientX, e.clientY);
     const selectedGeomId = this.checkForShapeOverlap(clickPos);
-    const hitIndex = findNearestGeometryPoint(clickPos, Array.from(state.c_geometryMap.values()));
-    const lineHit = checkLineIntersection(clickPos);
-    console.log(lineHit)
+    const pointId = findNearestGeometryPoint(clickPos, Array.from(state.c_geometryMap.values()));
+    let lineHit = null;
+    if (selectedGeomId) {
+      lineHit = isPointNearBezierGeometry(clickPos, state.c_geometryMap.get(selectedGeomId) as Geometry2D, rad * 2)
+    }
     state.pointerDown = true;
 
-    if (selectedGeomId || (hitIndex && hitIndex >= 0) || lineHit != null) {
+    if (selectedGeomId || (pointId) || lineHit != null) {
+      // Case: you hit something, anything at all of interest within the canvas
       switch (this.__state.type) {
         case "idle":
-          if ( hitIndex && hitIndex > -1 ) {
-            pushCommand( new SelectToolPointCommand( hitIndex ) );
+          if ( pointId ) {
+            pushCommand( new SelectToolPointCommand( pointId ) );
             this.transition({
-              type: "selecting_points",
-              selectedPointIndices: [ hitIndex ]
+              type: "selecting points",
             });
-          } else if ( lineHit ) {
-            pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-            this.transition({
-              type: "selecting_lines",
-              selectedLineHits: [ lineHit ]
-            }); 
-          } else if ( selectedShapeIndex > -1 ) {
-            pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
+            // TODO: describe line selection features, possibly you could select to measure a larger and larger segment?
+          // } else if ( lineHit ) {
+          //   pushCommand( new SelectToolSelectLineCommand( lineHit ) );
+          //   this.transition({
+          //     type: "selecting lines",
+          //   }); 
+          } else if ( selectedGeomId ) {
+            pushCommand( new SelectToolShapeCommand( selectedGeomId ) );
             this.transition({
               type: "selecting",
-              selectedShapeIndex
             });
           }
           break;
         
         case "selecting":
           if (state.shiftDown) {
-            if ( selectedShapeIndex > -1 ) {
-              // not sufficient
-              pushCommand( new SelectToolAddShapeCommand( selectedShapeIndex ) );
+            if ( selectedGeomId ) {
+              // Previously this called SelectToolAddShape command
+              // I do not know why as they seem functionally the same???
+              pushCommand( new SelectToolShapeCommand( selectedGeomId ) );
             }
           } 
           else {
-            if ( selectedShapeIndex > -1 ) {
-              pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
+            if ( selectedGeomId ) {
+              pushCommand( new SelectToolShapeCommand( selectedGeomId ) );
             }
           }
           break;
         
-        case "selecting_points":
-          if ( hitIndex && hitIndex > -1) {
+        case "selecting points":
+          if ( pointId ) {
             if (state.shiftDown ) {
-              if (state.c_selected.indexOf(hitIndex) === -1) {
-                pushCommand( new SelectToolPointCommand( hitIndex ) );
+              // if the point is not already selected
+              if (!state.c_pointsMap.get( pointId )) {
+                pushCommand( new SelectToolPointCommand( pointId ) );
+              } else {
+                // Deslect the point
+                pushCommand( new SelectToolDeselectPointCommand( pointId ) );
               }
-            } else {
-              if (state.c_selected.indexOf(hitIndex) === -1) {
-                pushCommand( new SelectToolPointCommand( hitIndex ) );
-              } 
+            } else if ( !state.shiftDown ) {
+              pushCommand( new SelectToolDeselectAllCommand() );
+              this.transition({
+                type: "idle"
+              });
             }
-          } else if ( !state.shiftDown ) {
-            pushCommand( new SelectToolDeselectAllCommand() );
-            this.transition({
-              type: "idle"
-            });
           }
           break;
 
 
-        case "selecting_lines":
+        case "selecting lines":
 
           // Hit Point
-          if ( hitIndex && hitIndex > -1 ) {
-            pushCommand( new SelectToolPointCommand( hitIndex ) );
+          if ( pointId ) {
+            pushCommand( new SelectToolPointCommand( pointId ) );
             this.transition({
-              type: "selecting_points",
-              selectedPointIndices: [ hitIndex ]
+              type: "selecting points",
             });
 
           // Hit Line
-          } else if ( lineHit ) {
-            if (state.shiftDown) {
-              // refact to append to line array
-              pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-            } else {
-              pushCommand( new SelectToolDeselectLinesCommand() );
-              pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-            }
+          // } else if ( lineHit ) {
+          //   if (state.shiftDown) {
+          //     // refact to append to line array
+          //     pushCommand( new SelectToolSelectLineCommand( lineHit ) );
+          //   } else {
+          //     pushCommand( new SelectToolDeselectLinesCommand() );
+          //     pushCommand( new SelectToolSelectLineCommand( lineHit ) );
+          //   }
 
           // Hit Shape
-          } else if ( selectedShapeIndex > -1 ) {
-            pushCommand( new SelectToolShapeCommand( selectedShapeIndex ) );
+          } else if ( selectedGeomId ) {
+            pushCommand( new SelectToolShapeCommand( selectedGeomId ) );
             this.transition({
               type: "selecting",
-              selectedShapeIndex
             });
           }
           break;
@@ -210,7 +217,6 @@ export class SelectTool implements ToolBase {
 
           this.transition({
             type: 'moving',
-            selectedShapeIndex: this.__state.selectedShapeIndex,
             startPos: cLocalizePoint(e.clientX, e.clientY)
           });
         };
@@ -226,9 +232,8 @@ export class SelectTool implements ToolBase {
     switch (this.__state.type) {
       case "moving":
         const endPos = cLocalizePoint(e.clientX, e.clientY);
-        const shapeIndex = this.__state.selectedShapeIndex;
         const startPos = this.__state.startPos;
-        pushCommand( new SelectToolMoveShapeCommand( shapeIndex, startPos, endPos ));
+        pushCommand( new SelectToolMoveShapeCommand( state.c_selectedGeometries, startPos, endPos ));
         this.transition({
           type: 'idle'
         });

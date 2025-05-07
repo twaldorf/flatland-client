@@ -8,23 +8,22 @@ import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBo
 import { generateFloatingLabel } from "../hooks/generateFloatingLabel";
 
 export class SelectToolShapeCommand implements Command {
-  private shapeIndex: number;
-  private previousSelection: number[];
+  private geomId: string;
+  private previousSelection: string[];
 
-  constructor(shapeIndex: number) {
-    this.shapeIndex = shapeIndex;
-    this.previousSelection = state.c_selected_shapes;
+  constructor(geomId: string) {
+    this.geomId = geomId;
+    this.previousSelection = state.c_selectedGeometries;
   }
 
   do() {
-    state.c_selected_shapes = [ this.shapeIndex ];
-    // state.c_pointmap = new Map()
-    console.log(`Shape ${this.shapeIndex} selected.`);
-    generateFloatingLabel(this.shapeIndex);
+    if (!state.c_selectedGeometries.some(id => id === this.geomId)) {
+      state.c_selectedGeometries.push(this.geomId);
+    }
+    generateFloatingLabel(this.geomId);
   }
 
   undo() {
-    state.c_selected_shapes = this.previousSelection;
-    console.log(`Selection reverted to shape ${this.previousSelection}`);
+    state.c_selectedGeometries = this.previousSelection;
   }
 }

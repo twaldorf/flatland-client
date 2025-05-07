@@ -6,6 +6,7 @@ import { drawArrayOfPointIndices } from "./drawArrayOfPointIndices";
 import { drawGrainOnShape } from "./drawGrainlines";
 import { drawPolygonFromOffsetPointIndices, drawPolygonFromPointIndices } from "./drawPolygonFromPointIndices";
 import { getBuffer } from "./getBuffer";
+import { getPointArray } from "../geometry/getPointArrayFromGeometry2D";
 
 
 //— helpers —//
@@ -158,11 +159,14 @@ export function drawShape(
 
 /** draw a shape—but normalized so its top‐left is at (0,0) */
 export function drawShapeNormalized(
-  geom: Geometry2D,
+  geomId:string,
   ctx: CanvasRenderingContext2D
 ) {
-  const { x0, y0 } = getGeometryBoundingRect(geom);
-  drawPolygonFromOffsetPointIds(geom.pointIds, -x0, -y0, ctx);
+  const pointArray = getPointArray(geomId);
+  if (pointArray) {
+    const { x0, y0 } = getGeometryBoundingRect(  pointArray );
+    // drawPolygonFromOffsetPointIds( pointArray, -x0, -y0, ctx);
+  }
 }
 
 // // Draw paths AND shapes

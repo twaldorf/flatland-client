@@ -4,22 +4,24 @@ import { state } from "../../State";
 import { Piece } from "../../types";
 import { useAppState } from "../../UI/store";
 import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBox";
+import { getPointArray } from "../geometry/getPointArrayFromGeometry2D";
 
-export const generateFloatingLabel = (shapeIndex:number):void => {
-  const box = getShapeBoundingRect(state.c_shapes[shapeIndex]);
-  const dim = getShapeDimensions(state.c_shapes[shapeIndex]);
+export const generateFloatingLabel = (geomId:string):void => {
+  const pointList = getPointArray(geomId) as Vector2[];
+  const box = getShapeBoundingRect(pointList);
+  const dim = getShapeDimensions(pointList);
   const rect = state.canvas.getBoundingClientRect();
 
   // Generate a point in the upper left hand corner of the shape in windowspace
   const labelPoint = new Vector2(box.x0 + rect.x, box.y0 + rect.y);
   
-  const pieceIndex = useAppState.getState().pieces.findIndex((piece) => piece.shapeIndex == shapeIndex);
+  const pieceIndex = useAppState.getState().pieces.findIndex((piece) => piece.geometryId == geomId);
   
   let piece:Piece;
   if (pieceIndex < 0) {
     piece = {
       id: generateUUID(),
-      shapeIndex: shapeIndex
+      geometryId: geomId
     }
   } else {
     piece = useAppState.getState().pieces[pieceIndex];
