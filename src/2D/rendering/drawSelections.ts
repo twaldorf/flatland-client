@@ -1,14 +1,29 @@
 import { state } from "../../State";
-import { State } from "../../types";
+import { BezierPoint, State } from "../../types";
 import { LineHit } from "../geometry/lineIntersection";
 import { rad } from "../settings/interface";
 import { getBuffer } from "./getBuffer";
+import { setDarkFill } from "./utils/styleUtils";
 
 export const drawSelections = (state:State) => {
   const { context, canvas } = getBuffer('selections');
 
   canvas.width = state.canvas.width;
   canvas.height = state.canvas.height;
+
+  state.c_selectedPoints.forEach((pid:string) => {
+    const point = state.c_pointsMap.get(pid) as BezierPoint;
+
+    if (!point?.to) {
+      return;
+    }
+
+    context.beginPath();
+    context.arc(point.to.x, point.to.y, rad * 2, 0, 2 * Math.PI);
+    setDarkFill(context);
+    context.fill();
+    context.closePath();
+  })
 
   // TODO
   // state.c_selected.map((index: number) => {

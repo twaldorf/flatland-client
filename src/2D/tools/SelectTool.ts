@@ -19,17 +19,21 @@ import { SelectToolSelectLineCommand } from "../commands/SelectToolSelectLineCom
 import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand";
 import { SelectToolDeselectLinesCommand } from "../commands/SelectToolDeselectLinesCommand";
 import { DrawPreviewsCommand } from "../commands/Rendering/DrawPreviewsCommand";
-import { findNearestGeometryPoint } from "../geometry/findNearestPoint";
+import { findNearestAnyPoint, findNearestGeometryPoint } from "../geometry/findNearestPoint";
 import { isPointNearBezierGeometry } from "../geometry/bezierIntersection";
 import { rad } from "../settings/interface";
 import { SelectToolDeselectPointCommand } from "../commands/SelectToolDeselectPointCommand";
+import { SelectToolMovePointsCommand } from "../commands/SelectToolMovePointsCommand";
+import { ChangeToolCommand } from "../commands/ChangeToolCommand";
 
 export type SelectToolState = 
   | { type: "idle" }
   | { type: "hovering"; hoveredIndex: number }
-  | { type: "moving"; startPos: Vector2 }
+  | { type: "moving shapes"; startPos: Vector2 }
+  | { type: "moving points"; startPos: Vector2 }
   | { type: "mousedown"; mousePosition: Vector2 }
-  | { type: "selecting"; }
+  | { type: "focus on point", pointId: string }
+  | { type: "selecting shapes"; }
   | { type: "selecting points"; }
   | { type: "selecting lines"; }
   | { type: "editing piece"; editingGeometryId: string; piece: Piece }
@@ -80,7 +84,7 @@ export class SelectTool implements ToolBase {
   private onMouseDown(e: MouseEvent) {
     const clickPos = cLocalizePoint(e.clientX, e.clientY);
     const selectedGeomId = this.checkForShapeOverlap(clickPos);
-    const pointId = findNearestGeometryPoint(clickPos, Array.from(state.c_geometryMap.values()));
+    let pointId = findNearestGeometryPoint(clickPos, Array.from(state.c_geometryMap.values()));
     let lineHit = null;
     if (selectedGeomId) {
       lineHit = isPointNearBezierGeometry(clickPos, state.c_geometryMap.get(selectedGeomId) as Geometry2D, rad * 2)
@@ -105,12 +109,12 @@ export class SelectTool implements ToolBase {
           } else if ( selectedGeomId ) {
             pushCommand( new SelectToolShapeCommand( selectedGeomId ) );
             this.transition({
-              type: "selecting",
+              type: "selecting shapes",
             });
           }
           break;
         
-        case "selecting":
+        case "selecting shapes":
           if (state.shiftDown) {
             if ( selectedGeomId ) {
               // Previously this called SelectToolAddShape command
@@ -129,24 +133,29 @@ export class SelectTool implements ToolBase {
           if ( pointId ) {
             if (state.shiftDown ) {
               // if the point is not already selected
-              if (!state.c_pointsMap.get( pointId )) {
+              if (!this.pointIsSelected(pointId)) {
                 pushCommand( new SelectToolPointCommand( pointId ) );
               } else {
                 // Deslect the point
                 pushCommand( new SelectToolDeselectPointCommand( pointId ) );
               }
             } else if ( !state.shiftDown ) {
-              pushCommand( new SelectToolDeselectAllCommand() );
-              this.transition({
-                type: "idle"
-              });
+              if (this.pointIsSelected(pointId)) {
+                // do nothing
+              } else {
+                pushCommand( new SelectToolDeselectAllCommand() );
+                pushCommand( new SelectToolPointCommand( pointId ) );
+              }
             }
+          } else {
+            this.transition({
+              type: "idle"
+            });
           }
           break;
 
 
         case "selecting lines":
-
           // Hit Point
           if ( pointId ) {
             pushCommand( new SelectToolPointCommand( pointId ) );
@@ -154,21 +163,11 @@ export class SelectTool implements ToolBase {
               type: "selecting points",
             });
 
-          // Hit Line
-          // } else if ( lineHit ) {
-          //   if (state.shiftDown) {
-          //     // refact to append to line array
-          //     pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-          //   } else {
-          //     pushCommand( new SelectToolDeselectLinesCommand() );
-          //     pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-          //   }
-
           // Hit Shape
           } else if ( selectedGeomId ) {
             pushCommand( new SelectToolShapeCommand( selectedGeomId ) );
             this.transition({
-              type: "selecting",
+              type: "selecting shapes",
             });
           }
           break;
@@ -206,17 +205,29 @@ export class SelectTool implements ToolBase {
     const pos = cLocalizePoint(e.clientX, e.clientY);
     switch (this.__state.type) {
 
-      case 'moving':
+      case 'moving shapes':
         pushCommand(new DrawPreviewsCommand(pos));
         break;
         
-      case 'selecting':
+      case 'selecting shapes':
         if (state.pointerDown == true) {
           state.c_move_from = pos;
           pushCommand(new DrawPreviewsCommand(pos));
 
           this.transition({
-            type: 'moving',
+            type: 'moving shapes',
+            startPos: cLocalizePoint(e.clientX, e.clientY)
+          });
+        };
+        break;
+
+      case 'selecting points':
+        if (state.pointerDown == true) {
+          state.c_move_from = pos;
+          pushCommand(new DrawPreviewsCommand(pos));
+
+          this.transition({
+            type: 'moving points',
             startPos: cLocalizePoint(e.clientX, e.clientY)
           });
         };
@@ -229,13 +240,24 @@ export class SelectTool implements ToolBase {
 
   private onMouseUp(e: MouseEvent) {
     state.pointerDown = false;
+
+    const endPos = cLocalizePoint(e.clientX, e.clientY);
+    let startPos = undefined;
+
     switch (this.__state.type) {
-      case "moving":
-        const endPos = cLocalizePoint(e.clientX, e.clientY);
-        const startPos = this.__state.startPos;
+      case "moving shapes":
+        startPos = this.__state.startPos;
         pushCommand( new SelectToolMoveShapeCommand( state.c_selectedGeometries, startPos, endPos ));
         this.transition({
-          type: 'idle'
+          type: 'selecting shapes'
+        });
+        break;
+
+      case "moving points":
+        startPos = this.__state.startPos;
+        pushCommand( new SelectToolMovePointsCommand( state.c_selectedPoints, startPos, endPos ));
+        this.transition({
+          type: 'selecting points'
         });
         break;
 
@@ -244,12 +266,19 @@ export class SelectTool implements ToolBase {
 
   private onDoubleClick(e: MouseEvent) {
     const pos = cLocalizePoint(e.clientX, e.clientY);
-    // TODO: use this for isolation mode
+    const pointId = findNearestGeometryPoint(pos, Array.from(state.c_geometryMap.values()));
+    if (pointId) {
+      pushCommand(new ChangeToolCommand('bezier point editor'));
+    }
+  }
+
+  public pointIsSelected(pointId:string) {
+    return state.c_selectedPoints.find((pid:string) => pid == pointId);
   }
 
   public onKeyDown(e: KeyboardEvent<Element>) {
     switch (this.state.type) {
-      case "selecting":
+      case "selecting shapes":
         console.log('keypress', e)
       // case "selecting_points":
         if (e.code === 'Backspace' || e.code === 'Delete') {

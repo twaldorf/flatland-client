@@ -7,29 +7,34 @@ import { BezierPoint, Geometry2D } from "../../types";
 
 export class SelectToolMoveShapeCommand implements Command {
   private geoms:string[];
-  private __from:Vector2;
-  private __to:Vector2;
+  // private __from:Vector2;
+  // private __to:Vector2;
   private __diff:Vector2;
 
   constructor(geoms:string[], from:Vector2, to:Vector2) {
     this.geoms = geoms;
-    this.__from = from.clone();
-    this.__to = to.clone();
-    this.__diff = this.__to.clone().sub(this.__from);
+    // this.__from = from.clone();
+    // this.__to = to.clone();
+    this.__diff = to.clone().sub(from);
   }
 
   do() {
-    state.c_selectedGeometries.forEach((geomId:string) => {
-      state.c_geometryMap.get(geomId)?.pointIds.forEach((id:string) => {
-        if (id != state.c_geometryMap.get(geomId)?.pointIds[0]) {
-          const point = state.c_pointsMap.get(id) as BezierPoint;
-          point.to.add(this.__diff);
-          point.from.add(this.__diff);
-          point.c1.add(this.__diff);
-          point.c2.add(this.__diff);
-        }
-      })
-    })
+    state.c_selectedGeometries.forEach((geomId: string) => {
+      const geom = state.c_geometryMap.get(geomId);
+      if (!geom) return;
+    
+      const uniqueIds = Array.from(new Set(geom.pointIds));
+    
+      uniqueIds.forEach(id => {
+        const bp = state.c_pointsMap.get(id) as BezierPoint;
+        if (!bp) return;
+    
+        bp.to.add(this.__diff);
+        // bp.from.add(this.__diff); // Do not modify this vector in this sweep–it is the previous point's .to vector
+        bp.c1.add(this.__diff);
+        bp.c2.add(this.__diff);
+      });
+    });
 
     // state.updateGrainlinePos( this.shapeIndex, computeCentroid( state.c_shapes[ this.shapeIndex ] ) );
     drawCanvasFromState(state);

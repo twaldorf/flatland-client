@@ -7,6 +7,7 @@ import { DistanceConstraint, Particle } from "./3D/simulation/xpbdTypes";
 import { LineHit } from "./2D/geometry/lineIntersection";
 import { MeasureTool, MeasureToolState } from "./2D/tools/MeasureTool";
 import { GrainlineTool, GrainlineToolState } from "./2D/tools/GrainlineTool";
+import { BezierPointEditorTool, BezierPointEditorToolState } from "./2D/tools/BezierPointEditorTool";
 
 // State interface for global state singleton
 export interface State {
@@ -165,7 +166,7 @@ export interface ToolBase {
   initializeEvents: Function;
   dismountEvents: Function;
   applyState: (state:ToolBase['state']) => void;
-  readonly state: PathToolState | SelectToolState | MeasureToolState | GrainlineToolState;
+  readonly state: PathToolState | SelectToolState | MeasureToolState | GrainlineToolState | BezierPointEditorToolState;
 }
 
 export interface ProjectInfo {
@@ -174,8 +175,8 @@ export interface ProjectInfo {
   lastUpdated: Date;
 }
 
-export type Tool = PathTool | SelectTool | MeasureTool | GrainlineTool;
-export type ToolName = "path" | "select" | "measure" | "grainline";
+export type Tool = PathTool | SelectTool | MeasureTool | GrainlineTool | BezierPointEditorTool;
+export type ToolName = "path" | "select" | "measure" | "grainline" | "bezier point editor";
 
 export type DrawableEntity = Vector2 | Vector2[];
 

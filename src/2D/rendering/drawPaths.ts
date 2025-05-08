@@ -7,6 +7,7 @@ import { drawGrainOnShape } from "./drawGrainlines";
 import { drawPolygonFromOffsetPointIndices, drawPolygonFromPointIndices } from "./drawPolygonFromPointIndices";
 import { getBuffer } from "./getBuffer";
 import { getPointArray } from "../geometry/getPointArrayFromGeometry2D";
+import { setGrayFill } from "./utils/styleUtils";
 
 
 //— helpers —//
@@ -87,6 +88,7 @@ export function drawPolygonFromPointIds(
     }
   }
 
+  setGrayFill(ctx);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();

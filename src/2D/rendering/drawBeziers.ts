@@ -1,4 +1,6 @@
 import { BezierPoint, Geometry2D, State } from "../../types";
+import { estimateBezierLength } from "../geometry/bezierNumerics";
+import { cf_canvas_to_inch, cf_scale } from "../settings/factors";
 import { rad } from "../settings/interface";
 import { getBuffer } from "./getBuffer";
 import { geometryIsSelected } from "./utils/geometryIsSelected";
@@ -28,7 +30,7 @@ export function drawBeziers(state:State) {
 
       });
 
-      pointIds.forEach((pid:string, index:number) => {
+      pointIds.forEach((pid:string, index:number, arr) => {
         // Points and their handles
         const point = state.c_pointsMap.get(pid) as BezierPoint;
 
@@ -62,6 +64,11 @@ export function drawBeziers(state:State) {
         setDashedStroke(context);
         context.stroke();
         context.closePath();
+
+        // Length measurement test space
+        if (index === arr.length - 1) {
+          console.log(estimateBezierLength(state.c_pointsMap.get(pid) as BezierPoint, 10) / cf_canvas_to_inch / cf_scale)
+        }
         
       });
 

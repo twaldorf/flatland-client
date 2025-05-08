@@ -15,6 +15,10 @@ export function drawSelectionMovePreview(pos: Vector2): void {
 }
 
 export function drawShapeSelectionMovePreview(pos: Vector2):void {
+  if (state.c_selectedGeometries.length < 1) {
+    return;
+  }
+  
   const { canvas, context } = getBuffer('shape_preview');
 
   const dif = state.c_move_from.clone().sub(pos);
@@ -28,8 +32,6 @@ export function drawShapeSelectionMovePreview(pos: Vector2):void {
 
     return allPoints;
   }
-
-  console.log('VALUES', Array.from(state.c_selectedGeometries.values()));
 
   const pointArray = 
     getPointArrayFromIds( 

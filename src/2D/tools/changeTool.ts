@@ -1,7 +1,8 @@
 import { state } from "../../State";
 import { ToolBase, ToolName } from "../../types";
 import { useAppState } from "../../UI/store";
-import { redrawCanvas } from "../rendering/canvas";
+import { drawCanvasFromState, redrawCanvas } from "../rendering/canvas";
+import { BezierPointEditorTool } from "./BezierPointEditorTool";
 import { GrainlineTool } from "./GrainlineTool";
 import { MeasureTool } from "./MeasureTool";
 import { PathTool } from "./PathTool";
@@ -45,6 +46,12 @@ export function changeTool(toolState: { name: string } & Partial<Omit<ToolBase, 
       state.tool = new GrainlineTool();
       useAppState.getState().setSelectedTool("grainline");
       redrawCanvas();
+      break;
+
+    case "bezier point editor":
+      state.tool = new BezierPointEditorTool(state.c_selectedPoints[0]); // A bit brittle, this corresponds to the selection made by the select tool
+      useAppState.getState().setSelectedTool("bezier point editor");
+      drawCanvasFromState(state);
       break;
           
     default:

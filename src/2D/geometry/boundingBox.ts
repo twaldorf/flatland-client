@@ -32,8 +32,6 @@ export function getGeometryBoundingRect(
   pointArray:Vector2[]
 ): { x0: number; y0: number; x1: number; y1: number } {
 
-  console.log(pointArray)
-
   let x0 =  Infinity;
   let y0 =  Infinity;
   let x1 = -Infinity;

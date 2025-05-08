@@ -19,8 +19,6 @@ export function drawPieceThumbnail(piece:Piece, canvas: HTMLCanvasElement) {
 export function generatePieceThumbnail( piece:Piece ) {
   const { context, canvas } = getBuffer(`preview_${piece.name}`);
 
-  console.log(piece, 'gen piece')
-
   const box = getGeometryBoundingRect( getPointArray(piece.geometryId) as Vector2[] );
 
   canvas.width = box.x1 - box.x0 + 1;

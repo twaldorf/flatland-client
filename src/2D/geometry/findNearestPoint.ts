@@ -1,6 +1,6 @@
 import { Vector2 } from "three";
 import { selectionRadius } from "../settings/interface";
-import { Geometry2D } from "../../types";
+import { BezierPoint, Geometry2D } from "../../types";
 import { state } from "../../State";
 
 export function findNearestPoint(pos: Vector2, points: Vector2[]): number | null {
@@ -34,7 +34,6 @@ export function findNearestGeometryPoint( pos: Vector2, geometries: Geometry2D[]
       const dy = pt.to.y - pos.y;
       const distSq = dx*dx + dy*dy;
 
-      // ! Note: sqrt is very expensive
       if ( Math.sqrt(distSq) < selectionRadius && distSq < minDistSq ) {
         minDistSq = distSq;
         nearestId = pointId;
@@ -42,5 +41,33 @@ export function findNearestGeometryPoint( pos: Vector2, geometries: Geometry2D[]
     }
   }
 
+  return nearestId;
+}
+
+export function findNearestAnyPoint( pos: Vector2 ): string | undefined {
+
+  let nearestId: string | undefined = undefined;
+  let minDistSq = Infinity;
+
+  for (const pid of state.c_pointsMap.keys()) {
+    const point = state.c_pointsMap.get(pid) as BezierPoint;
+    if (!point) {
+      return undefined;
+    }
+
+    for (const subpoint of Object.values(point)) {
+
+      const dx = subpoint.x - pos.x;
+      const dy = subpoint.y - pos.y;
+      const distSq = dx*dx + dy*dy;
+
+      if ( Math.sqrt(distSq) < selectionRadius && distSq < minDistSq ) {
+        minDistSq = distSq;
+        nearestId = pid;
+      }
+    }
+  }
+
+  console.log(nearestId)
   return nearestId;
 }

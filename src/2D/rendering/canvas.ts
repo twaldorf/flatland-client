@@ -11,6 +11,7 @@ import { applyCursorPreview, drawCursorPreview } from "./drawCursorPreview";
 import { applyMeasurements, drawMeasurements } from "./drawMeasurements";
 import { applyBeziers, drawBeziers } from "./drawBeziers";
 import { applyDrawPreviews } from "./drawNewPointPreview";
+import { drawDrawPreview } from "./drawDrawPreview";
 
 // 2D Canvas Renderer
 

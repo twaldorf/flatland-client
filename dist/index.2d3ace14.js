@@ -50325,6 +50325,7 @@ var _boundingBox = require("../geometry/boundingBox");
 var _drawGrainlines = require("./drawGrainlines");
 var _getBuffer = require("./getBuffer");
 var _getPointArrayFromGeometry2D = require("../geometry/getPointArrayFromGeometry2D");
+var _styleUtils = require("./utils/styleUtils");
 //— helpers —//
 function isBezierPoint(pt) {
     return pt.to !== undefined;
@@ -50370,6 +50371,7 @@ function drawPolygonFromPointIds(ids, ctx) {
             ctx.lineTo(p.x, p.y);
         }
     }
+    (0, _styleUtils.setGrayFill)(ctx);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
@@ -50423,7 +50425,7 @@ function drawGrainlines(shapeIndex, context) {
     throw new Error("Function not implemented.");
 }
 
-},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawGrainlines":"8S5xA","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/getPointArrayFromGeometry2D":"12og0"}],"3SCvR":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../geometry/boundingBox":"3SCvR","./drawGrainlines":"8S5xA","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/getPointArrayFromGeometry2D":"12og0","./utils/styleUtils":"dht7T"}],"3SCvR":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Given an array of point indices which make up a shape,
@@ -50455,7 +50457,6 @@ function getShapeBoundingRect(pointArray) {
     };
 }
 function getGeometryBoundingRect(pointArray) {
-    console.log(pointArray);
     let x0 = Infinity;
     let y0 = Infinity;
     let x1 = -Infinity;
@@ -50568,284 +50569,7 @@ function getPointArrayFromIds(pointIds) {
     return vectors;
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawSelections", ()=>drawSelections);
-var _getBuffer = require("./getBuffer");
-const drawSelections = (state)=>{
-    const { context, canvas } = (0, _getBuffer.getBuffer)('selections');
-    canvas.width = state.canvas.width;
-    canvas.height = state.canvas.height;
-    // TODO
-    // state.c_selected.map((index: number) => {
-    //   context.fillStyle = 'black';
-    //   context.strokeStyle = 'black';
-    //   context.beginPath();
-    //   context.arc(state.c_points[index].x - rad / 2 + 2, state.c_points[index].y - rad / 2 + 2, rad, 0, 2 * Math.PI);
-    //   context.fill();
-    //   context.stroke();
-    // });
-    // state.c_selected_lines.map((hit:LineHit) => {
-    //   const shapeArr = state.c_shapes[hit.shapeIndex];
-    //   const i1 = shapeArr[hit.lineStartIndex];
-    //   const i2 = shapeArr[(hit.lineStartIndex + 1) % (shapeArr.length - 1)];
-    //   const point1 = state.c_pointmap.get(i1);
-    //   const point2 = state.c_pointmap.get(i2);
-    //   if (point1 && point2) {
-    //     context.moveTo(point1.x, point1.y);
-    //     context.lineTo(point2.x, point2.y);
-    //     context.strokeStyle = 'blue';
-    //     context.lineWidth = 10;
-    //     context.stroke(); 
-    //   }
-    // })
-    state.context.drawImage(canvas, 0, 0);
-};
-
-},{"./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h76tE":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawYRuler", ()=>drawYRuler);
-parcelHelpers.export(exports, "drawGridRuler", ()=>drawGridRuler);
-var _state = require("../../State");
-var _factors = require("../settings/factors");
-var _getBuffer = require("./getBuffer");
-function drawYRuler() {
-    const bundle = (0, _getBuffer.getBuffer)('grid');
-    const ctx = bundle.context;
-    const bufferCanvas = bundle.canvas;
-    // Buffer
-    bufferCanvas.width = 10;
-    bufferCanvas.height = (0, _state.state).canvas.height;
-    ctx.lineWidth = 1;
-    // Draw inches
-    for(let i = 1; i < bufferCanvas.height; ++i){
-        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
-        ctx.lineTo(10, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
-        ctx.stroke();
-    }
-    // Draw inches
-    for(let i = 1; i < bufferCanvas.height; ++i){
-        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
-        ctx.lineTo(2.5, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
-        ctx.stroke();
-    }
-    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
-}
-function drawGridRuler() {
-    const bundle = (0, _getBuffer.getBuffer)('grid');
-    const ctx = bundle.context;
-    const bufferCanvas = bundle.canvas;
-    bufferCanvas.width = (0, _state.state).canvas.width;
-    bufferCanvas.height = (0, _state.state).canvas.height;
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'white';
-    // TODO: Center the start of the grid with an offset
-    const verticalGridHeight = (0, _factors.cf_canvas_to_inch) * 2;
-    const xMargin = verticalGridHeight;
-    const toX = Math.floor(bufferCanvas.width / verticalGridHeight) * verticalGridHeight;
-    const toY = Math.floor(bufferCanvas.height / verticalGridHeight) * verticalGridHeight - verticalGridHeight;
-    for(let i = 1; i < Math.floor(bufferCanvas.height / verticalGridHeight); ++i){
-        // Draw horizontal lines from top to bottom
-        ctx.moveTo(verticalGridHeight, i * verticalGridHeight);
-        ctx.lineTo(toX, i * verticalGridHeight);
-        ctx.stroke();
-    }
-    for(let i = 1; i <= Math.floor(bufferCanvas.width / verticalGridHeight); ++i){
-        ctx.moveTo(i * verticalGridHeight, xMargin);
-        ctx.lineTo(i * verticalGridHeight, toY);
-        ctx.stroke();
-    }
-    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
-}
-
-},{"../../State":"83rpN","../settings/factors":"9qufK","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9qufK":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
-parcelHelpers.export(exports, "SPEED", ()=>SPEED);
-parcelHelpers.export(exports, "velocityMax", ()=>velocityMax);
-parcelHelpers.export(exports, "velocityMin", ()=>velocityMin);
-var _three = require("three");
-const cf_canvas_to_inch = 25;
-const SPEED = 5;
-const velocityMax = new _three.Vector3(100, 100, 100);
-const velocityMin = new _three.Vector3(-100, -100, -100);
-
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"12vmI":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawCursorPreview", ()=>drawCursorPreview);
-parcelHelpers.export(exports, "applyCursorPreview", ()=>applyCursorPreview);
-var _state = require("../../State");
-var _getBuffer = require("./getBuffer");
-var _plusPath = require("../icons/plus_path");
-const drawCursorPreview = (pointer)=>{
-    const { context, canvas } = (0, _getBuffer.getBuffer)('cursor_preview');
-    // TODO: #optimization: make this a small canvas, draw it only at the pointer
-    canvas.width = 24;
-    canvas.height = 24;
-    // state.context.drawImage(canvas, 0, 0);
-    switch((0, _state.state).tool.state.type){
-        case "drawing":
-            context.stroke((0, _plusPath.path1));
-            context.stroke((0, _plusPath.path2));
-            break;
-        case "drawing new point":
-            context.stroke((0, _plusPath.path1));
-            context.stroke((0, _plusPath.path2));
-            break;
-        default:
-            break;
-    }
-};
-function applyCursorPreview() {
-    const obj = (0, _state.state).c_buffers.get('cursor_preview');
-    if (obj) (0, _state.state).context.drawImage(obj.canvas, (0, _state.state).pointer.x + 10, (0, _state.state).pointer.y - 20);
-}
-
-},{"../../State":"83rpN","./getBuffer":"7bBl8","../icons/plus_path":"fCwS7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fCwS7":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "path1", ()=>path1);
-parcelHelpers.export(exports, "path2", ()=>path2);
-const path1 = new Path2D(`M15,12.5H12.5V15a.5.5,0,0,1-1,0V12.5H9a.5.5,0,0,1,0-1h2.5V9a.5.5,0,0,1,1,0v2.5H15A.5.5,0,0,1,15,12.5Z`);
-const path2 = new Path2D(`M12,21.932A9.934,9.934,0,1,1,21.932,12,9.944,9.944,0,0,1,12,21.932ZM12,3.065A8.934,8.934,0,1,0,20.932,12,8.944,8.944,0,0,0,12,3.065Z`);
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aqmR1":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawMeasurements", ()=>drawMeasurements);
-parcelHelpers.export(exports, "applyMeasurements", ()=>applyMeasurements);
-var _three = require("three");
-var _getBuffer = require("./getBuffer");
-var _factors = require("../settings/factors");
-var _state = require("../../State");
-function drawMeasurements(state) {
-    if (state.c_measure_points.size < 2) //bail if there are no measurements
-    return;
-    const { context, canvas } = (0, _getBuffer.getBuffer)('measurements');
-    canvas.width = state.canvas.width;
-    canvas.height = state.canvas.height;
-    state.c_measure_paths.forEach((pathArr)=>{
-        const p0 = state.c_measure_points.get(pathArr[0]);
-        context.moveTo(p0.x, p0.y);
-        var last = p0;
-        for(let i = 1; i < pathArr.length; ++i){
-            const p = state.c_measure_points.get(pathArr[i]);
-            context.font = 'bold 22px sans-serif';
-            const midpoint = new (0, _three.Vector2)();
-            midpoint.addVectors(p, last).divideScalar(2);
-            context.fillText(`${Math.round(last.distanceTo(p)) / (0, _factors.cf_canvas_to_inch) / 2}in`, midpoint.x, midpoint.y);
-            context.lineTo(p.x, p.y);
-            last = p;
-        }
-    });
-    context.lineWidth = 4;
-    context.strokeStyle = '#ffaa55';
-    context.stroke();
-    state.context.drawImage(canvas, 0, 0);
-}
-function applyMeasurements() {
-    const obj = (0, _state.state).c_buffers.get('measurements');
-    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
-}
-
-},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6OCsl":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "drawBeziers", ()=>drawBeziers);
-parcelHelpers.export(exports, "applyBeziers", ()=>applyBeziers);
-var _interface = require("../settings/interface");
-var _getBuffer = require("./getBuffer");
-var _geometryIsSelected = require("./utils/geometryIsSelected");
-var _styleUtils = require("./utils/styleUtils");
-function drawBeziers(state) {
-    const { canvas, context } = (0, _getBuffer.getBuffer)('beziers');
-    canvas.width = state.canvas.width;
-    canvas.height = state.canvas.height;
-    state.c_geometryMap.forEach((geometry)=>{
-        if (geometry.type === 'bezier') {
-            const pointIds = geometry.pointIds;
-            context.beginPath();
-            pointIds.forEach((pid, index)=>{
-                // Paths
-                const point = state.c_pointsMap.get(pid);
-                (0, _styleUtils.setDarkLine)(context);
-                if (index === 0) context.moveTo(point.from.x, point.from.y);
-                else {
-                    const lastPoint = state.c_pointsMap.get(pointIds[index - 1]);
-                    context.bezierCurveTo(lastPoint.c1.x, lastPoint.c1.y, point.c2.x, point.c2.y, point.to.x, point.to.y);
-                }
-                context.stroke();
-            });
-            pointIds.forEach((pid, index)=>{
-                // Points and their handles
-                const point = state.c_pointsMap.get(pid);
-                // debug pixels
-                (0, _styleUtils.setDarkFill)(context);
-                // context.fill();
-                context.fillRect(point.to.x, point.to.y, 2, 2);
-                context.fillRect(point.c1.x, point.c1.y, 2, 2);
-                context.fillRect(point.c2.x, point.c2.y, 2, 2);
-                context.beginPath();
-                context.arc(point.to.x, point.to.y, (0, _interface.rad) * 1.25, 0, 2 * Math.PI);
-                (0, _styleUtils.setDarkFill)(context);
-                context.fill();
-                context.closePath();
-                context.fillStyle = '#134ecc';
-                context.beginPath();
-                context.arc(point.c1.x, point.c1.y, (0, _interface.rad), 0, 2 * Math.PI);
-                context.fill();
-                context.closePath();
-                context.beginPath();
-                context.arc(point.c2.x, point.c2.y, (0, _interface.rad), 0, 2 * Math.PI);
-                context.fill();
-                context.closePath();
-                context.beginPath();
-                context.moveTo(point.c1.x, point.c1.y);
-                context.lineTo(point.c2.x, point.c2.y);
-                context.moveTo(point.to.x, point.to.y);
-                (0, _styleUtils.setDashedStroke)(context);
-                context.stroke();
-                context.closePath();
-            });
-            if ((0, _geometryIsSelected.geometryIsSelected)(geometry.id)) // Selected geometries, not yet in use 
-            pointIds.forEach((pid)=>{
-                const point = state.c_pointsMap.get(pid);
-                context.setLineDash([
-                    5,
-                    5
-                ]);
-                context.stroke();
-                context.moveTo(point.to.x, point.to.y);
-                context.lineTo(point.c2.x, point.c2.y);
-                context.moveTo(point.to.x, point.to.y);
-                context.lineTo(point.c1.x, point.c1.y);
-                context.setLineDash([]);
-            });
-        }
-    });
-    state.context.drawImage(canvas, 0, 0);
-}
-function applyBeziers(ctx) {
-    const { context, canvas } = (0, _getBuffer.getBuffer)('beziers');
-    if (context && canvas && canvas.width > 0 && canvas.height > 0) ctx.drawImage(canvas, 0, 0);
-}
-
-},{"../settings/interface":"dci9b","./getBuffer":"7bBl8","./utils/geometryIsSelected":"kiVpu","./utils/styleUtils":"dht7T","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kiVpu":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "geometryIsSelected", ()=>geometryIsSelected);
-var _state = require("../../../State");
-function geometryIsSelected(gId) {
-    return (0, _state.state).c_selected_geometries.some((selected)=>{
-        if (gId === selected.id) return true;
-    });
-}
-
-},{"../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dht7T":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dht7T":[function(require,module,exports,__globalThis) {
 // styleUtils.ts
 // Generated by LLM
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -50970,7 +50694,334 @@ function setPreviewStyle(ctx) {
     ]);
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dKrFA":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ifoPt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawSelections", ()=>drawSelections);
+var _interface = require("../settings/interface");
+var _getBuffer = require("./getBuffer");
+var _styleUtils = require("./utils/styleUtils");
+const drawSelections = (state)=>{
+    const { context, canvas } = (0, _getBuffer.getBuffer)('selections');
+    canvas.width = state.canvas.width;
+    canvas.height = state.canvas.height;
+    state.c_selectedPoints.forEach((pid)=>{
+        const point = state.c_pointsMap.get(pid);
+        if (!point?.to) return;
+        context.beginPath();
+        context.arc(point.to.x, point.to.y, (0, _interface.rad) * 2, 0, 2 * Math.PI);
+        (0, _styleUtils.setDarkFill)(context);
+        context.fill();
+        context.closePath();
+    });
+    // TODO
+    // state.c_selected.map((index: number) => {
+    //   context.fillStyle = 'black';
+    //   context.strokeStyle = 'black';
+    //   context.beginPath();
+    //   context.arc(state.c_points[index].x - rad / 2 + 2, state.c_points[index].y - rad / 2 + 2, rad, 0, 2 * Math.PI);
+    //   context.fill();
+    //   context.stroke();
+    // });
+    // state.c_selected_lines.map((hit:LineHit) => {
+    //   const shapeArr = state.c_shapes[hit.shapeIndex];
+    //   const i1 = shapeArr[hit.lineStartIndex];
+    //   const i2 = shapeArr[(hit.lineStartIndex + 1) % (shapeArr.length - 1)];
+    //   const point1 = state.c_pointmap.get(i1);
+    //   const point2 = state.c_pointmap.get(i2);
+    //   if (point1 && point2) {
+    //     context.moveTo(point1.x, point1.y);
+    //     context.lineTo(point2.x, point2.y);
+    //     context.strokeStyle = 'blue';
+    //     context.lineWidth = 10;
+    //     context.stroke(); 
+    //   }
+    // })
+    state.context.drawImage(canvas, 0, 0);
+};
+
+},{"./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../settings/interface":"dci9b","./utils/styleUtils":"dht7T"}],"h76tE":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawYRuler", ()=>drawYRuler);
+parcelHelpers.export(exports, "drawGridRuler", ()=>drawGridRuler);
+var _state = require("../../State");
+var _factors = require("../settings/factors");
+var _getBuffer = require("./getBuffer");
+function drawYRuler() {
+    const bundle = (0, _getBuffer.getBuffer)('grid');
+    const ctx = bundle.context;
+    const bufferCanvas = bundle.canvas;
+    // Buffer
+    bufferCanvas.width = 10;
+    bufferCanvas.height = (0, _state.state).canvas.height;
+    ctx.lineWidth = 1;
+    // Draw inches
+    for(let i = 1; i < bufferCanvas.height; ++i){
+        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
+        ctx.lineTo(10, i * (0, _factors.cf_canvas_to_inch) * (0, _state.state).c_zoomfactor);
+        ctx.stroke();
+    }
+    // Draw inches
+    for(let i = 1; i < bufferCanvas.height; ++i){
+        ctx.moveTo(0, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
+        ctx.lineTo(2.5, i * (0, _factors.cf_canvas_to_inch) * .25 * (0, _state.state).c_zoomfactor);
+        ctx.stroke();
+    }
+    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
+}
+function drawGridRuler() {
+    const bundle = (0, _getBuffer.getBuffer)('grid');
+    const ctx = bundle.context;
+    const bufferCanvas = bundle.canvas;
+    bufferCanvas.width = (0, _state.state).canvas.width;
+    bufferCanvas.height = (0, _state.state).canvas.height;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'white';
+    // TODO: Center the start of the grid with an offset
+    const verticalGridHeight = (0, _factors.cf_canvas_to_inch) * 2;
+    const xMargin = verticalGridHeight;
+    const toX = Math.floor(bufferCanvas.width / verticalGridHeight) * verticalGridHeight;
+    const toY = Math.floor(bufferCanvas.height / verticalGridHeight) * verticalGridHeight - verticalGridHeight;
+    for(let i = 1; i < Math.floor(bufferCanvas.height / verticalGridHeight); ++i){
+        // Draw horizontal lines from top to bottom
+        ctx.moveTo(verticalGridHeight, i * verticalGridHeight);
+        ctx.lineTo(toX, i * verticalGridHeight);
+        ctx.stroke();
+    }
+    for(let i = 1; i <= Math.floor(bufferCanvas.width / verticalGridHeight); ++i){
+        ctx.moveTo(i * verticalGridHeight, xMargin);
+        ctx.lineTo(i * verticalGridHeight, toY);
+        ctx.stroke();
+    }
+    (0, _state.state).context.drawImage(bufferCanvas, 0, 0);
+}
+
+},{"../../State":"83rpN","../settings/factors":"9qufK","./getBuffer":"7bBl8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9qufK":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cf_canvas_to_inch", ()=>cf_canvas_to_inch);
+parcelHelpers.export(exports, "cf_scale", ()=>cf_scale);
+parcelHelpers.export(exports, "SPEED", ()=>SPEED);
+parcelHelpers.export(exports, "velocityMax", ()=>velocityMax);
+parcelHelpers.export(exports, "velocityMin", ()=>velocityMin);
+var _three = require("three");
+const cf_canvas_to_inch = 25;
+const cf_scale = 2; // TODO: not yet used in canvas setup
+const SPEED = 5;
+const velocityMax = new _three.Vector3(100, 100, 100);
+const velocityMin = new _three.Vector3(-100, -100, -100);
+
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"12vmI":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawCursorPreview", ()=>drawCursorPreview);
+parcelHelpers.export(exports, "applyCursorPreview", ()=>applyCursorPreview);
+var _state = require("../../State");
+var _getBuffer = require("./getBuffer");
+var _plusPath = require("../icons/plus_path");
+const drawCursorPreview = (pointer)=>{
+    const { context, canvas } = (0, _getBuffer.getBuffer)('cursor_preview');
+    // TODO: #optimization: make this a small canvas, draw it only at the pointer
+    canvas.width = 24;
+    canvas.height = 24;
+    // state.context.drawImage(canvas, 0, 0);
+    switch((0, _state.state).tool.state.type){
+        case "drawing":
+            context.stroke((0, _plusPath.path1));
+            context.stroke((0, _plusPath.path2));
+            break;
+        case "drawing new point":
+            context.stroke((0, _plusPath.path1));
+            context.stroke((0, _plusPath.path2));
+            break;
+        default:
+            break;
+    }
+};
+function applyCursorPreview() {
+    const obj = (0, _state.state).c_buffers.get('cursor_preview');
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, (0, _state.state).pointer.x + 10, (0, _state.state).pointer.y - 20);
+}
+
+},{"../../State":"83rpN","./getBuffer":"7bBl8","../icons/plus_path":"fCwS7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fCwS7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "path1", ()=>path1);
+parcelHelpers.export(exports, "path2", ()=>path2);
+const path1 = new Path2D(`M15,12.5H12.5V15a.5.5,0,0,1-1,0V12.5H9a.5.5,0,0,1,0-1h2.5V9a.5.5,0,0,1,1,0v2.5H15A.5.5,0,0,1,15,12.5Z`);
+const path2 = new Path2D(`M12,21.932A9.934,9.934,0,1,1,21.932,12,9.944,9.944,0,0,1,12,21.932ZM12,3.065A8.934,8.934,0,1,0,20.932,12,8.944,8.944,0,0,0,12,3.065Z`);
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aqmR1":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawMeasurements", ()=>drawMeasurements);
+parcelHelpers.export(exports, "applyMeasurements", ()=>applyMeasurements);
+var _three = require("three");
+var _getBuffer = require("./getBuffer");
+var _factors = require("../settings/factors");
+var _state = require("../../State");
+function drawMeasurements(state) {
+    if (state.c_measure_points.size < 2) //bail if there are no measurements
+    return;
+    const { context, canvas } = (0, _getBuffer.getBuffer)('measurements');
+    canvas.width = state.canvas.width;
+    canvas.height = state.canvas.height;
+    state.c_measure_paths.forEach((pathArr)=>{
+        const p0 = state.c_measure_points.get(pathArr[0]);
+        context.moveTo(p0.x, p0.y);
+        var last = p0;
+        for(let i = 1; i < pathArr.length; ++i){
+            const p = state.c_measure_points.get(pathArr[i]);
+            context.font = 'bold 22px sans-serif';
+            const midpoint = new (0, _three.Vector2)();
+            midpoint.addVectors(p, last).divideScalar(2);
+            context.fillText(`${Math.round(last.distanceTo(p)) / (0, _factors.cf_canvas_to_inch) / 2}in`, midpoint.x, midpoint.y);
+            context.lineTo(p.x, p.y);
+            last = p;
+        }
+    });
+    context.lineWidth = 4;
+    context.strokeStyle = '#ffaa55';
+    context.stroke();
+    state.context.drawImage(canvas, 0, 0);
+}
+function applyMeasurements() {
+    const obj = (0, _state.state).c_buffers.get('measurements');
+    if (obj) (0, _state.state).context.drawImage(obj.canvas, 0, 0);
+}
+
+},{"three":"ktPTu","./getBuffer":"7bBl8","../settings/factors":"9qufK","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6OCsl":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "drawBeziers", ()=>drawBeziers);
+parcelHelpers.export(exports, "applyBeziers", ()=>applyBeziers);
+var _bezierNumerics = require("../geometry/bezierNumerics");
+var _factors = require("../settings/factors");
+var _interface = require("../settings/interface");
+var _getBuffer = require("./getBuffer");
+var _geometryIsSelected = require("./utils/geometryIsSelected");
+var _styleUtils = require("./utils/styleUtils");
+function drawBeziers(state) {
+    const { canvas, context } = (0, _getBuffer.getBuffer)('beziers');
+    canvas.width = state.canvas.width;
+    canvas.height = state.canvas.height;
+    state.c_geometryMap.forEach((geometry)=>{
+        if (geometry.type === 'bezier') {
+            const pointIds = geometry.pointIds;
+            context.beginPath();
+            pointIds.forEach((pid, index)=>{
+                // Paths
+                const point = state.c_pointsMap.get(pid);
+                (0, _styleUtils.setDarkLine)(context);
+                if (index === 0) context.moveTo(point.from.x, point.from.y);
+                else {
+                    const lastPoint = state.c_pointsMap.get(pointIds[index - 1]);
+                    context.bezierCurveTo(lastPoint.c1.x, lastPoint.c1.y, point.c2.x, point.c2.y, point.to.x, point.to.y);
+                }
+                context.stroke();
+            });
+            pointIds.forEach((pid, index, arr)=>{
+                // Points and their handles
+                const point = state.c_pointsMap.get(pid);
+                // debug pixels
+                (0, _styleUtils.setDarkFill)(context);
+                // context.fill();
+                context.fillRect(point.to.x, point.to.y, 2, 2);
+                context.fillRect(point.c1.x, point.c1.y, 2, 2);
+                context.fillRect(point.c2.x, point.c2.y, 2, 2);
+                context.beginPath();
+                context.arc(point.to.x, point.to.y, (0, _interface.rad) * 1.25, 0, 2 * Math.PI);
+                (0, _styleUtils.setDarkFill)(context);
+                context.fill();
+                context.closePath();
+                context.fillStyle = '#134ecc';
+                context.beginPath();
+                context.arc(point.c1.x, point.c1.y, (0, _interface.rad), 0, 2 * Math.PI);
+                context.fill();
+                context.closePath();
+                context.beginPath();
+                context.arc(point.c2.x, point.c2.y, (0, _interface.rad), 0, 2 * Math.PI);
+                context.fill();
+                context.closePath();
+                context.beginPath();
+                context.moveTo(point.c1.x, point.c1.y);
+                context.lineTo(point.c2.x, point.c2.y);
+                context.moveTo(point.to.x, point.to.y);
+                (0, _styleUtils.setDashedStroke)(context);
+                context.stroke();
+                context.closePath();
+                // Length measurement test space
+                if (index === arr.length - 1) console.log((0, _bezierNumerics.estimateBezierLength)(state.c_pointsMap.get(pid), 10) / (0, _factors.cf_canvas_to_inch) / (0, _factors.cf_scale));
+            });
+            if ((0, _geometryIsSelected.geometryIsSelected)(geometry.id)) // Selected geometries, not yet in use 
+            pointIds.forEach((pid)=>{
+                const point = state.c_pointsMap.get(pid);
+                context.setLineDash([
+                    5,
+                    5
+                ]);
+                context.stroke();
+                context.moveTo(point.to.x, point.to.y);
+                context.lineTo(point.c2.x, point.c2.y);
+                context.moveTo(point.to.x, point.to.y);
+                context.lineTo(point.c1.x, point.c1.y);
+                context.setLineDash([]);
+            });
+        }
+    });
+    state.context.drawImage(canvas, 0, 0);
+}
+function applyBeziers(ctx) {
+    const { context, canvas } = (0, _getBuffer.getBuffer)('beziers');
+    if (context && canvas && canvas.width > 0 && canvas.height > 0) ctx.drawImage(canvas, 0, 0);
+}
+
+},{"../settings/interface":"dci9b","./getBuffer":"7bBl8","./utils/geometryIsSelected":"kiVpu","./utils/styleUtils":"dht7T","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../geometry/bezierNumerics":"kzeNU","../settings/factors":"9qufK"}],"kiVpu":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "geometryIsSelected", ()=>geometryIsSelected);
+var _state = require("../../../State");
+function geometryIsSelected(gId) {
+    return (0, _state.state).c_selected_geometries.some((selected)=>{
+        if (gId === selected.id) return true;
+    });
+}
+
+},{"../../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kzeNU":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/**
+ * Approximate the length of one BézierPoint segment by sampling `steps` points.
+ * Increasing `steps` improves accuracy at the cost of more math.
+ */ parcelHelpers.export(exports, "estimateBezierLength", ()=>estimateBezierLength);
+var _three = require("three");
+/**
+ * Evaluate the cubic Bézier at parameter t ∈ [0,1].
+ */ function evalCubic(from, c1, c2, to, t) {
+    const u = 1 - t;
+    // Bernstein basis:
+    // B(t) = u³·P0 + 3u²t·P1 + 3u·t²·P2 + t³·P3
+    const p = new (0, _three.Vector2)();
+    p.addScaledVector(from, u * u * u);
+    p.addScaledVector(c1, 3 * u * u * t);
+    p.addScaledVector(c2, 3 * u * t * t);
+    p.addScaledVector(to, t * t * t);
+    return p;
+}
+function estimateBezierLength(bp, steps = 20) {
+    let length = 0;
+    let prev = bp.from;
+    for(let i = 1; i <= steps; i++){
+        const t = i / steps;
+        const pt = evalCubic(bp.from, bp.c1, bp.c2, bp.to, t);
+        length += pt.distanceTo(prev);
+        prev = pt;
+    }
+    return length;
+}
+
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dKrFA":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawNewPointPreview", ()=>drawNewPointPreview);
@@ -51061,6 +51112,7 @@ function drawSelectionMovePreview(pos) {
     (0, _state.state).context.fillRect(pos.x - 5, pos.y - 5, 10, 10);
 }
 function drawShapeSelectionMovePreview(pos) {
+    if ((0, _state.state).c_selectedGeometries.length < 1) return;
     const { canvas, context } = (0, _getBuffer.getBuffer)('shape_preview');
     const dif = (0, _state.state).c_move_from.clone().sub(pos);
     function collectGeometryPointIds(geometryIds) {
@@ -51073,7 +51125,6 @@ function drawShapeSelectionMovePreview(pos) {
         }, []);
         return allPoints;
     }
-    console.log('VALUES', Array.from((0, _state.state).c_selectedGeometries.values()));
     const pointArray = (0, _getPointArrayFromGeometry2D.getPointArrayFromIds)(collectGeometryPointIds(Array.from((0, _state.state).c_selectedGeometries.values())));
     const dim = (0, _boundingBox.getShapeDimensions)(pointArray);
     const box = (0, _boundingBox.getShapeBoundingRect)(pointArray);
@@ -51237,6 +51288,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "findNearestPoint", ()=>findNearestPoint);
 parcelHelpers.export(exports, "findNearestGeometryPoint", ()=>findNearestGeometryPoint);
+parcelHelpers.export(exports, "findNearestAnyPoint", ()=>findNearestAnyPoint);
 var _interface = require("../settings/interface");
 var _state = require("../../State");
 function findNearestPoint(pos, points) {
@@ -51261,12 +51313,30 @@ function findNearestGeometryPoint(pos, geometries) {
         const dx = pt.to.x - pos.x;
         const dy = pt.to.y - pos.y;
         const distSq = dx * dx + dy * dy;
-        // ! Note: sqrt is very expensive
         if (Math.sqrt(distSq) < (0, _interface.selectionRadius) && distSq < minDistSq) {
             minDistSq = distSq;
             nearestId = pointId;
         }
     }
+    return nearestId;
+}
+function findNearestAnyPoint(pos) {
+    let nearestId = undefined;
+    let minDistSq = Infinity;
+    for (const pid of (0, _state.state).c_pointsMap.keys()){
+        const point = (0, _state.state).c_pointsMap.get(pid);
+        if (!point) return undefined;
+        for (const subpoint of Object.values(point)){
+            const dx = subpoint.x - pos.x;
+            const dy = subpoint.y - pos.y;
+            const distSq = dx * dx + dy * dy;
+            if (Math.sqrt(distSq) < (0, _interface.selectionRadius) && distSq < minDistSq) {
+                minDistSq = distSq;
+                nearestId = pid;
+            }
+        }
+    }
+    console.log(nearestId);
     return nearestId;
 }
 
@@ -52145,7 +52215,6 @@ function drawPieceThumbnail(piece, canvas) {
 }
 function generatePieceThumbnail(piece) {
     const { context, canvas } = (0, _getBuffer.getBuffer)(`preview_${piece.name}`);
-    console.log(piece, 'gen piece');
     const box = (0, _boundingBox.getGeometryBoundingRect)((0, _getPointArrayFromGeometry2D.getPointArray)(piece.geometryId));
     canvas.width = box.x1 - box.x0 + 1;
     canvas.height = box.y1 - box.y0 + 1;
@@ -52573,6 +52642,7 @@ parcelHelpers.export(exports, "changeTool", ()=>changeTool);
 var _state = require("../../State");
 var _store = require("../../UI/store");
 var _canvas = require("../rendering/canvas");
+var _bezierPointEditorTool = require("./BezierPointEditorTool");
 var _grainlineTool = require("./GrainlineTool");
 var _measureTool = require("./MeasureTool");
 var _pathTool = require("./PathTool");
@@ -52607,6 +52677,11 @@ function changeTool(toolState) {
             (0, _store.useAppState).getState().setSelectedTool("grainline");
             (0, _canvas.redrawCanvas)();
             break;
+        case "bezier point editor":
+            (0, _state.state).tool = new (0, _bezierPointEditorTool.BezierPointEditorTool)((0, _state.state).c_selectedPoints[0]); // A bit brittle, this corresponds to the selection made by the select tool
+            (0, _store.useAppState).getState().setSelectedTool("bezier point editor");
+            (0, _canvas.drawCanvasFromState)((0, _state.state));
+            break;
         default:
             (0, _state.state).tool = new (0, _selectTool.SelectTool)();
             (0, _store.useAppState).getState().setSelectedTool("select");
@@ -52616,7 +52691,7 @@ function changeTool(toolState) {
     (0, _state.state).tool.initializeEvents();
 }
 
-},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports,__globalThis) {
+},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./BezierPointEditorTool":"fIDCA"}],"jR44c":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
@@ -52943,6 +53018,8 @@ var _findNearestPoint = require("../geometry/findNearestPoint");
 var _bezierIntersection = require("../geometry/bezierIntersection");
 var _interface = require("../settings/interface");
 var _selectToolDeselectPointCommand = require("../commands/SelectToolDeselectPointCommand");
+var _selectToolMovePointsCommand = require("../commands/SelectToolMovePointsCommand");
+var _changeToolCommand = require("../commands/ChangeToolCommand");
 class SelectTool {
     constructor(){
         // Tool state object stores tool mechanical state
@@ -52983,7 +53060,7 @@ class SelectTool {
     onMouseDown(e) {
         const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         const selectedGeomId = this.checkForShapeOverlap(clickPos);
-        const pointId = (0, _findNearestPoint.findNearestGeometryPoint)(clickPos, Array.from((0, _state.state).c_geometryMap.values()));
+        let pointId = (0, _findNearestPoint.findNearestGeometryPoint)(clickPos, Array.from((0, _state.state).c_geometryMap.values()));
         let lineHit = null;
         if (selectedGeomId) lineHit = (0, _bezierIntersection.isPointNearBezierGeometry)(clickPos, (0, _state.state).c_geometryMap.get(selectedGeomId), (0, _interface.rad) * 2);
         (0, _state.state).pointerDown = true;
@@ -53004,11 +53081,11 @@ class SelectTool {
                 } else if (selectedGeomId) {
                     (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
                     this.transition({
-                        type: "selecting"
+                        type: "selecting shapes"
                     });
                 }
                 break;
-            case "selecting":
+            case "selecting shapes":
                 if ((0, _state.state).shiftDown) {
                     if (selectedGeomId) // Previously this called SelectToolAddShape command
                     // I do not know why as they seem functionally the same???
@@ -53019,16 +53096,19 @@ class SelectTool {
                 if (pointId) {
                     if ((0, _state.state).shiftDown) {
                         // if the point is not already selected
-                        if (!(0, _state.state).c_pointsMap.get(pointId)) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
+                        if (!this.pointIsSelected(pointId)) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
                         else // Deslect the point
                         (0, _command.pushCommand)(new (0, _selectToolDeselectPointCommand.SelectToolDeselectPointCommand)(pointId));
                     } else if (!(0, _state.state).shiftDown) {
-                        (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
-                        this.transition({
-                            type: "idle"
-                        });
+                        if (this.pointIsSelected(pointId)) ;
+                        else {
+                            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
+                            (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
+                        }
                     }
-                }
+                } else this.transition({
+                    type: "idle"
+                });
                 break;
             case "selecting lines":
                 // Hit Point
@@ -53037,20 +53117,11 @@ class SelectTool {
                     this.transition({
                         type: "selecting points"
                     });
-                // Hit Line
-                // } else if ( lineHit ) {
-                //   if (state.shiftDown) {
-                //     // refact to append to line array
-                //     pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-                //   } else {
-                //     pushCommand( new SelectToolDeselectLinesCommand() );
-                //     pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-                //   }
                 // Hit Shape
                 } else if (selectedGeomId) {
                     (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
                     this.transition({
-                        type: "selecting"
+                        type: "selecting shapes"
                     });
                 }
                 break;
@@ -53077,15 +53148,25 @@ class SelectTool {
     onMouseMove(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
         switch(this.__state.type){
-            case 'moving':
+            case 'moving shapes':
                 (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
                 break;
-            case 'selecting':
+            case 'selecting shapes':
                 if ((0, _state.state).pointerDown == true) {
                     (0, _state.state).c_move_from = pos;
                     (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
                     this.transition({
-                        type: 'moving',
+                        type: 'moving shapes',
+                        startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
+                    });
+                }
+                break;
+            case 'selecting points':
+                if ((0, _state.state).pointerDown == true) {
+                    (0, _state.state).c_move_from = pos;
+                    (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
+                    this.transition({
+                        type: 'moving points',
                         startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
                     });
                 }
@@ -53096,24 +53177,36 @@ class SelectTool {
     }
     onMouseUp(e) {
         (0, _state.state).pointerDown = false;
+        const endPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        let startPos = undefined;
         switch(this.__state.type){
-            case "moving":
-                const endPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-                const startPos = this.__state.startPos;
+            case "moving shapes":
+                startPos = this.__state.startPos;
                 (0, _command.pushCommand)(new (0, _selectToolMoveShapeCommand.SelectToolMoveShapeCommand)((0, _state.state).c_selectedGeometries, startPos, endPos));
                 this.transition({
-                    type: 'idle'
+                    type: 'selecting shapes'
+                });
+                break;
+            case "moving points":
+                startPos = this.__state.startPos;
+                (0, _command.pushCommand)(new (0, _selectToolMovePointsCommand.SelectToolMovePointsCommand)((0, _state.state).c_selectedPoints, startPos, endPos));
+                this.transition({
+                    type: 'selecting points'
                 });
                 break;
         }
     }
     onDoubleClick(e) {
         const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-    // TODO: use this for isolation mode
+        const pointId = (0, _findNearestPoint.findNearestGeometryPoint)(pos, Array.from((0, _state.state).c_geometryMap.values()));
+        if (pointId) (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)('bezier point editor'));
+    }
+    pointIsSelected(pointId) {
+        return (0, _state.state).c_selectedPoints.find((pid)=>pid == pointId);
     }
     onKeyDown(e) {
         switch(this.state.type){
-            case "selecting":
+            case "selecting shapes":
                 console.log('keypress', e);
                 // case "selecting_points":
                 if (e.code === 'Backspace' || e.code === 'Delete') {
@@ -53133,7 +53226,7 @@ class SelectTool {
     }
 }
 
-},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../commands/Rendering/DrawPreviewsCommand":"4QHCH","../geometry/findNearestPoint":"8deBQ","../geometry/bezierIntersection":"fUwbC","../settings/interface":"dci9b","../commands/SelectToolDeselectPointCommand":"DbYrq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports,__globalThis) {
+},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../commands/Rendering/DrawPreviewsCommand":"4QHCH","../geometry/findNearestPoint":"8deBQ","../geometry/bezierIntersection":"fUwbC","../settings/interface":"dci9b","../commands/SelectToolDeselectPointCommand":"DbYrq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/SelectToolMovePointsCommand":"bIGVa","../commands/ChangeToolCommand":"i5Ou7"}],"aHJgT":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
@@ -53189,20 +53282,22 @@ var _canvas = require("../rendering/canvas");
 class SelectToolMoveShapeCommand {
     constructor(geoms, from, to){
         this.geoms = geoms;
-        this.__from = from.clone();
-        this.__to = to.clone();
-        this.__diff = this.__to.clone().sub(this.__from);
+        // this.__from = from.clone();
+        // this.__to = to.clone();
+        this.__diff = to.clone().sub(from);
     }
     do() {
         (0, _state.state).c_selectedGeometries.forEach((geomId)=>{
-            (0, _state.state).c_geometryMap.get(geomId)?.pointIds.forEach((id)=>{
-                if (id != (0, _state.state).c_geometryMap.get(geomId)?.pointIds[0]) {
-                    const point = (0, _state.state).c_pointsMap.get(id);
-                    point.to.add(this.__diff);
-                    point.from.add(this.__diff);
-                    point.c1.add(this.__diff);
-                    point.c2.add(this.__diff);
-                }
+            const geom = (0, _state.state).c_geometryMap.get(geomId);
+            if (!geom) return;
+            const uniqueIds = Array.from(new Set(geom.pointIds));
+            uniqueIds.forEach((id)=>{
+                const bp = (0, _state.state).c_pointsMap.get(id);
+                if (!bp) return;
+                bp.to.add(this.__diff);
+                // bp.from.add(this.__diff); // Do not modify this vector in this sweep–it is the previous point's .to vector
+                bp.c1.add(this.__diff);
+                bp.c2.add(this.__diff);
             });
         });
         // state.updateGrainlinePos( this.shapeIndex, computeCentroid( state.c_shapes[ this.shapeIndex ] ) );
@@ -53378,6 +53473,90 @@ class SelectToolDeselectPointCommand {
     undo() {
         (0, _state.state).c_selectedPoints.push(this.__pointId);
         (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bIGVa":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolMovePointsCommand", ()=>SelectToolMovePointsCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolMovePointsCommand {
+    constructor(pointIds, from, to){
+        this.diff = to.clone().sub(from);
+        this.pointIds = pointIds;
+    }
+    do() {
+        this.pointIds.forEach((pid)=>{
+            const point = (0, _state.state).c_pointsMap.get(pid);
+            if (!point) return;
+            // Note the From component of the BezierPoint is not modified as it points to the previous point's To component
+            point.to.add(this.diff);
+            point.c1.add(this.diff);
+            point.c2.add(this.diff);
+        });
+        // state.updateGrainlinePos( this.shapeIndex, computeCentroid( state.c_shapes[ this.shapeIndex ] ) );
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // state.c_shapes[ this.shapeIndex ].forEach((i: number) => {
+        //   state.c_points[i].sub(this.__diff); // Reverse the movement
+        // });
+        console.error('not implemented');
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fIDCA":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "BezierPointEditorTool", ()=>BezierPointEditorTool);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class BezierPointEditorTool {
+    constructor(pointId){
+        // Tool name
+        this.name = 'bezier point editor';
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+        this.applyState = (state)=>{
+        // Not implemented
+        };
+        this.__state = {
+            type: "idle",
+            pointId
+        };
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    // canvas.addEventListener("dblclick", this.__listeners.dblclick);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener('mousedown', this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    // state.canvas.removeEventListener("dblclick", this.__listeners.dblclick);
+    }
+    // Tool state updater
+    transition(newState) {
+        console.log(`SelectTool state: ${this.state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+    }
+    // Select tool event management
+    onMouseDown(e) {
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    onMouseMove(e) {}
+    onMouseUp(e) {}
+    get state() {
+        return this.__state;
     }
 }
 
