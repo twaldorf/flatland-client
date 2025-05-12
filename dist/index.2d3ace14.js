@@ -18427,61 +18427,70 @@ const App = ()=>{
         (0, _main.initUpdate)();
     }, []);
     const ViewComponentMap = {
-        "piece library": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieceLibrary.PieceLibrary), {}, void 0, false, {
+        "app": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editor.Editor), {
+            canvasRef: canvasRef,
+            threeRef: threeRef
+        }, void 0, false, {
             fileName: "src/App.tsx",
             lineNumber: 44,
+            columnNumber: 12
+        }, undefined),
+        "piece library": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieceLibrary.PieceLibrary), {}, void 0, false, {
+            fileName: "src/App.tsx",
+            lineNumber: 45,
             columnNumber: 22
         }, undefined),
         "mark": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _markDefault.default), {}, void 0, false, {
             fileName: "src/App.tsx",
-            lineNumber: 45,
+            lineNumber: 46,
             columnNumber: 13
         }, undefined),
         "browser": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _browseDefault.default), {}, void 0, false, {
             fileName: "src/App.tsx",
-            lineNumber: 46,
+            lineNumber: 47,
             columnNumber: 16
         }, undefined)
     };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
-        className: "app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2",
+        className: "app-container font-mono w-full h-screen overflow-hidden bg-stone-100 pb-2",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex flex-col h-12vh",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _openOverlay.OpenProjectOverlay), {}, void 0, false, {
-                        fileName: "src/App.tsx",
-                        lineNumber: 52,
-                        columnNumber: 9
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _newProjectModal.NewProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 53,
                         columnNumber: 9
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editProjectModal.EditProjectModal), {}, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _newProjectModal.NewProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 54,
                         columnNumber: 9
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _saveAsProjectModal.SaveAsProjectModal), {}, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editProjectModal.EditProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 55,
                         columnNumber: 9
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _saveAsProjectModal.SaveAsProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 56,
                         columnNumber: 9
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {}, void 0, false, {
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 57,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {}, void 0, false, {
+                        fileName: "src/App.tsx",
+                        lineNumber: 58,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 51,
+                lineNumber: 52,
                 columnNumber: 7
             }, undefined),
             ViewComponentMap[view] ?? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editor.Editor), {
@@ -18489,13 +18498,13 @@ const App = ()=>{
                 threeRef: threeRef
             }, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 60,
+                lineNumber: 61,
                 columnNumber: 9
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 50,
+        lineNumber: 51,
         columnNumber: 5
     }, undefined);
 };
@@ -18572,7 +18581,10 @@ function initCanvas(ref) {
 }
 function initScene(canvas) {
     // Bail if no canvas has been passed
-    if (!canvas) return false;
+    if (!canvas) {
+        console.log("no canvas");
+        return false;
+    }
     (0, _state.state).renderer = new _three.WebGLRenderer({
         canvas
     });
@@ -49471,6 +49483,7 @@ parcelHelpers.export(exports, "state", ()=>state);
 var _three = require("three");
 var _pathTool = require("./2D/tools/PathTool");
 var _mathUtils = require("three/src/math/MathUtils");
+var _saveutils = require("./utils/saveutils");
 function genPointId() {
     return (0, _mathUtils.generateUUID)();
 }
@@ -49478,7 +49491,7 @@ function genGeoId() {
     return (0, _mathUtils.generateUUID)();
 }
 const state = {
-    version: "0.1",
+    version: "0.11",
     pointer: new (0, _three.Vector2),
     shiftDown: false,
     altDown: false,
@@ -49552,30 +49565,13 @@ const state = {
         return id;
     },
     serialize () {
-        const { version, c_pointmap, c_points, c_paths, c_measure_paths, c_measure_points, c_shapes } = this;
+        const { version, c_pointsMap, c_geometryMap, projectInfo } = this;
+        // flattened version of geometries, pieces, etc
         const coreInfo = {
             version,
-            c_pointmap: Array.from(this.c_pointmap.entries()).map(([k, v])=>[
-                    k,
-                    [
-                        v.x,
-                        v.y
-                    ]
-                ]),
-            c_points: this.c_points.map((p)=>[
-                    p.x,
-                    p.y
-                ]),
-            c_paths,
-            c_measure_paths,
-            c_measure_points: Array.from(this.c_measure_points.entries()).map(([k, v])=>[
-                    k,
-                    [
-                        v.x,
-                        v.y
-                    ]
-                ]),
-            c_shapes
+            c_pointsMap: (0, _saveutils.flattenPointsMap)(c_pointsMap),
+            c_geometryMap: (0, _saveutils.flattenGeometryMap)(c_geometryMap),
+            projectInfo
         };
         const serializedObj = JSON.stringify(coreInfo);
         return serializedObj;
@@ -49583,31 +49579,17 @@ const state = {
     deserialize (stringObj) {
         const serializedObj = JSON.parse(stringObj);
         if (serializedObj.version == this.version) {
-            this.c_pointmap = new Map(serializedObj.c_pointmap.map(([k, [x, y]])=>[
-                    k,
-                    new (0, _three.Vector2)(x, y)
-                ]));
-            this.c_points = serializedObj.c_points.map(([x, y])=>new (0, _three.Vector2)(x, y));
-            this.c_paths = serializedObj.c_paths;
-            this.c_measure_paths = serializedObj.c_measure_paths;
-            this.c_measure_points = new Map(serializedObj.c_measure_points.map(([k, [x, y]])=>[
-                    k,
-                    new (0, _three.Vector2)(x, y)
-                ]));
-            this.c_shapes = serializedObj.c_shapes;
+            this.c_pointsMap = (0, _saveutils.restorePointsMap)(serializedObj.c_pointsMap);
+            this.c_geometryMap = (0, _saveutils.restoreGeometryMap)(serializedObj.c_geometryMap);
+            this.projectInfo = serializedObj.projectInfo;
         }
     },
     clear () {
-        this.c_pointmap = new Map();
-        this.c_points = [];
-        this.c_paths = [];
-        this.c_measure_paths = [];
-        this.c_measure_points = new Map();
-        this.c_shapes = [];
+    // not implemented
     }
 };
 
-},{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","three/src/math/MathUtils":"cuzU2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports) {
+},{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","three/src/math/MathUtils":"cuzU2","./utils/saveutils":"4Ifxv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathTool", ()=>PathTool);
@@ -52139,7 +52121,71 @@ function drawBezierHandlePreview(c1, anchor, lastPoint, lastC1) {
     (0, _state.state).context.drawImage(canvas, 0, 0);
 }
 
-},{"./getBuffer":"7bBl8","../settings/interface":"dci9b","../../State":"83rpN","./utils/styleUtils":"dht7T","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports) {
+},{"./getBuffer":"7bBl8","../settings/interface":"dci9b","../../State":"83rpN","./utils/styleUtils":"dht7T","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4Ifxv":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "flattenBezierPoint", ()=>flattenBezierPoint);
+parcelHelpers.export(exports, "restoreBezierPoint", ()=>restoreBezierPoint);
+parcelHelpers.export(exports, "flattenPointsMap", ()=>flattenPointsMap);
+parcelHelpers.export(exports, "restorePointsMap", ()=>restorePointsMap);
+parcelHelpers.export(exports, "flattenGeometryMap", ()=>flattenGeometryMap);
+parcelHelpers.export(exports, "restoreGeometryMap", ()=>restoreGeometryMap);
+var _three = require("three");
+const flattenBezierPoint = (bp)=>{
+    return [
+        bp.to.x,
+        bp.to.y,
+        bp.from.x,
+        bp.from.y,
+        bp.c1.x,
+        bp.c1.y,
+        bp.c2.x,
+        bp.c2.y
+    ];
+};
+const restoreBezierPoint = (arr)=>{
+    const point = {
+        to: new (0, _three.Vector2)(arr[0], arr[1]),
+        from: new (0, _three.Vector2)(arr[2], arr[3]),
+        c1: new (0, _three.Vector2)(arr[4], arr[5]),
+        c2: new (0, _three.Vector2)(arr[6], arr[7])
+    };
+    return point;
+};
+const flattenPointsMap = (pm)=>{
+    return Array.from(pm.entries()).map(([id, point])=>{
+        return [
+            id,
+            flattenBezierPoint(point)
+        ];
+    });
+};
+const restorePointsMap = (flat)=>{
+    return new Map(flat.map(([id, arr])=>[
+            id,
+            restoreBezierPoint(arr)
+        ]));
+};
+const flattenGeometryMap = (gm)=>Array.from(gm.entries()).map(([id, geom])=>[
+            id,
+            {
+                type: geom.type,
+                pointIds: geom.pointIds
+            }
+        ]);
+const restoreGeometryMap = (arr)=>{
+    const map = new Map();
+    arr.forEach(([id, { type, pointIds }])=>{
+        map.set(id, {
+            id,
+            type,
+            pointIds
+        });
+    });
+    return map;
+};
+
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Pointer Events for 3D canvas
@@ -54855,7 +54901,7 @@ var _labelDefault = parcelHelpers.interopDefault(_label);
 var _shapeInfo = require("./Overlay/ShapeInfo");
 const Editor = ({ canvasRef, threeRef })=>{
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "grid grid-cols-4 flex-1 overflow-hidden",
+        className: "grid grid-cols-4 flex-1 overflow-hidden h-[88vh]",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
                 className: "wrelative flex flex-col bg-white p-3 overflow-hidden col-span-3",
@@ -67580,96 +67626,126 @@ try {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _jsxRuntime = require("react/jsx-runtime");
-var _pieceLibrary = require("../sections/PieceLibrary");
 var _store = require("../store");
+var _react = require("react");
+var _projectSummary = require("./ProjectSummary");
 var _s = $RefreshSig$();
 const Browser = ()=>{
     _s();
     const currentId = (0, _store.useAppState)((s)=>s.activeProjectTitle);
     const setCurrent = (0, _store.useAppState)((s)=>s.setActiveProjectTitle);
-    let projects = localStorage.getItem("flatland-projects");
-    if (projects) projects = JSON.parse(projects);
+    const [selectedProject, setSelectedProject] = (0, _react.useState)(undefined);
+    const projectString = localStorage.getItem("flatland-projects");
+    let projects = undefined;
+    if (projectString) projects = JSON.parse(projectString);
     else return;
     if (projects.length <= 0) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: "No projects found."
     }, void 0, false, {
         fileName: "src/UI/browse/Browse.tsx",
-        lineNumber: 17,
+        lineNumber: 23,
         columnNumber: 9
     }, undefined);
     function getProjectDetails(name) {
-        const project = localStorage.getItem(name);
-        return project;
+        const projectString = localStorage.getItem(name);
+        if (projectString) {
+            const project = JSON.parse(projectString);
+            return {
+                version: project.version,
+                info: project.projectInfo,
+                pieces: [],
+                thumbnail: undefined
+            };
+        } else throw new Error("Couldn't load project details.");
+    // return project;
     }
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxRuntime.Fragment), {
+    return(// <Fragment>
+    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "h-[88vh] flex flex-row border-t",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                className: "w-1/4 border-r p-4 overflow-scroll",
+                className: "w-1/4 border-r p-4 overflow-scroll h-1/1",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
                         className: "text-lg font-semibold mb-4 text-black",
                         children: "Projects"
                     }, void 0, false, {
                         fileName: "src/UI/browse/Browse.tsx",
-                        lineNumber: 32,
+                        lineNumber: 44,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-                        className: "overflow-scroll",
-                        children: projects && projects.map((projectName)=>{
+                        className: "",
+                        children: typeof projects == "object" && projects.map((projectName)=>{
                             const proj = getProjectDetails(projectName);
                             return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-                                onClick: ()=>setCurrent(proj.id),
-                                className: `p-2 rounded cursor-pointer mb-1 ${proj.id === currentId ? "bg-stone-200" : "hover:bg-stone-100"}`,
-                                children: projectName.replace("flatland-project-", "")
-                            }, proj.title, false, {
+                                onClick: ()=>setSelectedProject(proj),
+                                className: `p-2 rounded cursor-pointer mb-1 flex justify-between ${selectedProject && proj.info.title === selectedProject.info.title ? "bg-stone-200" : "hover:bg-stone-100"}`,
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                        children: projectName.replace("flatland-project-", "")
+                                    }, void 0, false, {
+                                        fileName: "src/UI/browse/Browse.tsx",
+                                        lineNumber: 56,
+                                        columnNumber: 15
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                        children: new Date(proj.info.lastUpdated).toLocaleDateString("us-en")
+                                    }, void 0, false, {
+                                        fileName: "src/UI/browse/Browse.tsx",
+                                        lineNumber: 57,
+                                        columnNumber: 15
+                                    }, undefined)
+                                ]
+                            }, proj.title, true, {
                                 fileName: "src/UI/browse/Browse.tsx",
-                                lineNumber: 37,
+                                lineNumber: 49,
                                 columnNumber: 13
                             }, undefined);
                         })
                     }, void 0, false, {
                         fileName: "src/UI/browse/Browse.tsx",
-                        lineNumber: 33,
+                        lineNumber: 45,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/browse/Browse.tsx",
-                lineNumber: 31,
+                lineNumber: 43,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                className: "flex-1 p-4 overflow-auto",
+                className: "w-3/4 p-4 h-1/1",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
                         className: "text-lg font-semibold mb-4",
-                        children: "Pieces"
+                        children: "Details"
                     }, void 0, false, {
                         fileName: "src/UI/browse/Browse.tsx",
-                        lineNumber: 51,
+                        lineNumber: 64,
                         columnNumber: 9
                     }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieceLibrary.PieceLibrary), {}, void 0, false, {
+                    selectedProject && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _projectSummary.ProjectSummary), {
+                        proj: selectedProject
+                    }, void 0, false, {
                         fileName: "src/UI/browse/Browse.tsx",
-                        lineNumber: 52,
-                        columnNumber: 9
+                        lineNumber: 66,
+                        columnNumber: 11
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/browse/Browse.tsx",
-                lineNumber: 50,
+                lineNumber: 63,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/browse/Browse.tsx",
-        lineNumber: 29,
+        lineNumber: 42,
         columnNumber: 5
-    }, undefined);
+    }, undefined));
 };
-_s(Browser, "bl+ED4HC9CiyeBFlBBeZ2AlcwYE=", false, function() {
+_s(Browser, "8Zn7oGMu/KIi6V1G/sPh4jhfju4=", false, function() {
     return [
         (0, _store.useAppState),
         (0, _store.useAppState)
@@ -67685,222 +67761,125 @@ $RefreshReg$(_c, "Browser");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react/jsx-runtime":"6AEwr","../sections/PieceLibrary":"2JSEM","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6AEwr":[function(require,module,exports) {
-"use strict";
-module.exports = require("c4c10cbba9862d5f");
+},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react":"21dqq","./ProjectSummary":"ryfj4"}],"ryfj4":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$178d = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$178d.prelude(module);
 
-},{"c4c10cbba9862d5f":"kujY4"}],"kujY4":[function(require,module,exports) {
-/**
- * @license React
- * react-jsx-runtime.development.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ "use strict";
-(function() {
-    function getComponentNameFromType(type) {
-        if (null == type) return null;
-        if ("function" === typeof type) return type.$$typeof === REACT_CLIENT_REFERENCE ? null : type.displayName || type.name || null;
-        if ("string" === typeof type) return type;
-        switch(type){
-            case REACT_FRAGMENT_TYPE:
-                return "Fragment";
-            case REACT_PROFILER_TYPE:
-                return "Profiler";
-            case REACT_STRICT_MODE_TYPE:
-                return "StrictMode";
-            case REACT_SUSPENSE_TYPE:
-                return "Suspense";
-            case REACT_SUSPENSE_LIST_TYPE:
-                return "SuspenseList";
-            case REACT_ACTIVITY_TYPE:
-                return "Activity";
-        }
-        if ("object" === typeof type) switch("number" === typeof type.tag && console.error("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."), type.$$typeof){
-            case REACT_PORTAL_TYPE:
-                return "Portal";
-            case REACT_CONTEXT_TYPE:
-                return (type.displayName || "Context") + ".Provider";
-            case REACT_CONSUMER_TYPE:
-                return (type._context.displayName || "Context") + ".Consumer";
-            case REACT_FORWARD_REF_TYPE:
-                var innerType = type.render;
-                type = type.displayName;
-                type || (type = innerType.displayName || innerType.name || "", type = "" !== type ? "ForwardRef(" + type + ")" : "ForwardRef");
-                return type;
-            case REACT_MEMO_TYPE:
-                return innerType = type.displayName || null, null !== innerType ? innerType : getComponentNameFromType(type.type) || "Memo";
-            case REACT_LAZY_TYPE:
-                innerType = type._payload;
-                type = type._init;
-                try {
-                    return getComponentNameFromType(type(innerType));
-                } catch (x) {}
-        }
-        return null;
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ProjectSummary", ()=>ProjectSummary);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _command = require("../../Command");
+var _loadProjectCommand = require("../commands/LoadProjectCommand");
+var _viewState = require("../ViewState");
+const ProjectSummary = ({ proj })=>{
+    const browse = (0, _viewState.useViewState).getState().setView;
+    function openProject(projectTitle) {
+        (0, _command.pushCommand)(new (0, _loadProjectCommand.LoadProjectCommand)(projectTitle));
+        browse("app");
     }
-    function testStringCoercion(value) {
-        return "" + value;
-    }
-    function checkKeyStringCoercion(value) {
-        try {
-            testStringCoercion(value);
-            var JSCompiler_inline_result = !1;
-        } catch (e) {
-            JSCompiler_inline_result = !0;
-        }
-        if (JSCompiler_inline_result) {
-            JSCompiler_inline_result = console;
-            var JSCompiler_temp_const = JSCompiler_inline_result.error;
-            var JSCompiler_inline_result$jscomp$0 = "function" === typeof Symbol && Symbol.toStringTag && value[Symbol.toStringTag] || value.constructor.name || "Object";
-            JSCompiler_temp_const.call(JSCompiler_inline_result, "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.", JSCompiler_inline_result$jscomp$0);
-            return testStringCoercion(value);
-        }
-    }
-    function getTaskName(type) {
-        if (type === REACT_FRAGMENT_TYPE) return "<>";
-        if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE) return "<...>";
-        try {
-            var name = getComponentNameFromType(type);
-            return name ? "<" + name + ">" : "<...>";
-        } catch (x) {
-            return "<...>";
-        }
-    }
-    function getOwner() {
-        var dispatcher = ReactSharedInternals.A;
-        return null === dispatcher ? null : dispatcher.getOwner();
-    }
-    function UnknownOwner() {
-        return Error("react-stack-top-frame");
-    }
-    function hasValidKey(config) {
-        if (hasOwnProperty.call(config, "key")) {
-            var getter = Object.getOwnPropertyDescriptor(config, "key").get;
-            if (getter && getter.isReactWarning) return !1;
-        }
-        return void 0 !== config.key;
-    }
-    function defineKeyPropWarningGetter(props, displayName) {
-        function warnAboutAccessingKey() {
-            specialPropKeyWarningShown || (specialPropKeyWarningShown = !0, console.error("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)", displayName));
-        }
-        warnAboutAccessingKey.isReactWarning = !0;
-        Object.defineProperty(props, "key", {
-            get: warnAboutAccessingKey,
-            configurable: !0
-        });
-    }
-    function elementRefGetterWithDeprecationWarning() {
-        var componentName = getComponentNameFromType(this.type);
-        didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = !0, console.error("Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."));
-        componentName = this.props.ref;
-        return void 0 !== componentName ? componentName : null;
-    }
-    function ReactElement(type, key, self, source, owner, props, debugStack, debugTask) {
-        self = props.ref;
-        type = {
-            $$typeof: REACT_ELEMENT_TYPE,
-            type: type,
-            key: key,
-            props: props,
-            _owner: owner
-        };
-        null !== (void 0 !== self ? self : null) ? Object.defineProperty(type, "ref", {
-            enumerable: !1,
-            get: elementRefGetterWithDeprecationWarning
-        }) : Object.defineProperty(type, "ref", {
-            enumerable: !1,
-            value: null
-        });
-        type._store = {};
-        Object.defineProperty(type._store, "validated", {
-            configurable: !1,
-            enumerable: !1,
-            writable: !0,
-            value: 0
-        });
-        Object.defineProperty(type, "_debugInfo", {
-            configurable: !1,
-            enumerable: !1,
-            writable: !0,
-            value: null
-        });
-        Object.defineProperty(type, "_debugStack", {
-            configurable: !1,
-            enumerable: !1,
-            writable: !0,
-            value: debugStack
-        });
-        Object.defineProperty(type, "_debugTask", {
-            configurable: !1,
-            enumerable: !1,
-            writable: !0,
-            value: debugTask
-        });
-        Object.freeze && (Object.freeze(type.props), Object.freeze(type));
-        return type;
-    }
-    function jsxDEVImpl(type, config, maybeKey, isStaticChildren, source, self, debugStack, debugTask) {
-        var children = config.children;
-        if (void 0 !== children) {
-            if (isStaticChildren) {
-                if (isArrayImpl(children)) {
-                    for(isStaticChildren = 0; isStaticChildren < children.length; isStaticChildren++)validateChildKeys(children[isStaticChildren]);
-                    Object.freeze && Object.freeze(children);
-                } else console.error("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");
-            } else validateChildKeys(children);
-        }
-        if (hasOwnProperty.call(config, "key")) {
-            children = getComponentNameFromType(type);
-            var keys = Object.keys(config).filter(function(k) {
-                return "key" !== k;
-            });
-            isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
-            didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error('A props object containing a "key" prop is being spread into JSX:\n  let props = %s;\n  <%s {...props} />\nReact keys must be passed directly to JSX without using spread:\n  let props = %s;\n  <%s key={someKey} {...props} />', isStaticChildren, children, keys, children), didWarnAboutKeySpread[children + isStaticChildren] = !0);
-        }
-        children = null;
-        void 0 !== maybeKey && (checkKeyStringCoercion(maybeKey), children = "" + maybeKey);
-        hasValidKey(config) && (checkKeyStringCoercion(config.key), children = "" + config.key);
-        if ("key" in config) {
-            maybeKey = {};
-            for(var propName in config)"key" !== propName && (maybeKey[propName] = config[propName]);
-        } else maybeKey = config;
-        children && defineKeyPropWarningGetter(maybeKey, "function" === typeof type ? type.displayName || type.name || "Unknown" : type);
-        return ReactElement(type, children, self, source, getOwner(), maybeKey, debugStack, debugTask);
-    }
-    function validateChildKeys(node) {
-        "object" === typeof node && null !== node && node.$$typeof === REACT_ELEMENT_TYPE && node._store && (node._store.validated = 1);
-    }
-    var React = require("593632ccebda0d3a"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler");
-    Symbol.for("react.provider");
-    var REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), ReactSharedInternals = React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
-        return null;
-    };
-    React = {
-        "react-stack-bottom-frame": function(callStackForError) {
-            return callStackForError();
-        }
-    };
-    var specialPropKeyWarningShown;
-    var didWarnAboutElementRef = {};
-    var unknownOwnerDebugStack = React["react-stack-bottom-frame"].bind(React, UnknownOwner)();
-    var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
-    var didWarnAboutKeySpread = {};
-    exports.Fragment = REACT_FRAGMENT_TYPE;
-    exports.jsx = function(type, config, maybeKey, source, self) {
-        var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
-        return jsxDEVImpl(type, config, maybeKey, !1, source, self, trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack, trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask);
-    };
-    exports.jsxs = function(type, config, maybeKey, source, self) {
-        var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
-        return jsxDEVImpl(type, config, maybeKey, !0, source, self, trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack, trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask);
-    };
-})();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "flex flex-col",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                htmlFor: "",
+                children: "Title"
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 16,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: proj.info.title
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 17,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                htmlFor: "",
+                children: "Version"
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 18,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: proj.version
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 19,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                htmlFor: "",
+                children: "Last Updated"
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 20,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: proj.info.lastUpdated
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 21,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                htmlFor: "",
+                children: "Author"
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 22,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: proj.info.author
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 23,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                onClick: ()=>openProject(proj.info.title),
+                children: "Open Project"
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 24,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {}, void 0, false, {
+                    fileName: "src/UI/browse/ProjectSummary.tsx",
+                    lineNumber: 26,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "src/UI/browse/ProjectSummary.tsx",
+                lineNumber: 25,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/browse/ProjectSummary.tsx",
+        lineNumber: 15,
+        columnNumber: 5
+    }, undefined);
+};
+_c = ProjectSummary;
+var _c;
+$RefreshReg$(_c, "ProjectSummary");
 
-},{"593632ccebda0d3a":"21dqq"}],"7H0HC":[function(require,module,exports) {
+  $parcel$ReactRefreshHelpers$178d.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../Command":"efiIE","../commands/LoadProjectCommand":"53Ggr","../ViewState":"kfxN8"}],"7H0HC":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$b6a0 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;

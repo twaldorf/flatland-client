@@ -13,7 +13,7 @@ import { Tabs } from "./Workspace/Tabs";
 
 export const Editor = ({ canvasRef, threeRef }) => {
   return (
-      <div className="grid grid-cols-4 flex-1 overflow-hidden">
+      <div className="grid grid-cols-4 flex-1 overflow-hidden h-[88vh]">
         {/* Left column */}
         <section className="wrelative flex flex-col bg-white p-3 overflow-hidden col-span-3">
           <Toolbar />

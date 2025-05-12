@@ -41,14 +41,15 @@ const App: React.FC = () => {
   }, []);
 
   const ViewComponentMap: Record<ViewName, React.ReactNode> = {
+    "app": <Editor canvasRef={canvasRef} threeRef={threeRef} />,
     "piece library": <PieceLibrary />,
     "mark": <Mark />,
     "browser": <Browser />,
   };
 
   return (
-    <main className="app-container font-mono w-full h-screen overflow-hidden flex flex-col bg-stone-100 pb-2">
-      <div>
+    <main className="app-container font-mono w-full h-screen overflow-hidden bg-stone-100 pb-2">
+      <div className="flex flex-col h-12vh">
         <OpenProjectOverlay />
         <NewProjectModal />
         <EditProjectModal />

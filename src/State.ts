@@ -3,6 +3,7 @@ import { BezierPoint, BufferBundle, BufferType, State } from "./types";
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
 import { generateUUID } from "three/src/math/MathUtils";
+import { flattenGeometryMap, flattenPointsMap, restoreGeometryMap, restorePointsMap } from "./utils/saveutils";
 
 export function genPointId() {
   return generateUUID();
@@ -12,7 +13,7 @@ export function genGeoId() {
 }
 
 export const state:State = {
-  version: '0.1',
+  version: '0.11',
   pointer: new Vector2,
   shiftDown: false,
   altDown: false,
@@ -100,22 +101,17 @@ export const state:State = {
   serialize():string {
     const {
       version,
-      c_pointmap,
-      c_points,
-      c_paths,
-      c_measure_paths,
-      c_measure_points,
-      c_shapes
+      c_pointsMap,
+      c_geometryMap,
+      projectInfo
     } = this;
 
+    // flattened version of geometries, pieces, etc
     const coreInfo = {
       version,
-      c_pointmap: Array.from(this.c_pointmap.entries()).map(([k, v]) => [k, [v.x, v.y]]),
-      c_points: this.c_points.map(p => [p.x, p.y]),
-      c_paths,
-      c_measure_paths,
-      c_measure_points: Array.from(this.c_measure_points.entries()).map(([k, v]) => [k, [v.x, v.y]]),
-      c_shapes
+      c_pointsMap: flattenPointsMap(c_pointsMap),
+      c_geometryMap: flattenGeometryMap(c_geometryMap),
+      projectInfo
     }
 
     const serializedObj = JSON.stringify(coreInfo);
@@ -126,22 +122,14 @@ export const state:State = {
   deserialize(stringObj:string):void {
     const serializedObj = JSON.parse(stringObj);
     if (serializedObj.version == this.version) {
-      this.c_pointmap = new Map(serializedObj.c_pointmap.map(([k, [x, y]]) => [k, new Vector2(x, y)]));
-      this.c_points = serializedObj.c_points.map(([x, y]) => new Vector2(x, y));
-      this.c_paths = serializedObj.c_paths;
-      this.c_measure_paths = serializedObj.c_measure_paths;
-      this.c_measure_points = new Map(serializedObj.c_measure_points.map(([k, [x, y]]) => [k, new Vector2(x, y)]));
-      this.c_shapes = serializedObj.c_shapes;
+      this.c_pointsMap = restorePointsMap(serializedObj.c_pointsMap);
+      this.c_geometryMap = restoreGeometryMap(serializedObj.c_geometryMap);
+      this.projectInfo = serializedObj.projectInfo;
     }
   },
 
   clear():void {
-    this.c_pointmap = new Map();
-    this.c_points = [];
-    this.c_paths = [];
-    this.c_measure_paths = [];
-    this.c_measure_points = new Map();
-    this.c_shapes = [];
+    // not implemented
   }
 
 };

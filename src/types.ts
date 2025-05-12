@@ -175,6 +175,12 @@ export interface ProjectInfo {
   lastUpdated: Date;
 }
 
+export interface ProjectSummary {
+  info: ProjectInfo;
+  pieces: Piece[];
+  thumbnail: HTMLCanvasElement;
+}
+
 export type Tool = PathTool | SelectTool | MeasureTool | GrainlineTool | BezierPointEditorTool;
 export type ToolName = "path" | "select" | "measure" | "grainline" | "bezier point editor";
 
@@ -192,8 +198,8 @@ export interface Piece {
   id: string; // Hidden
   geometryId: string; // Hidden
   name: string; // Shown
-  thumb: HTMLCanvasElement; // Shown
-  canvas: OffscreenCanvas; // Hidden
+  thumb?: HTMLCanvasElement; // Shown
+  canvas?: OffscreenCanvas; // Hidden
   angle?: number; // Shown as Set or Unset, not the number
   description?: string; // Shown as a preview
   quantity?:number; // Shown

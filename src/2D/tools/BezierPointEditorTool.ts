@@ -1,30 +1,6 @@
-import { Vector, Vector2 } from "three";
-import { pushCommand } from "../../Command";
 import { state } from "../../State";
-import { BezierPoint, Geometry2D, Piece, ToolBase, ToolName } from "../../types";
-import { cLocalizePoint } from "../pointer/cLocalizePoint";
-import { SelectToolShapeCommand } from "../commands/SelectToolShapeCommand";
-import { isPointInPolygon } from "../geometry/isPointInPolygon";
-import { SelectToolMoveShapeCommand } from "../commands/SelectToolMoveShapeCommand"
-import { checkPointOverlap } from "./common";
-import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
-import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
+import { ToolBase, ToolName } from "../../types";
 import { drawCanvasFromState, point, redrawCanvas } from "../rendering/canvas";
-import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
-
-import { KeyboardEvent } from "react";
-import { DeleteShapeCommand } from "../commands/DeleteShapeCommand";
-import { checkLineIntersection, LineHit } from "../geometry/lineIntersection";
-import { SelectToolSelectLineCommand } from "../commands/SelectToolSelectLineCommand";
-import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand";
-import { SelectToolDeselectLinesCommand } from "../commands/SelectToolDeselectLinesCommand";
-import { DrawPreviewsCommand } from "../commands/Rendering/DrawPreviewsCommand";
-import { findNearestAnyPoint, findNearestGeometryPoint } from "../geometry/findNearestPoint";
-import { isPointNearBezierGeometry } from "../geometry/bezierIntersection";
-import { rad } from "../settings/interface";
-import { SelectToolDeselectPointCommand } from "../commands/SelectToolDeselectPointCommand";
-import { SelectToolMovePointsCommand } from "../commands/SelectToolMovePointsCommand";
-import { ChangeToolCommand } from "../commands/ChangeToolCommand";
 
 export type BezierPointEditorToolState = 
   | { type: "idle", pointId: string }
