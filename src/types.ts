@@ -189,14 +189,18 @@ export interface Grainline {
 }
 
 export interface Piece {
-  id: string;
-  geometryId: string;
-  name: string;
-  thumb: HTMLCanvasElement;
-  canvas: OffscreenCanvas;
-  angle: number;
-  // name is also the key to thhe thumbnail map
-  // area: number;
+  id: string; // Hidden
+  geometryId: string; // Hidden
+  name: string; // Shown
+  thumb: HTMLCanvasElement; // Shown
+  canvas: OffscreenCanvas; // Hidden
+  angle?: number; // Shown as Set or Unset, not the number
+  description?: string; // Shown as a preview
+  quantity?:number; // Shown
+  seamAllowanceGeometryId?: string; // Hidden
+  uiColor: "#134ecc"; // hidden
+  interfaced: 0; // hidden
+  area?: number; // Shown only if present
 }
 
 interface RawPointer {

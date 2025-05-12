@@ -3,13 +3,13 @@ import { state } from "../../State";
 import { drawCanvasFromState, redrawCanvas } from "../rendering/canvas";
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { findNearestPoint } from "../geometry/findNearestPoint";
-import { useAppState } from "../../UI/store";
 import { Vector, Vector2 } from "three";
 import { drawDrawPreview } from "../rendering/drawDrawPreview";
 import { pushCommand } from "../../Command";
 import { GrainlineToolCreateGrainlineCommand } from "../commands/GrainlineToolCreateGrainlineCommand";
 import { isPointInPolygon } from "../geometry/isPointInPolygon";
 import { ChangeToolCommand } from "../commands/ChangeToolCommand";
+import { useAppState } from "../../UI/store";
 
 export type GrainlineToolState = 
   | { type: "idle" }

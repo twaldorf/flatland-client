@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { AnchorHTMLAttributes, MouseEventHandler, useRef } from "react";
 import { drawPieceThumbnail } from "../../2D/rendering/drawPieceThumbnail";
-import { useAppState } from "../store";
 import { Piece } from "../../types";
 import { PieceComponent } from "./Piece";
+import { useAppState } from "../store";
+import { useViewState } from "../ViewState";
 
 interface PiecesProps {
 
@@ -10,10 +11,16 @@ interface PiecesProps {
 
 export const Pieces = () => {
   const pieces = useAppState((state) => state.pieces);
+  const setView = useViewState((state) => state.setView);
+  function handleNav(e:unknown): void {
+    e.preventDefault();
+    setView('piece library');
+  }
 
   return (
     <div className="rounded-lg bg-stone-200 min-h-24 bg-white p-2">
       <h4>Pieces ({pieces.length})</h4>
+      <h4><a href="/piecelibrary" onClick={handleNav}>Piece Library</a></h4>
       <ul className="flex flex-row text-xs relative gap-2 overflow-auto">
         {pieces.map((piece) => (
           <PieceComponent key={piece.id} piece={piece} />

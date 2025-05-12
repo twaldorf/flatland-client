@@ -24,6 +24,6 @@ export class SaveProjectCommand implements Command {
   }
 
   undo() {
-    // no undo for save
+    // No undo for save, baby
   }
 }

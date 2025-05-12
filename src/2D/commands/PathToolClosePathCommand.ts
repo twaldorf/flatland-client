@@ -3,9 +3,9 @@ import { createPolygonPlane } from "../../3D/geometry/polygon";
 import { Command } from "../../Command";
 import { state } from "../../State";
 import { Geometry2D, Piece } from "../../types";
-import { useAppState } from "../../UI/store";
 import { drawCanvasFromState } from "../rendering/canvas";
 import { generatePieceThumbnail } from "../rendering/drawPieceThumbnail";
+import { useAppState } from "../../UI/store";
 
 
 export class PathToolClosePathCommand implements Command {

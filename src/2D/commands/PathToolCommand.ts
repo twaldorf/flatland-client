@@ -4,7 +4,7 @@ import { state } from '../../State';
 import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { PathTool } from "../tools/PathTool";
 import { rad } from "../settings/interface";
-import { useAppState } from "../../UI/store";
+import { useAppState } from "../../UI/ViewState";
 
 export class PathToolCommand implements Command {
   __point:Vector2;

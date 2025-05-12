@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { useAppState } from "../../store"
 import { pushCommand } from "../../../Command"
 import { NewProjectCommand } from "../../commands/NewProjectCommand"
+import { useAppState } from "../../store"
 
 export const NewProjectModal = () => {
   const modal = useAppState((s) => s.modal)

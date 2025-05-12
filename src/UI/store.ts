@@ -64,7 +64,6 @@ interface AppState {
   updatePoint: (index: number, point: Vector2) => void;
   deletePoint: (index: number) => void;
   insertPoint: (index: number, point: Vector2) => void;
-
 }
 
 export const useAppState = create<AppState>((set, get) => ({

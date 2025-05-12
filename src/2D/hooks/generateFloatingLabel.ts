@@ -2,9 +2,9 @@ import { Vector2 } from "three";
 import { generateUUID } from "three/src/math/MathUtils";
 import { state } from "../../State";
 import { Piece } from "../../types";
-import { useAppState } from "../../UI/store";
 import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBox";
 import { getPointArray } from "../geometry/getPointArrayFromGeometry2D";
+import { useAppState } from "../../UI/store";
 
 export const generateFloatingLabel = (geomId:string):void => {
   const pointList = getPointArray(geomId) as Vector2[];

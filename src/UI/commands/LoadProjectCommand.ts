@@ -1,7 +1,6 @@
 import { drawCanvasFromState } from "../../2D/rendering/canvas";
 import { Command } from "../../Command";
 import { state } from "../../State";
-import { useAppState } from "../store";
 
 export class LoadProjectCommand implements Command {
 

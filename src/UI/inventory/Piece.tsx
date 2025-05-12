@@ -4,6 +4,7 @@ import { Piece } from "../../types";
 import { CiEdit } from "react-icons/ci";
 import { useAppState } from "../store";
 
+
 export const PieceComponent = ({ piece }: { piece: Piece }) => {
   const thumbnailRef = useRef<HTMLCanvasElement>(null);
   const [ editing, setEditing ] = useState(false);

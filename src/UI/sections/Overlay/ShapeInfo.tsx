@@ -1,5 +1,5 @@
 import { Vector2 } from "three";
-import { useAppState } from "../../store"
+import { useAppState } from "../../store";
 
 export const ShapeInfo = () => {
   const points = useAppState((state) => state.shapePoints);

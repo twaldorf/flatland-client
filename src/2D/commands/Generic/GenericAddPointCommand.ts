@@ -1,8 +1,8 @@
 import { Path, Vector2 } from "three";
 import { Command } from "../../../Command";
-import { useAppState } from "../../../UI/store";
 import { PathTool } from "../../tools/PathTool";
 import { state } from "../../../State";
+import { useAppState } from "../../../UI/store";
 
 export class GenericAddPointCommand implements Command {
   __point:Vector2;

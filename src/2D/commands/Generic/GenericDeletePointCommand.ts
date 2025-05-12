@@ -1,6 +1,6 @@
 import { Path, Vector2 } from "three";
 import { Command } from "../../../Command";
-import { useAppState } from "../../../UI/store";
+import { useAppState } from "../../../UI/ViewState";
 import { PathTool } from "../../tools/PathTool";
 import { state } from "../../../State";
 

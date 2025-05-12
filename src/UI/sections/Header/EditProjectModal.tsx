@@ -1,8 +1,8 @@
 import { useState } from "react"
-import { useAppState } from "../../store"
 import { pushCommand } from "../../../Command"
 import { NewProjectCommand } from "../../commands/NewProjectCommand"
 import { state } from "../../../State"
+import { useAppState } from "../../store"
 
 export const EditProjectModal = () => {
   const modal = useAppState((s) => s.modal)

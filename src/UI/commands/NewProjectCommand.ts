@@ -14,7 +14,7 @@ export class NewProjectCommand implements Command {
   }
 
   do() {
-    state.clear() // define this on your state singleton
+    state.clear() 
     useAppState.getState().setActiveProjectTitle(this.projectInfo.title);
     state.projectInfo = this.projectInfo;
     drawCanvasFromState(state);

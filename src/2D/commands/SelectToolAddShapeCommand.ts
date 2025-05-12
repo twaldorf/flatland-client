@@ -1,7 +1,7 @@
 import { Vector2 } from "three";
 import { Command } from "../../Command";
 import { state } from "../../State";
-import { useAppState } from "../../UI/store";
+import { useAppState } from "../../UI/ViewState";
 import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBox";
 import { generateUUID } from "three/src/math/MathUtils";
 import { Piece } from "../../types";

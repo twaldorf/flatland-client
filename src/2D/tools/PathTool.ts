@@ -14,10 +14,10 @@ import { PathToolSelectCommand } from "../commands/PathToolSelectCommand";
 import { PathToolDeselectCommand } from "../commands/PathToolDeselectCommand";
 import { PathToolClosePathCommand } from "../commands/PathToolClosePathCommand";
 import { PathToolRemovePointCommand } from "../commands/PathToolRemovePointCommand";
-import { useAppState } from "../../UI/store";
 import { PathToolAddBezierCommand } from "../commands/PathToolAddBezierCommand";
 import { drawNewPointPreview } from "../rendering/drawNewPointPreview";
 import { drawBezierHandlePreview } from "../rendering/drawBezierHandlePreview";
+import { useAppState } from "../../UI/store";
 
 export type PathToolState = 
   | { type: "idle" }

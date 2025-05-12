@@ -7,11 +7,14 @@
     "build": "parcel build"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "4.1.0",
+    "autoprefixer": "^10.4.21",
     "parcel": "latest",
-    "process": "^0.11.10"
+    "postcss": "^8.5.3",
+    "process": "^0.11.10",
+    "tailwindcss": "^4.1.6"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.0.3",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@types/three": "^0.155.0",
@@ -19,7 +22,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
-    "tailwindcss": "^4.0.3",
     "three": "^0.155.0",
     "three-subdivide": "^1.1.5",
     "zustand": "^5.0.3"
