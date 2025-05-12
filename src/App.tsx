@@ -28,18 +28,6 @@ const App: React.FC = () => {
 
   useViewRouting();
 
-  // Set up canvas refs and create new project
-  useEffect(() => {
-    if (canvasRef.current) {
-      initCanvas(canvasRef.current);
-    }
-    if (threeRef.current) {
-      initScene(threeRef.current);
-    }
-    pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
-    initUpdate();
-  }, []);
-
   const ViewComponentMap: Record<ViewName, React.ReactNode> = {
     "app": <Editor canvasRef={canvasRef} threeRef={threeRef} />,
     "piece library": <PieceLibrary />,

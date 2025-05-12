@@ -18391,14 +18391,10 @@ parcelHelpers.defineInteropFlag(exports);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
-// import "./styles.css";
-var _main = require("./main");
 var _header = require("./UI/sections/Header");
 var _tabs = require("./UI/sections/Workspace/Tabs");
 var _openOverlay = require("./UI/sections/Header/OpenOverlay");
 var _newProjectModal = require("./UI/sections/Header/NewProjectModal");
-var _command = require("./Command");
-var _newProjectCommand = require("./UI/commands/NewProjectCommand");
 var _editProjectModal = require("./UI/sections/Header/EditProjectModal");
 var _saveAsProjectModal = require("./UI/sections/Header/SaveAsProjectModal");
 var _viewState = require("./UI/ViewState");
@@ -18416,38 +18412,28 @@ const App = ()=>{
     const threeRef = (0, _react.useRef)(null);
     const view = (0, _viewState.useViewState)((vs)=>vs.view);
     (0, _routes.useViewRouting)();
-    // Set up canvas refs and create new project
-    (0, _react.useEffect)(()=>{
-        if (canvasRef.current) (0, _main.initCanvas)(canvasRef.current);
-        if (threeRef.current) (0, _main.initScene)(threeRef.current);
-        (0, _command.pushCommand)(new (0, _newProjectCommand.NewProjectCommand)({
-            title: "untitled",
-            author: "unknown"
-        }));
-        (0, _main.initUpdate)();
-    }, []);
     const ViewComponentMap = {
         "app": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editor.Editor), {
             canvasRef: canvasRef,
             threeRef: threeRef
         }, void 0, false, {
             fileName: "src/App.tsx",
-            lineNumber: 44,
+            lineNumber: 32,
             columnNumber: 12
         }, undefined),
         "piece library": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieceLibrary.PieceLibrary), {}, void 0, false, {
             fileName: "src/App.tsx",
-            lineNumber: 45,
+            lineNumber: 33,
             columnNumber: 22
         }, undefined),
         "mark": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _markDefault.default), {}, void 0, false, {
             fileName: "src/App.tsx",
-            lineNumber: 46,
+            lineNumber: 34,
             columnNumber: 13
         }, undefined),
         "browser": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _browseDefault.default), {}, void 0, false, {
             fileName: "src/App.tsx",
-            lineNumber: 47,
+            lineNumber: 35,
             columnNumber: 16
         }, undefined)
     };
@@ -18459,38 +18445,38 @@ const App = ()=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _openOverlay.OpenProjectOverlay), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 53,
+                        lineNumber: 41,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _newProjectModal.NewProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 54,
+                        lineNumber: 42,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editProjectModal.EditProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 55,
+                        lineNumber: 43,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _saveAsProjectModal.SaveAsProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 56,
+                        lineNumber: 44,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 57,
+                        lineNumber: 45,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 58,
+                        lineNumber: 46,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 52,
+                lineNumber: 40,
                 columnNumber: 7
             }, undefined),
             ViewComponentMap[view] ?? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editor.Editor), {
@@ -18498,17 +18484,17 @@ const App = ()=>{
                 threeRef: threeRef
             }, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 61,
+                lineNumber: 49,
                 columnNumber: 9
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 51,
+        lineNumber: 39,
         columnNumber: 5
     }, undefined);
 };
-_s(App, "kbx5Y2PyDIe74ZL54A2AD3D8Md0=", false, function() {
+_s(App, "924XMLeGMfoPcrnzdoTiPWIfsws=", false, function() {
     return [
         (0, _viewState.useViewState),
         (0, _routes.useViewRouting)
@@ -18524,149 +18510,381 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./main":"jeorp","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./Command":"efiIE","./UI/commands/NewProjectCommand":"eoWAT","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Header/SaveAsProjectModal":"lPxKp","./UI/ViewState":"kfxN8","./routes":"cAFqI","./UI/sections/Editor":"enAMq","./UI/sections/PieceLibrary":"2JSEM","./UI/browse/Browse":"clocv","./UI/mark/Mark":"7H0HC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"jeorp":[function(require,module,exports) {
-// Controller module
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Header/SaveAsProjectModal":"lPxKp","./UI/ViewState":"kfxN8","./routes":"cAFqI","./UI/sections/Editor":"enAMq","./UI/sections/PieceLibrary":"2JSEM","./UI/browse/Browse":"clocv","./UI/mark/Mark":"7H0HC","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6ni0Q":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$d584 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$d584.prelude(module);
+
+try {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-// Initialize renderloop
-parcelHelpers.export(exports, "initUpdate", ()=>initUpdate);
-// 2D initialization
-parcelHelpers.export(exports, "initCanvas", ()=>initCanvas);
-// 3D initialization
-parcelHelpers.export(exports, "initScene", ()=>initScene);
-var _three = require("three");
-var _util = require("./util");
-var _orbitControlsJs = require("three/examples/jsm/controls/OrbitControls.js");
-var _state = require("./State");
-var _command = require("./Command");
-var _pointer = require("./3D/events/pointer");
-var _hotkeys = require("./2D/hotkeys/hotkeys");
-var _pointerEvents = require("./2D/pointer/pointerEvents");
-var _canvas = require("./2D/rendering/canvas");
-var _protoXPBD = require("./3D/simulation/protoXPBD");
-var _factors = require("./2D/settings/factors");
-// This file initializes 2D and 3D canvases and runs the global update loop (which processes all Commands for the canvases)
-const renderFlags = {
-    renderer3dAlive: false,
-    renderer2dAlive: false,
-    commandsUp: true
+parcelHelpers.export(exports, "Header", ()=>Header);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _command = require("../../Command");
+var _saveProjectCommand = require("../commands/SaveProjectCommand");
+var _menuItem = require("./Header/MenuItem");
+var _menuItemDefault = parcelHelpers.interopDefault(_menuItem);
+var _userIcon = require("./Header/UserIcon");
+var _store = require("../store");
+var _s = $RefreshSig$();
+const Header = ()=>{
+    _s();
+    const showModal = (0, _store.useAppState)((s)=>s.showModal);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("header", {
+        className: "p-3 flex flex-row items-center justify-between",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                className: "items-center flex-row flex ",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
+                        className: "text-2xl bg-stone-900 text-white inline-block px-2",
+                        children: "Flatland Studio"
+                    }, void 0, false, {
+                        fileName: "src/UI/sections/Header.tsx",
+                        lineNumber: 16,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _menuItemDefault.default), {
+                        label: "File",
+                        options: [
+                            {
+                                name: "Recent >",
+                                action: ()=>console.log("Zoom In")
+                            },
+                            {
+                                name: "New",
+                                action: ()=>showModal("New Project")
+                            },
+                            {
+                                name: "Open",
+                                action: ()=>showModal("Open Project")
+                            },
+                            {
+                                name: "Save",
+                                action: ()=>{
+                                    const activeTitle = (0, _store.useAppState).getState().activeProjectTitle;
+                                    // If the project has no title, prompt Save As modal
+                                    if (!activeTitle || activeTitle == "untitled") (0, _store.useAppState).getState().showModal("Save As Project");
+                                    else (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)());
+                                }
+                            }
+                        ]
+                    }, void 0, false, {
+                        fileName: "src/UI/sections/Header.tsx",
+                        lineNumber: 17,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/sections/Header.tsx",
+                lineNumber: 15,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _userIcon.UserIcon), {
+                    user: null,
+                    onLogin: function() {
+                        throw new Error("Function not implemented.");
+                    },
+                    onLogout: function() {
+                        throw new Error("Function not implemented.");
+                    }
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Header.tsx",
+                    lineNumber: 39,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "src/UI/sections/Header.tsx",
+                lineNumber: 38,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/sections/Header.tsx",
+        lineNumber: 14,
+        columnNumber: 5
+    }, undefined);
 };
-function initUpdate() {
-    // Explore feature flags
-    update();
+_s(Header, "W6iXQHZojcEiDzgJ0VwaHXtI5aI=", false, function() {
+    return [
+        (0, _store.useAppState)
+    ];
+});
+_c = Header;
+var _c;
+$RefreshReg$(_c, "Header");
+
+  $parcel$ReactRefreshHelpers$d584.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
 }
-function initCanvas(ref) {
-    // Get a reference to the canvas element and its rendering context
-    const canvas = ref;
-    (0, _state.state).canvas = canvas;
-    console.log("canvas init");
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("No such 2D context when initializing page elements");
-    (0, _state.state).context = context;
-    context?.clearRect(0, 0, canvas.width, canvas.height);
-    (0, _hotkeys.initializeHotkeys)();
-    (0, _state.state).tool.initializeEvents();
-    (0, _pointerEvents.initializeCanvasEvents)(canvas);
-    if (context) {
-        const devicePixelRatio = window.devicePixelRatio || 1;
-        canvas.width = canvas.clientWidth * devicePixelRatio;
-        canvas.height = canvas.clientHeight * devicePixelRatio;
-        // scaling removed, may need to add if this becomes a problem?
-        (0, _canvas.drawCanvasSetup)();
-        renderFlags.renderer2dAlive = true;
-    }
-    return {
-        canvasRef: (0, _state.state).canvas
-    };
-}
-function initScene(canvas) {
-    // Bail if no canvas has been passed
-    if (!canvas) {
-        console.log("no canvas");
-        return false;
-    }
-    (0, _state.state).renderer = new _three.WebGLRenderer({
-        canvas
-    });
-    const renderer = (0, _state.state).renderer;
-    renderer.setSize(window.innerWidth / 2, window.innerWidth / 2);
-    const scene = new _three.Scene();
-    (0, _state.state).scene = scene;
-    const camera_group = new _three.Group();
-    const frustumSize = 25;
-    const aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight;
-    const camera = new _three.OrthographicCamera(frustumSize * aspect / -2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / -2, 0.1, 1000);
-    (0, _state.state).camera = camera;
-    camera_group.add(camera);
-    const controls = new (0, _orbitControlsJs.OrbitControls)(camera, renderer.domElement);
-    controls.autoRotate = true;
-    controls.rotateSpeed = .1;
-    (0, _state.state).camera_controls = controls;
-    camera.position.set(0, 50, 100);
-    camera.lookAt(0, 0, 0);
-    scene.background = new _three.Color(0xF5CF36);
-    const gridHelper = new _three.GridHelper(500, 40, new _three.Color(1, 1, 1), new _three.Color(0.8, 0.4, .3));
-    scene.add(gridHelper);
-    const raycaster = new _three.Raycaster();
-    const pointer = new _three.Vector2();
-    (0, _state.state).raycaster = raycaster;
-    (0, _state.state).pointer = pointer;
-    // register event listeners
-    renderer.domElement.addEventListener("pointermove", (0, _pointer.onPointerMove));
-    renderer.domElement.addEventListener("pointerdown", (0, _pointer.onPointerDown));
-    renderer.domElement.addEventListener("pointerup", (0, _pointer.onPointerUp));
-    renderer.domElement.addEventListener("dblclick", (0, _pointer.onDoubleClick));
-    (0, _state.state).pointerDown = false;
-    // kick off update
-    renderFlags.renderer3dAlive = true;
-    renderer.render((0, _state.state).scene, (0, _state.state).camera);
-    return {
-        threeRef: parent
-    };
-}
-// Local deltatime, not tracked as state
-let dt = 0.0;
-const interval = 1 / 30;
-// Render and global command processing loop
-function update() {
-    if (renderFlags.commandsUp) (0, _command.executeCommands)();
-    const { pointer, camera, scene, renderer, raycaster } = (0, _state.state);
-    requestAnimationFrame(update);
-    dt += (0, _state.state).clock.getDelta();
-    if (renderFlags.renderer3dAlive) // Physics loop
-    {
-        if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval && (0, _state.state).c_shapes.length > 0) {
-            (0, _protoXPBD.updateXPBD)(dt * (0, _factors.SPEED));
-            dt = 0;
-            // update the picking ray with the camera and pointer position 
-            camera.updateMatrixWorld();
-            raycaster.setFromCamera(pointer, camera);
-            const intersects = raycaster.intersectObjects((0, _state.state).objects);
-            (0, _state.state).intersects = intersects;
-            if (intersects.length > 0) {
-                const intersect = intersects[0];
-            // This is a good example of attribute management but is no longer used
-            // TODO move this or file it away in documentation
-            // const face = intersect.face;
-            // const linePosition = line.geometry.attributes.position;
-            // const meshPosition = mesh.geometry.attributes.position;
-            // linePosition.copyAt( 0, meshPosition, face.a );
-            // linePosition.copyAt( 1, meshPosition, face.b );
-            // linePosition.copyAt( 2, meshPosition, face.c );
-            // linePosition.copyAt( 3, meshPosition, face.a );
-            // mesh.updateMatrix(); 
-            // line.geometry.applyMatrix4( mesh.matrix );
-            // line.visible = true;
-            }
+},{"react/jsx-dev-runtime":"iTorj","../../Command":"efiIE","../commands/SaveProjectCommand":"8Akqt","./Header/MenuItem":"6dTG8","./Header/UserIcon":"5JxDc","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"efiIE":[function(require,module,exports) {
+// The Command interface and class is responsible for managing incoming user commands that affect state, with some exception (camera position)
+// The Command Queue is a list of all incoming commands yet to be executed
+// The command History is a list of all previously executed commands
+// the command Future is a list of all commands that have been Undone, i.e., taken from History. Future is not yet implemented
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "pushCommand", ()=>pushCommand);
+parcelHelpers.export(exports, "executeCommands", ()=>executeCommands);
+parcelHelpers.export(exports, "undoCommands", ()=>undoCommands);
+const pushCommand = (command)=>{
+    queue.add(command);
+};
+function executeCommands() {
+    while(queue.__size > 0){
+        const cmd = queue.pop();
+        if (cmd) {
+            cmd.do();
+            queue.addHistory(cmd);
         }
     }
-    if (renderFlags.renderer3dAlive) {
-        (0, _state.state).camera_controls.update();
-        renderer.render(scene, camera);
+}
+function undoCommands() {
+    const cmd = queue.popHistory();
+    if (cmd) {
+        console.log(cmd);
+        cmd.undo();
+    }
+}
+// Invoker function for storing and invoking commands
+// Not used, and not really needed, a bit too elaborate
+// export const Invoker = () => {
+//   const __queue = new CQueue();
+//   const __list:Command[] = [];
+//   var __index:number = 0;
+//   return {
+//     addCommandToQueue: __queue.add,
+//     invokeNextCommand: function ()  {
+//       const cmd = __queue.pop();
+//       if (cmd) {
+//         cmd.do();
+//         __list.push(cmd);
+//         __index++;
+//       }
+//     }
+//   }
+// }
+// Queue structure for holding Commands
+class CQueue {
+    // TODO: Implement Redo (as Future and fsize and findex)
+    constructor(){
+        this.__items = [];
+        this.__size = 0;
+        this.__index = 0;
+        this.__history = [];
+        this.__hsize = 0;
+        this.__hindex = 0;
+    }
+    // Not currently used, not currently needed
+    resize(index) {
+        const newArr = [];
+        for(let i = index; i < this.__size; ++i)newArr.push(this.__items[i]);
+        this.__items = newArr;
+        this.__size = newArr.length;
+        this.__index = 0;
+    }
+    add(item) {
+        this.__items.push(item);
+        this.__size++;
+    }
+    pop() {
+        if (this.__size < 1) return false;
+        this.__size--;
+        const index = this.__index;
+        this.__index++;
+        return this.__items[index];
+    }
+    addHistory(item) {
+        this.__history.push(item);
+        this.__hsize++;
+    }
+    popHistory() {
+        const cmd = this.__history.pop();
+        this.__hsize--;
+        if (cmd) return cmd;
+        else return false;
+    }
+}
+const queue = new CQueue();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, "__esModule", {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"8Akqt":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SaveProjectCommand", ()=>SaveProjectCommand);
+var _state = require("../../State");
+class SaveProjectCommand {
+    constructor(projectName = "default"){
+        projectName = (0, _state.state).projectInfo.title;
+        this.key = `flatland-project-${projectName}`;
+    }
+    do() {
+        const json = (0, _state.state).serialize();
+        localStorage.setItem(this.key, json);
+        const projects = localStorage.getItem("flatland-projects");
+        if (projects) {
+            const projects_list = JSON.parse(projects);
+            projects_list.push(this.key);
+            localStorage.setItem("flatland-projects", JSON.stringify(projects_list));
+        } else localStorage.setItem("flatland-projects", JSON.stringify([
+            this.key
+        ]));
+        console.log("saved item to ", this.key);
+    }
+    undo() {
+    // No undo for save, baby
     }
 }
 
-},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","./2D/rendering/canvas":"fjxS8","./3D/simulation/protoXPBD":"46Cm3","./2D/settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"83rpN":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "genPointId", ()=>genPointId);
+parcelHelpers.export(exports, "genGeoId", ()=>genGeoId);
+parcelHelpers.export(exports, "state", ()=>state);
+var _three = require("three");
+var _pathTool = require("./2D/tools/PathTool");
+var _mathUtils = require("three/src/math/MathUtils");
+var _saveutils = require("./utils/saveutils");
+function genPointId() {
+    return (0, _mathUtils.generateUUID)();
+}
+function genGeoId() {
+    return (0, _mathUtils.generateUUID)();
+}
+const state = {
+    version: "0.11",
+    pointer: new (0, _three.Vector2),
+    shiftDown: false,
+    altDown: false,
+    pointerDown: false,
+    scene: new (0, _three.Scene),
+    camera: new (0, _three.Camera),
+    camera_group: new (0, _three.Group),
+    camera_controls: undefined,
+    renderer: undefined,
+    raycaster: new (0, _three.Raycaster),
+    selected: new Set,
+    selected_faces: new Set,
+    // pattern: undefined,
+    intersects: null,
+    rawPointer: {
+        rx: 0,
+        ry: 0
+    },
+    objects: [],
+    testObject: null,
+    mode: "default",
+    controls: {
+        waitForDoubleClick: false,
+        doubleClick: false
+    },
+    clock: new (0, _three.Clock)(true),
+    c_grainlines: new Map(),
+    updateGrainlinePos (index, pos) {
+        const gl = this.c_grainlines.get(index);
+        if (gl) {
+            gl.position = pos;
+            this.c_grainlines.set(index, gl);
+        }
+    },
+    context: null,
+    c_preview_context: null,
+    c_preview_canvas: null,
+    c_buffers: new Map,
+    canvas: undefined,
+    tool: new (0, _pathTool.PathTool)(),
+    c_points: [],
+    c_pointmap: new Map(),
+    c_pointsMap: new Map(),
+    c_geometryMap: new Map(),
+    c_paths: [],
+    c_selectedPoints: [],
+    c_shapes: [],
+    c_selected_shapes: [],
+    c_selected_lines: [],
+    c_selectedGeometries: [],
+    c_measure_path: [],
+    c_measure_paths: [],
+    c_measure_points: new Map(),
+    cActive: false,
+    cSelecting: false,
+    pendingSelection: undefined,
+    cMovingPoint: false,
+    c_move_from: new (0, _three.Vector2)(),
+    particles: [],
+    constraints: [],
+    c_zoomfactor: 1,
+    pieces: new Map(),
+    projectInfo: {
+        title: "untitled",
+        author: "unknown",
+        lastUpdated: new Date()
+    },
+    addGeometryPoint (v) {
+        const id = genPointId();
+        this.c_pointsMap.set(id, v);
+        return id;
+    },
+    serialize () {
+        const { version, c_pointsMap, c_geometryMap, projectInfo } = this;
+        // flattened version of geometries, pieces, etc
+        const coreInfo = {
+            version,
+            c_pointsMap: (0, _saveutils.flattenPointsMap)(c_pointsMap),
+            c_geometryMap: (0, _saveutils.flattenGeometryMap)(c_geometryMap),
+            projectInfo
+        };
+        const serializedObj = JSON.stringify(coreInfo);
+        return serializedObj;
+    },
+    deserialize (stringObj) {
+        const serializedObj = JSON.parse(stringObj);
+        if (serializedObj.version == this.version) {
+            this.c_pointsMap = (0, _saveutils.restorePointsMap)(serializedObj.c_pointsMap);
+            this.c_geometryMap = (0, _saveutils.restoreGeometryMap)(serializedObj.c_geometryMap);
+            this.projectInfo = serializedObj.projectInfo;
+        }
+    },
+    clear () {
+    // not implemented
+    }
+};
+
+},{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","three/src/math/MathUtils":"cuzU2","./utils/saveutils":"4Ifxv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -48663,933 +48881,7 @@ if (typeof window !== "undefined") {
     else window.__THREE__ = REVISION;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, "__esModule", {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"7wzGb":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "mouseOverCanvas", ()=>mouseOverCanvas);
-parcelHelpers.export(exports, "intersecting", ()=>intersecting);
-parcelHelpers.export(exports, "first_intersecting_object", ()=>first_intersecting_object);
-parcelHelpers.export(exports, "first_intersecting_face", ()=>first_intersecting_face);
-const mouseOverCanvas = (state)=>{
-    const bounds = state.renderer.domElement.getBoundingClientRect();
-    if (state.rawPointer) return state.rawPointer.rx >= bounds.left && state.rawPointer.rx <= bounds.right && state.rawPointer.ry >= bounds.top && state.rawPointer.ry <= bounds.bottom;
-    return false;
-};
-const intersecting = (state)=>{
-    return state.intersects != null && state.intersects.length > 0;
-};
-const first_intersecting_object = (state)=>{
-    const selected_mesh = state.intersects.filter((obj)=>{
-        // Select only Mesh objects (for now)
-        if (obj.object.type == "Mesh") return true;
-        return false;
-    })[0];
-    if (selected_mesh) return selected_mesh.object;
-    else return undefined;
-};
-const first_intersecting_face = (state)=>{
-    const selected_mesh = state.intersects.filter((obj)=>{
-        // Select only Mesh objects (for now)
-        if (obj.object.type == "Mesh") return true;
-        return false;
-    })[0];
-    if (selected_mesh) return {
-        faceIndex: selected_mesh.faceIndex,
-        face: selected_mesh.face,
-        object: selected_mesh.object
-    };
-    else return undefined;
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7mqRv":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "OrbitControls", ()=>OrbitControls);
-var _three = require("three");
-// OrbitControls performs orbiting, dollying (zooming), and panning.
-// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
-//
-//    Orbit - left mouse / touch: one-finger move
-//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-//    Pan - right mouse, or left mouse + ctrl/meta/shiftKey, or arrow keys / touch: two-finger move
-const _changeEvent = {
-    type: "change"
-};
-const _startEvent = {
-    type: "start"
-};
-const _endEvent = {
-    type: "end"
-};
-const _ray = new (0, _three.Ray)();
-const _plane = new (0, _three.Plane)();
-const TILT_LIMIT = Math.cos(70 * (0, _three.MathUtils).DEG2RAD);
-class OrbitControls extends (0, _three.EventDispatcher) {
-    constructor(object, domElement){
-        super();
-        this.object = object;
-        this.domElement = domElement;
-        this.domElement.style.touchAction = "none"; // disable touch scroll
-        // Set to false to disable this control
-        this.enabled = true;
-        // "target" sets the location of focus, where the object orbits around
-        this.target = new (0, _three.Vector3)();
-        // How far you can dolly in and out ( PerspectiveCamera only )
-        this.minDistance = 0;
-        this.maxDistance = Infinity;
-        // How far you can zoom in and out ( OrthographicCamera only )
-        this.minZoom = 0;
-        this.maxZoom = Infinity;
-        // How far you can orbit vertically, upper and lower limits.
-        // Range is 0 to Math.PI radians.
-        this.minPolarAngle = 0; // radians
-        this.maxPolarAngle = Math.PI; // radians
-        // How far you can orbit horizontally, upper and lower limits.
-        // If set, the interval [ min, max ] must be a sub-interval of [ - 2 PI, 2 PI ], with ( max - min < 2 PI )
-        this.minAzimuthAngle = -Infinity; // radians
-        this.maxAzimuthAngle = Infinity; // radians
-        // Set to true to enable damping (inertia)
-        // If damping is enabled, you must call controls.update() in your animation loop
-        this.enableDamping = false;
-        this.dampingFactor = 0.05;
-        // This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
-        // Set to false to disable zooming
-        this.enableZoom = true;
-        this.zoomSpeed = 1.0;
-        // Set to false to disable rotating
-        this.enableRotate = true;
-        this.rotateSpeed = 1.0;
-        // Set to false to disable panning
-        this.enablePan = true;
-        this.panSpeed = 1.0;
-        this.screenSpacePanning = true; // if false, pan orthogonal to world-space direction camera.up
-        this.keyPanSpeed = 7.0; // pixels moved per arrow key push
-        this.zoomToCursor = false;
-        // Set to true to automatically rotate around the target
-        // If auto-rotate is enabled, you must call controls.update() in your animation loop
-        this.autoRotate = false;
-        this.autoRotateSpeed = 2.0; // 30 seconds per orbit when fps is 60
-        // The four arrow keys
-        this.keys = {
-            LEFT: "ArrowLeft",
-            UP: "ArrowUp",
-            RIGHT: "ArrowRight",
-            BOTTOM: "ArrowDown"
-        };
-        // Mouse buttons
-        this.mouseButtons = {
-            LEFT: (0, _three.MOUSE).ROTATE,
-            MIDDLE: (0, _three.MOUSE).DOLLY,
-            RIGHT: (0, _three.MOUSE).PAN
-        };
-        // Touch fingers
-        this.touches = {
-            ONE: (0, _three.TOUCH).ROTATE,
-            TWO: (0, _three.TOUCH).DOLLY_PAN
-        };
-        // for reset
-        this.target0 = this.target.clone();
-        this.position0 = this.object.position.clone();
-        this.zoom0 = this.object.zoom;
-        // the target DOM element for key events
-        this._domElementKeyEvents = null;
-        //
-        // public methods
-        //
-        this.getPolarAngle = function() {
-            return spherical.phi;
-        };
-        this.getAzimuthalAngle = function() {
-            return spherical.theta;
-        };
-        this.getDistance = function() {
-            return this.object.position.distanceTo(this.target);
-        };
-        this.listenToKeyEvents = function(domElement) {
-            domElement.addEventListener("keydown", onKeyDown);
-            this._domElementKeyEvents = domElement;
-        };
-        this.stopListenToKeyEvents = function() {
-            this._domElementKeyEvents.removeEventListener("keydown", onKeyDown);
-            this._domElementKeyEvents = null;
-        };
-        this.saveState = function() {
-            scope.target0.copy(scope.target);
-            scope.position0.copy(scope.object.position);
-            scope.zoom0 = scope.object.zoom;
-        };
-        this.reset = function() {
-            scope.target.copy(scope.target0);
-            scope.object.position.copy(scope.position0);
-            scope.object.zoom = scope.zoom0;
-            scope.object.updateProjectionMatrix();
-            scope.dispatchEvent(_changeEvent);
-            scope.update();
-            state = STATE.NONE;
-        };
-        // this method is exposed, but perhaps it would be better if we can make it private...
-        this.update = function() {
-            const offset = new (0, _three.Vector3)();
-            // so camera.up is the orbit axis
-            const quat = new (0, _three.Quaternion)().setFromUnitVectors(object.up, new (0, _three.Vector3)(0, 1, 0));
-            const quatInverse = quat.clone().invert();
-            const lastPosition = new (0, _three.Vector3)();
-            const lastQuaternion = new (0, _three.Quaternion)();
-            const lastTargetPosition = new (0, _three.Vector3)();
-            const twoPI = 2 * Math.PI;
-            return function update() {
-                const position = scope.object.position;
-                offset.copy(position).sub(scope.target);
-                // rotate offset to "y-axis-is-up" space
-                offset.applyQuaternion(quat);
-                // angle from z-axis around y-axis
-                spherical.setFromVector3(offset);
-                if (scope.autoRotate && state === STATE.NONE) rotateLeft(getAutoRotationAngle());
-                if (scope.enableDamping) {
-                    spherical.theta += sphericalDelta.theta * scope.dampingFactor;
-                    spherical.phi += sphericalDelta.phi * scope.dampingFactor;
-                } else {
-                    spherical.theta += sphericalDelta.theta;
-                    spherical.phi += sphericalDelta.phi;
-                }
-                // restrict theta to be between desired limits
-                let min = scope.minAzimuthAngle;
-                let max = scope.maxAzimuthAngle;
-                if (isFinite(min) && isFinite(max)) {
-                    if (min < -Math.PI) min += twoPI;
-                    else if (min > Math.PI) min -= twoPI;
-                    if (max < -Math.PI) max += twoPI;
-                    else if (max > Math.PI) max -= twoPI;
-                    if (min <= max) spherical.theta = Math.max(min, Math.min(max, spherical.theta));
-                    else spherical.theta = spherical.theta > (min + max) / 2 ? Math.max(min, spherical.theta) : Math.min(max, spherical.theta);
-                }
-                // restrict phi to be between desired limits
-                spherical.phi = Math.max(scope.minPolarAngle, Math.min(scope.maxPolarAngle, spherical.phi));
-                spherical.makeSafe();
-                // move target to panned location
-                if (scope.enableDamping === true) scope.target.addScaledVector(panOffset, scope.dampingFactor);
-                else scope.target.add(panOffset);
-                // adjust the camera position based on zoom only if we're not zooming to the cursor or if it's an ortho camera
-                // we adjust zoom later in these cases
-                if (scope.zoomToCursor && performCursorZoom || scope.object.isOrthographicCamera) spherical.radius = clampDistance(spherical.radius);
-                else spherical.radius = clampDistance(spherical.radius * scale);
-                offset.setFromSpherical(spherical);
-                // rotate offset back to "camera-up-vector-is-up" space
-                offset.applyQuaternion(quatInverse);
-                position.copy(scope.target).add(offset);
-                scope.object.lookAt(scope.target);
-                if (scope.enableDamping === true) {
-                    sphericalDelta.theta *= 1 - scope.dampingFactor;
-                    sphericalDelta.phi *= 1 - scope.dampingFactor;
-                    panOffset.multiplyScalar(1 - scope.dampingFactor);
-                } else {
-                    sphericalDelta.set(0, 0, 0);
-                    panOffset.set(0, 0, 0);
-                }
-                // adjust camera position
-                let zoomChanged = false;
-                if (scope.zoomToCursor && performCursorZoom) {
-                    let newRadius = null;
-                    if (scope.object.isPerspectiveCamera) {
-                        // move the camera down the pointer ray
-                        // this method avoids floating point error
-                        const prevRadius = offset.length();
-                        newRadius = clampDistance(prevRadius * scale);
-                        const radiusDelta = prevRadius - newRadius;
-                        scope.object.position.addScaledVector(dollyDirection, radiusDelta);
-                        scope.object.updateMatrixWorld();
-                    } else if (scope.object.isOrthographicCamera) {
-                        // adjust the ortho camera position based on zoom changes
-                        const mouseBefore = new (0, _three.Vector3)(mouse.x, mouse.y, 0);
-                        mouseBefore.unproject(scope.object);
-                        scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom / scale));
-                        scope.object.updateProjectionMatrix();
-                        zoomChanged = true;
-                        const mouseAfter = new (0, _three.Vector3)(mouse.x, mouse.y, 0);
-                        mouseAfter.unproject(scope.object);
-                        scope.object.position.sub(mouseAfter).add(mouseBefore);
-                        scope.object.updateMatrixWorld();
-                        newRadius = offset.length();
-                    } else {
-                        console.warn("WARNING: OrbitControls.js encountered an unknown camera type - zoom to cursor disabled.");
-                        scope.zoomToCursor = false;
-                    }
-                    // handle the placement of the target
-                    if (newRadius !== null) {
-                        if (this.screenSpacePanning) // position the orbit target in front of the new camera position
-                        scope.target.set(0, 0, -1).transformDirection(scope.object.matrix).multiplyScalar(newRadius).add(scope.object.position);
-                        else {
-                            // get the ray and translation plane to compute target
-                            _ray.origin.copy(scope.object.position);
-                            _ray.direction.set(0, 0, -1).transformDirection(scope.object.matrix);
-                            // if the camera is 20 degrees above the horizon then don't adjust the focus target to avoid
-                            // extremely large values
-                            if (Math.abs(scope.object.up.dot(_ray.direction)) < TILT_LIMIT) object.lookAt(scope.target);
-                            else {
-                                _plane.setFromNormalAndCoplanarPoint(scope.object.up, scope.target);
-                                _ray.intersectPlane(_plane, scope.target);
-                            }
-                        }
-                    }
-                } else if (scope.object.isOrthographicCamera) {
-                    scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom / scale));
-                    scope.object.updateProjectionMatrix();
-                    zoomChanged = true;
-                }
-                scale = 1;
-                performCursorZoom = false;
-                // update condition is:
-                // min(camera displacement, camera rotation in radians)^2 > EPS
-                // using small-angle approximation cos(x/2) = 1 - x^2 / 8
-                if (zoomChanged || lastPosition.distanceToSquared(scope.object.position) > EPS || 8 * (1 - lastQuaternion.dot(scope.object.quaternion)) > EPS || lastTargetPosition.distanceToSquared(scope.target) > 0) {
-                    scope.dispatchEvent(_changeEvent);
-                    lastPosition.copy(scope.object.position);
-                    lastQuaternion.copy(scope.object.quaternion);
-                    lastTargetPosition.copy(scope.target);
-                    zoomChanged = false;
-                    return true;
-                }
-                return false;
-            };
-        }();
-        this.dispose = function() {
-            scope.domElement.removeEventListener("contextmenu", onContextMenu);
-            scope.domElement.removeEventListener("pointerdown", onPointerDown);
-            scope.domElement.removeEventListener("pointercancel", onPointerUp);
-            scope.domElement.removeEventListener("wheel", onMouseWheel);
-            scope.domElement.removeEventListener("pointermove", onPointerMove);
-            scope.domElement.removeEventListener("pointerup", onPointerUp);
-            if (scope._domElementKeyEvents !== null) {
-                scope._domElementKeyEvents.removeEventListener("keydown", onKeyDown);
-                scope._domElementKeyEvents = null;
-            }
-        //scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
-        };
-        //
-        // internals
-        //
-        const scope = this;
-        const STATE = {
-            NONE: -1,
-            ROTATE: 0,
-            DOLLY: 1,
-            PAN: 2,
-            TOUCH_ROTATE: 3,
-            TOUCH_PAN: 4,
-            TOUCH_DOLLY_PAN: 5,
-            TOUCH_DOLLY_ROTATE: 6
-        };
-        let state = STATE.NONE;
-        const EPS = 0.000001;
-        // current position in spherical coordinates
-        const spherical = new (0, _three.Spherical)();
-        const sphericalDelta = new (0, _three.Spherical)();
-        let scale = 1;
-        const panOffset = new (0, _three.Vector3)();
-        const rotateStart = new (0, _three.Vector2)();
-        const rotateEnd = new (0, _three.Vector2)();
-        const rotateDelta = new (0, _three.Vector2)();
-        const panStart = new (0, _three.Vector2)();
-        const panEnd = new (0, _three.Vector2)();
-        const panDelta = new (0, _three.Vector2)();
-        const dollyStart = new (0, _three.Vector2)();
-        const dollyEnd = new (0, _three.Vector2)();
-        const dollyDelta = new (0, _three.Vector2)();
-        const dollyDirection = new (0, _three.Vector3)();
-        const mouse = new (0, _three.Vector2)();
-        let performCursorZoom = false;
-        const pointers = [];
-        const pointerPositions = {};
-        function getAutoRotationAngle() {
-            return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
-        }
-        function getZoomScale() {
-            return Math.pow(0.95, scope.zoomSpeed);
-        }
-        function rotateLeft(angle) {
-            sphericalDelta.theta -= angle;
-        }
-        function rotateUp(angle) {
-            sphericalDelta.phi -= angle;
-        }
-        const panLeft = function() {
-            const v = new (0, _three.Vector3)();
-            return function panLeft(distance, objectMatrix) {
-                v.setFromMatrixColumn(objectMatrix, 0); // get X column of objectMatrix
-                v.multiplyScalar(-distance);
-                panOffset.add(v);
-            };
-        }();
-        const panUp = function() {
-            const v = new (0, _three.Vector3)();
-            return function panUp(distance, objectMatrix) {
-                if (scope.screenSpacePanning === true) v.setFromMatrixColumn(objectMatrix, 1);
-                else {
-                    v.setFromMatrixColumn(objectMatrix, 0);
-                    v.crossVectors(scope.object.up, v);
-                }
-                v.multiplyScalar(distance);
-                panOffset.add(v);
-            };
-        }();
-        // deltaX and deltaY are in pixels; right and down are positive
-        const pan = function() {
-            const offset = new (0, _three.Vector3)();
-            return function pan(deltaX, deltaY) {
-                const element = scope.domElement;
-                if (scope.object.isPerspectiveCamera) {
-                    // perspective
-                    const position = scope.object.position;
-                    offset.copy(position).sub(scope.target);
-                    let targetDistance = offset.length();
-                    // half of the fov is center to top of screen
-                    targetDistance *= Math.tan(scope.object.fov / 2 * Math.PI / 180.0);
-                    // we use only clientHeight here so aspect ratio does not distort speed
-                    panLeft(2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix);
-                    panUp(2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix);
-                } else if (scope.object.isOrthographicCamera) {
-                    // orthographic
-                    panLeft(deltaX * (scope.object.right - scope.object.left) / scope.object.zoom / element.clientWidth, scope.object.matrix);
-                    panUp(deltaY * (scope.object.top - scope.object.bottom) / scope.object.zoom / element.clientHeight, scope.object.matrix);
-                } else {
-                    // camera neither orthographic nor perspective
-                    console.warn("WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.");
-                    scope.enablePan = false;
-                }
-            };
-        }();
-        function dollyOut(dollyScale) {
-            if (scope.object.isPerspectiveCamera || scope.object.isOrthographicCamera) scale /= dollyScale;
-            else {
-                console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.");
-                scope.enableZoom = false;
-            }
-        }
-        function dollyIn(dollyScale) {
-            if (scope.object.isPerspectiveCamera || scope.object.isOrthographicCamera) scale *= dollyScale;
-            else {
-                console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.");
-                scope.enableZoom = false;
-            }
-        }
-        function updateMouseParameters(event) {
-            if (!scope.zoomToCursor) return;
-            performCursorZoom = true;
-            const rect = scope.domElement.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-            const w = rect.width;
-            const h = rect.height;
-            mouse.x = x / w * 2 - 1;
-            mouse.y = -(y / h) * 2 + 1;
-            dollyDirection.set(mouse.x, mouse.y, 1).unproject(object).sub(object.position).normalize();
-        }
-        function clampDistance(dist) {
-            return Math.max(scope.minDistance, Math.min(scope.maxDistance, dist));
-        }
-        //
-        // event callbacks - update the object state
-        //
-        function handleMouseDownRotate(event) {
-            rotateStart.set(event.clientX, event.clientY);
-        }
-        function handleMouseDownDolly(event) {
-            updateMouseParameters(event);
-            dollyStart.set(event.clientX, event.clientY);
-        }
-        function handleMouseDownPan(event) {
-            panStart.set(event.clientX, event.clientY);
-        }
-        function handleMouseMoveRotate(event) {
-            rotateEnd.set(event.clientX, event.clientY);
-            rotateDelta.subVectors(rotateEnd, rotateStart).multiplyScalar(scope.rotateSpeed);
-            const element = scope.domElement;
-            rotateLeft(2 * Math.PI * rotateDelta.x / element.clientHeight); // yes, height
-            rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight);
-            rotateStart.copy(rotateEnd);
-            scope.update();
-        }
-        function handleMouseMoveDolly(event) {
-            dollyEnd.set(event.clientX, event.clientY);
-            dollyDelta.subVectors(dollyEnd, dollyStart);
-            if (dollyDelta.y > 0) dollyOut(getZoomScale());
-            else if (dollyDelta.y < 0) dollyIn(getZoomScale());
-            dollyStart.copy(dollyEnd);
-            scope.update();
-        }
-        function handleMouseMovePan(event) {
-            panEnd.set(event.clientX, event.clientY);
-            panDelta.subVectors(panEnd, panStart).multiplyScalar(scope.panSpeed);
-            pan(panDelta.x, panDelta.y);
-            panStart.copy(panEnd);
-            scope.update();
-        }
-        function handleMouseWheel(event) {
-            updateMouseParameters(event);
-            if (event.deltaY < 0) dollyIn(getZoomScale());
-            else if (event.deltaY > 0) dollyOut(getZoomScale());
-            scope.update();
-        }
-        function handleKeyDown(event) {
-            let needsUpdate = false;
-            switch(event.code){
-                case scope.keys.UP:
-                    if (event.ctrlKey || event.metaKey || event.shiftKey) rotateUp(2 * Math.PI * scope.rotateSpeed / scope.domElement.clientHeight);
-                    else pan(0, scope.keyPanSpeed);
-                    needsUpdate = true;
-                    break;
-                case scope.keys.BOTTOM:
-                    if (event.ctrlKey || event.metaKey || event.shiftKey) rotateUp(-2 * Math.PI * scope.rotateSpeed / scope.domElement.clientHeight);
-                    else pan(0, -scope.keyPanSpeed);
-                    needsUpdate = true;
-                    break;
-                case scope.keys.LEFT:
-                    if (event.ctrlKey || event.metaKey || event.shiftKey) rotateLeft(2 * Math.PI * scope.rotateSpeed / scope.domElement.clientHeight);
-                    else pan(scope.keyPanSpeed, 0);
-                    needsUpdate = true;
-                    break;
-                case scope.keys.RIGHT:
-                    if (event.ctrlKey || event.metaKey || event.shiftKey) rotateLeft(-2 * Math.PI * scope.rotateSpeed / scope.domElement.clientHeight);
-                    else pan(-scope.keyPanSpeed, 0);
-                    needsUpdate = true;
-                    break;
-            }
-            if (needsUpdate) {
-                // prevent the browser from scrolling on cursor keys
-                event.preventDefault();
-                scope.update();
-            }
-        }
-        function handleTouchStartRotate() {
-            if (pointers.length === 1) rotateStart.set(pointers[0].pageX, pointers[0].pageY);
-            else {
-                const x = 0.5 * (pointers[0].pageX + pointers[1].pageX);
-                const y = 0.5 * (pointers[0].pageY + pointers[1].pageY);
-                rotateStart.set(x, y);
-            }
-        }
-        function handleTouchStartPan() {
-            if (pointers.length === 1) panStart.set(pointers[0].pageX, pointers[0].pageY);
-            else {
-                const x = 0.5 * (pointers[0].pageX + pointers[1].pageX);
-                const y = 0.5 * (pointers[0].pageY + pointers[1].pageY);
-                panStart.set(x, y);
-            }
-        }
-        function handleTouchStartDolly() {
-            const dx = pointers[0].pageX - pointers[1].pageX;
-            const dy = pointers[0].pageY - pointers[1].pageY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            dollyStart.set(0, distance);
-        }
-        function handleTouchStartDollyPan() {
-            if (scope.enableZoom) handleTouchStartDolly();
-            if (scope.enablePan) handleTouchStartPan();
-        }
-        function handleTouchStartDollyRotate() {
-            if (scope.enableZoom) handleTouchStartDolly();
-            if (scope.enableRotate) handleTouchStartRotate();
-        }
-        function handleTouchMoveRotate(event) {
-            if (pointers.length == 1) rotateEnd.set(event.pageX, event.pageY);
-            else {
-                const position = getSecondPointerPosition(event);
-                const x = 0.5 * (event.pageX + position.x);
-                const y = 0.5 * (event.pageY + position.y);
-                rotateEnd.set(x, y);
-            }
-            rotateDelta.subVectors(rotateEnd, rotateStart).multiplyScalar(scope.rotateSpeed);
-            const element = scope.domElement;
-            rotateLeft(2 * Math.PI * rotateDelta.x / element.clientHeight); // yes, height
-            rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight);
-            rotateStart.copy(rotateEnd);
-        }
-        function handleTouchMovePan(event) {
-            if (pointers.length === 1) panEnd.set(event.pageX, event.pageY);
-            else {
-                const position = getSecondPointerPosition(event);
-                const x = 0.5 * (event.pageX + position.x);
-                const y = 0.5 * (event.pageY + position.y);
-                panEnd.set(x, y);
-            }
-            panDelta.subVectors(panEnd, panStart).multiplyScalar(scope.panSpeed);
-            pan(panDelta.x, panDelta.y);
-            panStart.copy(panEnd);
-        }
-        function handleTouchMoveDolly(event) {
-            const position = getSecondPointerPosition(event);
-            const dx = event.pageX - position.x;
-            const dy = event.pageY - position.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            dollyEnd.set(0, distance);
-            dollyDelta.set(0, Math.pow(dollyEnd.y / dollyStart.y, scope.zoomSpeed));
-            dollyOut(dollyDelta.y);
-            dollyStart.copy(dollyEnd);
-        }
-        function handleTouchMoveDollyPan(event) {
-            if (scope.enableZoom) handleTouchMoveDolly(event);
-            if (scope.enablePan) handleTouchMovePan(event);
-        }
-        function handleTouchMoveDollyRotate(event) {
-            if (scope.enableZoom) handleTouchMoveDolly(event);
-            if (scope.enableRotate) handleTouchMoveRotate(event);
-        }
-        //
-        // event handlers - FSM: listen for events and reset state
-        //
-        function onPointerDown(event) {
-            if (scope.enabled === false) return;
-            if (pointers.length === 0) {
-                scope.domElement.setPointerCapture(event.pointerId);
-                scope.domElement.addEventListener("pointermove", onPointerMove);
-                scope.domElement.addEventListener("pointerup", onPointerUp);
-            }
-            //
-            addPointer(event);
-            if (event.pointerType === "touch") onTouchStart(event);
-            else onMouseDown(event);
-        }
-        function onPointerMove(event) {
-            if (scope.enabled === false) return;
-            if (event.pointerType === "touch") onTouchMove(event);
-            else onMouseMove(event);
-        }
-        function onPointerUp(event) {
-            removePointer(event);
-            if (pointers.length === 0) {
-                scope.domElement.releasePointerCapture(event.pointerId);
-                scope.domElement.removeEventListener("pointermove", onPointerMove);
-                scope.domElement.removeEventListener("pointerup", onPointerUp);
-            }
-            scope.dispatchEvent(_endEvent);
-            state = STATE.NONE;
-        }
-        function onMouseDown(event) {
-            let mouseAction;
-            switch(event.button){
-                case 0:
-                    mouseAction = scope.mouseButtons.LEFT;
-                    break;
-                case 1:
-                    mouseAction = scope.mouseButtons.MIDDLE;
-                    break;
-                case 2:
-                    mouseAction = scope.mouseButtons.RIGHT;
-                    break;
-                default:
-                    mouseAction = -1;
-            }
-            switch(mouseAction){
-                case (0, _three.MOUSE).DOLLY:
-                    if (scope.enableZoom === false) return;
-                    handleMouseDownDolly(event);
-                    state = STATE.DOLLY;
-                    break;
-                case (0, _three.MOUSE).ROTATE:
-                    if (event.ctrlKey || event.metaKey || event.shiftKey) {
-                        if (scope.enablePan === false) return;
-                        handleMouseDownPan(event);
-                        state = STATE.PAN;
-                    } else {
-                        if (scope.enableRotate === false) return;
-                        handleMouseDownRotate(event);
-                        state = STATE.ROTATE;
-                    }
-                    break;
-                case (0, _three.MOUSE).PAN:
-                    if (event.ctrlKey || event.metaKey || event.shiftKey) {
-                        if (scope.enableRotate === false) return;
-                        handleMouseDownRotate(event);
-                        state = STATE.ROTATE;
-                    } else {
-                        if (scope.enablePan === false) return;
-                        handleMouseDownPan(event);
-                        state = STATE.PAN;
-                    }
-                    break;
-                default:
-                    state = STATE.NONE;
-            }
-            if (state !== STATE.NONE) scope.dispatchEvent(_startEvent);
-        }
-        function onMouseMove(event) {
-            switch(state){
-                case STATE.ROTATE:
-                    if (scope.enableRotate === false) return;
-                    handleMouseMoveRotate(event);
-                    break;
-                case STATE.DOLLY:
-                    if (scope.enableZoom === false) return;
-                    handleMouseMoveDolly(event);
-                    break;
-                case STATE.PAN:
-                    if (scope.enablePan === false) return;
-                    handleMouseMovePan(event);
-                    break;
-            }
-        }
-        function onMouseWheel(event) {
-            if (scope.enabled === false || scope.enableZoom === false || state !== STATE.NONE) return;
-            event.preventDefault();
-            scope.dispatchEvent(_startEvent);
-            handleMouseWheel(event);
-            scope.dispatchEvent(_endEvent);
-        }
-        function onKeyDown(event) {
-            if (scope.enabled === false || scope.enablePan === false) return;
-            handleKeyDown(event);
-        }
-        function onTouchStart(event) {
-            trackPointer(event);
-            switch(pointers.length){
-                case 1:
-                    switch(scope.touches.ONE){
-                        case (0, _three.TOUCH).ROTATE:
-                            if (scope.enableRotate === false) return;
-                            handleTouchStartRotate();
-                            state = STATE.TOUCH_ROTATE;
-                            break;
-                        case (0, _three.TOUCH).PAN:
-                            if (scope.enablePan === false) return;
-                            handleTouchStartPan();
-                            state = STATE.TOUCH_PAN;
-                            break;
-                        default:
-                            state = STATE.NONE;
-                    }
-                    break;
-                case 2:
-                    switch(scope.touches.TWO){
-                        case (0, _three.TOUCH).DOLLY_PAN:
-                            if (scope.enableZoom === false && scope.enablePan === false) return;
-                            handleTouchStartDollyPan();
-                            state = STATE.TOUCH_DOLLY_PAN;
-                            break;
-                        case (0, _three.TOUCH).DOLLY_ROTATE:
-                            if (scope.enableZoom === false && scope.enableRotate === false) return;
-                            handleTouchStartDollyRotate();
-                            state = STATE.TOUCH_DOLLY_ROTATE;
-                            break;
-                        default:
-                            state = STATE.NONE;
-                    }
-                    break;
-                default:
-                    state = STATE.NONE;
-            }
-            if (state !== STATE.NONE) scope.dispatchEvent(_startEvent);
-        }
-        function onTouchMove(event) {
-            trackPointer(event);
-            switch(state){
-                case STATE.TOUCH_ROTATE:
-                    if (scope.enableRotate === false) return;
-                    handleTouchMoveRotate(event);
-                    scope.update();
-                    break;
-                case STATE.TOUCH_PAN:
-                    if (scope.enablePan === false) return;
-                    handleTouchMovePan(event);
-                    scope.update();
-                    break;
-                case STATE.TOUCH_DOLLY_PAN:
-                    if (scope.enableZoom === false && scope.enablePan === false) return;
-                    handleTouchMoveDollyPan(event);
-                    scope.update();
-                    break;
-                case STATE.TOUCH_DOLLY_ROTATE:
-                    if (scope.enableZoom === false && scope.enableRotate === false) return;
-                    handleTouchMoveDollyRotate(event);
-                    scope.update();
-                    break;
-                default:
-                    state = STATE.NONE;
-            }
-        }
-        function onContextMenu(event) {
-            if (scope.enabled === false) return;
-            event.preventDefault();
-        }
-        function addPointer(event) {
-            pointers.push(event);
-        }
-        function removePointer(event) {
-            delete pointerPositions[event.pointerId];
-            for(let i = 0; i < pointers.length; i++)if (pointers[i].pointerId == event.pointerId) {
-                pointers.splice(i, 1);
-                return;
-            }
-        }
-        function trackPointer(event) {
-            let position = pointerPositions[event.pointerId];
-            if (position === undefined) {
-                position = new (0, _three.Vector2)();
-                pointerPositions[event.pointerId] = position;
-            }
-            position.set(event.pageX, event.pageY);
-        }
-        function getSecondPointerPosition(event) {
-            const pointer = event.pointerId === pointers[0].pointerId ? pointers[1] : pointers[0];
-            return pointerPositions[pointer.pointerId];
-        }
-        //
-        scope.domElement.addEventListener("contextmenu", onContextMenu);
-        scope.domElement.addEventListener("pointerdown", onPointerDown);
-        scope.domElement.addEventListener("pointercancel", onPointerUp);
-        scope.domElement.addEventListener("wheel", onMouseWheel, {
-            passive: false
-        });
-        // force an update at start
-        this.update();
-    }
-}
-
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"83rpN":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "genPointId", ()=>genPointId);
-parcelHelpers.export(exports, "genGeoId", ()=>genGeoId);
-parcelHelpers.export(exports, "state", ()=>state);
-var _three = require("three");
-var _pathTool = require("./2D/tools/PathTool");
-var _mathUtils = require("three/src/math/MathUtils");
-var _saveutils = require("./utils/saveutils");
-function genPointId() {
-    return (0, _mathUtils.generateUUID)();
-}
-function genGeoId() {
-    return (0, _mathUtils.generateUUID)();
-}
-const state = {
-    version: "0.11",
-    pointer: new (0, _three.Vector2),
-    shiftDown: false,
-    altDown: false,
-    pointerDown: false,
-    scene: new (0, _three.Scene),
-    camera: new (0, _three.Camera),
-    camera_group: new (0, _three.Group),
-    camera_controls: undefined,
-    renderer: undefined,
-    raycaster: new (0, _three.Raycaster),
-    selected: new Set,
-    selected_faces: new Set,
-    // pattern: undefined,
-    intersects: null,
-    rawPointer: {
-        rx: 0,
-        ry: 0
-    },
-    objects: [],
-    testObject: null,
-    mode: "default",
-    controls: {
-        waitForDoubleClick: false,
-        doubleClick: false
-    },
-    clock: new (0, _three.Clock)(true),
-    c_grainlines: new Map(),
-    updateGrainlinePos (index, pos) {
-        const gl = this.c_grainlines.get(index);
-        if (gl) {
-            gl.position = pos;
-            this.c_grainlines.set(index, gl);
-        }
-    },
-    context: null,
-    c_preview_context: null,
-    c_preview_canvas: null,
-    c_buffers: new Map,
-    canvas: undefined,
-    tool: new (0, _pathTool.PathTool)(),
-    c_points: [],
-    c_pointmap: new Map(),
-    c_pointsMap: new Map(),
-    c_geometryMap: new Map(),
-    c_paths: [],
-    c_selectedPoints: [],
-    c_shapes: [],
-    c_selected_shapes: [],
-    c_selected_lines: [],
-    c_selectedGeometries: [],
-    c_measure_path: [],
-    c_measure_paths: [],
-    c_measure_points: new Map(),
-    cActive: false,
-    cSelecting: false,
-    pendingSelection: undefined,
-    cMovingPoint: false,
-    c_move_from: new (0, _three.Vector2)(),
-    particles: [],
-    constraints: [],
-    c_zoomfactor: 1,
-    pieces: new Map(),
-    projectInfo: {
-        title: "untitled",
-        author: "unknown",
-        lastUpdated: new Date()
-    },
-    addGeometryPoint (v) {
-        const id = genPointId();
-        this.c_pointsMap.set(id, v);
-        return id;
-    },
-    serialize () {
-        const { version, c_pointsMap, c_geometryMap, projectInfo } = this;
-        // flattened version of geometries, pieces, etc
-        const coreInfo = {
-            version,
-            c_pointsMap: (0, _saveutils.flattenPointsMap)(c_pointsMap),
-            c_geometryMap: (0, _saveutils.flattenGeometryMap)(c_geometryMap),
-            projectInfo
-        };
-        const serializedObj = JSON.stringify(coreInfo);
-        return serializedObj;
-    },
-    deserialize (stringObj) {
-        const serializedObj = JSON.parse(stringObj);
-        if (serializedObj.version == this.version) {
-            this.c_pointsMap = (0, _saveutils.restorePointsMap)(serializedObj.c_pointsMap);
-            this.c_geometryMap = (0, _saveutils.restoreGeometryMap)(serializedObj.c_geometryMap);
-            this.projectInfo = serializedObj.projectInfo;
-        }
-    },
-    clear () {
-    // not implemented
-    }
-};
-
-},{"three":"ktPTu","./2D/tools/PathTool":"j7KYD","three/src/math/MathUtils":"cuzU2","./utils/saveutils":"4Ifxv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j7KYD":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathTool", ()=>PathTool);
@@ -50917,97 +50209,7 @@ function applyShapeSelectionMovePreview(pos) {
     if (canvas) (0, _state.state).context.drawImage(canvas, pos.x - (pos.x - box.x0), pos.y - (pos.y - box.y0));
 }
 
-},{"../../State":"83rpN","./canvas":"fjxS8","./getBuffer":"7bBl8","./drawPaths":"lgYVM","../geometry/boundingBox":"3SCvR","../geometry/getPointArrayFromGeometry2D":"12og0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"efiIE":[function(require,module,exports) {
-// The Command interface and class is responsible for managing incoming user commands that affect state, with some exception (camera position)
-// The Command Queue is a list of all incoming commands yet to be executed
-// The command History is a list of all previously executed commands
-// the command Future is a list of all commands that have been Undone, i.e., taken from History. Future is not yet implemented
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "pushCommand", ()=>pushCommand);
-parcelHelpers.export(exports, "executeCommands", ()=>executeCommands);
-parcelHelpers.export(exports, "undoCommands", ()=>undoCommands);
-const pushCommand = (command)=>{
-    queue.add(command);
-};
-function executeCommands() {
-    while(queue.__size > 0){
-        const cmd = queue.pop();
-        if (cmd) {
-            cmd.do();
-            queue.addHistory(cmd);
-        }
-    }
-}
-function undoCommands() {
-    const cmd = queue.popHistory();
-    if (cmd) {
-        console.log(cmd);
-        cmd.undo();
-    }
-}
-// Invoker function for storing and invoking commands
-// Not used, and not really needed, a bit too elaborate
-// export const Invoker = () => {
-//   const __queue = new CQueue();
-//   const __list:Command[] = [];
-//   var __index:number = 0;
-//   return {
-//     addCommandToQueue: __queue.add,
-//     invokeNextCommand: function ()  {
-//       const cmd = __queue.pop();
-//       if (cmd) {
-//         cmd.do();
-//         __list.push(cmd);
-//         __index++;
-//       }
-//     }
-//   }
-// }
-// Queue structure for holding Commands
-class CQueue {
-    // TODO: Implement Redo (as Future and fsize and findex)
-    constructor(){
-        this.__items = [];
-        this.__size = 0;
-        this.__index = 0;
-        this.__history = [];
-        this.__hsize = 0;
-        this.__hindex = 0;
-    }
-    // Not currently used, not currently needed
-    resize(index) {
-        const newArr = [];
-        for(let i = index; i < this.__size; ++i)newArr.push(this.__items[i]);
-        this.__items = newArr;
-        this.__size = newArr.length;
-        this.__index = 0;
-    }
-    add(item) {
-        this.__items.push(item);
-        this.__size++;
-    }
-    pop() {
-        if (this.__size < 1) return false;
-        this.__size--;
-        const index = this.__index;
-        this.__index++;
-        return this.__items[index];
-    }
-    addHistory(item) {
-        this.__history.push(item);
-        this.__hsize++;
-    }
-    popHistory() {
-        const cmd = this.__history.pop();
-        this.__hsize--;
-        if (cmd) return cmd;
-        else return false;
-    }
-}
-const queue = new CQueue();
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5n0lO":[function(require,module,exports) {
+},{"../../State":"83rpN","./canvas":"fjxS8","./getBuffer":"7bBl8","./drawPaths":"lgYVM","../geometry/boundingBox":"3SCvR","../geometry/getPointArrayFromGeometry2D":"12og0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5n0lO":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolMovePointCommand", ()=>PathToolMovePointCommand);
@@ -52185,1421 +51387,7 @@ const restoreGeometryMap = (arr)=>{
     return map;
 };
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-// Pointer Events for 3D canvas
-parcelHelpers.export(exports, "onDoubleClick", ()=>onDoubleClick);
-// localize pointer position, expose to React UI
-parcelHelpers.export(exports, "onPointerMove", ()=>onPointerMove);
-// click to add points
-parcelHelpers.export(exports, "onPointerDown", ()=>onPointerDown);
-parcelHelpers.export(exports, "onPointerUp", ()=>onPointerUp);
-var _command = require("../../Command");
-var _selectObjectCommand = require("../commands/SelectObjectCommand");
-var _state = require("../../State");
-var _util = require("../../util");
-var _selectFaceCommand = require("../commands/SelectFaceCommand");
-var _localizePointerTo = require("../../pointer/LocalizePointerTo");
-function onDoubleClick(event) {
-    (0, _state.state).intersects = [];
-    (0, _state.state).raycaster.setFromCamera((0, _state.state).pointer, (0, _state.state).camera);
-    const intersects = (0, _state.state).raycaster.intersectObjects((0, _state.state).objects);
-    (0, _state.state).intersects = intersects;
-    if ((0, _util.intersecting)((0, _state.state))) {
-        const bundle = (0, _util.first_intersecting_face)((0, _state.state));
-        if (bundle && bundle.faceIndex) {
-            if (!(0, _state.state).selected_faces.has(JSON.stringify((0, _selectFaceCommand.tagFace)(bundle.face, bundle.object.uuid)))) (0, _command.pushCommand)(new (0, _selectFaceCommand.SelectFaceCommand)(bundle));
-            else (0, _command.pushCommand)(new (0, _selectFaceCommand.DeselectFaceCommand)(bundle));
-        }
-    }
-}
-function onPointerMove(event) {
-    (0, _localizePointerTo.localizePointerTo)({
-        event,
-        state: (0, _state.state),
-        domElement: (0, _state.state).renderer.domElement
-    });
-// if (state.pointerDown && state.selected_faces.size > 0) {
-// }
-}
-function onPointerDown(event) {
-    (0, _state.state).pointerDown = true;
-    (0, _state.state).intersects = [];
-    (0, _state.state).raycaster.setFromCamera((0, _state.state).pointer, (0, _state.state).camera);
-    const intersects = (0, _state.state).raycaster.intersectObjects((0, _state.state).objects);
-    (0, _state.state).intersects = intersects;
-    // TODO: Track dragging and account for camera movement clicks
-    if ((0, _util.intersecting)((0, _state.state))) {
-        const selected_mesh = (0, _util.first_intersecting_object)((0, _state.state));
-        if (selected_mesh) (0, _command.pushCommand)(new (0, _selectObjectCommand.SelectObjectCommand)(selected_mesh));
-    } else (0, _command.pushCommand)(new (0, _selectObjectCommand.DeselectObjectCommand)());
-}
-function onPointerUp(event) {
-    (0, _state.state).pointerDown = false;
-}
-
-},{"../../Command":"efiIE","../commands/SelectObjectCommand":"9u1vs","../../State":"83rpN","../../util":"7wzGb","../commands/SelectFaceCommand":"32QS8","../../pointer/LocalizePointerTo":"dLwIR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9u1vs":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectObjectCommand", ()=>SelectObjectCommand);
-parcelHelpers.export(exports, "DeselectObjectCommand", ()=>DeselectObjectCommand);
-var _materials = require("../Materials");
-var _state = require("../../State");
-class SelectObjectCommand {
-    constructor(object){
-        this.__selected = (0, _state.state).selected;
-        this.__object = object;
-    }
-    do() {
-        if (!(0, _state.state).selected.has(this.__object)) {
-            (0, _state.state).selected = new Set([
-                this.__object
-            ]);
-            this.__object.original_material = this.__object.material;
-            this.__object.material = (0, _materials.material_selected);
-        }
-    }
-    undo() {
-        (0, _state.state).selected = this.__selected;
-        this.__object.material = prev_material;
-    }
-}
-class DeselectObjectCommand {
-    constructor(){
-        this.__selected = (0, _state.state).selected;
-    }
-    do() {
-        if ((0, _state.state).selected.size > 0) {
-            (0, _state.state).selected.forEach((obj)=>{
-                obj.material = obj.original_material;
-            });
-            (0, _state.state).selected = new Set();
-        }
-    }
-    undo() {
-        (0, _state.state).selected = this.__selected;
-    }
-}
-
-},{"../Materials":"eTWEv","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eTWEv":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "material_selected", ()=>material_selected);
-parcelHelpers.export(exports, "material_default", ()=>material_default);
-var _three = require("three");
-const material_selected = new _three.MeshBasicMaterial({
-    color: "#ffffff"
-});
-const material_default = new _three.MeshBasicMaterial({
-    color: "#ff0000"
-});
-
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"32QS8":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "tagFace", ()=>tagFace);
-parcelHelpers.export(exports, "SelectFaceCommand", ()=>SelectFaceCommand);
-parcelHelpers.export(exports, "DeselectFaceCommand", ()=>DeselectFaceCommand);
-var _state = require("../../State");
-const tagFace = (face, uuid)=>{
-    const generic_face = {
-        ...face,
-        materialIndex: 0
-    };
-    return {
-        face: generic_face,
-        uuid
-    };
-};
-class SelectFaceCommand {
-    constructor(bundle){
-        this.__selected = (0, _state.state).selected_faces;
-        this.__bundle = {
-            ...bundle,
-            face: tagFace(bundle.face, bundle.object.uuid)
-        };
-    }
-    do() {
-        if (!this.__selected.has(JSON.stringify(this.__bundle.face))) {
-            (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
-            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
-        }
-    }
-    undo() {
-        (0, _state.state).selected_faces = this.__selected;
-        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
-    }
-}
-class DeselectFaceCommand {
-    constructor(bundle){
-        this.__bundle = {
-            ...bundle,
-            face: tagFace(bundle.face, bundle.object.uuid)
-        };
-    }
-    do() {
-        if ((0, _state.state).selected_faces.has(JSON.stringify(this.__bundle.face))) {
-            (0, _state.state).selected_faces.delete(JSON.stringify(this.__bundle.face));
-            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
-        }
-    }
-    undo() {
-        (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
-        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dLwIR":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "localizePointerTo", ()=>localizePointerTo);
-const localizePointerTo = ({ event, state, domElement })=>{
-    state.rawPointer.rx = event.clientX;
-    state.rawPointer.ry = event.clientY;
-    state.pointer.x = 2 * (window.innerWidth / domElement.offsetWidth) * (event.clientX - state.renderer.domElement.getBoundingClientRect().x) / window.innerWidth - 1;
-    state.pointer.y = -2 * (window.innerHeight / domElement.offsetHeight) * (event.clientY - state.renderer.domElement.getBoundingClientRect().y) / window.innerHeight + 1;
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdjjs":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "handleKeyDown", ()=>handleKeyDown);
-parcelHelpers.export(exports, "handleKeyUp", ()=>handleKeyUp);
-parcelHelpers.export(exports, "initializeHotkeys", ()=>initializeHotkeys);
-var _command = require("../../Command");
-var _state = require("../../State");
-var _saveProjectCommand = require("../../UI/commands/SaveProjectCommand");
-var _changeToolCommand = require("../commands/ChangeToolCommand");
-var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
-const handleKeyDown = (e)=>{
-    if (e.repeat) return; // Ignore repeated keydown events
-    switch(e.key){
-        case "Backspace":
-        case "Delete":
-            e.preventDefault();
-            handleDelete(e);
-            break;
-        case "Shift":
-            (0, _state.state).shiftDown = true; // Track shift for multi-selection
-            break;
-        case "z":
-            (0, _command.undoCommands)();
-            break;
-        case "s":
-            if (e.metaKey) {
-                e.preventDefault();
-                (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)());
-            }
-            break;
-        case "Alt":
-            (0, _state.state).altDown = true;
-            break;
-        case "Escape":
-            (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("select"));
-            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
-            break;
-        default:
-            break;
-    }
-};
-const handleKeyUp = (e)=>{
-    switch(e.key){
-        case "Shift":
-            (0, _state.state).shiftDown = false;
-            break;
-        case "Alt":
-            (0, _state.state).altDown = false;
-        default:
-            break;
-    }
-};
-const handleDelete = (e)=>{
-    (0, _state.state).tool.onKeyDown(e);
-};
-const initializeHotkeys = ()=>{
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("keyup", handleKeyUp);
-}; // Call this function in your app startup logic
-
-},{"../../Command":"efiIE","../../State":"83rpN","../../UI/commands/SaveProjectCommand":"8Akqt","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Akqt":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SaveProjectCommand", ()=>SaveProjectCommand);
-var _state = require("../../State");
-class SaveProjectCommand {
-    constructor(projectName = "default"){
-        projectName = (0, _state.state).projectInfo.title;
-        this.key = `flatland-project-${projectName}`;
-    }
-    do() {
-        const json = (0, _state.state).serialize();
-        localStorage.setItem(this.key, json);
-        const projects = localStorage.getItem("flatland-projects");
-        if (projects) {
-            const projects_list = JSON.parse(projects);
-            projects_list.push(this.key);
-            localStorage.setItem("flatland-projects", JSON.stringify(projects_list));
-        } else localStorage.setItem("flatland-projects", JSON.stringify([
-            this.key
-        ]));
-        console.log("saved item to ", this.key);
-    }
-    undo() {
-    // No undo for save, baby
-    }
-}
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i5Ou7":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
-var _changeTool = require("../tools/changeTool");
-class ChangeToolCommand {
-    // private lastToolState: ToolBase["state"];
-    constructor(type){
-        this.__type = type;
-    // this.lastToolState = state.tool.__state; // Not implemented: stateful tool swapping (for redo)
-    }
-    do() {
-        (0, _changeTool.changeTool)({
-            name: this.__type
-        });
-    }
-    undo() {
-        (0, _changeTool.changeTool)({
-            name: this.__type
-        });
-        console.log("Undo not yet implemented for ChangeToolCommand");
-    }
-}
-
-},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kXHtP":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "changeTool", ()=>changeTool);
-var _state = require("../../State");
-var _store = require("../../UI/store");
-var _canvas = require("../rendering/canvas");
-var _bezierPointEditorTool = require("./BezierPointEditorTool");
-var _grainlineTool = require("./GrainlineTool");
-var _measureTool = require("./MeasureTool");
-var _pathTool = require("./PathTool");
-var _selectTool = require("./SelectTool");
-function changeTool(toolState) {
-    // name is required, all other properties optional
-    // Context: this needs to be the tool name but it should also accept entire tool state wholesale for the purposes of undo
-    const newToolName = toolState.name;
-    const importedState = toolState.state;
-    console.log(toolState.name);
-    (0, _state.state).tool.dismountEvents();
-    (0, _store.useAppState).getState().resetUI();
-    switch(newToolName){
-        case "path":
-            (0, _state.state).tool = new (0, _pathTool.PathTool)();
-            (0, _store.useAppState).getState().setSelectedTool("path");
-            if (importedState) (0, _state.state).tool.applyState(importedState);
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "select":
-            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
-            (0, _store.useAppState).getState().setSelectedTool("select");
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "measure":
-            (0, _state.state).tool = new (0, _measureTool.MeasureTool)();
-            (0, _store.useAppState).getState().setSelectedTool("measure");
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "grainline":
-            (0, _state.state).tool = new (0, _grainlineTool.GrainlineTool)();
-            (0, _store.useAppState).getState().setSelectedTool("grainline");
-            (0, _canvas.redrawCanvas)();
-            break;
-        case "bezier point editor":
-            (0, _state.state).tool = new (0, _bezierPointEditorTool.BezierPointEditorTool)((0, _state.state).c_selectedPoints[0]); // A bit brittle, this corresponds to the selection made by the select tool
-            (0, _store.useAppState).getState().setSelectedTool("bezier point editor");
-            (0, _canvas.drawCanvasFromState)((0, _state.state));
-            break;
-        default:
-            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
-            (0, _store.useAppState).getState().setSelectedTool("select");
-            (0, _canvas.redrawCanvas)();
-            break;
-    }
-    (0, _state.state).tool.initializeEvents();
-}
-
-},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./BezierPointEditorTool":"fIDCA","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fIDCA":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "BezierPointEditorTool", ()=>BezierPointEditorTool);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class BezierPointEditorTool {
-    constructor(pointId){
-        // Tool name
-        this.name = "bezier point editor";
-        this.__listeners = {
-            down: this.onMouseDown.bind(this),
-            move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this)
-        };
-        this.applyState = (state)=>{
-        // Not implemented
-        };
-        this.__state = {
-            type: "idle",
-            pointId
-        };
-    }
-    initializeEvents() {
-        const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.__listeners.down);
-        canvas.addEventListener("mousemove", this.__listeners.move);
-        canvas.addEventListener("mouseup", this.__listeners.up);
-    // canvas.addEventListener("dblclick", this.__listeners.dblclick);
-    }
-    dismountEvents() {
-        (0, _state.state).canvas.removeEventListener("mousedown", this.__listeners.down);
-        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
-        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
-    // state.canvas.removeEventListener("dblclick", this.__listeners.dblclick);
-    }
-    // Tool state updater
-    transition(newState) {
-        console.log(`SelectTool state: ${this.state.type} \u{2192} ${newState.type}`);
-        this.__state = newState;
-    }
-    // Select tool event management
-    onMouseDown(e) {
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    onMouseMove(e) {}
-    onMouseUp(e) {}
-    get state() {
-        return this.__state;
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _three = require("three");
-var _drawDrawPreview = require("../rendering/drawDrawPreview");
-var _command = require("../../Command");
-var _grainlineToolCreateGrainlineCommand = require("../commands/GrainlineToolCreateGrainlineCommand");
-var _isPointInPolygon = require("../geometry/isPointInPolygon");
-var _changeToolCommand = require("../commands/ChangeToolCommand");
-var _store = require("../../UI/store");
-class GrainlineTool {
-    constructor(){
-        // Tool state object stores tool mechanical state, no data
-        this.__state = {
-            type: "idle"
-        };
-        // Tool name
-        this.name = "grainline";
-        this.unitVector = new (0, _three.Vector2)(0, -1);
-        this.setPointer = (0, _store.useAppState).getState().setPointer;
-        this.__listeners = {
-            down: this.onMouseDown.bind(this),
-            move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this)
-        };
-        this.angle = 0;
-    }
-    initializeEvents() {
-        const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.__listeners.down);
-        canvas.addEventListener("mousemove", this.__listeners.move);
-        canvas.addEventListener("mouseup", this.__listeners.up);
-    }
-    dismountEvents() {
-        (0, _state.state).canvas.removeEventListener("mousedown", this.__listeners.down);
-        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
-        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
-    }
-    get state() {
-        return this.__state;
-    }
-    // Tool state management
-    transition(newState) {
-        console.log(`Tool state: ${this.__state.type} \u{2192} ${newState.type}`);
-        this.__state = newState;
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    // Tool event management
-    onMouseDown(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        // state.pointer = pos;
-        const selectedShapeIndex = this.checkForShapeOverlap(pos);
-        if (selectedShapeIndex > -1) switch(this.__state.type){
-            case "idle":
-                this.transition({
-                    type: "drawing",
-                    originPos: pos
-                });
-                break;
-            default:
-                break;
-        }
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    onMouseMove(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        (0, _state.state).pointer = pos;
-        this.setPointer((0, _state.state).pointer);
-        switch(this.__state.type){
-            case "drawing":
-                (0, _drawDrawPreview.drawDrawPreview)(this.__state.originPos, pos, `${Math.round(180 * this.angleFromNoon(pos, this.__state.originPos) / Math.PI)}\xb0`);
-                break;
-        }
-    }
-    onMouseUp(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        switch(this.__state.type){
-            case "drawing":
-                this.angle = this.angleFromNoon(pos, this.__state.originPos);
-                (0, _command.pushCommand)(new (0, _grainlineToolCreateGrainlineCommand.GrainlineToolCreateGrainlineCommand)(this.__state.originPos, (0, _state.state).c_selected_shapes[0], this.angle));
-        }
-        this.transition({
-            type: "idle"
-        });
-        (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("select"));
-    }
-    checkForShapeOverlap(pos) {
-        let value = -1;
-        (0, _state.state).c_shapes.forEach((shape, index)=>{
-            const shapePoints = shape.map((pointIndex)=>(0, _state.state).c_points[pointIndex]);
-            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) value = index;
-        });
-        return value;
-    }
-    angleFromNoon(vector, origin) {
-        vector = vector.clone().sub(origin);
-        let baseAngle = Math.atan2(vector.y, vector.x);
-        let ang = baseAngle + Math.PI / 2;
-        // Map to [0, 2pi]
-        if (ang < 0) ang += 2 * Math.PI;
-        return ang;
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","three":"ktPTu","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","../geometry/isPointInPolygon":"aOEKs","../commands/ChangeToolCommand":"i5Ou7","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5NqY4":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GrainlineToolCreateGrainlineCommand", ()=>GrainlineToolCreateGrainlineCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-var _centroid = require("../geometry/centroid");
-class GrainlineToolCreateGrainlineCommand {
-    constructor(position, shapeIndex, angle){
-        this.shapeIndex = shapeIndex;
-        this.grainline = {
-            position: (0, _centroid.computeCentroid)((0, _state.state).c_shapes[shapeIndex]),
-            angle
-        };
-    }
-    do() {
-        (0, _state.state).c_grainlines.set(this.shapeIndex, this.grainline);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_grainlines.delete(this.shapeIndex);
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gsjQg":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
-var _three = require("three");
-var _state = require("../../State");
-function computeCentroid(indices) {
-    if (indices.length === 0) return new (0, _three.Vector2)();
-    const centroid = new (0, _three.Vector2)();
-    for (const index of indices){
-        const point = (0, _state.state).c_points[index];
-        centroid.add(point);
-    }
-    centroid.divideScalar(indices.length);
-    return centroid;
-}
-
-},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-/**
- * Checks if a point is inside a polygon using the ray-casting algorithm.
- * @param point The point to check.
- * @param polygon An array of Vector2 points defining the closed shape.
- * @returns `true` if the point is inside the polygon, `false` otherwise.
- */ parcelHelpers.export(exports, "isPointInPolygon", ()=>isPointInPolygon);
-function isPointInPolygon(point, polygon) {
-    let inside = false;
-    const n = polygon.length;
-    for(let i = 0, j = n - 1; i < n; j = i++){
-        const xi = polygon[i].x, yi = polygon[i].y;
-        const xj = polygon[j].x, yj = polygon[j].y;
-        // Check if point is between polygon edges
-        const intersect = yi > point.y !== yj > point.y && point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi;
-        if (intersect) inside = !inside;
-    }
-    return inside;
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
-var _command = require("../../Command");
-var _state = require("../../State");
-var _measureToolAddPointCommand = require("../commands/MeasureToolAddPointCommand");
-var _measureToolClosePathCommand = require("../commands/MeasureToolClosePathCommand");
-var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _canvas = require("../rendering/canvas");
-var _drawDrawPreview = require("../rendering/drawDrawPreview");
-class MeasureTool {
-    constructor(){
-        this.__state = {
-            type: "idle"
-        };
-        // Tool name
-        this.name = "measure";
-        this.__listeners = {
-            down: this.onMouseDown.bind(this),
-            move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this)
-        };
-        this.__length = 0;
-    }
-    initializeEvents() {
-        const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.__listeners.down);
-        canvas.addEventListener("mousemove", this.__listeners.move);
-        canvas.addEventListener("mouseup", this.__listeners.up);
-    }
-    dismountEvents() {
-        (0, _state.state).canvas.removeEventListener("mousedown", this.__listeners.down);
-        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
-        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
-    }
-    // Tool state management
-    transition(newState) {
-        console.log(`MeasureTool state: ${this.__state.type} \u{2192} ${newState.type}`);
-        this.__state = newState;
-    }
-    // Tool event management
-    onMouseDown(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        (0, _state.state).pointer = pos;
-        switch(this.__state.type){
-            case "idle":
-                this.transition({
-                    type: "drawing",
-                    currentPathIndex: (0, _state.state).c_measure_paths.length
-                });
-                (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, (0, _state.state).c_measure_paths.length));
-                break;
-            case "drawing":
-                if ((0, _state.state).altDown) (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, this.__state.currentPathIndex));
-                else {
-                    (0, _command.pushCommand)(new (0, _measureToolClosePathCommand.MeasureToolClosePathCommand)(pos, this.__state.currentPathIndex));
-                    this.transition({
-                        type: "idle"
-                    });
-                }
-                break;
-            default:
-                break;
-        }
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    onMouseMove(e) {
-        switch(this.__state.type){
-            case "idle":
-                break;
-            case "drawing":
-                if ((0, _state.state).c_measure_paths[this.__state.currentPathIndex]) (0, _drawDrawPreview.drawDrawPreview)((0, _state.state).c_measure_points.get((0, _state.state).c_measure_paths[this.__state.currentPathIndex][0]), (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY));
-                break;
-            default:
-                break;
-        }
-    }
-    onMouseUp(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        this.__state.type;
-    // drawCanvasFromState(state);
-    }
-    get state() {
-        return this.__state;
-    }
-}
-
-},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../commands/MeasureToolClosePathCommand":"aINj4","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1IlS2":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MeasureToolAddPointCommand", ()=>MeasureToolAddPointCommand);
-var _three = require("three");
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class MeasureToolAddPointCommand {
-    constructor(pos, pathIndex){
-        this.pos = new (0, _three.Vector2)();
-        this.pos.copy(pos);
-        this.currentPathIndex = pathIndex;
-        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
-    }
-    do() {
-        (0, _state.state).c_measure_points.set(this.key, this.pos);
-        if (!(0, _state.state).c_measure_paths[this.currentPathIndex]) (0, _state.state).c_measure_paths[this.currentPathIndex] = [];
-        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_measure_points.delete(this.key);
-    }
-}
-
-},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aINj4":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MeasureToolClosePathCommand", ()=>MeasureToolClosePathCommand);
-var _three = require("three");
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class MeasureToolClosePathCommand {
-    constructor(pos, pathIndex){
-        this.pos = new (0, _three.Vector2)();
-        this.pos.copy(pos);
-        this.currentPathIndex = pathIndex;
-        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
-    }
-    do() {
-        (0, _state.state).c_measure_points.set(this.key, this.pos);
-        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_measure_points.delete(this.key);
-    }
-}
-
-},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jISwe":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectTool", ()=>SelectTool);
-var _command = require("../../Command");
-var _state = require("../../State");
-var _cLocalizePoint = require("../pointer/cLocalizePoint");
-var _selectToolShapeCommand = require("../commands/SelectToolShapeCommand");
-var _isPointInPolygon = require("../geometry/isPointInPolygon");
-var _selectToolMoveShapeCommand = require("../commands/SelectToolMoveShapeCommand");
-var _selectToolPointCommand = require("../commands/SelectToolPointCommand");
-var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
-var _canvas = require("../rendering/canvas");
-var _deleteShapeCommand = require("../commands/DeleteShapeCommand");
-var _drawPreviewsCommand = require("../commands/Rendering/DrawPreviewsCommand");
-var _findNearestPoint = require("../geometry/findNearestPoint");
-var _bezierIntersection = require("../geometry/bezierIntersection");
-var _interface = require("../settings/interface");
-var _selectToolDeselectPointCommand = require("../commands/SelectToolDeselectPointCommand");
-var _selectToolMovePointsCommand = require("../commands/SelectToolMovePointsCommand");
-var _changeToolCommand = require("../commands/ChangeToolCommand");
-class SelectTool {
-    constructor(){
-        // Tool state object stores tool mechanical state
-        this.__state = {
-            type: "idle"
-        };
-        // Tool name
-        this.name = "select";
-        this.__listeners = {
-            down: this.onMouseDown.bind(this),
-            move: this.onMouseMove.bind(this),
-            up: this.onMouseUp.bind(this),
-            dblclick: this.onDoubleClick.bind(this)
-        };
-        this.applyState = (state)=>{
-        // Not implemented
-        };
-    }
-    initializeEvents() {
-        const canvas = (0, _state.state).canvas;
-        canvas.addEventListener("mousedown", this.__listeners.down);
-        canvas.addEventListener("mousemove", this.__listeners.move);
-        canvas.addEventListener("mouseup", this.__listeners.up);
-        canvas.addEventListener("dblclick", this.__listeners.dblclick);
-    }
-    dismountEvents() {
-        (0, _state.state).canvas.removeEventListener("mousedown", this.__listeners.down);
-        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
-        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
-        (0, _state.state).canvas.removeEventListener("dblclick", this.__listeners.dblclick);
-    }
-    // Tool state updater
-    transition(newState) {
-        console.log(`SelectTool state: ${this.__state.type} \u{2192} ${newState.type}`);
-        this.__state = newState;
-    }
-    // Select tool event management
-    onMouseDown(e) {
-        const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        const selectedGeomId = this.checkForShapeOverlap(clickPos);
-        let pointId = (0, _findNearestPoint.findNearestGeometryPoint)(clickPos, Array.from((0, _state.state).c_geometryMap.values()));
-        let lineHit = null;
-        if (selectedGeomId) lineHit = (0, _bezierIntersection.isPointNearBezierGeometry)(clickPos, (0, _state.state).c_geometryMap.get(selectedGeomId), (0, _interface.rad) * 2);
-        (0, _state.state).pointerDown = true;
-        if (selectedGeomId || pointId || lineHit != null) // Case: you hit something, anything at all of interest within the canvas
-        switch(this.__state.type){
-            case "idle":
-                if (pointId) {
-                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
-                    this.transition({
-                        type: "selecting points"
-                    });
-                // TODO: describe line selection features, possibly you could select to measure a larger and larger segment?
-                // } else if ( lineHit ) {
-                //   pushCommand( new SelectToolSelectLineCommand( lineHit ) );
-                //   this.transition({
-                //     type: "selecting lines",
-                //   }); 
-                } else if (selectedGeomId) {
-                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
-                    this.transition({
-                        type: "selecting shapes"
-                    });
-                }
-                break;
-            case "selecting shapes":
-                if ((0, _state.state).shiftDown) {
-                    if (selectedGeomId) // Previously this called SelectToolAddShape command
-                    // I do not know why as they seem functionally the same???
-                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
-                } else if (selectedGeomId) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
-                break;
-            case "selecting points":
-                if (pointId) {
-                    if ((0, _state.state).shiftDown) {
-                        // if the point is not already selected
-                        if (!this.pointIsSelected(pointId)) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
-                        else // Deslect the point
-                        (0, _command.pushCommand)(new (0, _selectToolDeselectPointCommand.SelectToolDeselectPointCommand)(pointId));
-                    } else if (!(0, _state.state).shiftDown) {
-                        if (this.pointIsSelected(pointId)) ;
-                        else {
-                            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
-                            (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
-                        }
-                    }
-                } else this.transition({
-                    type: "idle"
-                });
-                break;
-            case "selecting lines":
-                // Hit Point
-                if (pointId) {
-                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
-                    this.transition({
-                        type: "selecting points"
-                    });
-                // Hit Shape
-                } else if (selectedGeomId) {
-                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
-                    this.transition({
-                        type: "selecting shapes"
-                    });
-                }
-                break;
-        }
-        else {
-            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
-            this.transition({
-                type: "idle"
-            });
-        }
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    checkForShapeOverlap(pos) {
-        let foundId = null;
-        (0, _state.state).c_geometryMap.forEach((geom, id)=>{
-            const shapePoints = geom.pointIds.map((pointId)=>{
-                const point = (0, _state.state).c_pointsMap.get(pointId);
-                return point.to;
-            });
-            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) foundId = id;
-        });
-        return foundId;
-    }
-    onMouseMove(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        switch(this.__state.type){
-            case "moving shapes":
-                (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
-                break;
-            case "selecting shapes":
-                if ((0, _state.state).pointerDown == true) {
-                    (0, _state.state).c_move_from = pos;
-                    (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
-                    this.transition({
-                        type: "moving shapes",
-                        startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
-                    });
-                }
-                break;
-            case "selecting points":
-                if ((0, _state.state).pointerDown == true) {
-                    (0, _state.state).c_move_from = pos;
-                    (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
-                    this.transition({
-                        type: "moving points",
-                        startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
-                    });
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    onMouseUp(e) {
-        (0, _state.state).pointerDown = false;
-        const endPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        let startPos = undefined;
-        switch(this.__state.type){
-            case "moving shapes":
-                startPos = this.__state.startPos;
-                (0, _command.pushCommand)(new (0, _selectToolMoveShapeCommand.SelectToolMoveShapeCommand)((0, _state.state).c_selectedGeometries, startPos, endPos));
-                this.transition({
-                    type: "selecting shapes"
-                });
-                break;
-            case "moving points":
-                startPos = this.__state.startPos;
-                (0, _command.pushCommand)(new (0, _selectToolMovePointsCommand.SelectToolMovePointsCommand)((0, _state.state).c_selectedPoints, startPos, endPos));
-                this.transition({
-                    type: "selecting points"
-                });
-                break;
-        }
-    }
-    onDoubleClick(e) {
-        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
-        const pointId = (0, _findNearestPoint.findNearestGeometryPoint)(pos, Array.from((0, _state.state).c_geometryMap.values()));
-        if (pointId) (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("bezier point editor"));
-    }
-    pointIsSelected(pointId) {
-        return (0, _state.state).c_selectedPoints.find((pid)=>pid == pointId);
-    }
-    onKeyDown(e) {
-        switch(this.state.type){
-            case "selecting shapes":
-                console.log("keypress", e);
-                // case "selecting_points":
-                if (e.code === "Backspace" || e.code === "Delete") {
-                    if ((0, _state.state).c_selected_shapes.length > 0) (0, _command.pushCommand)(new (0, _deleteShapeCommand.DeleteShapeCommand)(this.state.selectedShapeIndex));
-                }
-                this.transition({
-                    type: "idle"
-                });
-                break;
-        }
-    }
-    deselect() {
-        console.error("Not implemented for the Select tool");
-    }
-    get state() {
-        return this.__state;
-    }
-}
-
-},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../commands/Rendering/DrawPreviewsCommand":"4QHCH","../geometry/findNearestPoint":"8deBQ","../geometry/bezierIntersection":"fUwbC","../settings/interface":"dci9b","../commands/SelectToolDeselectPointCommand":"DbYrq","../commands/SelectToolMovePointsCommand":"bIGVa","../commands/ChangeToolCommand":"i5Ou7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
-var _state = require("../../State");
-var _generateFloatingLabel = require("../hooks/generateFloatingLabel");
-class SelectToolShapeCommand {
-    constructor(geomId){
-        this.geomId = geomId;
-        this.previousSelection = (0, _state.state).c_selectedGeometries;
-    }
-    do() {
-        if (!(0, _state.state).c_selectedGeometries.some((id)=>id === this.geomId)) (0, _state.state).c_selectedGeometries.push(this.geomId);
-        (0, _generateFloatingLabel.generateFloatingLabel)(this.geomId);
-    }
-    undo() {
-        (0, _state.state).c_selectedGeometries = this.previousSelection;
-    }
-}
-
-},{"../../State":"83rpN","../hooks/generateFloatingLabel":"gIlKq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gIlKq":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "generateFloatingLabel", ()=>generateFloatingLabel);
-var _three = require("three");
-var _mathUtils = require("three/src/math/MathUtils");
-var _state = require("../../State");
-var _boundingBox = require("../geometry/boundingBox");
-var _getPointArrayFromGeometry2D = require("../geometry/getPointArrayFromGeometry2D");
-var _store = require("../../UI/store");
-const generateFloatingLabel = (geomId)=>{
-    const pointList = (0, _getPointArrayFromGeometry2D.getPointArray)(geomId);
-    const box = (0, _boundingBox.getShapeBoundingRect)(pointList);
-    const dim = (0, _boundingBox.getShapeDimensions)(pointList);
-    const rect = (0, _state.state).canvas.getBoundingClientRect();
-    // Generate a point in the upper left hand corner of the shape in windowspace
-    const labelPoint = new (0, _three.Vector2)(box.x0 + rect.x, box.y0 + rect.y);
-    const pieceIndex = (0, _store.useAppState).getState().pieces.findIndex((piece)=>piece.geometryId == geomId);
-    let piece;
-    if (pieceIndex < 0) piece = {
-        id: (0, _mathUtils.generateUUID)(),
-        geometryId: geomId
-    };
-    else piece = (0, _store.useAppState).getState().pieces[pieceIndex];
-    (0, _store.useAppState).getState().labelPiece(labelPoint, piece);
-};
-
-},{"three":"ktPTu","three/src/math/MathUtils":"cuzU2","../../State":"83rpN","../geometry/boundingBox":"3SCvR","../geometry/getPointArrayFromGeometry2D":"12og0","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2adoe":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolMoveShapeCommand", ()=>SelectToolMoveShapeCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class SelectToolMoveShapeCommand {
-    constructor(geoms, from, to){
-        this.geoms = geoms;
-        // this.__from = from.clone();
-        // this.__to = to.clone();
-        this.__diff = to.clone().sub(from);
-    }
-    do() {
-        (0, _state.state).c_selectedGeometries.forEach((geomId)=>{
-            const geom = (0, _state.state).c_geometryMap.get(geomId);
-            if (!geom) return;
-            const uniqueIds = Array.from(new Set(geom.pointIds));
-            uniqueIds.forEach((id)=>{
-                const bp = (0, _state.state).c_pointsMap.get(id);
-                if (!bp) return;
-                bp.to.add(this.__diff);
-                // bp.from.add(this.__diff); // Do not modify this vector in this sweep–it is the previous point's .to vector
-                bp.c1.add(this.__diff);
-                bp.c2.add(this.__diff);
-            });
-        });
-        // state.updateGrainlinePos( this.shapeIndex, computeCentroid( state.c_shapes[ this.shapeIndex ] ) );
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        // state.c_shapes[ this.shapeIndex ].forEach((i: number) => {
-        //   state.c_points[i].sub(this.__diff); // Reverse the movement
-        // });
-        console.error("not implemented");
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"97SwH":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolPointCommand", ()=>SelectToolPointCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class SelectToolPointCommand {
-    constructor(pointId){
-        this.__pointId = pointId;
-        this.__index = (0, _state.state).c_selectedPoints.length - 1;
-    }
-    do() {
-        (0, _state.state).c_selectedPoints.push(this.__pointId);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_selectedPoints.splice(this.__index, 1);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"35eIL":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolDeselectAllCommand", ()=>SelectToolDeselectAllCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class SelectToolDeselectAllCommand {
-    constructor(){
-        this.old_selected = (0, _state.state).c_selectedPoints;
-        this.old_selected_lines = (0, _state.state).c_selected_lines;
-        this.old_selected_shapes = (0, _state.state).c_selectedGeometries;
-    }
-    do() {
-        (0, _state.state).c_selectedPoints = [];
-        (0, _state.state).c_selected_lines = [];
-        (0, _state.state).c_selectedGeometries = [];
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_selectedPoints = this.old_selected;
-        (0, _state.state).c_selected_lines = this.old_selected_lines;
-        (0, _state.state).c_selectedGeometries = this.old_selected_shapes;
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3BS11":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DeleteShapeCommand", ()=>DeleteShapeCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class DeleteShapeCommand {
-    constructor(shapeIndex){
-        this.__shapeIndex = shapeIndex;
-    }
-    do() {
-        (0, _state.state).c_shapes[this.__shapeIndex].forEach((pointIndex)=>{
-            // Delete points from the active point map
-            (0, _state.state).c_pointmap.delete(pointIndex);
-        });
-        // Remove shape from the list of shapes
-        (0, _state.state).c_shapes.splice(this.__shapeIndex, 1);
-        console.log("deleted shape ", this.__shapeIndex);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        // TODO: Implement DeleteShapeCommand undo
-        console.log("Undo function for DeleteshapeCommand not implemented");
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4QHCH":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DrawPreviewsCommand", ()=>DrawPreviewsCommand);
-var _drawSelectionMovePreview = require("../../rendering/drawSelectionMovePreview");
-var _canvas = require("../../rendering/canvas");
-class DrawPreviewsCommand {
-    constructor(pos){
-        this.pos = pos;
-    }
-    do() {
-        (0, _canvas.redrawCanvas)();
-        (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(this.pos);
-    }
-    undo() {
-    // do render commands have an undo?
-    }
-}
-
-},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fUwbC":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-/**
- * Returns true if `point` is within `radius` of any Bézier segment
- * in the given Geometry2D (i.e. when `geom.type === 'bezier'`).
- */ parcelHelpers.export(exports, "isPointNearBezierGeometry", ()=>isPointNearBezierGeometry);
-var _three = require("three");
-var _state = require("../../State");
-/** Evaluate the cubic Bézier at parameter t ∈ [0,1]. */ function evalCubic(P0, P1, P2, P3, t) {
-    const u = 1 - t;
-    return new (0, _three.Vector2)(u * u * u * P0.x + 3 * u * u * t * P1.x + 3 * u * t * t * P2.x + t * t * t * P3.x, u * u * u * P0.y + 3 * u * u * t * P1.y + 3 * u * t * t * P2.y + t * t * t * P3.y);
-}
-/** Squared distance from point P to the line segment VW. */ function pointToSegmentDistanceSq(P, V, W) {
-    const l2 = V.distanceToSquared(W);
-    if (l2 === 0) return P.distanceToSquared(V);
-    let t = ((P.x - V.x) * (W.x - V.x) + (P.y - V.y) * (W.y - V.y)) / l2;
-    t = Math.max(0, Math.min(1, t));
-    const proj = new (0, _three.Vector2)(V.x + t * (W.x - V.x), V.y + t * (W.y - V.y));
-    return P.distanceToSquared(proj);
-}
-/**
- * Approximate the minimum squared distance from P to the cubic Bézier defined by `bp`.
- * We sample `steps` segments between t=0 and t=1.
- */ function bezierDistanceSq(bp, P, steps = 20) {
-    let minSq = Infinity;
-    let prev = bp.from;
-    for(let i = 1; i <= steps; i++){
-        const t = i / steps;
-        const curr = evalCubic(bp.from, bp.c1, bp.c2, bp.to, t);
-        const dsq = pointToSegmentDistanceSq(P, prev, curr);
-        if (dsq < minSq) minSq = dsq;
-        prev = curr;
-    }
-    return minSq;
-}
-function isPointNearBezierGeometry(point, geom, radius, steps = 20) {
-    if (geom.type !== "bezier") return false;
-    const r2 = radius * radius;
-    for (const pid of geom.pointIds){
-        const bp = (0, _state.state).c_pointsMap.get(pid);
-        if (!bp) continue;
-        // if this point isn’t actually a BezierPoint, skip
-        if (bp.to === undefined) continue;
-        const distSq = bezierDistanceSq(bp, point, steps);
-        if (distSq <= r2) return true;
-    }
-    return false;
-}
-
-},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"DbYrq":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolDeselectPointCommand", ()=>SelectToolDeselectPointCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class SelectToolDeselectPointCommand {
-    constructor(pointId){
-        this.__pointId = pointId;
-        this.__index = (0, _state.state).c_selectedPoints.length - 1;
-    }
-    do() {
-        (0, _state.state).c_selectedPoints = (0, _state.state).c_selectedPoints.filter((elt)=>{
-            this.__pointId;
-        });
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_selectedPoints.push(this.__pointId);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bIGVa":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "SelectToolMovePointsCommand", ()=>SelectToolMovePointsCommand);
-var _state = require("../../State");
-var _canvas = require("../rendering/canvas");
-class SelectToolMovePointsCommand {
-    constructor(pointIds, from, to){
-        this.diff = to.clone().sub(from);
-        this.pointIds = pointIds;
-    }
-    do() {
-        this.pointIds.forEach((pid)=>{
-            const point = (0, _state.state).c_pointsMap.get(pid);
-            if (!point) return;
-            // Note the From component of the BezierPoint is not modified as it points to the previous point's To component
-            point.to.add(this.diff);
-            point.c1.add(this.diff);
-            point.c2.add(this.diff);
-        });
-        // state.updateGrainlinePos( this.shapeIndex, computeCentroid( state.c_shapes[ this.shapeIndex ] ) );
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        // state.c_shapes[ this.shapeIndex ].forEach((i: number) => {
-        //   state.c_points[i].sub(this.__diff); // Reverse the movement
-        // });
-        console.error("not implemented");
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-}
-
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
-var _cOnMouseEnter = require("./cOnMouseEnter");
-var _cOnMouseLeave = require("./cOnMouseLeave");
-const initializeCanvasEvents = (canvas)=>{
-    if (!canvas) {
-        console.error("Canvas element not found");
-        return;
-    }
-    canvas.addEventListener("mouseenter", (0, _cOnMouseEnter.cOnMouseEnter));
-    canvas.addEventListener("mouseleave", (0, _cOnMouseLeave.cOnMouseLeave));
-// canvas.addEventListener("mousedown", debugEvent);
-};
-const debugEvent = (e)=>{
-    console.log(e);
-};
-
-},{"./cOnMouseEnter":"gK6it","./cOnMouseLeave":"hoBK0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gK6it":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "cOnMouseEnter", ()=>cOnMouseEnter);
-var _state = require("../../State");
-const cOnMouseEnter = (e)=>{
-    console.log("active");
-    (0, _state.state).cActive = true;
-};
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hoBK0":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "cOnMouseLeave", ()=>cOnMouseLeave);
-var _state = require("../../State");
-const cOnMouseLeave = (e)=>{
-    (0, _state.state).cActive = false;
-};
-
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"46Cm3":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-// The main update function where XPBD and collision handling occur.
-parcelHelpers.export(exports, "updateXPBD", ()=>updateXPBD);
-var _three = require("three");
-var _state = require("../../State");
-var _factors = require("../../2D/settings/factors");
-// For collisions, we’ll resolve with a simple floor at y = 0.
-function resolveCollisions(particle, floorY) {
-    if (particle.predicted.y < floorY) // Push the particle back to the floor.
-    particle.predicted.y = floorY;
-}
-function updateXPBD(deltaTime) {
-    if ((0, _state.state).particles.length < 1) // Bail if the geometry is not initialized
-    // TODO: Add user input or smart re-triggering for polygon building
-    return;
-    const gravity = new _three.Vector3(0, -9.81, 0);
-    for (const particle of (0, _state.state).particles)if (particle.invMass > 0) {
-        // Predict new position
-        particle.predicted.copy(particle.position);
-        // Add scaled velocity to predicted pos
-        particle.predicted.addScaledVector(particle.velocity, deltaTime);
-        // Add dt^2 * invMa*f_ext(x^n) to xpredicted
-        const dtsq = Math.pow(deltaTime, 2);
-        particle.predicted.addScaledVector(gravity, particle.invMass * dtsq);
-    }
-    for (const particle of (0, _state.state).particles)resolveCollisions(particle, 0);
-    const iterations = 10;
-    for(let iter = 0; iter < iterations; iter++)for (const constraint of (0, _state.state).constraints)constraint.solve(deltaTime, {
-        particles: (0, _state.state).particles
-    });
-    for (const particle of (0, _state.state).particles){
-        // Store previous position for later velocity calculation
-        particle.previousPosition.copy(particle.position);
-        // Update position
-        particle.position.copy(particle.predicted);
-        // Update geometry buffer
-        const positionAttr = particle.geometry.getAttribute("position");
-        positionAttr.setXYZ(particle.positionIndex, particle.position.x, particle.position.y, particle.position.z);
-        positionAttr.needsUpdate = true;
-        // Update velocity with possible Number guards (-> damping)
-        particle.velocity.copy(particle.position);
-        particle.velocity.sub(particle.previousPosition);
-        particle.velocity.clamp((0, _factors.velocityMin), (0, _factors.velocityMax));
-        particle.velocity.divideScalar(deltaTime);
-    }
-    (0, _state.state).particles[0].geometry.attributes.position.needsUpdate = true;
-    (0, _state.state).particles[0].geometry.computeBoundingSphere();
-}
-
-},{"three":"ktPTu","../../State":"83rpN","../../2D/settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6ni0Q":[function(require,module,exports) {
-var $parcel$ReactRefreshHelpers$d584 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$d584.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Header", ()=>Header);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _command = require("../../Command");
-var _saveProjectCommand = require("../commands/SaveProjectCommand");
-var _menuItem = require("./Header/MenuItem");
-var _menuItemDefault = parcelHelpers.interopDefault(_menuItem);
-var _userIcon = require("./Header/UserIcon");
-var _store = require("../store");
-var _s = $RefreshSig$();
-const Header = ()=>{
-    _s();
-    const showModal = (0, _store.useAppState)((s)=>s.showModal);
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("header", {
-        className: "p-3 flex flex-row items-center justify-between",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                className: "items-center flex-row flex ",
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
-                        className: "text-2xl bg-stone-900 text-white inline-block px-2",
-                        children: "Flatland Studio"
-                    }, void 0, false, {
-                        fileName: "src/UI/sections/Header.tsx",
-                        lineNumber: 16,
-                        columnNumber: 9
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _menuItemDefault.default), {
-                        label: "File",
-                        options: [
-                            {
-                                name: "Recent >",
-                                action: ()=>console.log("Zoom In")
-                            },
-                            {
-                                name: "New",
-                                action: ()=>showModal("New Project")
-                            },
-                            {
-                                name: "Open",
-                                action: ()=>showModal("Open Project")
-                            },
-                            {
-                                name: "Save",
-                                action: ()=>{
-                                    const activeTitle = (0, _store.useAppState).getState().activeProjectTitle;
-                                    // If the project has no title, prompt Save As modal
-                                    if (!activeTitle || activeTitle == "untitled") (0, _store.useAppState).getState().showModal("Save As Project");
-                                    else (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)());
-                                }
-                            }
-                        ]
-                    }, void 0, false, {
-                        fileName: "src/UI/sections/Header.tsx",
-                        lineNumber: 17,
-                        columnNumber: 9
-                    }, undefined)
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/sections/Header.tsx",
-                lineNumber: 15,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _userIcon.UserIcon), {
-                    user: null,
-                    onLogin: function() {
-                        throw new Error("Function not implemented.");
-                    },
-                    onLogout: function() {
-                        throw new Error("Function not implemented.");
-                    }
-                }, void 0, false, {
-                    fileName: "src/UI/sections/Header.tsx",
-                    lineNumber: 39,
-                    columnNumber: 9
-                }, undefined)
-            }, void 0, false, {
-                fileName: "src/UI/sections/Header.tsx",
-                lineNumber: 38,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/sections/Header.tsx",
-        lineNumber: 14,
-        columnNumber: 5
-    }, undefined);
-};
-_s(Header, "W6iXQHZojcEiDzgJ0VwaHXtI5aI=", false, function() {
-    return [
-        (0, _store.useAppState)
-    ];
-});
-_c = Header;
-var _c;
-$RefreshReg$(_c, "Header");
-
-  $parcel$ReactRefreshHelpers$d584.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-},{"react/jsx-dev-runtime":"iTorj","../../Command":"efiIE","../commands/SaveProjectCommand":"8Akqt","./Header/MenuItem":"6dTG8","./Header/UserIcon":"5JxDc","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6dTG8":[function(require,module,exports) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6dTG8":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$122f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -54892,6 +52680,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Editor", ()=>Editor);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
 var _pieces = require("../inventory/Pieces");
 var _toolbar = require("../tools/Toolbar");
 var _cursorInfo = require("./Overlay/CursorInfo");
@@ -54899,7 +52688,20 @@ var _cursorInfoDefault = parcelHelpers.interopDefault(_cursorInfo);
 var _label = require("./Overlay/Label");
 var _labelDefault = parcelHelpers.interopDefault(_label);
 var _shapeInfo = require("./Overlay/ShapeInfo");
+var _main = require("../../main");
+var _store = require("../store");
+var _s = $RefreshSig$();
 const Editor = ({ canvasRef, threeRef })=>{
+    _s();
+    // Set up canvas refs and create new project
+    (0, _react.useEffect)(()=>{
+        if (canvasRef.current) (0, _main.initCanvas)(canvasRef.current);
+        if (threeRef.current) (0, _main.initScene)(threeRef.current);
+        // pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
+        (0, _main.initUpdate)();
+    }, [
+        (0, _store.useAppState)((s)=>s.activeProjectTitle)
+    ]);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "grid grid-cols-4 flex-1 overflow-hidden h-[88vh]",
         children: [
@@ -54908,22 +52710,22 @@ const Editor = ({ canvasRef, threeRef })=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 19,
+                        lineNumber: 36,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 20,
+                        lineNumber: 37,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 21,
+                        lineNumber: 38,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 22,
+                        lineNumber: 39,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -54932,34 +52734,35 @@ const Editor = ({ canvasRef, threeRef })=>{
                         className: "flex-1 w-full h-full rounded-md"
                     }, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 23,
+                        lineNumber: 40,
                         columnNumber: 11
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Editor.tsx",
-                lineNumber: 18,
+                lineNumber: 35,
                 columnNumber: 9
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
                 className: "flex flex-col h-full overflow-hidden",
                 children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
                     fileName: "src/UI/sections/Editor.tsx",
-                    lineNumber: 32,
+                    lineNumber: 49,
                     columnNumber: 11
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/UI/sections/Editor.tsx",
-                lineNumber: 31,
+                lineNumber: 48,
                 columnNumber: 9
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Editor.tsx",
-        lineNumber: 16,
+        lineNumber: 33,
         columnNumber: 7
     }, undefined);
 };
+_s(Editor, "OD7bBpZva5O2jO+Puf00hKivP7c=");
 _c = Editor;
 var _c;
 $RefreshReg$(_c, "Editor");
@@ -54969,7 +52772,7 @@ $RefreshReg$(_c, "Editor");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../inventory/Pieces":"5aREB","../tools/Toolbar":"2W72B","./Overlay/CursorInfo":"bSDlR","./Overlay/Label":"SPMyB","./Overlay/ShapeInfo":"dkMF4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"5aREB":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../inventory/Pieces":"5aREB","../tools/Toolbar":"2W72B","./Overlay/CursorInfo":"bSDlR","./Overlay/Label":"SPMyB","./Overlay/ShapeInfo":"dkMF4","../../main":"jeorp","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"5aREB":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -66987,7 +64790,956 @@ $RefreshReg$(_c, "PathIcon");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"01aU3":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"i5Ou7":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ChangeToolCommand", ()=>ChangeToolCommand);
+var _changeTool = require("../tools/changeTool");
+class ChangeToolCommand {
+    // private lastToolState: ToolBase["state"];
+    constructor(type){
+        this.__type = type;
+    // this.lastToolState = state.tool.__state; // Not implemented: stateful tool swapping (for redo)
+    }
+    do() {
+        (0, _changeTool.changeTool)({
+            name: this.__type
+        });
+    }
+    undo() {
+        (0, _changeTool.changeTool)({
+            name: this.__type
+        });
+        console.log("Undo not yet implemented for ChangeToolCommand");
+    }
+}
+
+},{"../tools/changeTool":"kXHtP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kXHtP":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "changeTool", ()=>changeTool);
+var _state = require("../../State");
+var _store = require("../../UI/store");
+var _canvas = require("../rendering/canvas");
+var _bezierPointEditorTool = require("./BezierPointEditorTool");
+var _grainlineTool = require("./GrainlineTool");
+var _measureTool = require("./MeasureTool");
+var _pathTool = require("./PathTool");
+var _selectTool = require("./SelectTool");
+function changeTool(toolState) {
+    // name is required, all other properties optional
+    // Context: this needs to be the tool name but it should also accept entire tool state wholesale for the purposes of undo
+    const newToolName = toolState.name;
+    const importedState = toolState.state;
+    console.log(toolState.name);
+    (0, _state.state).tool.dismountEvents();
+    (0, _store.useAppState).getState().resetUI();
+    switch(newToolName){
+        case "path":
+            (0, _state.state).tool = new (0, _pathTool.PathTool)();
+            (0, _store.useAppState).getState().setSelectedTool("path");
+            if (importedState) (0, _state.state).tool.applyState(importedState);
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "select":
+            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            (0, _store.useAppState).getState().setSelectedTool("select");
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "measure":
+            (0, _state.state).tool = new (0, _measureTool.MeasureTool)();
+            (0, _store.useAppState).getState().setSelectedTool("measure");
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "grainline":
+            (0, _state.state).tool = new (0, _grainlineTool.GrainlineTool)();
+            (0, _store.useAppState).getState().setSelectedTool("grainline");
+            (0, _canvas.redrawCanvas)();
+            break;
+        case "bezier point editor":
+            (0, _state.state).tool = new (0, _bezierPointEditorTool.BezierPointEditorTool)((0, _state.state).c_selectedPoints[0]); // A bit brittle, this corresponds to the selection made by the select tool
+            (0, _store.useAppState).getState().setSelectedTool("bezier point editor");
+            (0, _canvas.drawCanvasFromState)((0, _state.state));
+            break;
+        default:
+            (0, _state.state).tool = new (0, _selectTool.SelectTool)();
+            (0, _store.useAppState).getState().setSelectedTool("select");
+            (0, _canvas.redrawCanvas)();
+            break;
+    }
+    (0, _state.state).tool.initializeEvents();
+}
+
+},{"../../State":"83rpN","../../UI/store":"l1Ff7","../rendering/canvas":"fjxS8","./BezierPointEditorTool":"fIDCA","./GrainlineTool":"jR44c","./MeasureTool":"3Zp6S","./PathTool":"j7KYD","./SelectTool":"jISwe","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fIDCA":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "BezierPointEditorTool", ()=>BezierPointEditorTool);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class BezierPointEditorTool {
+    constructor(pointId){
+        // Tool name
+        this.name = "bezier point editor";
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+        this.applyState = (state)=>{
+        // Not implemented
+        };
+        this.__state = {
+            type: "idle",
+            pointId
+        };
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    // canvas.addEventListener("dblclick", this.__listeners.dblclick);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener("mousedown", this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    // state.canvas.removeEventListener("dblclick", this.__listeners.dblclick);
+    }
+    // Tool state updater
+    transition(newState) {
+        console.log(`SelectTool state: ${this.state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+    }
+    // Select tool event management
+    onMouseDown(e) {
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    onMouseMove(e) {}
+    onMouseUp(e) {}
+    get state() {
+        return this.__state;
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jR44c":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GrainlineTool", ()=>GrainlineTool);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _cLocalizePoint = require("../pointer/cLocalizePoint");
+var _three = require("three");
+var _drawDrawPreview = require("../rendering/drawDrawPreview");
+var _command = require("../../Command");
+var _grainlineToolCreateGrainlineCommand = require("../commands/GrainlineToolCreateGrainlineCommand");
+var _isPointInPolygon = require("../geometry/isPointInPolygon");
+var _changeToolCommand = require("../commands/ChangeToolCommand");
+var _store = require("../../UI/store");
+class GrainlineTool {
+    constructor(){
+        // Tool state object stores tool mechanical state, no data
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = "grainline";
+        this.unitVector = new (0, _three.Vector2)(0, -1);
+        this.setPointer = (0, _store.useAppState).getState().setPointer;
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+        this.angle = 0;
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener("mousedown", this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    }
+    get state() {
+        return this.__state;
+    }
+    // Tool state management
+    transition(newState) {
+        console.log(`Tool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    // Tool event management
+    onMouseDown(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        // state.pointer = pos;
+        const selectedShapeIndex = this.checkForShapeOverlap(pos);
+        if (selectedShapeIndex > -1) switch(this.__state.type){
+            case "idle":
+                this.transition({
+                    type: "drawing",
+                    originPos: pos
+                });
+                break;
+            default:
+                break;
+        }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    onMouseMove(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
+        this.setPointer((0, _state.state).pointer);
+        switch(this.__state.type){
+            case "drawing":
+                (0, _drawDrawPreview.drawDrawPreview)(this.__state.originPos, pos, `${Math.round(180 * this.angleFromNoon(pos, this.__state.originPos) / Math.PI)}\xb0`);
+                break;
+        }
+    }
+    onMouseUp(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        switch(this.__state.type){
+            case "drawing":
+                this.angle = this.angleFromNoon(pos, this.__state.originPos);
+                (0, _command.pushCommand)(new (0, _grainlineToolCreateGrainlineCommand.GrainlineToolCreateGrainlineCommand)(this.__state.originPos, (0, _state.state).c_selected_shapes[0], this.angle));
+        }
+        this.transition({
+            type: "idle"
+        });
+        (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("select"));
+    }
+    checkForShapeOverlap(pos) {
+        let value = -1;
+        (0, _state.state).c_shapes.forEach((shape, index)=>{
+            const shapePoints = shape.map((pointIndex)=>(0, _state.state).c_points[pointIndex]);
+            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) value = index;
+        });
+        return value;
+    }
+    angleFromNoon(vector, origin) {
+        vector = vector.clone().sub(origin);
+        let baseAngle = Math.atan2(vector.y, vector.x);
+        let ang = baseAngle + Math.PI / 2;
+        // Map to [0, 2pi]
+        if (ang < 0) ang += 2 * Math.PI;
+        return ang;
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../pointer/cLocalizePoint":"3rhkZ","three":"ktPTu","../rendering/drawDrawPreview":"aI2tH","../../Command":"efiIE","../commands/GrainlineToolCreateGrainlineCommand":"5NqY4","../geometry/isPointInPolygon":"aOEKs","../commands/ChangeToolCommand":"i5Ou7","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5NqY4":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GrainlineToolCreateGrainlineCommand", ()=>GrainlineToolCreateGrainlineCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+var _centroid = require("../geometry/centroid");
+class GrainlineToolCreateGrainlineCommand {
+    constructor(position, shapeIndex, angle){
+        this.shapeIndex = shapeIndex;
+        this.grainline = {
+            position: (0, _centroid.computeCentroid)((0, _state.state).c_shapes[shapeIndex]),
+            angle
+        };
+    }
+    do() {
+        (0, _state.state).c_grainlines.set(this.shapeIndex, this.grainline);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_grainlines.delete(this.shapeIndex);
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","../geometry/centroid":"gsjQg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gsjQg":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "computeCentroid", ()=>computeCentroid);
+var _three = require("three");
+var _state = require("../../State");
+function computeCentroid(indices) {
+    if (indices.length === 0) return new (0, _three.Vector2)();
+    const centroid = new (0, _three.Vector2)();
+    for (const index of indices){
+        const point = (0, _state.state).c_points[index];
+        centroid.add(point);
+    }
+    centroid.divideScalar(indices.length);
+    return centroid;
+}
+
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aOEKs":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/**
+ * Checks if a point is inside a polygon using the ray-casting algorithm.
+ * @param point The point to check.
+ * @param polygon An array of Vector2 points defining the closed shape.
+ * @returns `true` if the point is inside the polygon, `false` otherwise.
+ */ parcelHelpers.export(exports, "isPointInPolygon", ()=>isPointInPolygon);
+function isPointInPolygon(point, polygon) {
+    let inside = false;
+    const n = polygon.length;
+    for(let i = 0, j = n - 1; i < n; j = i++){
+        const xi = polygon[i].x, yi = polygon[i].y;
+        const xj = polygon[j].x, yj = polygon[j].y;
+        // Check if point is between polygon edges
+        const intersect = yi > point.y !== yj > point.y && point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi;
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Zp6S":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "MeasureTool", ()=>MeasureTool);
+var _command = require("../../Command");
+var _state = require("../../State");
+var _measureToolAddPointCommand = require("../commands/MeasureToolAddPointCommand");
+var _measureToolClosePathCommand = require("../commands/MeasureToolClosePathCommand");
+var _cLocalizePoint = require("../pointer/cLocalizePoint");
+var _canvas = require("../rendering/canvas");
+var _drawDrawPreview = require("../rendering/drawDrawPreview");
+class MeasureTool {
+    constructor(){
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = "measure";
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this)
+        };
+        this.__length = 0;
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener("mousedown", this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+    }
+    // Tool state management
+    transition(newState) {
+        console.log(`MeasureTool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+    }
+    // Tool event management
+    onMouseDown(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        (0, _state.state).pointer = pos;
+        switch(this.__state.type){
+            case "idle":
+                this.transition({
+                    type: "drawing",
+                    currentPathIndex: (0, _state.state).c_measure_paths.length
+                });
+                (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, (0, _state.state).c_measure_paths.length));
+                break;
+            case "drawing":
+                if ((0, _state.state).altDown) (0, _command.pushCommand)(new (0, _measureToolAddPointCommand.MeasureToolAddPointCommand)(pos, this.__state.currentPathIndex));
+                else {
+                    (0, _command.pushCommand)(new (0, _measureToolClosePathCommand.MeasureToolClosePathCommand)(pos, this.__state.currentPathIndex));
+                    this.transition({
+                        type: "idle"
+                    });
+                }
+                break;
+            default:
+                break;
+        }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    onMouseMove(e) {
+        switch(this.__state.type){
+            case "idle":
+                break;
+            case "drawing":
+                if ((0, _state.state).c_measure_paths[this.__state.currentPathIndex]) (0, _drawDrawPreview.drawDrawPreview)((0, _state.state).c_measure_points.get((0, _state.state).c_measure_paths[this.__state.currentPathIndex][0]), (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY));
+                break;
+            default:
+                break;
+        }
+    }
+    onMouseUp(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        this.__state.type;
+    // drawCanvasFromState(state);
+    }
+    get state() {
+        return this.__state;
+    }
+}
+
+},{"../../Command":"efiIE","../../State":"83rpN","../commands/MeasureToolAddPointCommand":"1IlS2","../commands/MeasureToolClosePathCommand":"aINj4","../pointer/cLocalizePoint":"3rhkZ","../rendering/canvas":"fjxS8","../rendering/drawDrawPreview":"aI2tH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1IlS2":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "MeasureToolAddPointCommand", ()=>MeasureToolAddPointCommand);
+var _three = require("three");
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class MeasureToolAddPointCommand {
+    constructor(pos, pathIndex){
+        this.pos = new (0, _three.Vector2)();
+        this.pos.copy(pos);
+        this.currentPathIndex = pathIndex;
+        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
+    }
+    do() {
+        (0, _state.state).c_measure_points.set(this.key, this.pos);
+        if (!(0, _state.state).c_measure_paths[this.currentPathIndex]) (0, _state.state).c_measure_paths[this.currentPathIndex] = [];
+        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_measure_points.delete(this.key);
+    }
+}
+
+},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aINj4":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "MeasureToolClosePathCommand", ()=>MeasureToolClosePathCommand);
+var _three = require("three");
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class MeasureToolClosePathCommand {
+    constructor(pos, pathIndex){
+        this.pos = new (0, _three.Vector2)();
+        this.pos.copy(pos);
+        this.currentPathIndex = pathIndex;
+        this.key = String.fromCharCode(65 + (0, _state.state).c_measure_points.size);
+    }
+    do() {
+        (0, _state.state).c_measure_points.set(this.key, this.pos);
+        (0, _state.state).c_measure_paths[this.currentPathIndex].push(this.key);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_measure_points.delete(this.key);
+    }
+}
+
+},{"three":"ktPTu","../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jISwe":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectTool", ()=>SelectTool);
+var _command = require("../../Command");
+var _state = require("../../State");
+var _cLocalizePoint = require("../pointer/cLocalizePoint");
+var _selectToolShapeCommand = require("../commands/SelectToolShapeCommand");
+var _isPointInPolygon = require("../geometry/isPointInPolygon");
+var _selectToolMoveShapeCommand = require("../commands/SelectToolMoveShapeCommand");
+var _selectToolPointCommand = require("../commands/SelectToolPointCommand");
+var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
+var _canvas = require("../rendering/canvas");
+var _deleteShapeCommand = require("../commands/DeleteShapeCommand");
+var _drawPreviewsCommand = require("../commands/Rendering/DrawPreviewsCommand");
+var _findNearestPoint = require("../geometry/findNearestPoint");
+var _bezierIntersection = require("../geometry/bezierIntersection");
+var _interface = require("../settings/interface");
+var _selectToolDeselectPointCommand = require("../commands/SelectToolDeselectPointCommand");
+var _selectToolMovePointsCommand = require("../commands/SelectToolMovePointsCommand");
+var _changeToolCommand = require("../commands/ChangeToolCommand");
+class SelectTool {
+    constructor(){
+        // Tool state object stores tool mechanical state
+        this.__state = {
+            type: "idle"
+        };
+        // Tool name
+        this.name = "select";
+        this.__listeners = {
+            down: this.onMouseDown.bind(this),
+            move: this.onMouseMove.bind(this),
+            up: this.onMouseUp.bind(this),
+            dblclick: this.onDoubleClick.bind(this)
+        };
+        this.applyState = (state)=>{
+        // Not implemented
+        };
+    }
+    initializeEvents() {
+        const canvas = (0, _state.state).canvas;
+        canvas.addEventListener("mousedown", this.__listeners.down);
+        canvas.addEventListener("mousemove", this.__listeners.move);
+        canvas.addEventListener("mouseup", this.__listeners.up);
+        canvas.addEventListener("dblclick", this.__listeners.dblclick);
+    }
+    dismountEvents() {
+        (0, _state.state).canvas.removeEventListener("mousedown", this.__listeners.down);
+        (0, _state.state).canvas.removeEventListener("mousemove", this.__listeners.move);
+        (0, _state.state).canvas.removeEventListener("mouseup", this.__listeners.up);
+        (0, _state.state).canvas.removeEventListener("dblclick", this.__listeners.dblclick);
+    }
+    // Tool state updater
+    transition(newState) {
+        console.log(`SelectTool state: ${this.__state.type} \u{2192} ${newState.type}`);
+        this.__state = newState;
+    }
+    // Select tool event management
+    onMouseDown(e) {
+        const clickPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        const selectedGeomId = this.checkForShapeOverlap(clickPos);
+        let pointId = (0, _findNearestPoint.findNearestGeometryPoint)(clickPos, Array.from((0, _state.state).c_geometryMap.values()));
+        let lineHit = null;
+        if (selectedGeomId) lineHit = (0, _bezierIntersection.isPointNearBezierGeometry)(clickPos, (0, _state.state).c_geometryMap.get(selectedGeomId), (0, _interface.rad) * 2);
+        (0, _state.state).pointerDown = true;
+        if (selectedGeomId || pointId || lineHit != null) // Case: you hit something, anything at all of interest within the canvas
+        switch(this.__state.type){
+            case "idle":
+                if (pointId) {
+                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
+                    this.transition({
+                        type: "selecting points"
+                    });
+                // TODO: describe line selection features, possibly you could select to measure a larger and larger segment?
+                // } else if ( lineHit ) {
+                //   pushCommand( new SelectToolSelectLineCommand( lineHit ) );
+                //   this.transition({
+                //     type: "selecting lines",
+                //   }); 
+                } else if (selectedGeomId) {
+                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
+                    this.transition({
+                        type: "selecting shapes"
+                    });
+                }
+                break;
+            case "selecting shapes":
+                if ((0, _state.state).shiftDown) {
+                    if (selectedGeomId) // Previously this called SelectToolAddShape command
+                    // I do not know why as they seem functionally the same???
+                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
+                } else if (selectedGeomId) (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
+                break;
+            case "selecting points":
+                if (pointId) {
+                    if ((0, _state.state).shiftDown) {
+                        // if the point is not already selected
+                        if (!this.pointIsSelected(pointId)) (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
+                        else // Deslect the point
+                        (0, _command.pushCommand)(new (0, _selectToolDeselectPointCommand.SelectToolDeselectPointCommand)(pointId));
+                    } else if (!(0, _state.state).shiftDown) {
+                        if (this.pointIsSelected(pointId)) ;
+                        else {
+                            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
+                            (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
+                        }
+                    }
+                } else this.transition({
+                    type: "idle"
+                });
+                break;
+            case "selecting lines":
+                // Hit Point
+                if (pointId) {
+                    (0, _command.pushCommand)(new (0, _selectToolPointCommand.SelectToolPointCommand)(pointId));
+                    this.transition({
+                        type: "selecting points"
+                    });
+                // Hit Shape
+                } else if (selectedGeomId) {
+                    (0, _command.pushCommand)(new (0, _selectToolShapeCommand.SelectToolShapeCommand)(selectedGeomId));
+                    this.transition({
+                        type: "selecting shapes"
+                    });
+                }
+                break;
+        }
+        else {
+            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
+            this.transition({
+                type: "idle"
+            });
+        }
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    checkForShapeOverlap(pos) {
+        let foundId = null;
+        (0, _state.state).c_geometryMap.forEach((geom, id)=>{
+            const shapePoints = geom.pointIds.map((pointId)=>{
+                const point = (0, _state.state).c_pointsMap.get(pointId);
+                return point.to;
+            });
+            if ((0, _isPointInPolygon.isPointInPolygon)(pos, shapePoints)) foundId = id;
+        });
+        return foundId;
+    }
+    onMouseMove(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        switch(this.__state.type){
+            case "moving shapes":
+                (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
+                break;
+            case "selecting shapes":
+                if ((0, _state.state).pointerDown == true) {
+                    (0, _state.state).c_move_from = pos;
+                    (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
+                    this.transition({
+                        type: "moving shapes",
+                        startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
+                    });
+                }
+                break;
+            case "selecting points":
+                if ((0, _state.state).pointerDown == true) {
+                    (0, _state.state).c_move_from = pos;
+                    (0, _command.pushCommand)(new (0, _drawPreviewsCommand.DrawPreviewsCommand)(pos));
+                    this.transition({
+                        type: "moving points",
+                        startPos: (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY)
+                    });
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    onMouseUp(e) {
+        (0, _state.state).pointerDown = false;
+        const endPos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        let startPos = undefined;
+        switch(this.__state.type){
+            case "moving shapes":
+                startPos = this.__state.startPos;
+                (0, _command.pushCommand)(new (0, _selectToolMoveShapeCommand.SelectToolMoveShapeCommand)((0, _state.state).c_selectedGeometries, startPos, endPos));
+                this.transition({
+                    type: "selecting shapes"
+                });
+                break;
+            case "moving points":
+                startPos = this.__state.startPos;
+                (0, _command.pushCommand)(new (0, _selectToolMovePointsCommand.SelectToolMovePointsCommand)((0, _state.state).c_selectedPoints, startPos, endPos));
+                this.transition({
+                    type: "selecting points"
+                });
+                break;
+        }
+    }
+    onDoubleClick(e) {
+        const pos = (0, _cLocalizePoint.cLocalizePoint)(e.clientX, e.clientY);
+        const pointId = (0, _findNearestPoint.findNearestGeometryPoint)(pos, Array.from((0, _state.state).c_geometryMap.values()));
+        if (pointId) (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("bezier point editor"));
+    }
+    pointIsSelected(pointId) {
+        return (0, _state.state).c_selectedPoints.find((pid)=>pid == pointId);
+    }
+    onKeyDown(e) {
+        switch(this.state.type){
+            case "selecting shapes":
+                console.log("keypress", e);
+                // case "selecting_points":
+                if (e.code === "Backspace" || e.code === "Delete") {
+                    if ((0, _state.state).c_selected_shapes.length > 0) (0, _command.pushCommand)(new (0, _deleteShapeCommand.DeleteShapeCommand)(this.state.selectedShapeIndex));
+                }
+                this.transition({
+                    type: "idle"
+                });
+                break;
+        }
+    }
+    deselect() {
+        console.error("Not implemented for the Select tool");
+    }
+    get state() {
+        return this.__state;
+    }
+}
+
+},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteShapeCommand":"3BS11","../commands/Rendering/DrawPreviewsCommand":"4QHCH","../geometry/findNearestPoint":"8deBQ","../geometry/bezierIntersection":"fUwbC","../settings/interface":"dci9b","../commands/SelectToolDeselectPointCommand":"DbYrq","../commands/SelectToolMovePointsCommand":"bIGVa","../commands/ChangeToolCommand":"i5Ou7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aHJgT":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolShapeCommand", ()=>SelectToolShapeCommand);
+var _state = require("../../State");
+var _generateFloatingLabel = require("../hooks/generateFloatingLabel");
+class SelectToolShapeCommand {
+    constructor(geomId){
+        this.geomId = geomId;
+        this.previousSelection = (0, _state.state).c_selectedGeometries;
+    }
+    do() {
+        if (!(0, _state.state).c_selectedGeometries.some((id)=>id === this.geomId)) (0, _state.state).c_selectedGeometries.push(this.geomId);
+        (0, _generateFloatingLabel.generateFloatingLabel)(this.geomId);
+    }
+    undo() {
+        (0, _state.state).c_selectedGeometries = this.previousSelection;
+    }
+}
+
+},{"../../State":"83rpN","../hooks/generateFloatingLabel":"gIlKq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gIlKq":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "generateFloatingLabel", ()=>generateFloatingLabel);
+var _three = require("three");
+var _mathUtils = require("three/src/math/MathUtils");
+var _state = require("../../State");
+var _boundingBox = require("../geometry/boundingBox");
+var _getPointArrayFromGeometry2D = require("../geometry/getPointArrayFromGeometry2D");
+var _store = require("../../UI/store");
+const generateFloatingLabel = (geomId)=>{
+    const pointList = (0, _getPointArrayFromGeometry2D.getPointArray)(geomId);
+    const box = (0, _boundingBox.getShapeBoundingRect)(pointList);
+    const dim = (0, _boundingBox.getShapeDimensions)(pointList);
+    const rect = (0, _state.state).canvas.getBoundingClientRect();
+    // Generate a point in the upper left hand corner of the shape in windowspace
+    const labelPoint = new (0, _three.Vector2)(box.x0 + rect.x, box.y0 + rect.y);
+    const pieceIndex = (0, _store.useAppState).getState().pieces.findIndex((piece)=>piece.geometryId == geomId);
+    let piece;
+    if (pieceIndex < 0) piece = {
+        id: (0, _mathUtils.generateUUID)(),
+        geometryId: geomId
+    };
+    else piece = (0, _store.useAppState).getState().pieces[pieceIndex];
+    (0, _store.useAppState).getState().labelPiece(labelPoint, piece);
+};
+
+},{"three":"ktPTu","three/src/math/MathUtils":"cuzU2","../../State":"83rpN","../geometry/boundingBox":"3SCvR","../geometry/getPointArrayFromGeometry2D":"12og0","../../UI/store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2adoe":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolMoveShapeCommand", ()=>SelectToolMoveShapeCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolMoveShapeCommand {
+    constructor(geoms, from, to){
+        this.geoms = geoms;
+        // this.__from = from.clone();
+        // this.__to = to.clone();
+        this.__diff = to.clone().sub(from);
+    }
+    do() {
+        (0, _state.state).c_selectedGeometries.forEach((geomId)=>{
+            const geom = (0, _state.state).c_geometryMap.get(geomId);
+            if (!geom) return;
+            const uniqueIds = Array.from(new Set(geom.pointIds));
+            uniqueIds.forEach((id)=>{
+                const bp = (0, _state.state).c_pointsMap.get(id);
+                if (!bp) return;
+                bp.to.add(this.__diff);
+                // bp.from.add(this.__diff); // Do not modify this vector in this sweep–it is the previous point's .to vector
+                bp.c1.add(this.__diff);
+                bp.c2.add(this.__diff);
+            });
+        });
+        // state.updateGrainlinePos( this.shapeIndex, computeCentroid( state.c_shapes[ this.shapeIndex ] ) );
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // state.c_shapes[ this.shapeIndex ].forEach((i: number) => {
+        //   state.c_points[i].sub(this.__diff); // Reverse the movement
+        // });
+        console.error("not implemented");
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"97SwH":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolPointCommand", ()=>SelectToolPointCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolPointCommand {
+    constructor(pointId){
+        this.__pointId = pointId;
+        this.__index = (0, _state.state).c_selectedPoints.length - 1;
+    }
+    do() {
+        (0, _state.state).c_selectedPoints.push(this.__pointId);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_selectedPoints.splice(this.__index, 1);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"35eIL":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolDeselectAllCommand", ()=>SelectToolDeselectAllCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolDeselectAllCommand {
+    constructor(){
+        this.old_selected = (0, _state.state).c_selectedPoints;
+        this.old_selected_lines = (0, _state.state).c_selected_lines;
+        this.old_selected_shapes = (0, _state.state).c_selectedGeometries;
+    }
+    do() {
+        (0, _state.state).c_selectedPoints = [];
+        (0, _state.state).c_selected_lines = [];
+        (0, _state.state).c_selectedGeometries = [];
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_selectedPoints = this.old_selected;
+        (0, _state.state).c_selected_lines = this.old_selected_lines;
+        (0, _state.state).c_selectedGeometries = this.old_selected_shapes;
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3BS11":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DeleteShapeCommand", ()=>DeleteShapeCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class DeleteShapeCommand {
+    constructor(shapeIndex){
+        this.__shapeIndex = shapeIndex;
+    }
+    do() {
+        (0, _state.state).c_shapes[this.__shapeIndex].forEach((pointIndex)=>{
+            // Delete points from the active point map
+            (0, _state.state).c_pointmap.delete(pointIndex);
+        });
+        // Remove shape from the list of shapes
+        (0, _state.state).c_shapes.splice(this.__shapeIndex, 1);
+        console.log("deleted shape ", this.__shapeIndex);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // TODO: Implement DeleteShapeCommand undo
+        console.log("Undo function for DeleteshapeCommand not implemented");
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4QHCH":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DrawPreviewsCommand", ()=>DrawPreviewsCommand);
+var _drawSelectionMovePreview = require("../../rendering/drawSelectionMovePreview");
+var _canvas = require("../../rendering/canvas");
+class DrawPreviewsCommand {
+    constructor(pos){
+        this.pos = pos;
+    }
+    do() {
+        (0, _canvas.redrawCanvas)();
+        (0, _drawSelectionMovePreview.drawShapeSelectionMovePreview)(this.pos);
+    }
+    undo() {
+    // do render commands have an undo?
+    }
+}
+
+},{"../../rendering/drawSelectionMovePreview":"jMLdr","../../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fUwbC":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/**
+ * Returns true if `point` is within `radius` of any Bézier segment
+ * in the given Geometry2D (i.e. when `geom.type === 'bezier'`).
+ */ parcelHelpers.export(exports, "isPointNearBezierGeometry", ()=>isPointNearBezierGeometry);
+var _three = require("three");
+var _state = require("../../State");
+/** Evaluate the cubic Bézier at parameter t ∈ [0,1]. */ function evalCubic(P0, P1, P2, P3, t) {
+    const u = 1 - t;
+    return new (0, _three.Vector2)(u * u * u * P0.x + 3 * u * u * t * P1.x + 3 * u * t * t * P2.x + t * t * t * P3.x, u * u * u * P0.y + 3 * u * u * t * P1.y + 3 * u * t * t * P2.y + t * t * t * P3.y);
+}
+/** Squared distance from point P to the line segment VW. */ function pointToSegmentDistanceSq(P, V, W) {
+    const l2 = V.distanceToSquared(W);
+    if (l2 === 0) return P.distanceToSquared(V);
+    let t = ((P.x - V.x) * (W.x - V.x) + (P.y - V.y) * (W.y - V.y)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    const proj = new (0, _three.Vector2)(V.x + t * (W.x - V.x), V.y + t * (W.y - V.y));
+    return P.distanceToSquared(proj);
+}
+/**
+ * Approximate the minimum squared distance from P to the cubic Bézier defined by `bp`.
+ * We sample `steps` segments between t=0 and t=1.
+ */ function bezierDistanceSq(bp, P, steps = 20) {
+    let minSq = Infinity;
+    let prev = bp.from;
+    for(let i = 1; i <= steps; i++){
+        const t = i / steps;
+        const curr = evalCubic(bp.from, bp.c1, bp.c2, bp.to, t);
+        const dsq = pointToSegmentDistanceSq(P, prev, curr);
+        if (dsq < minSq) minSq = dsq;
+        prev = curr;
+    }
+    return minSq;
+}
+function isPointNearBezierGeometry(point, geom, radius, steps = 20) {
+    if (geom.type !== "bezier") return false;
+    const r2 = radius * radius;
+    for (const pid of geom.pointIds){
+        const bp = (0, _state.state).c_pointsMap.get(pid);
+        if (!bp) continue;
+        // if this point isn’t actually a BezierPoint, skip
+        if (bp.to === undefined) continue;
+        const distSq = bezierDistanceSq(bp, point, steps);
+        if (distSq <= r2) return true;
+    }
+    return false;
+}
+
+},{"three":"ktPTu","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"DbYrq":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolDeselectPointCommand", ()=>SelectToolDeselectPointCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolDeselectPointCommand {
+    constructor(pointId){
+        this.__pointId = pointId;
+        this.__index = (0, _state.state).c_selectedPoints.length - 1;
+    }
+    do() {
+        (0, _state.state).c_selectedPoints = (0, _state.state).c_selectedPoints.filter((elt)=>{
+            this.__pointId;
+        });
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_selectedPoints.push(this.__pointId);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bIGVa":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectToolMovePointsCommand", ()=>SelectToolMovePointsCommand);
+var _state = require("../../State");
+var _canvas = require("../rendering/canvas");
+class SelectToolMovePointsCommand {
+    constructor(pointIds, from, to){
+        this.diff = to.clone().sub(from);
+        this.pointIds = pointIds;
+    }
+    do() {
+        this.pointIds.forEach((pid)=>{
+            const point = (0, _state.state).c_pointsMap.get(pid);
+            if (!point) return;
+            // Note the From component of the BezierPoint is not modified as it points to the previous point's To component
+            point.to.add(this.diff);
+            point.c1.add(this.diff);
+            point.c2.add(this.diff);
+        });
+        // state.updateGrainlinePos( this.shapeIndex, computeCentroid( state.c_shapes[ this.shapeIndex ] ) );
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        // state.c_shapes[ this.shapeIndex ].forEach((i: number) => {
+        //   state.c_points[i].sub(this.__diff); // Reverse the movement
+        // });
+        console.error("not implemented");
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+}
+
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"01aU3":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$4ff5 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67426,7 +66178,1256 @@ $RefreshReg$(_c, "ShapeInfo");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","three":"ktPTu","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"2JSEM":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","three":"ktPTu","../../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"jeorp":[function(require,module,exports) {
+// Controller module
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// Initialize renderloop
+parcelHelpers.export(exports, "initUpdate", ()=>initUpdate);
+// 2D initialization
+parcelHelpers.export(exports, "initCanvas", ()=>initCanvas);
+// 3D initialization
+parcelHelpers.export(exports, "initScene", ()=>initScene);
+var _three = require("three");
+var _util = require("./util");
+var _orbitControlsJs = require("three/examples/jsm/controls/OrbitControls.js");
+var _state = require("./State");
+var _command = require("./Command");
+var _pointer = require("./3D/events/pointer");
+var _hotkeys = require("./2D/hotkeys/hotkeys");
+var _pointerEvents = require("./2D/pointer/pointerEvents");
+var _canvas = require("./2D/rendering/canvas");
+var _protoXPBD = require("./3D/simulation/protoXPBD");
+var _factors = require("./2D/settings/factors");
+// This file initializes 2D and 3D canvases and runs the global update loop (which processes all Commands for the canvases)
+const renderFlags = {
+    renderer3dAlive: false,
+    renderer2dAlive: false,
+    commandsUp: true
+};
+function initUpdate() {
+    // Explore feature flags
+    update();
+}
+function initCanvas(ref) {
+    // Get a reference to the canvas element and its rendering context
+    const canvas = ref;
+    (0, _state.state).canvas = canvas;
+    console.log("canvas init");
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("No such 2D context when initializing page elements");
+    (0, _state.state).context = context;
+    context?.clearRect(0, 0, canvas.width, canvas.height);
+    (0, _hotkeys.initializeHotkeys)();
+    (0, _state.state).tool.initializeEvents();
+    (0, _pointerEvents.initializeCanvasEvents)(canvas);
+    if (context) {
+        const devicePixelRatio = window.devicePixelRatio || 1;
+        canvas.width = canvas.clientWidth * devicePixelRatio;
+        canvas.height = canvas.clientHeight * devicePixelRatio;
+        // scaling removed, may need to add if this becomes a problem?
+        (0, _canvas.drawCanvasSetup)();
+        renderFlags.renderer2dAlive = true;
+    }
+    return {
+        canvasRef: (0, _state.state).canvas
+    };
+}
+function initScene(canvas) {
+    // Bail if no canvas has been passed
+    if (!canvas) {
+        console.log("no canvas");
+        return false;
+    }
+    (0, _state.state).renderer = new _three.WebGLRenderer({
+        canvas
+    });
+    const renderer = (0, _state.state).renderer;
+    renderer.setSize(window.innerWidth / 2, window.innerWidth / 2);
+    const scene = new _three.Scene();
+    (0, _state.state).scene = scene;
+    const camera_group = new _three.Group();
+    const frustumSize = 25;
+    const aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight;
+    const camera = new _three.OrthographicCamera(frustumSize * aspect / -2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / -2, 0.1, 1000);
+    (0, _state.state).camera = camera;
+    camera_group.add(camera);
+    const controls = new (0, _orbitControlsJs.OrbitControls)(camera, renderer.domElement);
+    controls.autoRotate = true;
+    controls.rotateSpeed = .1;
+    (0, _state.state).camera_controls = controls;
+    camera.position.set(0, 50, 100);
+    camera.lookAt(0, 0, 0);
+    scene.background = new _three.Color(0xF5CF36);
+    const gridHelper = new _three.GridHelper(500, 40, new _three.Color(1, 1, 1), new _three.Color(0.8, 0.4, .3));
+    scene.add(gridHelper);
+    const raycaster = new _three.Raycaster();
+    const pointer = new _three.Vector2();
+    (0, _state.state).raycaster = raycaster;
+    (0, _state.state).pointer = pointer;
+    // register event listeners
+    renderer.domElement.addEventListener("pointermove", (0, _pointer.onPointerMove));
+    renderer.domElement.addEventListener("pointerdown", (0, _pointer.onPointerDown));
+    renderer.domElement.addEventListener("pointerup", (0, _pointer.onPointerUp));
+    renderer.domElement.addEventListener("dblclick", (0, _pointer.onDoubleClick));
+    (0, _state.state).pointerDown = false;
+    // kick off update
+    renderFlags.renderer3dAlive = true;
+    renderer.render((0, _state.state).scene, (0, _state.state).camera);
+    return {
+        threeRef: parent
+    };
+}
+// Local deltatime, not tracked as state
+let dt = 0.0;
+const interval = 1 / 30;
+// Render and global command processing loop
+function update() {
+    if (renderFlags.commandsUp) (0, _command.executeCommands)();
+    const { pointer, camera, scene, renderer, raycaster } = (0, _state.state);
+    requestAnimationFrame(update);
+    dt += (0, _state.state).clock.getDelta();
+    if (renderFlags.renderer3dAlive) // Physics loop
+    {
+        if ((0, _util.mouseOverCanvas)((0, _state.state)) === true && dt > interval && (0, _state.state).c_shapes.length > 0) {
+            (0, _protoXPBD.updateXPBD)(dt * (0, _factors.SPEED));
+            dt = 0;
+            // update the picking ray with the camera and pointer position 
+            camera.updateMatrixWorld();
+            raycaster.setFromCamera(pointer, camera);
+            const intersects = raycaster.intersectObjects((0, _state.state).objects);
+            (0, _state.state).intersects = intersects;
+            if (intersects.length > 0) {
+                const intersect = intersects[0];
+            // This is a good example of attribute management but is no longer used
+            // TODO move this or file it away in documentation
+            // const face = intersect.face;
+            // const linePosition = line.geometry.attributes.position;
+            // const meshPosition = mesh.geometry.attributes.position;
+            // linePosition.copyAt( 0, meshPosition, face.a );
+            // linePosition.copyAt( 1, meshPosition, face.b );
+            // linePosition.copyAt( 2, meshPosition, face.c );
+            // linePosition.copyAt( 3, meshPosition, face.a );
+            // mesh.updateMatrix(); 
+            // line.geometry.applyMatrix4( mesh.matrix );
+            // line.visible = true;
+            }
+        }
+    }
+    if (renderFlags.renderer3dAlive) {
+        (0, _state.state).camera_controls.update();
+        renderer.render(scene, camera);
+    }
+}
+
+},{"three":"ktPTu","./util":"7wzGb","three/examples/jsm/controls/OrbitControls.js":"7mqRv","./State":"83rpN","./Command":"efiIE","./3D/events/pointer":"11Ir4","./2D/hotkeys/hotkeys":"jdjjs","./2D/pointer/pointerEvents":"ghSIM","./2D/rendering/canvas":"fjxS8","./3D/simulation/protoXPBD":"46Cm3","./2D/settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7wzGb":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "mouseOverCanvas", ()=>mouseOverCanvas);
+parcelHelpers.export(exports, "intersecting", ()=>intersecting);
+parcelHelpers.export(exports, "first_intersecting_object", ()=>first_intersecting_object);
+parcelHelpers.export(exports, "first_intersecting_face", ()=>first_intersecting_face);
+const mouseOverCanvas = (state)=>{
+    const bounds = state.renderer.domElement.getBoundingClientRect();
+    if (state.rawPointer) return state.rawPointer.rx >= bounds.left && state.rawPointer.rx <= bounds.right && state.rawPointer.ry >= bounds.top && state.rawPointer.ry <= bounds.bottom;
+    return false;
+};
+const intersecting = (state)=>{
+    return state.intersects != null && state.intersects.length > 0;
+};
+const first_intersecting_object = (state)=>{
+    const selected_mesh = state.intersects.filter((obj)=>{
+        // Select only Mesh objects (for now)
+        if (obj.object.type == "Mesh") return true;
+        return false;
+    })[0];
+    if (selected_mesh) return selected_mesh.object;
+    else return undefined;
+};
+const first_intersecting_face = (state)=>{
+    const selected_mesh = state.intersects.filter((obj)=>{
+        // Select only Mesh objects (for now)
+        if (obj.object.type == "Mesh") return true;
+        return false;
+    })[0];
+    if (selected_mesh) return {
+        faceIndex: selected_mesh.faceIndex,
+        face: selected_mesh.face,
+        object: selected_mesh.object
+    };
+    else return undefined;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7mqRv":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "OrbitControls", ()=>OrbitControls);
+var _three = require("three");
+// OrbitControls performs orbiting, dollying (zooming), and panning.
+// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
+//
+//    Orbit - left mouse / touch: one-finger move
+//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
+//    Pan - right mouse, or left mouse + ctrl/meta/shiftKey, or arrow keys / touch: two-finger move
+const _changeEvent = {
+    type: "change"
+};
+const _startEvent = {
+    type: "start"
+};
+const _endEvent = {
+    type: "end"
+};
+const _ray = new (0, _three.Ray)();
+const _plane = new (0, _three.Plane)();
+const TILT_LIMIT = Math.cos(70 * (0, _three.MathUtils).DEG2RAD);
+class OrbitControls extends (0, _three.EventDispatcher) {
+    constructor(object, domElement){
+        super();
+        this.object = object;
+        this.domElement = domElement;
+        this.domElement.style.touchAction = "none"; // disable touch scroll
+        // Set to false to disable this control
+        this.enabled = true;
+        // "target" sets the location of focus, where the object orbits around
+        this.target = new (0, _three.Vector3)();
+        // How far you can dolly in and out ( PerspectiveCamera only )
+        this.minDistance = 0;
+        this.maxDistance = Infinity;
+        // How far you can zoom in and out ( OrthographicCamera only )
+        this.minZoom = 0;
+        this.maxZoom = Infinity;
+        // How far you can orbit vertically, upper and lower limits.
+        // Range is 0 to Math.PI radians.
+        this.minPolarAngle = 0; // radians
+        this.maxPolarAngle = Math.PI; // radians
+        // How far you can orbit horizontally, upper and lower limits.
+        // If set, the interval [ min, max ] must be a sub-interval of [ - 2 PI, 2 PI ], with ( max - min < 2 PI )
+        this.minAzimuthAngle = -Infinity; // radians
+        this.maxAzimuthAngle = Infinity; // radians
+        // Set to true to enable damping (inertia)
+        // If damping is enabled, you must call controls.update() in your animation loop
+        this.enableDamping = false;
+        this.dampingFactor = 0.05;
+        // This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
+        // Set to false to disable zooming
+        this.enableZoom = true;
+        this.zoomSpeed = 1.0;
+        // Set to false to disable rotating
+        this.enableRotate = true;
+        this.rotateSpeed = 1.0;
+        // Set to false to disable panning
+        this.enablePan = true;
+        this.panSpeed = 1.0;
+        this.screenSpacePanning = true; // if false, pan orthogonal to world-space direction camera.up
+        this.keyPanSpeed = 7.0; // pixels moved per arrow key push
+        this.zoomToCursor = false;
+        // Set to true to automatically rotate around the target
+        // If auto-rotate is enabled, you must call controls.update() in your animation loop
+        this.autoRotate = false;
+        this.autoRotateSpeed = 2.0; // 30 seconds per orbit when fps is 60
+        // The four arrow keys
+        this.keys = {
+            LEFT: "ArrowLeft",
+            UP: "ArrowUp",
+            RIGHT: "ArrowRight",
+            BOTTOM: "ArrowDown"
+        };
+        // Mouse buttons
+        this.mouseButtons = {
+            LEFT: (0, _three.MOUSE).ROTATE,
+            MIDDLE: (0, _three.MOUSE).DOLLY,
+            RIGHT: (0, _three.MOUSE).PAN
+        };
+        // Touch fingers
+        this.touches = {
+            ONE: (0, _three.TOUCH).ROTATE,
+            TWO: (0, _three.TOUCH).DOLLY_PAN
+        };
+        // for reset
+        this.target0 = this.target.clone();
+        this.position0 = this.object.position.clone();
+        this.zoom0 = this.object.zoom;
+        // the target DOM element for key events
+        this._domElementKeyEvents = null;
+        //
+        // public methods
+        //
+        this.getPolarAngle = function() {
+            return spherical.phi;
+        };
+        this.getAzimuthalAngle = function() {
+            return spherical.theta;
+        };
+        this.getDistance = function() {
+            return this.object.position.distanceTo(this.target);
+        };
+        this.listenToKeyEvents = function(domElement) {
+            domElement.addEventListener("keydown", onKeyDown);
+            this._domElementKeyEvents = domElement;
+        };
+        this.stopListenToKeyEvents = function() {
+            this._domElementKeyEvents.removeEventListener("keydown", onKeyDown);
+            this._domElementKeyEvents = null;
+        };
+        this.saveState = function() {
+            scope.target0.copy(scope.target);
+            scope.position0.copy(scope.object.position);
+            scope.zoom0 = scope.object.zoom;
+        };
+        this.reset = function() {
+            scope.target.copy(scope.target0);
+            scope.object.position.copy(scope.position0);
+            scope.object.zoom = scope.zoom0;
+            scope.object.updateProjectionMatrix();
+            scope.dispatchEvent(_changeEvent);
+            scope.update();
+            state = STATE.NONE;
+        };
+        // this method is exposed, but perhaps it would be better if we can make it private...
+        this.update = function() {
+            const offset = new (0, _three.Vector3)();
+            // so camera.up is the orbit axis
+            const quat = new (0, _three.Quaternion)().setFromUnitVectors(object.up, new (0, _three.Vector3)(0, 1, 0));
+            const quatInverse = quat.clone().invert();
+            const lastPosition = new (0, _three.Vector3)();
+            const lastQuaternion = new (0, _three.Quaternion)();
+            const lastTargetPosition = new (0, _three.Vector3)();
+            const twoPI = 2 * Math.PI;
+            return function update() {
+                const position = scope.object.position;
+                offset.copy(position).sub(scope.target);
+                // rotate offset to "y-axis-is-up" space
+                offset.applyQuaternion(quat);
+                // angle from z-axis around y-axis
+                spherical.setFromVector3(offset);
+                if (scope.autoRotate && state === STATE.NONE) rotateLeft(getAutoRotationAngle());
+                if (scope.enableDamping) {
+                    spherical.theta += sphericalDelta.theta * scope.dampingFactor;
+                    spherical.phi += sphericalDelta.phi * scope.dampingFactor;
+                } else {
+                    spherical.theta += sphericalDelta.theta;
+                    spherical.phi += sphericalDelta.phi;
+                }
+                // restrict theta to be between desired limits
+                let min = scope.minAzimuthAngle;
+                let max = scope.maxAzimuthAngle;
+                if (isFinite(min) && isFinite(max)) {
+                    if (min < -Math.PI) min += twoPI;
+                    else if (min > Math.PI) min -= twoPI;
+                    if (max < -Math.PI) max += twoPI;
+                    else if (max > Math.PI) max -= twoPI;
+                    if (min <= max) spherical.theta = Math.max(min, Math.min(max, spherical.theta));
+                    else spherical.theta = spherical.theta > (min + max) / 2 ? Math.max(min, spherical.theta) : Math.min(max, spherical.theta);
+                }
+                // restrict phi to be between desired limits
+                spherical.phi = Math.max(scope.minPolarAngle, Math.min(scope.maxPolarAngle, spherical.phi));
+                spherical.makeSafe();
+                // move target to panned location
+                if (scope.enableDamping === true) scope.target.addScaledVector(panOffset, scope.dampingFactor);
+                else scope.target.add(panOffset);
+                // adjust the camera position based on zoom only if we're not zooming to the cursor or if it's an ortho camera
+                // we adjust zoom later in these cases
+                if (scope.zoomToCursor && performCursorZoom || scope.object.isOrthographicCamera) spherical.radius = clampDistance(spherical.radius);
+                else spherical.radius = clampDistance(spherical.radius * scale);
+                offset.setFromSpherical(spherical);
+                // rotate offset back to "camera-up-vector-is-up" space
+                offset.applyQuaternion(quatInverse);
+                position.copy(scope.target).add(offset);
+                scope.object.lookAt(scope.target);
+                if (scope.enableDamping === true) {
+                    sphericalDelta.theta *= 1 - scope.dampingFactor;
+                    sphericalDelta.phi *= 1 - scope.dampingFactor;
+                    panOffset.multiplyScalar(1 - scope.dampingFactor);
+                } else {
+                    sphericalDelta.set(0, 0, 0);
+                    panOffset.set(0, 0, 0);
+                }
+                // adjust camera position
+                let zoomChanged = false;
+                if (scope.zoomToCursor && performCursorZoom) {
+                    let newRadius = null;
+                    if (scope.object.isPerspectiveCamera) {
+                        // move the camera down the pointer ray
+                        // this method avoids floating point error
+                        const prevRadius = offset.length();
+                        newRadius = clampDistance(prevRadius * scale);
+                        const radiusDelta = prevRadius - newRadius;
+                        scope.object.position.addScaledVector(dollyDirection, radiusDelta);
+                        scope.object.updateMatrixWorld();
+                    } else if (scope.object.isOrthographicCamera) {
+                        // adjust the ortho camera position based on zoom changes
+                        const mouseBefore = new (0, _three.Vector3)(mouse.x, mouse.y, 0);
+                        mouseBefore.unproject(scope.object);
+                        scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom / scale));
+                        scope.object.updateProjectionMatrix();
+                        zoomChanged = true;
+                        const mouseAfter = new (0, _three.Vector3)(mouse.x, mouse.y, 0);
+                        mouseAfter.unproject(scope.object);
+                        scope.object.position.sub(mouseAfter).add(mouseBefore);
+                        scope.object.updateMatrixWorld();
+                        newRadius = offset.length();
+                    } else {
+                        console.warn("WARNING: OrbitControls.js encountered an unknown camera type - zoom to cursor disabled.");
+                        scope.zoomToCursor = false;
+                    }
+                    // handle the placement of the target
+                    if (newRadius !== null) {
+                        if (this.screenSpacePanning) // position the orbit target in front of the new camera position
+                        scope.target.set(0, 0, -1).transformDirection(scope.object.matrix).multiplyScalar(newRadius).add(scope.object.position);
+                        else {
+                            // get the ray and translation plane to compute target
+                            _ray.origin.copy(scope.object.position);
+                            _ray.direction.set(0, 0, -1).transformDirection(scope.object.matrix);
+                            // if the camera is 20 degrees above the horizon then don't adjust the focus target to avoid
+                            // extremely large values
+                            if (Math.abs(scope.object.up.dot(_ray.direction)) < TILT_LIMIT) object.lookAt(scope.target);
+                            else {
+                                _plane.setFromNormalAndCoplanarPoint(scope.object.up, scope.target);
+                                _ray.intersectPlane(_plane, scope.target);
+                            }
+                        }
+                    }
+                } else if (scope.object.isOrthographicCamera) {
+                    scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom / scale));
+                    scope.object.updateProjectionMatrix();
+                    zoomChanged = true;
+                }
+                scale = 1;
+                performCursorZoom = false;
+                // update condition is:
+                // min(camera displacement, camera rotation in radians)^2 > EPS
+                // using small-angle approximation cos(x/2) = 1 - x^2 / 8
+                if (zoomChanged || lastPosition.distanceToSquared(scope.object.position) > EPS || 8 * (1 - lastQuaternion.dot(scope.object.quaternion)) > EPS || lastTargetPosition.distanceToSquared(scope.target) > 0) {
+                    scope.dispatchEvent(_changeEvent);
+                    lastPosition.copy(scope.object.position);
+                    lastQuaternion.copy(scope.object.quaternion);
+                    lastTargetPosition.copy(scope.target);
+                    zoomChanged = false;
+                    return true;
+                }
+                return false;
+            };
+        }();
+        this.dispose = function() {
+            scope.domElement.removeEventListener("contextmenu", onContextMenu);
+            scope.domElement.removeEventListener("pointerdown", onPointerDown);
+            scope.domElement.removeEventListener("pointercancel", onPointerUp);
+            scope.domElement.removeEventListener("wheel", onMouseWheel);
+            scope.domElement.removeEventListener("pointermove", onPointerMove);
+            scope.domElement.removeEventListener("pointerup", onPointerUp);
+            if (scope._domElementKeyEvents !== null) {
+                scope._domElementKeyEvents.removeEventListener("keydown", onKeyDown);
+                scope._domElementKeyEvents = null;
+            }
+        //scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
+        };
+        //
+        // internals
+        //
+        const scope = this;
+        const STATE = {
+            NONE: -1,
+            ROTATE: 0,
+            DOLLY: 1,
+            PAN: 2,
+            TOUCH_ROTATE: 3,
+            TOUCH_PAN: 4,
+            TOUCH_DOLLY_PAN: 5,
+            TOUCH_DOLLY_ROTATE: 6
+        };
+        let state = STATE.NONE;
+        const EPS = 0.000001;
+        // current position in spherical coordinates
+        const spherical = new (0, _three.Spherical)();
+        const sphericalDelta = new (0, _three.Spherical)();
+        let scale = 1;
+        const panOffset = new (0, _three.Vector3)();
+        const rotateStart = new (0, _three.Vector2)();
+        const rotateEnd = new (0, _three.Vector2)();
+        const rotateDelta = new (0, _three.Vector2)();
+        const panStart = new (0, _three.Vector2)();
+        const panEnd = new (0, _three.Vector2)();
+        const panDelta = new (0, _three.Vector2)();
+        const dollyStart = new (0, _three.Vector2)();
+        const dollyEnd = new (0, _three.Vector2)();
+        const dollyDelta = new (0, _three.Vector2)();
+        const dollyDirection = new (0, _three.Vector3)();
+        const mouse = new (0, _three.Vector2)();
+        let performCursorZoom = false;
+        const pointers = [];
+        const pointerPositions = {};
+        function getAutoRotationAngle() {
+            return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
+        }
+        function getZoomScale() {
+            return Math.pow(0.95, scope.zoomSpeed);
+        }
+        function rotateLeft(angle) {
+            sphericalDelta.theta -= angle;
+        }
+        function rotateUp(angle) {
+            sphericalDelta.phi -= angle;
+        }
+        const panLeft = function() {
+            const v = new (0, _three.Vector3)();
+            return function panLeft(distance, objectMatrix) {
+                v.setFromMatrixColumn(objectMatrix, 0); // get X column of objectMatrix
+                v.multiplyScalar(-distance);
+                panOffset.add(v);
+            };
+        }();
+        const panUp = function() {
+            const v = new (0, _three.Vector3)();
+            return function panUp(distance, objectMatrix) {
+                if (scope.screenSpacePanning === true) v.setFromMatrixColumn(objectMatrix, 1);
+                else {
+                    v.setFromMatrixColumn(objectMatrix, 0);
+                    v.crossVectors(scope.object.up, v);
+                }
+                v.multiplyScalar(distance);
+                panOffset.add(v);
+            };
+        }();
+        // deltaX and deltaY are in pixels; right and down are positive
+        const pan = function() {
+            const offset = new (0, _three.Vector3)();
+            return function pan(deltaX, deltaY) {
+                const element = scope.domElement;
+                if (scope.object.isPerspectiveCamera) {
+                    // perspective
+                    const position = scope.object.position;
+                    offset.copy(position).sub(scope.target);
+                    let targetDistance = offset.length();
+                    // half of the fov is center to top of screen
+                    targetDistance *= Math.tan(scope.object.fov / 2 * Math.PI / 180.0);
+                    // we use only clientHeight here so aspect ratio does not distort speed
+                    panLeft(2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix);
+                    panUp(2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix);
+                } else if (scope.object.isOrthographicCamera) {
+                    // orthographic
+                    panLeft(deltaX * (scope.object.right - scope.object.left) / scope.object.zoom / element.clientWidth, scope.object.matrix);
+                    panUp(deltaY * (scope.object.top - scope.object.bottom) / scope.object.zoom / element.clientHeight, scope.object.matrix);
+                } else {
+                    // camera neither orthographic nor perspective
+                    console.warn("WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.");
+                    scope.enablePan = false;
+                }
+            };
+        }();
+        function dollyOut(dollyScale) {
+            if (scope.object.isPerspectiveCamera || scope.object.isOrthographicCamera) scale /= dollyScale;
+            else {
+                console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.");
+                scope.enableZoom = false;
+            }
+        }
+        function dollyIn(dollyScale) {
+            if (scope.object.isPerspectiveCamera || scope.object.isOrthographicCamera) scale *= dollyScale;
+            else {
+                console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.");
+                scope.enableZoom = false;
+            }
+        }
+        function updateMouseParameters(event) {
+            if (!scope.zoomToCursor) return;
+            performCursorZoom = true;
+            const rect = scope.domElement.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const w = rect.width;
+            const h = rect.height;
+            mouse.x = x / w * 2 - 1;
+            mouse.y = -(y / h) * 2 + 1;
+            dollyDirection.set(mouse.x, mouse.y, 1).unproject(object).sub(object.position).normalize();
+        }
+        function clampDistance(dist) {
+            return Math.max(scope.minDistance, Math.min(scope.maxDistance, dist));
+        }
+        //
+        // event callbacks - update the object state
+        //
+        function handleMouseDownRotate(event) {
+            rotateStart.set(event.clientX, event.clientY);
+        }
+        function handleMouseDownDolly(event) {
+            updateMouseParameters(event);
+            dollyStart.set(event.clientX, event.clientY);
+        }
+        function handleMouseDownPan(event) {
+            panStart.set(event.clientX, event.clientY);
+        }
+        function handleMouseMoveRotate(event) {
+            rotateEnd.set(event.clientX, event.clientY);
+            rotateDelta.subVectors(rotateEnd, rotateStart).multiplyScalar(scope.rotateSpeed);
+            const element = scope.domElement;
+            rotateLeft(2 * Math.PI * rotateDelta.x / element.clientHeight); // yes, height
+            rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight);
+            rotateStart.copy(rotateEnd);
+            scope.update();
+        }
+        function handleMouseMoveDolly(event) {
+            dollyEnd.set(event.clientX, event.clientY);
+            dollyDelta.subVectors(dollyEnd, dollyStart);
+            if (dollyDelta.y > 0) dollyOut(getZoomScale());
+            else if (dollyDelta.y < 0) dollyIn(getZoomScale());
+            dollyStart.copy(dollyEnd);
+            scope.update();
+        }
+        function handleMouseMovePan(event) {
+            panEnd.set(event.clientX, event.clientY);
+            panDelta.subVectors(panEnd, panStart).multiplyScalar(scope.panSpeed);
+            pan(panDelta.x, panDelta.y);
+            panStart.copy(panEnd);
+            scope.update();
+        }
+        function handleMouseWheel(event) {
+            updateMouseParameters(event);
+            if (event.deltaY < 0) dollyIn(getZoomScale());
+            else if (event.deltaY > 0) dollyOut(getZoomScale());
+            scope.update();
+        }
+        function handleKeyDown(event) {
+            let needsUpdate = false;
+            switch(event.code){
+                case scope.keys.UP:
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) rotateUp(2 * Math.PI * scope.rotateSpeed / scope.domElement.clientHeight);
+                    else pan(0, scope.keyPanSpeed);
+                    needsUpdate = true;
+                    break;
+                case scope.keys.BOTTOM:
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) rotateUp(-2 * Math.PI * scope.rotateSpeed / scope.domElement.clientHeight);
+                    else pan(0, -scope.keyPanSpeed);
+                    needsUpdate = true;
+                    break;
+                case scope.keys.LEFT:
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) rotateLeft(2 * Math.PI * scope.rotateSpeed / scope.domElement.clientHeight);
+                    else pan(scope.keyPanSpeed, 0);
+                    needsUpdate = true;
+                    break;
+                case scope.keys.RIGHT:
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) rotateLeft(-2 * Math.PI * scope.rotateSpeed / scope.domElement.clientHeight);
+                    else pan(-scope.keyPanSpeed, 0);
+                    needsUpdate = true;
+                    break;
+            }
+            if (needsUpdate) {
+                // prevent the browser from scrolling on cursor keys
+                event.preventDefault();
+                scope.update();
+            }
+        }
+        function handleTouchStartRotate() {
+            if (pointers.length === 1) rotateStart.set(pointers[0].pageX, pointers[0].pageY);
+            else {
+                const x = 0.5 * (pointers[0].pageX + pointers[1].pageX);
+                const y = 0.5 * (pointers[0].pageY + pointers[1].pageY);
+                rotateStart.set(x, y);
+            }
+        }
+        function handleTouchStartPan() {
+            if (pointers.length === 1) panStart.set(pointers[0].pageX, pointers[0].pageY);
+            else {
+                const x = 0.5 * (pointers[0].pageX + pointers[1].pageX);
+                const y = 0.5 * (pointers[0].pageY + pointers[1].pageY);
+                panStart.set(x, y);
+            }
+        }
+        function handleTouchStartDolly() {
+            const dx = pointers[0].pageX - pointers[1].pageX;
+            const dy = pointers[0].pageY - pointers[1].pageY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            dollyStart.set(0, distance);
+        }
+        function handleTouchStartDollyPan() {
+            if (scope.enableZoom) handleTouchStartDolly();
+            if (scope.enablePan) handleTouchStartPan();
+        }
+        function handleTouchStartDollyRotate() {
+            if (scope.enableZoom) handleTouchStartDolly();
+            if (scope.enableRotate) handleTouchStartRotate();
+        }
+        function handleTouchMoveRotate(event) {
+            if (pointers.length == 1) rotateEnd.set(event.pageX, event.pageY);
+            else {
+                const position = getSecondPointerPosition(event);
+                const x = 0.5 * (event.pageX + position.x);
+                const y = 0.5 * (event.pageY + position.y);
+                rotateEnd.set(x, y);
+            }
+            rotateDelta.subVectors(rotateEnd, rotateStart).multiplyScalar(scope.rotateSpeed);
+            const element = scope.domElement;
+            rotateLeft(2 * Math.PI * rotateDelta.x / element.clientHeight); // yes, height
+            rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight);
+            rotateStart.copy(rotateEnd);
+        }
+        function handleTouchMovePan(event) {
+            if (pointers.length === 1) panEnd.set(event.pageX, event.pageY);
+            else {
+                const position = getSecondPointerPosition(event);
+                const x = 0.5 * (event.pageX + position.x);
+                const y = 0.5 * (event.pageY + position.y);
+                panEnd.set(x, y);
+            }
+            panDelta.subVectors(panEnd, panStart).multiplyScalar(scope.panSpeed);
+            pan(panDelta.x, panDelta.y);
+            panStart.copy(panEnd);
+        }
+        function handleTouchMoveDolly(event) {
+            const position = getSecondPointerPosition(event);
+            const dx = event.pageX - position.x;
+            const dy = event.pageY - position.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            dollyEnd.set(0, distance);
+            dollyDelta.set(0, Math.pow(dollyEnd.y / dollyStart.y, scope.zoomSpeed));
+            dollyOut(dollyDelta.y);
+            dollyStart.copy(dollyEnd);
+        }
+        function handleTouchMoveDollyPan(event) {
+            if (scope.enableZoom) handleTouchMoveDolly(event);
+            if (scope.enablePan) handleTouchMovePan(event);
+        }
+        function handleTouchMoveDollyRotate(event) {
+            if (scope.enableZoom) handleTouchMoveDolly(event);
+            if (scope.enableRotate) handleTouchMoveRotate(event);
+        }
+        //
+        // event handlers - FSM: listen for events and reset state
+        //
+        function onPointerDown(event) {
+            if (scope.enabled === false) return;
+            if (pointers.length === 0) {
+                scope.domElement.setPointerCapture(event.pointerId);
+                scope.domElement.addEventListener("pointermove", onPointerMove);
+                scope.domElement.addEventListener("pointerup", onPointerUp);
+            }
+            //
+            addPointer(event);
+            if (event.pointerType === "touch") onTouchStart(event);
+            else onMouseDown(event);
+        }
+        function onPointerMove(event) {
+            if (scope.enabled === false) return;
+            if (event.pointerType === "touch") onTouchMove(event);
+            else onMouseMove(event);
+        }
+        function onPointerUp(event) {
+            removePointer(event);
+            if (pointers.length === 0) {
+                scope.domElement.releasePointerCapture(event.pointerId);
+                scope.domElement.removeEventListener("pointermove", onPointerMove);
+                scope.domElement.removeEventListener("pointerup", onPointerUp);
+            }
+            scope.dispatchEvent(_endEvent);
+            state = STATE.NONE;
+        }
+        function onMouseDown(event) {
+            let mouseAction;
+            switch(event.button){
+                case 0:
+                    mouseAction = scope.mouseButtons.LEFT;
+                    break;
+                case 1:
+                    mouseAction = scope.mouseButtons.MIDDLE;
+                    break;
+                case 2:
+                    mouseAction = scope.mouseButtons.RIGHT;
+                    break;
+                default:
+                    mouseAction = -1;
+            }
+            switch(mouseAction){
+                case (0, _three.MOUSE).DOLLY:
+                    if (scope.enableZoom === false) return;
+                    handleMouseDownDolly(event);
+                    state = STATE.DOLLY;
+                    break;
+                case (0, _three.MOUSE).ROTATE:
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                        if (scope.enablePan === false) return;
+                        handleMouseDownPan(event);
+                        state = STATE.PAN;
+                    } else {
+                        if (scope.enableRotate === false) return;
+                        handleMouseDownRotate(event);
+                        state = STATE.ROTATE;
+                    }
+                    break;
+                case (0, _three.MOUSE).PAN:
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                        if (scope.enableRotate === false) return;
+                        handleMouseDownRotate(event);
+                        state = STATE.ROTATE;
+                    } else {
+                        if (scope.enablePan === false) return;
+                        handleMouseDownPan(event);
+                        state = STATE.PAN;
+                    }
+                    break;
+                default:
+                    state = STATE.NONE;
+            }
+            if (state !== STATE.NONE) scope.dispatchEvent(_startEvent);
+        }
+        function onMouseMove(event) {
+            switch(state){
+                case STATE.ROTATE:
+                    if (scope.enableRotate === false) return;
+                    handleMouseMoveRotate(event);
+                    break;
+                case STATE.DOLLY:
+                    if (scope.enableZoom === false) return;
+                    handleMouseMoveDolly(event);
+                    break;
+                case STATE.PAN:
+                    if (scope.enablePan === false) return;
+                    handleMouseMovePan(event);
+                    break;
+            }
+        }
+        function onMouseWheel(event) {
+            if (scope.enabled === false || scope.enableZoom === false || state !== STATE.NONE) return;
+            event.preventDefault();
+            scope.dispatchEvent(_startEvent);
+            handleMouseWheel(event);
+            scope.dispatchEvent(_endEvent);
+        }
+        function onKeyDown(event) {
+            if (scope.enabled === false || scope.enablePan === false) return;
+            handleKeyDown(event);
+        }
+        function onTouchStart(event) {
+            trackPointer(event);
+            switch(pointers.length){
+                case 1:
+                    switch(scope.touches.ONE){
+                        case (0, _three.TOUCH).ROTATE:
+                            if (scope.enableRotate === false) return;
+                            handleTouchStartRotate();
+                            state = STATE.TOUCH_ROTATE;
+                            break;
+                        case (0, _three.TOUCH).PAN:
+                            if (scope.enablePan === false) return;
+                            handleTouchStartPan();
+                            state = STATE.TOUCH_PAN;
+                            break;
+                        default:
+                            state = STATE.NONE;
+                    }
+                    break;
+                case 2:
+                    switch(scope.touches.TWO){
+                        case (0, _three.TOUCH).DOLLY_PAN:
+                            if (scope.enableZoom === false && scope.enablePan === false) return;
+                            handleTouchStartDollyPan();
+                            state = STATE.TOUCH_DOLLY_PAN;
+                            break;
+                        case (0, _three.TOUCH).DOLLY_ROTATE:
+                            if (scope.enableZoom === false && scope.enableRotate === false) return;
+                            handleTouchStartDollyRotate();
+                            state = STATE.TOUCH_DOLLY_ROTATE;
+                            break;
+                        default:
+                            state = STATE.NONE;
+                    }
+                    break;
+                default:
+                    state = STATE.NONE;
+            }
+            if (state !== STATE.NONE) scope.dispatchEvent(_startEvent);
+        }
+        function onTouchMove(event) {
+            trackPointer(event);
+            switch(state){
+                case STATE.TOUCH_ROTATE:
+                    if (scope.enableRotate === false) return;
+                    handleTouchMoveRotate(event);
+                    scope.update();
+                    break;
+                case STATE.TOUCH_PAN:
+                    if (scope.enablePan === false) return;
+                    handleTouchMovePan(event);
+                    scope.update();
+                    break;
+                case STATE.TOUCH_DOLLY_PAN:
+                    if (scope.enableZoom === false && scope.enablePan === false) return;
+                    handleTouchMoveDollyPan(event);
+                    scope.update();
+                    break;
+                case STATE.TOUCH_DOLLY_ROTATE:
+                    if (scope.enableZoom === false && scope.enableRotate === false) return;
+                    handleTouchMoveDollyRotate(event);
+                    scope.update();
+                    break;
+                default:
+                    state = STATE.NONE;
+            }
+        }
+        function onContextMenu(event) {
+            if (scope.enabled === false) return;
+            event.preventDefault();
+        }
+        function addPointer(event) {
+            pointers.push(event);
+        }
+        function removePointer(event) {
+            delete pointerPositions[event.pointerId];
+            for(let i = 0; i < pointers.length; i++)if (pointers[i].pointerId == event.pointerId) {
+                pointers.splice(i, 1);
+                return;
+            }
+        }
+        function trackPointer(event) {
+            let position = pointerPositions[event.pointerId];
+            if (position === undefined) {
+                position = new (0, _three.Vector2)();
+                pointerPositions[event.pointerId] = position;
+            }
+            position.set(event.pageX, event.pageY);
+        }
+        function getSecondPointerPosition(event) {
+            const pointer = event.pointerId === pointers[0].pointerId ? pointers[1] : pointers[0];
+            return pointerPositions[pointer.pointerId];
+        }
+        //
+        scope.domElement.addEventListener("contextmenu", onContextMenu);
+        scope.domElement.addEventListener("pointerdown", onPointerDown);
+        scope.domElement.addEventListener("pointercancel", onPointerUp);
+        scope.domElement.addEventListener("wheel", onMouseWheel, {
+            passive: false
+        });
+        // force an update at start
+        this.update();
+    }
+}
+
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11Ir4":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// Pointer Events for 3D canvas
+parcelHelpers.export(exports, "onDoubleClick", ()=>onDoubleClick);
+// localize pointer position, expose to React UI
+parcelHelpers.export(exports, "onPointerMove", ()=>onPointerMove);
+// click to add points
+parcelHelpers.export(exports, "onPointerDown", ()=>onPointerDown);
+parcelHelpers.export(exports, "onPointerUp", ()=>onPointerUp);
+var _command = require("../../Command");
+var _selectObjectCommand = require("../commands/SelectObjectCommand");
+var _state = require("../../State");
+var _util = require("../../util");
+var _selectFaceCommand = require("../commands/SelectFaceCommand");
+var _localizePointerTo = require("../../pointer/LocalizePointerTo");
+function onDoubleClick(event) {
+    (0, _state.state).intersects = [];
+    (0, _state.state).raycaster.setFromCamera((0, _state.state).pointer, (0, _state.state).camera);
+    const intersects = (0, _state.state).raycaster.intersectObjects((0, _state.state).objects);
+    (0, _state.state).intersects = intersects;
+    if ((0, _util.intersecting)((0, _state.state))) {
+        const bundle = (0, _util.first_intersecting_face)((0, _state.state));
+        if (bundle && bundle.faceIndex) {
+            if (!(0, _state.state).selected_faces.has(JSON.stringify((0, _selectFaceCommand.tagFace)(bundle.face, bundle.object.uuid)))) (0, _command.pushCommand)(new (0, _selectFaceCommand.SelectFaceCommand)(bundle));
+            else (0, _command.pushCommand)(new (0, _selectFaceCommand.DeselectFaceCommand)(bundle));
+        }
+    }
+}
+function onPointerMove(event) {
+    (0, _localizePointerTo.localizePointerTo)({
+        event,
+        state: (0, _state.state),
+        domElement: (0, _state.state).renderer.domElement
+    });
+// if (state.pointerDown && state.selected_faces.size > 0) {
+// }
+}
+function onPointerDown(event) {
+    (0, _state.state).pointerDown = true;
+    (0, _state.state).intersects = [];
+    (0, _state.state).raycaster.setFromCamera((0, _state.state).pointer, (0, _state.state).camera);
+    const intersects = (0, _state.state).raycaster.intersectObjects((0, _state.state).objects);
+    (0, _state.state).intersects = intersects;
+    // TODO: Track dragging and account for camera movement clicks
+    if ((0, _util.intersecting)((0, _state.state))) {
+        const selected_mesh = (0, _util.first_intersecting_object)((0, _state.state));
+        if (selected_mesh) (0, _command.pushCommand)(new (0, _selectObjectCommand.SelectObjectCommand)(selected_mesh));
+    } else (0, _command.pushCommand)(new (0, _selectObjectCommand.DeselectObjectCommand)());
+}
+function onPointerUp(event) {
+    (0, _state.state).pointerDown = false;
+}
+
+},{"../../Command":"efiIE","../commands/SelectObjectCommand":"9u1vs","../../State":"83rpN","../../util":"7wzGb","../commands/SelectFaceCommand":"32QS8","../../pointer/LocalizePointerTo":"dLwIR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9u1vs":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SelectObjectCommand", ()=>SelectObjectCommand);
+parcelHelpers.export(exports, "DeselectObjectCommand", ()=>DeselectObjectCommand);
+var _materials = require("../Materials");
+var _state = require("../../State");
+class SelectObjectCommand {
+    constructor(object){
+        this.__selected = (0, _state.state).selected;
+        this.__object = object;
+    }
+    do() {
+        if (!(0, _state.state).selected.has(this.__object)) {
+            (0, _state.state).selected = new Set([
+                this.__object
+            ]);
+            this.__object.original_material = this.__object.material;
+            this.__object.material = (0, _materials.material_selected);
+        }
+    }
+    undo() {
+        (0, _state.state).selected = this.__selected;
+        this.__object.material = prev_material;
+    }
+}
+class DeselectObjectCommand {
+    constructor(){
+        this.__selected = (0, _state.state).selected;
+    }
+    do() {
+        if ((0, _state.state).selected.size > 0) {
+            (0, _state.state).selected.forEach((obj)=>{
+                obj.material = obj.original_material;
+            });
+            (0, _state.state).selected = new Set();
+        }
+    }
+    undo() {
+        (0, _state.state).selected = this.__selected;
+    }
+}
+
+},{"../Materials":"eTWEv","../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eTWEv":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "material_selected", ()=>material_selected);
+parcelHelpers.export(exports, "material_default", ()=>material_default);
+var _three = require("three");
+const material_selected = new _three.MeshBasicMaterial({
+    color: "#ffffff"
+});
+const material_default = new _three.MeshBasicMaterial({
+    color: "#ff0000"
+});
+
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"32QS8":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "tagFace", ()=>tagFace);
+parcelHelpers.export(exports, "SelectFaceCommand", ()=>SelectFaceCommand);
+parcelHelpers.export(exports, "DeselectFaceCommand", ()=>DeselectFaceCommand);
+var _state = require("../../State");
+const tagFace = (face, uuid)=>{
+    const generic_face = {
+        ...face,
+        materialIndex: 0
+    };
+    return {
+        face: generic_face,
+        uuid
+    };
+};
+class SelectFaceCommand {
+    constructor(bundle){
+        this.__selected = (0, _state.state).selected_faces;
+        this.__bundle = {
+            ...bundle,
+            face: tagFace(bundle.face, bundle.object.uuid)
+        };
+    }
+    do() {
+        if (!this.__selected.has(JSON.stringify(this.__bundle.face))) {
+            (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
+            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
+        }
+    }
+    undo() {
+        (0, _state.state).selected_faces = this.__selected;
+        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
+    }
+}
+class DeselectFaceCommand {
+    constructor(bundle){
+        this.__bundle = {
+            ...bundle,
+            face: tagFace(bundle.face, bundle.object.uuid)
+        };
+    }
+    do() {
+        if ((0, _state.state).selected_faces.has(JSON.stringify(this.__bundle.face))) {
+            (0, _state.state).selected_faces.delete(JSON.stringify(this.__bundle.face));
+            this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 0;
+        }
+    }
+    undo() {
+        (0, _state.state).selected_faces.add(JSON.stringify(this.__bundle.face));
+        this.__bundle.object.geometry.groups[Math.floor(this.__bundle.faceIndex / 2)].materialIndex = 1;
+    }
+}
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dLwIR":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "localizePointerTo", ()=>localizePointerTo);
+const localizePointerTo = ({ event, state, domElement })=>{
+    state.rawPointer.rx = event.clientX;
+    state.rawPointer.ry = event.clientY;
+    state.pointer.x = 2 * (window.innerWidth / domElement.offsetWidth) * (event.clientX - state.renderer.domElement.getBoundingClientRect().x) / window.innerWidth - 1;
+    state.pointer.y = -2 * (window.innerHeight / domElement.offsetHeight) * (event.clientY - state.renderer.domElement.getBoundingClientRect().y) / window.innerHeight + 1;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdjjs":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handleKeyDown", ()=>handleKeyDown);
+parcelHelpers.export(exports, "handleKeyUp", ()=>handleKeyUp);
+parcelHelpers.export(exports, "initializeHotkeys", ()=>initializeHotkeys);
+var _command = require("../../Command");
+var _state = require("../../State");
+var _saveProjectCommand = require("../../UI/commands/SaveProjectCommand");
+var _changeToolCommand = require("../commands/ChangeToolCommand");
+var _selectToolDeselectAllCommand = require("../commands/SelectToolDeselectAllCommand");
+const handleKeyDown = (e)=>{
+    if (e.repeat) return; // Ignore repeated keydown events
+    switch(e.key){
+        case "Backspace":
+        case "Delete":
+            e.preventDefault();
+            handleDelete(e);
+            break;
+        case "Shift":
+            (0, _state.state).shiftDown = true; // Track shift for multi-selection
+            break;
+        case "z":
+            (0, _command.undoCommands)();
+            break;
+        case "s":
+            if (e.metaKey) {
+                e.preventDefault();
+                (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)());
+            }
+            break;
+        case "Alt":
+            (0, _state.state).altDown = true;
+            break;
+        case "Escape":
+            (0, _command.pushCommand)(new (0, _changeToolCommand.ChangeToolCommand)("select"));
+            (0, _command.pushCommand)(new (0, _selectToolDeselectAllCommand.SelectToolDeselectAllCommand)());
+            break;
+        default:
+            break;
+    }
+};
+const handleKeyUp = (e)=>{
+    switch(e.key){
+        case "Shift":
+            (0, _state.state).shiftDown = false;
+            break;
+        case "Alt":
+            (0, _state.state).altDown = false;
+        default:
+            break;
+    }
+};
+const handleDelete = (e)=>{
+    (0, _state.state).tool.onKeyDown(e);
+};
+const initializeHotkeys = ()=>{
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+}; // Call this function in your app startup logic
+
+},{"../../Command":"efiIE","../../State":"83rpN","../../UI/commands/SaveProjectCommand":"8Akqt","../commands/ChangeToolCommand":"i5Ou7","../commands/SelectToolDeselectAllCommand":"35eIL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ghSIM":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "initializeCanvasEvents", ()=>initializeCanvasEvents);
+var _cOnMouseEnter = require("./cOnMouseEnter");
+var _cOnMouseLeave = require("./cOnMouseLeave");
+const initializeCanvasEvents = (canvas)=>{
+    if (!canvas) {
+        console.error("Canvas element not found");
+        return;
+    }
+    canvas.addEventListener("mouseenter", (0, _cOnMouseEnter.cOnMouseEnter));
+    canvas.addEventListener("mouseleave", (0, _cOnMouseLeave.cOnMouseLeave));
+// canvas.addEventListener("mousedown", debugEvent);
+};
+const debugEvent = (e)=>{
+    console.log(e);
+};
+
+},{"./cOnMouseEnter":"gK6it","./cOnMouseLeave":"hoBK0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gK6it":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseEnter", ()=>cOnMouseEnter);
+var _state = require("../../State");
+const cOnMouseEnter = (e)=>{
+    console.log("active");
+    (0, _state.state).cActive = true;
+};
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hoBK0":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cOnMouseLeave", ()=>cOnMouseLeave);
+var _state = require("../../State");
+const cOnMouseLeave = (e)=>{
+    (0, _state.state).cActive = false;
+};
+
+},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"46Cm3":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// The main update function where XPBD and collision handling occur.
+parcelHelpers.export(exports, "updateXPBD", ()=>updateXPBD);
+var _three = require("three");
+var _state = require("../../State");
+var _factors = require("../../2D/settings/factors");
+// For collisions, we’ll resolve with a simple floor at y = 0.
+function resolveCollisions(particle, floorY) {
+    if (particle.predicted.y < floorY) // Push the particle back to the floor.
+    particle.predicted.y = floorY;
+}
+function updateXPBD(deltaTime) {
+    if ((0, _state.state).particles.length < 1) // Bail if the geometry is not initialized
+    // TODO: Add user input or smart re-triggering for polygon building
+    return;
+    const gravity = new _three.Vector3(0, -9.81, 0);
+    for (const particle of (0, _state.state).particles)if (particle.invMass > 0) {
+        // Predict new position
+        particle.predicted.copy(particle.position);
+        // Add scaled velocity to predicted pos
+        particle.predicted.addScaledVector(particle.velocity, deltaTime);
+        // Add dt^2 * invMa*f_ext(x^n) to xpredicted
+        const dtsq = Math.pow(deltaTime, 2);
+        particle.predicted.addScaledVector(gravity, particle.invMass * dtsq);
+    }
+    for (const particle of (0, _state.state).particles)resolveCollisions(particle, 0);
+    const iterations = 10;
+    for(let iter = 0; iter < iterations; iter++)for (const constraint of (0, _state.state).constraints)constraint.solve(deltaTime, {
+        particles: (0, _state.state).particles
+    });
+    for (const particle of (0, _state.state).particles){
+        // Store previous position for later velocity calculation
+        particle.previousPosition.copy(particle.position);
+        // Update position
+        particle.position.copy(particle.predicted);
+        // Update geometry buffer
+        const positionAttr = particle.geometry.getAttribute("position");
+        positionAttr.setXYZ(particle.positionIndex, particle.position.x, particle.position.y, particle.position.z);
+        positionAttr.needsUpdate = true;
+        // Update velocity with possible Number guards (-> damping)
+        particle.velocity.copy(particle.position);
+        particle.velocity.sub(particle.previousPosition);
+        particle.velocity.clamp((0, _factors.velocityMin), (0, _factors.velocityMax));
+        particle.velocity.divideScalar(deltaTime);
+    }
+    (0, _state.state).particles[0].geometry.attributes.position.needsUpdate = true;
+    (0, _state.state).particles[0].geometry.computeBoundingSphere();
+}
+
+},{"three":"ktPTu","../../State":"83rpN","../../2D/settings/factors":"9qufK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2JSEM":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$c156 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67761,7 +67762,7 @@ $RefreshReg$(_c, "Browser");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","react":"21dqq","./ProjectSummary":"ryfj4"}],"ryfj4":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","../store":"l1Ff7","react":"21dqq","./ProjectSummary":"ryfj4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"ryfj4":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$178d = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -67879,7 +67880,7 @@ $RefreshReg$(_c, "ProjectSummary");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../Command":"efiIE","../commands/LoadProjectCommand":"53Ggr","../ViewState":"kfxN8"}],"7H0HC":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","../../Command":"efiIE","../commands/LoadProjectCommand":"53Ggr","../ViewState":"kfxN8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"7H0HC":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$b6a0 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;

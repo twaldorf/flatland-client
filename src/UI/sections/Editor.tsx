@@ -1,4 +1,4 @@
-import { Ref, RefObject } from "react";
+import { Ref, RefObject, useEffect } from "react";
 import { Pieces } from "../inventory/Pieces";
 import { Toolbar } from "../tools/Toolbar";
 import { Header } from "./Header";
@@ -10,8 +10,25 @@ import CursorInfo from "./Overlay/CursorInfo";
 import Label from "./Overlay/Label";
 import { ShapeInfo } from "./Overlay/ShapeInfo";
 import { Tabs } from "./Workspace/Tabs";
+import { pushCommand } from "../../Command";
+import { initCanvas, initScene, initUpdate } from "../../main";
+import { NewProjectCommand } from "../commands/NewProjectCommand";
+import { useAppState } from "../store";
 
 export const Editor = ({ canvasRef, threeRef }) => {
+
+  // Set up canvas refs and create new project
+  useEffect(() => {
+    if (canvasRef.current) {
+      initCanvas(canvasRef.current);
+    }
+    if (threeRef.current) {
+      initScene(threeRef.current);
+    }
+    // pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
+    initUpdate();
+  }, [ useAppState(s => s.activeProjectTitle)] );
+
   return (
       <div className="grid grid-cols-4 flex-1 overflow-hidden h-[88vh]">
         {/* Left column */}
