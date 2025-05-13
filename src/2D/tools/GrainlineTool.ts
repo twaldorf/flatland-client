@@ -9,7 +9,7 @@ import { pushCommand } from "../../Command";
 import { GrainlineToolCreateGrainlineCommand } from "../commands/GrainlineToolCreateGrainlineCommand";
 import { isPointInPolygon } from "../geometry/isPointInPolygon";
 import { ChangeToolCommand } from "../commands/ChangeToolCommand";
-import { useAppState } from "../../UI/store";
+import { useAppState } from "../../UI/AppState";
 
 export type GrainlineToolState = 
   | { type: "idle" }

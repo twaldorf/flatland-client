@@ -1,5 +1,5 @@
 import { Vector2 } from "three";
-import { BezierPoint, Geometry2D, Point } from "../types";
+import { BezierPoint, Geometry2D, Piece, Point } from "../types";
 
 export const flattenBezierPoint = (bp:BezierPoint):number[] => {
   return [ bp.to.x, bp.to.y, bp.from.x, bp.from.y, bp.c1.x, bp.c1.y, bp.c2.x, bp.c2.y ];
@@ -42,3 +42,8 @@ export const restoreGeometryMap = (arr:Array<[string, { type: string; pointIds: 
   return map;
 }
 
+// export function
+
+// export function restorePieceMap(arr:[ string, object:Piece ]):Map<string, Piece> {
+
+// }

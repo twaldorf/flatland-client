@@ -2,7 +2,7 @@ import { useState } from "react"
 import { pushCommand } from "../../../Command"
 import { SaveProjectCommand } from "../../commands/SaveProjectCommand"
 import { state } from "../../../State"
-import { useAppState } from "../../store"
+import { useAppState } from "../../AppState"
 
 export const SaveAsProjectModal = () => {
   const modal = useAppState((s) => s.modal)

@@ -2,7 +2,7 @@ import { useRef, useEffect, FormEventHandler, useState } from "react";
 import { drawPieceThumbnail } from "../../2D/rendering/drawPieceThumbnail";
 import { Piece } from "../../types";
 import { CiEdit } from "react-icons/ci";
-import { useAppState } from "../store";
+import { useAppState } from "../AppState";
 
 
 export const PieceComponent = ({ piece }: { piece: Piece }) => {
@@ -17,9 +17,10 @@ export const PieceComponent = ({ piece }: { piece: Piece }) => {
 
   useEffect(() => {
     if (thumbnailRef.current) {
-      drawPieceThumbnail(piece, thumbnailRef.current);
+      console.log(piece)
+      // drawPieceThumbnail(piece, thumbnailRef.current);
     }
-  }, [piece]);
+  }, [ piece ]);
 
   function handleClick(): void {
     editing == true ? setEditing(false) : setEditing(true);

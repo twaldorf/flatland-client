@@ -1,6 +1,7 @@
 import { drawCanvasFromState } from "../../2D/rendering/canvas";
 import { Command } from "../../Command";
 import { state } from "../../State";
+import { useAppState } from "../AppState";
 
 export class LoadProjectCommand implements Command {
 
@@ -15,6 +16,7 @@ export class LoadProjectCommand implements Command {
     if (!json) return;
     const data = json;
     state.deserialize(data);
+    useAppState.getState().setPieces(state.pieces);
     drawCanvasFromState(state);
   }
 

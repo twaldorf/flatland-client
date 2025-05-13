@@ -1,9 +1,9 @@
 // src/components/Tabs.tsx
 import React from 'react';
-import { useViewState } from '../../ViewState';
+import { useViewState, ViewName } from '../../ViewState';
 
 // Define the available views and their corresponding paths
-const tabConfig: { label: string; view: string; path: string }[] = [
+const tabConfig: { label: string; view: ViewName; path: string }[] = [
   { label: 'Editor',        view: 'app',           path: '/' },
   { label: 'Piece Library', view: 'piece library', path: '/piece-library' },
   { label: 'Mark',          view: 'mark',          path: '/mark' },
@@ -11,7 +11,7 @@ const tabConfig: { label: string; view: string; path: string }[] = [
 ];
 
 export const Tabs: React.FC = () => {
-  const view    = useViewState((s) => s.view);
+  const view = useViewState((s) => s.view);
   const setView = useViewState((s) => s.setView);
 
   return (

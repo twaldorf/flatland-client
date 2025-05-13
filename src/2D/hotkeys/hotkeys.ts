@@ -60,7 +60,7 @@ export const handleKeyUp = (e: KeyboardEvent) => {
 };
 
 const handleDelete = (e:KeyboardEvent) => {
-  state.tool.onKeyDown(e);
+  state.tool.onKeyDown(e); // this is mostly handled in individual tools
 };
 
 

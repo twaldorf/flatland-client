@@ -4,6 +4,8 @@ import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
 import { generateUUID } from "three/src/math/MathUtils";
 import { flattenGeometryMap, flattenPointsMap, restoreGeometryMap, restorePointsMap } from "./utils/saveutils";
+import { SelectTool } from "./2D/tools/SelectTool";
+import { BASE_PROJECT_TITLE } from "./constants";
 
 export function genPointId() {
   return generateUUID();
@@ -13,7 +15,7 @@ export function genGeoId() {
 }
 
 export const state:State = {
-  version: '0.11',
+  version: 0.12,
   pointer: new Vector2,
   shiftDown: false,
   altDown: false,
@@ -36,6 +38,7 @@ export const state:State = {
   testObject: null,
   
   mode: 'default',
+  autosave: true,
   
   controls: {
     waitForDoubleClick: false,
@@ -58,7 +61,7 @@ export const state:State = {
   c_preview_canvas: null,
   c_buffers: new Map<BufferType, BufferBundle>,
   canvas: undefined,
-  tool: new PathTool(),
+  tool: new SelectTool(),
   c_points: [],
   c_pointmap: new Map(),
 
@@ -84,11 +87,11 @@ export const state:State = {
 
   c_zoomfactor: 1,
 
-  pieces: new Map(),
+  pieces: [],
 
   projectInfo: {
-    title: 'untitled',
-    author: 'unknown',
+    title: BASE_PROJECT_TITLE,
+    author: '',
     lastUpdated: new Date(),
   },
 
@@ -103,15 +106,18 @@ export const state:State = {
       version,
       c_pointsMap,
       c_geometryMap,
-      projectInfo
+      projectInfo,
+      pieces,
     } = this;
+    console.log(this.pieces)
 
     // flattened version of geometries, pieces, etc
     const coreInfo = {
       version,
       c_pointsMap: flattenPointsMap(c_pointsMap),
       c_geometryMap: flattenGeometryMap(c_geometryMap),
-      projectInfo
+      projectInfo,
+      pieces,
     }
 
     const serializedObj = JSON.stringify(coreInfo);
@@ -125,11 +131,15 @@ export const state:State = {
       this.c_pointsMap = restorePointsMap(serializedObj.c_pointsMap);
       this.c_geometryMap = restoreGeometryMap(serializedObj.c_geometryMap);
       this.projectInfo = serializedObj.projectInfo;
+      console.log(serializedObj.pieces);
+      this.pieces = serializedObj.pieces;
     }
   },
 
   clear():void {
-    // not implemented
+    this.c_pointsMap = new Map();
+    this.c_geometryMap = new Map();
+    this.pieces = [];
   }
 
 };

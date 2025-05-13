@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { pushCommand } from "../../../Command"
 import { LoadProjectCommand } from "../../commands/LoadProjectCommand"
-import { useAppState } from "../../store"
+import { useAppState } from "../../AppState"
 
 export const OpenProjectOverlay = () => {
   const [keys, setKeys] = useState<string[]>([])

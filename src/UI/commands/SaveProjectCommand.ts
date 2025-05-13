@@ -4,8 +4,8 @@ import { state } from "../../State"
 export class SaveProjectCommand implements Command {
   private readonly key: string;
 
-  constructor(projectName = "default") {
-    projectName = state.projectInfo.title;
+  constructor(projectName?:string) {
+    projectName = projectName ? projectName : state.projectInfo.title;
     this.key = `flatland-project-${projectName}`;
   }
 
@@ -14,9 +14,11 @@ export class SaveProjectCommand implements Command {
     localStorage.setItem(this.key, json);
     const projects = localStorage.getItem('flatland-projects');
     if (projects) {
-      const projects_list = JSON.parse(projects);
-      projects_list.push(this.key);
-      localStorage.setItem('flatland-projects', JSON.stringify(projects_list));
+      const projects_list = JSON.parse(projects) as string[];
+      if (!projects_list.some((name:string) => name === this.key)) {
+        projects_list.push(this.key);
+        localStorage.setItem('flatland-projects', JSON.stringify(projects_list));
+      }
     } else {
       localStorage.setItem('flatland-projects', JSON.stringify([this.key]));
     }

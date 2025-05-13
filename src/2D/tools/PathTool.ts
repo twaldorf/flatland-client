@@ -17,7 +17,7 @@ import { PathToolRemovePointCommand } from "../commands/PathToolRemovePointComma
 import { PathToolAddBezierCommand } from "../commands/PathToolAddBezierCommand";
 import { drawNewPointPreview } from "../rendering/drawNewPointPreview";
 import { drawBezierHandlePreview } from "../rendering/drawBezierHandlePreview";
-import { useAppState } from "../../UI/store";
+import { useAppState } from "../../UI/AppState";
 
 export type PathToolState = 
   | { type: "idle" }

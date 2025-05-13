@@ -11,15 +11,19 @@ import { BezierPointEditorTool, BezierPointEditorToolState } from "./2D/tools/Be
 
 // State interface for global state singleton
 export interface State {
+  // Flag for enable/disable autosave
+  autosave: boolean;
   // Test object for debugging
   testObject: unknown;
 
-  // State schema version
-  version: string,
+  // State schema version, increments by .01 with two decimal place precision
+  version: number,
 
   // Project info like title, author, lastUpdated, etc
   projectInfo: ProjectInfo;
-  pieces: Map<string, Piece>;
+
+  // Collection of pieces
+  pieces: Piece[];
 
   // ## State shared between editor and canvas
   pointerDown: boolean;
@@ -60,8 +64,10 @@ export interface State {
   tool: Tool;
 
   // A selected point is being moved
+  // Deprecated
   cMovingPoint: boolean;
   // from its previous position at:
+  // Deprecated
   c_move_from: Vector2;
 
   // Making a selection (as opposed to creating a new mark)
@@ -72,11 +78,8 @@ export interface State {
   // Deprecated
   pendingSelection: Command;
 
-  // All points on the canvas, flattened for rendering
+  // Map of active points
   // Deprecated
-  c_points: Array<Vector2>;
-
-  // Map of active points, deprecated
   // Pairs an index in the point array with a vector2 for convenience
   // These points are all 'active', i.e. they have not been deleted and contribute to shapes or paths
   // These points are not necessarily selected
@@ -90,6 +93,7 @@ export interface State {
   c_geometryMap: Map<string, Geometry2D>,
 
   // 2D Array of all paths composed by the indices of each path member vertices
+  // DEPRECATED
   c_paths: Array<Array<number>>;
 
   // All selected points on the canvas
@@ -107,13 +111,16 @@ export interface State {
 
   // Array of closed paths (shapes)
   // Shapes are moved from the paths array into the shapes array
-  c_shapes: Array<Array<number>>;
+  // DEPRECATED
+  // c_shapes: Array<Array<number>>;
 
   // Index of the active path within the c_paths array
   // -1 when it is inactive
+  // DEPRECATED
   c_activePath: number;
 
   // Array of point indices making up a measuring line
+  // Deprecated  but in use
   c_measure_path: number[];
 
   // Array of arrays of measure point ids

@@ -26,7 +26,7 @@ export function getPointArray(geomId: string):Array<Vector2> | undefined {
 }
 
 export function getPointArrayFromIds(pointIds:string[]):Vector2[] {
-  pointIds.pop();
+  // pointIds.pop(); // why is this here
   const vectors = pointIds.reduce( ( prev:any, id:string ):any => {
     const point = state.c_pointsMap.get(id) as BezierPoint;
     return [...prev, 

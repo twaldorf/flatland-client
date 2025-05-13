@@ -15,18 +15,54 @@ import { NewProjectCommand } from "./UI/commands/NewProjectCommand";
 import { EditProjectModal } from "./UI/sections/Header/EditProjectModal";
 import { SaveAsProjectModal } from "./UI/sections/Header/SaveAsProjectModal";
 import { useViewState, ViewName } from "./UI/ViewState";
+import { useAppState } from './UI/AppState';
 import { useViewRouting } from "./routes";
 import { Editor } from "./UI/sections/Editor";
 import { PieceLibrary } from "./UI/sections/PieceLibrary";
 import Browser from "./UI/browse/Browse";
 import Mark from "./UI/mark/Mark";
+import { SaveProjectCommand } from "./UI/commands/SaveProjectCommand";
+import { state } from "./State";
+import { LoadProjectCommand } from "./UI/commands/LoadProjectCommand";
+import { BASE_PROJECT_TITLE } from "./constants";
 
 const App: React.FC = () => {
+  useEffect(() => {
+    autoSave();
+  }, []);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const threeRef = useRef<HTMLCanvasElement>(null);
   const view = useViewState((vs) => vs.view);
 
   useViewRouting();
+  state.clear();
+  loadAutosave();
+
+  function loadAutosave() {
+    if (state.projectInfo.title == BASE_PROJECT_TITLE) {
+      const projectString = localStorage.getItem('flatland-project-autosave');
+      if (projectString) {
+        const project = JSON.parse(projectString);
+        if (project.version === state.version) {
+          console.log('LOADING PROJECT FROM AUTOSAVE')
+          pushCommand(new LoadProjectCommand('flatland-project-autosave'));
+        }
+      }
+    }
+  }
+
+  function autoSave() {
+    let title = state.projectInfo.title;
+    if (state.projectInfo.title === BASE_PROJECT_TITLE) {
+      title = 'autosave';
+    }
+    setInterval(() => {
+      if (state.autosave) {
+        pushCommand(new SaveProjectCommand(title));
+        console.log('Submitted save command for ', title)
+      }
+    }, 1000 * 5);
+  }
 
   const ViewComponentMap: Record<ViewName, React.ReactNode> = {
     "app": <Editor canvasRef={canvasRef} threeRef={threeRef} />,

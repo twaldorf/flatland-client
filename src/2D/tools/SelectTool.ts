@@ -13,7 +13,7 @@ import { drawCanvasFromState, point, redrawCanvas } from "../rendering/canvas";
 import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
 
 import { KeyboardEvent } from "react";
-import { DeleteShapeCommand } from "../commands/DeleteShapeCommand";
+import { DeleteGeometriesCommand, DeleteShapeCommand } from "../commands/DeleteGeometriesCommand";
 import { checkLineIntersection, LineHit } from "../geometry/lineIntersection";
 import { SelectToolSelectLineCommand } from "../commands/SelectToolSelectLineCommand";
 import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand";
@@ -52,7 +52,7 @@ export class SelectTool implements ToolBase {
     down: this.onMouseDown.bind(this),
     move: this.onMouseMove.bind(this),
     up: this.onMouseUp.bind(this),
-    dblclick: this.onDoubleClick.bind(this)
+    dblclick: this.onDoubleClick.bind(this),
   }
 
   public initializeEvents() {
@@ -277,15 +277,13 @@ export class SelectTool implements ToolBase {
   }
 
   public onKeyDown(e: KeyboardEvent<Element>) {
+    console.log(state.c_selectedGeometries)
     switch (this.state.type) {
       case "selecting shapes":
-        console.log('keypress', e)
-      // case "selecting_points":
         if (e.code === 'Backspace' || e.code === 'Delete') {
-          if (state.c_selected_shapes.length > 0) {
-            pushCommand(new DeleteShapeCommand(this.state.selectedShapeIndex));
+          if (state.c_selectedGeometries.length > 0) {
+            pushCommand(new DeleteGeometriesCommand(state.c_selectedGeometries));
           }
-          // also delete points
         }
         this.transition({type: "idle"});
         break;

@@ -35,13 +35,13 @@ export class PathToolAddBezierCommand implements Command {
     // Bezier point object containing Indices
     const bPoint:BezierPoint = { 
       to: 
-      this.anchor,
+      this.anchor.clone(),
       c1: 
-      this.pos,
+      this.pos.clone(),
       c2:
-      backHandle,
+      backHandle.clone(),
       from:
-      this.prevPoint.to,
+      this.prevPoint.to.clone(),
     }
 
     const id = state.addGeometryPoint(bPoint);

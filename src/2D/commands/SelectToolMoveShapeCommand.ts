@@ -30,7 +30,7 @@ export class SelectToolMoveShapeCommand implements Command {
         if (!bp) return;
     
         bp.to.add(this.__diff);
-        // bp.from.add(this.__diff); // Do not modify this vector in this sweep–it is the previous point's .to vector
+        bp.from.add(this.__diff);
         bp.c1.add(this.__diff);
         bp.c2.add(this.__diff);
       });

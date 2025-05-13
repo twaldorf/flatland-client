@@ -5,7 +5,7 @@ import { state } from "../../State";
 import { Geometry2D, Piece } from "../../types";
 import { drawCanvasFromState } from "../rendering/canvas";
 import { generatePieceThumbnail } from "../rendering/drawPieceThumbnail";
-import { useAppState } from "../../UI/store";
+import { useAppState } from "../../UI/AppState";
 
 
 export class PathToolClosePathCommand implements Command {
@@ -42,6 +42,7 @@ export class PathToolClosePathCommand implements Command {
     piece.canvas = generatePieceThumbnail(piece);
     useAppState.getState().addPiece(piece);
     this.pieceId = piece.id;
+    state.pieces.push(piece);
 
     drawCanvasFromState(state);
   }

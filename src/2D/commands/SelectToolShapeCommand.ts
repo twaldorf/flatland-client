@@ -3,7 +3,7 @@ import { generateUUID } from "three/src/math/MathUtils";
 import { Command } from "../../Command";
 import { state } from "../../State";
 import { Piece } from "../../types";
-import { useAppState } from "../../UI/store";
+import { useAppState } from "../../UI/AppState";
 import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBox";
 import { generateFloatingLabel } from "../hooks/generateFloatingLabel";
 

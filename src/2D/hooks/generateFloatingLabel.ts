@@ -4,7 +4,7 @@ import { state } from "../../State";
 import { Piece } from "../../types";
 import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBox";
 import { getPointArray } from "../geometry/getPointArrayFromGeometry2D";
-import { useAppState } from "../../UI/store";
+import { useAppState } from "../../UI/AppState";
 
 export const generateFloatingLabel = (geomId:string):void => {
   const pointList = getPointArray(geomId) as Vector2[];

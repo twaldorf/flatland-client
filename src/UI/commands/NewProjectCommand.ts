@@ -2,7 +2,7 @@ import { drawCanvasFromState } from "../../2D/rendering/canvas";
 import { Command } from "../../Command"
 import { state } from "../../State"
 import { ProjectInfo } from "../../types";
-import { useAppState } from "../store";
+import { useAppState } from "../AppState";
 
 export class NewProjectCommand implements Command {
   private previousState: string;

@@ -1,0 +1,1 @@
+export const BASE_PROJECT_TITLE = 'untitled'

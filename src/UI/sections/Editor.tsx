@@ -13,7 +13,7 @@ import { Tabs } from "./Workspace/Tabs";
 import { pushCommand } from "../../Command";
 import { initCanvas, initScene, initUpdate } from "../../main";
 import { NewProjectCommand } from "../commands/NewProjectCommand";
-import { useAppState } from "../store";
+import { useAppState } from "../AppState";
 
 export const Editor = ({ canvasRef, threeRef }) => {
 

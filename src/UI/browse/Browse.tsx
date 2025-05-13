@@ -1,9 +1,7 @@
-import { Fragment } from "react/jsx-runtime";
-import { PieceLibrary } from "../sections/PieceLibrary";
-import { useAppState } from "../store";
-import { ProjectInfo } from "../../types";
+import { useAppState } from "../AppState";
 import { useState } from "react";
 import { ProjectSummary } from "./ProjectSummary";
+import { formatDate } from "../../utils/dates";
 
 const Browser: React.FC = () => {
   const currentId = useAppState((s) => s.activeProjectTitle);
@@ -54,7 +52,7 @@ const Browser: React.FC = () => {
               }`}
             >
               <p>{projectName.replace('flatland-project-', '')}</p>
-              <p>{new Date(proj.info.lastUpdated).toLocaleDateString('us-en')}</p>
+              <p>{formatDate(new Date(proj.info.lastUpdated))}</p>
             </li>
           )})}
         </ul>

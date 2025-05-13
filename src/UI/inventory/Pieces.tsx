@@ -2,7 +2,7 @@ import { AnchorHTMLAttributes, MouseEventHandler, useRef } from "react";
 import { drawPieceThumbnail } from "../../2D/rendering/drawPieceThumbnail";
 import { Piece } from "../../types";
 import { PieceComponent } from "./Piece";
-import { useAppState } from "../store";
+import { useAppState } from "../AppState";
 import { useViewState } from "../ViewState";
 
 interface PiecesProps {

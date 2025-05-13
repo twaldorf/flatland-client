@@ -1,4 +1,4 @@
-import { useAppState } from "../../store";
+import { useAppState } from "../../AppState";
 
 const CursorInfo = () => {
   const pointerX = useAppState((state) => state.pointer.x);

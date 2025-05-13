@@ -4,7 +4,7 @@ import { NewProjectCommand } from "../commands/NewProjectCommand"
 import { SaveProjectCommand } from "../commands/SaveProjectCommand"
 import MenuItem from "./Header/MenuItem"
 import { UserIcon } from "./Header/UserIcon"
-import { useAppState } from "../store"
+import { useAppState } from "../AppState"
 
 export const Header = () => {
 

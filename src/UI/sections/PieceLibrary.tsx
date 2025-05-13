@@ -1,6 +1,6 @@
 import { Piece } from "../../types";
 import LibraryPieceComponent from "../library/Piece";
-import { useAppState } from "../store";
+import { useAppState } from "../AppState";
 import { Header } from "./Header";
 
 
