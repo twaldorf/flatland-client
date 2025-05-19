@@ -49944,6 +49944,17 @@ const useAppState = (0, _zustand.create)((set, get)=>({
                     label: undefined
                 }));
         },
+        expandLabel: ()=>{
+            set((state)=>({
+                    expandedLabel: true
+                }));
+        },
+        minimizeLabel: ()=>{
+            set((state)=>({
+                    expandedLabel: false
+                }));
+        },
+        expandedLabel: false,
         pointer: new (0, _three.Vector2)(0, 0),
         tool: {
             name: "select"
@@ -51100,26 +51111,21 @@ class DeleteGeometriesCommand {
     do() {
         this.geometryIds.forEach((geomId)=>{
             (0, _state.state).c_geometryMap.delete(geomId);
-            const pieceIndex = (0, _state.state).pieces.findIndex((piece)=>piece.geometryId === geomId);
-            this.pieces = [
-                ...this.pieces,
-                ...(0, _state.state).pieces.splice(pieceIndex, 1)
-            ];
-            const pieceId = this.pieces[this.pieces.length - 1].id;
-            (0, _appState.useAppState).getState().removePiece(pieceId);
+            (0, _appState.useAppState).getState().clearLabel();
+        // const pieceIndex = state.pieces.findIndex((piece:Piece) => piece.geometryId === geomId);
+        // this.pieces = [...this.pieces, ...state.pieces.splice(pieceIndex, 1)];
+        // const pieceId = this.pieces[this.pieces.length - 1].id;
+        // useAppState.getState().removePiece(pieceId);
         });
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
         (0, _state.state).c_geometryMap = this.geometries;
-        (0, _state.state).pieces = [
-            ...(0, _state.state).pieces,
-            ...this.pieces
-        ];
+    // state.pieces = [...state.pieces, ...this.pieces];
     }
 }
 
-},{"../../State":"83rpN","../../UI/AppState":"e3032","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4QHCH":[function(require,module,exports) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../UI/AppState":"e3032"}],"4QHCH":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "DrawPreviewsCommand", ()=>DrawPreviewsCommand);
@@ -66059,11 +66065,16 @@ var _appState = require("../../AppState");
 var _changeToolCommand = require("../../../2D/commands/ChangeToolCommand");
 var _command = require("../../../Command");
 var _react = require("react");
+var _overlayCss = require("./overlay.css");
 var _s = $RefreshSig$();
+// Individual piece detail view
 const Label = ()=>{
     _s();
     const label = (0, _appState.useAppState)((state)=>state.label);
     const clearLabel = (0, _appState.useAppState)((state)=>state.clearLabel);
+    const expanded = (0, _appState.useAppState)((state)=>state.expandedLabel);
+    const expandLabel = (0, _appState.useAppState)((state)=>state.expandLabel);
+    const minimizeLabel = (0, _appState.useAppState)((state)=>state.minimizeLabel);
     const grainlineRef = (0, _react.useRef)(null);
     const labelRef = (0, _react.useRef)(null);
     const handleGrainlineClick = ()=>{
@@ -66072,7 +66083,7 @@ const Label = ()=>{
     if (!label) return null; // Don't render if there's no label
     const { point, piece } = label;
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "absolute gap-2 flex flex-row bg-gray-800 text-white px-3 py-2 rounded shadow-md",
+        className: "absolute gap-2 bg-gray-800 text-white px-3 py-2 rounded shadow-md",
         ref: labelRef,
         style: {
             left: `${Math.max(12, point.x / 2)}px`,
@@ -66081,75 +66092,139 @@ const Label = ()=>{
         },
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex flex-row align-center",
                 children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                        className: "text-sm font-medium",
-                        children: piece.name
-                    }, void 0, false, {
-                        fileName: "src/UI/sections/Overlay/Label.tsx",
-                        lineNumber: 34,
-                        columnNumber: 9
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                        className: "text-xs text-gray-400",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                        className: "m-auto h-min",
                         children: [
-                            "Shape #",
-                            piece.shapeIndex
+                            piece.quantity ? piece.quantity : 1,
+                            "x"
                         ]
                     }, void 0, true, {
                         fileName: "src/UI/sections/Overlay/Label.tsx",
-                        lineNumber: 35,
+                        lineNumber: 39,
                         columnNumber: 9
-                    }, undefined)
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 33,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                ref: grainlineRef,
-                className: "flex flex-row items-center text-sm p-2 border border-white focus:border-blue-500 focus:border rounded-sm",
-                onClick: handleGrainlineClick,
-                children: [
-                    "Grainline",
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {
-                        className: "text-2xl"
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                        className: "text-sm font-medium flex flex-row m-auto h-min",
+                        children: [
+                            piece.name,
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiEdit), {
+                                className: "text-2xl"
+                            }, void 0, false, {
+                                fileName: "src/UI/sections/Overlay/Label.tsx",
+                                lineNumber: 40,
+                                columnNumber: 83
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/UI/sections/Overlay/Label.tsx",
+                        lineNumber: 40,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+                        className: "actionButtons",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                children: "Stash"
+                            }, void 0, false, {
+                                fileName: "src/UI/sections/Overlay/Label.tsx",
+                                lineNumber: 42,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                children: "Clone"
+                            }, void 0, false, {
+                                fileName: "src/UI/sections/Overlay/Label.tsx",
+                                lineNumber: 43,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                children: "Copy"
+                            }, void 0, false, {
+                                fileName: "src/UI/sections/Overlay/Label.tsx",
+                                lineNumber: 44,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                children: "Trash"
+                            }, void 0, false, {
+                                fileName: "src/UI/sections/Overlay/Label.tsx",
+                                lineNumber: 45,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/UI/sections/Overlay/Label.tsx",
+                        lineNumber: 41,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                        ref: grainlineRef,
+                        className: "flex flex-row items-center text-sm p-2 border border-white focus:border-blue-500 focus:border rounded-sm",
+                        onClick: handleGrainlineClick,
+                        children: "Grainline"
                     }, void 0, false, {
                         fileName: "src/UI/sections/Overlay/Label.tsx",
-                        lineNumber: 42,
+                        lineNumber: 47,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                        className: "text-2xl hover:text-red-300",
+                        onClick: clearLabel,
+                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiCircleRemove), {
+                            strokeWidth: ".5"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Overlay/Label.tsx",
+                            lineNumber: 57,
+                            columnNumber: 11
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "src/UI/sections/Overlay/Label.tsx",
+                        lineNumber: 53,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 37,
+                lineNumber: 38,
                 columnNumber: 7
             }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                className: "text-2xl hover:text-red-300",
-                onClick: clearLabel,
-                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _ci.CiCircleRemove), {
-                    strokeWidth: ".5"
-                }, void 0, false, {
-                    fileName: "src/UI/sections/Overlay/Label.tsx",
-                    lineNumber: 48,
-                    columnNumber: 9
-                }, undefined)
-            }, void 0, false, {
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        htmlFor: "properties",
+                        children: "Properties"
+                    }, void 0, false, {
+                        fileName: "src/UI/sections/Overlay/Label.tsx",
+                        lineNumber: 62,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+                        id: "properties"
+                    }, void 0, false, {
+                        fileName: "src/UI/sections/Overlay/Label.tsx",
+                        lineNumber: 63,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
                 fileName: "src/UI/sections/Overlay/Label.tsx",
-                lineNumber: 44,
+                lineNumber: 60,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Overlay/Label.tsx",
-        lineNumber: 24,
+        lineNumber: 29,
         columnNumber: 5
     }, undefined);
 };
-_s(Label, "9F1spJIPXE+uILgesUIURFIyXh8=", false, function() {
+_s(Label, "3ZRqVXF3FZvlkzXKc7rQILEsgik=", false, function() {
     return [
+        (0, _appState.useAppState),
+        (0, _appState.useAppState),
+        (0, _appState.useAppState),
         (0, _appState.useAppState),
         (0, _appState.useAppState)
     ];
@@ -66164,7 +66239,7 @@ $RefreshReg$(_c, "Label");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","../../AppState":"e3032","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"dkMF4":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","../../AppState":"e3032","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./overlay.css":"2ubSI"}],"2ubSI":[function() {},{}],"dkMF4":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$618c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;

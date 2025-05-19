@@ -419,6 +419,10 @@
     }
   }
 
+  .m-auto {
+    margin: auto;
+  }
+
   .mx-1 {
     margin-inline: calc(var(--spacing) * 1);
   }
@@ -483,6 +487,10 @@
     display: none;
   }
 
+  .inline {
+    display: inline;
+  }
+
   .inline-block {
     display: inline-block;
   }
@@ -509,6 +517,10 @@
 
   .h-full {
     height: 100%;
+  }
+
+  .h-min {
+    height: min-content;
   }
 
   .h-screen {

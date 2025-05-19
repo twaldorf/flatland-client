@@ -20,17 +20,18 @@ export class DeleteGeometriesCommand implements Command {
   do() {
     this.geometryIds.forEach((geomId:string) => {
       state.c_geometryMap.delete(geomId);
-      const pieceIndex = state.pieces.findIndex((piece:Piece) => piece.geometryId === geomId);
-      this.pieces = [...this.pieces, ...state.pieces.splice(pieceIndex, 1)];
-      const pieceId = this.pieces[this.pieces.length - 1].id;
-      useAppState.getState().removePiece(pieceId);
+      useAppState.getState().clearLabel();
+      // const pieceIndex = state.pieces.findIndex((piece:Piece) => piece.geometryId === geomId);
+      // this.pieces = [...this.pieces, ...state.pieces.splice(pieceIndex, 1)];
+      // const pieceId = this.pieces[this.pieces.length - 1].id;
+      // useAppState.getState().removePiece(pieceId);
     });
     drawCanvasFromState(state);
   }
 
   undo() {
     state.c_geometryMap = this.geometries;
-    state.pieces = [...state.pieces, ...this.pieces];
+    // state.pieces = [...state.pieces, ...this.pieces];
     
   }
 }

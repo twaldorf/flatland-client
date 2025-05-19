@@ -1,0 +1,18 @@
+.actionButtons > button {
+  background-color: #3a3a4a;
+  border-radius: .4rem;
+  padding: .4rem;
+  display: inline;
+  height: min-content;
+}
+
+.actionButtons {
+  display: flex;
+  gap: .4rem;
+  align-items: center;
+}
+
+.actionButtons > button:hover {
+  background-color: #569;
+  cursor: pointer;
+}

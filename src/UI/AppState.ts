@@ -50,7 +50,10 @@ interface AppState {
   // Manage the control panel (label) associated with a piece
   labelPiece: (labelPoint: Vector2, piece: Piece) => void;
   clearLabel: () => void;
+  expandLabel: () => void;
+  minimizeLabel: () => void;
   label: Label | undefined;
+  expandedLabel: boolean;
   
   // Store the current pointer position within the 2D canvas
   pointer: Vector2;
@@ -129,6 +132,20 @@ export const useAppState = create<AppState>((set, get) => ({
       label: undefined
     }))
   },
+
+  expandLabel: () => {
+   set((state) => ({
+      expandedLabel: true
+    })) 
+  },
+
+  minimizeLabel: () => {
+   set((state) => ({
+      expandedLabel: false
+    })) 
+  },
+
+  expandedLabel: false,
 
   pointer: new Vector2(0, 0),
   tool: { name: "select" },
