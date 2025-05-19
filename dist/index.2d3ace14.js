@@ -52945,7 +52945,7 @@ class LoadProjectCommand {
         (0, _state.state).c_geometryMap = c_geometryMap;
         (0, _state.state).projectInfo = projectInfo;
         (0, _state.state).pieces = pieces;
-        (0, _appState.useAppState).getState().setPieces([]);
+        (0, _appState.useAppState).getState().setPieces(pieces);
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {

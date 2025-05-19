@@ -27,7 +27,7 @@ export class LoadProjectCommand implements Command {
     state.projectInfo = projectInfo;
     state.pieces = pieces;
 
-    useAppState.getState().setPieces([]);
+    useAppState.getState().setPieces(pieces);
     drawCanvasFromState(state);
   }
 
