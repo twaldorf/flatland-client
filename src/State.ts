@@ -109,7 +109,6 @@ export const state:State = {
       projectInfo,
       pieces,
     } = this;
-    console.log(this.pieces)
 
     // flattened version of geometries, pieces, etc
     const coreInfo = {
@@ -127,19 +126,27 @@ export const state:State = {
 
   deserialize(stringObj:string):void {
     const serializedObj = JSON.parse(stringObj);
+    console.log(serializedObj)
     if (serializedObj.version == this.version) {
       this.c_pointsMap = restorePointsMap(serializedObj.c_pointsMap);
       this.c_geometryMap = restoreGeometryMap(serializedObj.c_geometryMap);
       this.projectInfo = serializedObj.projectInfo;
-      console.log(serializedObj.pieces);
       this.pieces = serializedObj.pieces;
     }
+    console.log(this.pieces, serializedObj.pieces)
   },
 
   clear():void {
+    console.log('clear');
     this.c_pointsMap = new Map();
     this.c_geometryMap = new Map();
     this.pieces = [];
+    this.projectInfo = {
+      title: BASE_PROJECT_TITLE,
+      author: '',
+      lastUpdated: new Date()
+    };
+    console.log(this.projectInfo)
   }
 
 };

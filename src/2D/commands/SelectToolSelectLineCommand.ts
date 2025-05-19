@@ -16,7 +16,6 @@ export class SelectToolSelectLineCommand implements Command {
   do() {
     state.c_selected_lines = [ ...state.c_selected_lines, this.lineHit ];
 
-  console.log('state.c_selected_lines', state.c_selected_lines)
   drawCanvasFromState(state);
   }
 

@@ -80,7 +80,6 @@ export interface LineHit {
 export function checkLineIntersection(pos:Vector2):LineHit | null {
   var result = null;
   state.c_shapes.forEach((shapeArr:number[], index) => {
-    console.log(shapeArr)
     for (let i = 0; i < shapeArr.length - 1; ++i) {
       const p0 = state.c_points[shapeArr[i]];
       const p1 = state.c_points[shapeArr[(i + 1) % (shapeArr.length - 1)]];

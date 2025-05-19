@@ -17,7 +17,6 @@ export const PieceComponent = ({ piece }: { piece: Piece }) => {
 
   useEffect(() => {
     if (thumbnailRef.current) {
-      console.log(piece)
       // drawPieceThumbnail(piece, thumbnailRef.current);
     }
   }, [ piece ]);
@@ -51,7 +50,6 @@ const EditPieceNameAttr = ({ piece, onSave }) => {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e)
     setNewName(e.target.value);
   };
 

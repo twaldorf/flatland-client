@@ -30,7 +30,6 @@ export function initCanvas(ref:HTMLCanvasElement) {
   // Get a reference to the canvas element and its rendering context
   const canvas = ref;
   state.canvas = canvas;
-  console.log('canvas init')
 
   const context = canvas.getContext( "2d" );
   if (!context) {
@@ -64,7 +63,6 @@ export function initCanvas(ref:HTMLCanvasElement) {
 export function initScene(canvas:HTMLCanvasElement) {
   // Bail if no canvas has been passed
   if (!canvas) {
-    console.log('no canvas')
     return false;
   }
 

@@ -18391,84 +18391,45 @@ parcelHelpers.defineInteropFlag(exports);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
+// import "./styles.css";
 var _header = require("./UI/sections/Header");
 var _tabs = require("./UI/sections/Workspace/Tabs");
 var _openOverlay = require("./UI/sections/Header/OpenOverlay");
 var _newProjectModal = require("./UI/sections/Header/NewProjectModal");
 var _command = require("./Command");
-var _editProjectModal = require("./UI/sections/Header/EditProjectModal");
 var _saveAsProjectModal = require("./UI/sections/Header/SaveAsProjectModal");
-var _viewState = require("./UI/ViewState");
-var _routes = require("./routes");
-var _editor = require("./UI/sections/Editor");
-var _pieceLibrary = require("./UI/sections/PieceLibrary");
-var _browse = require("./UI/browse/Browse");
-var _browseDefault = parcelHelpers.interopDefault(_browse);
-var _mark = require("./UI/mark/Mark");
-var _markDefault = parcelHelpers.interopDefault(_mark);
 var _saveProjectCommand = require("./UI/commands/SaveProjectCommand");
-var _state = require("./State");
+// import { state } from "./State";
 var _loadProjectCommand = require("./UI/commands/LoadProjectCommand");
 var _constants = require("./constants");
+var _editProjectModal = require("./UI/sections/Header/EditProjectModal");
+var _workspaces = require("./UI/sections/Workspace/Workspaces");
 var _s = $RefreshSig$();
 const App = ()=>{
     _s();
     (0, _react.useEffect)(()=>{
-        autoSave();
+    // autoSave();
     }, []);
     const canvasRef = (0, _react.useRef)(null);
     const threeRef = (0, _react.useRef)(null);
-    const view = (0, _viewState.useViewState)((vs)=>vs.view);
-    (0, _routes.useViewRouting)();
-    (0, _state.state).clear();
-    loadAutosave();
+    console.log("RENDER ROOT");
+    // state.clear();
+    // loadAutosave();
     function loadAutosave() {
-        if ((0, _state.state).projectInfo.title == (0, _constants.BASE_PROJECT_TITLE)) {
+        if (state.projectInfo.title == (0, _constants.BASE_PROJECT_TITLE)) {
             const projectString = localStorage.getItem("flatland-project-autosave");
             if (projectString) {
                 const project = JSON.parse(projectString);
-                if (project.version === (0, _state.state).version) {
-                    console.log("LOADING PROJECT FROM AUTOSAVE");
-                    (0, _command.pushCommand)(new (0, _loadProjectCommand.LoadProjectCommand)("flatland-project-autosave"));
-                }
+                if (project.version === state.version) (0, _command.pushCommand)(new (0, _loadProjectCommand.LoadProjectCommand)("flatland-project-autosave"));
             }
         }
     }
     function autoSave() {
-        let title = (0, _state.state).projectInfo.title;
-        if ((0, _state.state).projectInfo.title === (0, _constants.BASE_PROJECT_TITLE)) title = "autosave";
+        const title = state.projectInfo.title;
         setInterval(()=>{
-            if ((0, _state.state).autosave) {
-                (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)(title));
-                console.log("Submitted save command for ", title);
-            }
+            if (state.autosave) (0, _command.pushCommand)(new (0, _saveProjectCommand.SaveProjectCommand)(title));
         }, 5000);
     }
-    const ViewComponentMap = {
-        "app": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editor.Editor), {
-            canvasRef: canvasRef,
-            threeRef: threeRef
-        }, void 0, false, {
-            fileName: "src/App.tsx",
-            lineNumber: 68,
-            columnNumber: 12
-        }, undefined),
-        "piece library": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieceLibrary.PieceLibrary), {}, void 0, false, {
-            fileName: "src/App.tsx",
-            lineNumber: 69,
-            columnNumber: 22
-        }, undefined),
-        "mark": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _markDefault.default), {}, void 0, false, {
-            fileName: "src/App.tsx",
-            lineNumber: 70,
-            columnNumber: 13
-        }, undefined),
-        "browser": /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _browseDefault.default), {}, void 0, false, {
-            fileName: "src/App.tsx",
-            lineNumber: 71,
-            columnNumber: 16
-        }, undefined)
-    };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
         className: "app-container font-mono w-full h-screen overflow-hidden bg-stone-100 pb-2",
         children: [
@@ -18477,61 +18438,56 @@ const App = ()=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _openOverlay.OpenProjectOverlay), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 77,
+                        lineNumber: 58,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _newProjectModal.NewProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 78,
+                        lineNumber: 59,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editProjectModal.EditProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 79,
+                        lineNumber: 60,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _saveAsProjectModal.SaveAsProjectModal), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 80,
+                        lineNumber: 61,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _header.Header), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 81,
+                        lineNumber: 62,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _tabs.Tabs), {}, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 82,
+                        lineNumber: 63,
                         columnNumber: 9
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 76,
+                lineNumber: 57,
                 columnNumber: 7
             }, undefined),
-            ViewComponentMap[view] ?? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editor.Editor), {
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _workspaces.Workspaces), {
                 canvasRef: canvasRef,
                 threeRef: threeRef
             }, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 85,
-                columnNumber: 9
+                lineNumber: 65,
+                columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 75,
+        lineNumber: 56,
         columnNumber: 5
     }, undefined);
 };
-_s(App, "otmETlSWfJ1KXP3w0zUDJQMG1lM=", false, function() {
-    return [
-        (0, _viewState.useViewState),
-        (0, _routes.useViewRouting)
-    ];
-});
+_s(App, "A70S3ba2G8eXaOCWK/nj2IqC5EI=");
 _c = App;
 exports.default = App;
 var _c;
@@ -18542,7 +18498,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./Command":"efiIE","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Header/SaveAsProjectModal":"lPxKp","./UI/ViewState":"kfxN8","./routes":"cAFqI","./UI/sections/Editor":"enAMq","./UI/sections/PieceLibrary":"2JSEM","./UI/browse/Browse":"clocv","./UI/mark/Mark":"7H0HC","./UI/commands/SaveProjectCommand":"8Akqt","./State":"83rpN","./UI/commands/LoadProjectCommand":"53Ggr","./constants":"45DZp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6ni0Q":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./Command":"efiIE","./UI/commands/SaveProjectCommand":"8Akqt","./UI/commands/LoadProjectCommand":"53Ggr","./constants":"45DZp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./UI/sections/Header/SaveAsProjectModal":"lPxKp","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Workspace/Workspaces":"dhvAj"}],"6ni0Q":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$d584 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -18897,7 +18853,6 @@ const state = {
     },
     serialize () {
         const { version, c_pointsMap, c_geometryMap, projectInfo, pieces } = this;
-        console.log(this.pieces);
         // flattened version of geometries, pieces, etc
         const coreInfo = {
             version,
@@ -18911,18 +18866,26 @@ const state = {
     },
     deserialize (stringObj) {
         const serializedObj = JSON.parse(stringObj);
+        console.log(serializedObj);
         if (serializedObj.version == this.version) {
             this.c_pointsMap = (0, _saveutils.restorePointsMap)(serializedObj.c_pointsMap);
             this.c_geometryMap = (0, _saveutils.restoreGeometryMap)(serializedObj.c_geometryMap);
             this.projectInfo = serializedObj.projectInfo;
-            console.log(serializedObj.pieces);
             this.pieces = serializedObj.pieces;
         }
+        console.log(this.pieces, serializedObj.pieces);
     },
     clear () {
+        console.log("clear");
         this.c_pointsMap = new Map();
         this.c_geometryMap = new Map();
         this.pieces = [];
+        this.projectInfo = {
+            title: (0, _constants.BASE_PROJECT_TITLE),
+            author: "",
+            lastUpdated: new Date()
+        };
+        console.log(this.projectInfo);
     }
 };
 
@@ -51276,7 +51239,6 @@ function findNearestAnyPoint(pos) {
             }
         }
     }
-    console.log(nearestId);
     return nearestId;
 }
 
@@ -52250,7 +52212,7 @@ class PathToolClosePathCommand {
     }
 }
 
-},{"three/src/math/MathUtils":"cuzU2","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawPieceThumbnail":"1Jt5c","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","./Generic/GenericLoadPieceCommand":"bwTU6"}],"1Jt5c":[function(require,module,exports) {
+},{"three/src/math/MathUtils":"cuzU2","../../Command":"efiIE","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawPieceThumbnail":"1Jt5c","./Generic/GenericLoadPieceCommand":"bwTU6","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1Jt5c":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Apply the thumbnail to the canvas
@@ -52821,7 +52783,31 @@ const useViewState = (0, _zustand.create)((set, get)=>({
         }
     }));
 
-},{"zustand":"cPNyt","../Command":"efiIE","./commands/SaveProjectCommand":"8Akqt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bNtGY":[function(require,module,exports) {
+},{"zustand":"cPNyt","../Command":"efiIE","./commands/SaveProjectCommand":"8Akqt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"53Ggr":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "LoadProjectCommand", ()=>LoadProjectCommand);
+var _canvas = require("../../2D/rendering/canvas");
+var _state = require("../../State");
+var _appState = require("../AppState");
+class LoadProjectCommand {
+    constructor(key){
+        this.key = key;
+    }
+    do() {
+        const json = localStorage.getItem(this.key);
+        if (!json) return;
+        const data = json;
+        (0, _state.state).deserialize(data);
+        (0, _appState.useAppState).getState().setPieces([]);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+    // No undo for load
+    }
+}
+
+},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bNtGY":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$6951 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -52960,31 +52946,7 @@ $RefreshReg$(_c, "OpenProjectOverlay");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../Command":"efiIE","../../commands/LoadProjectCommand":"53Ggr","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"53Ggr":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "LoadProjectCommand", ()=>LoadProjectCommand);
-var _canvas = require("../../2D/rendering/canvas");
-var _state = require("../../State");
-var _appState = require("../AppState");
-class LoadProjectCommand {
-    constructor(key){
-        this.key = key;
-    }
-    do() {
-        const json = localStorage.getItem(this.key);
-        if (!json) return;
-        const data = json;
-        (0, _state.state).deserialize(data);
-        (0, _appState.useAppState).getState().setPieces((0, _state.state).pieces);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-    // No undo for load
-    }
-}
-
-},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hPbLI":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../Command":"efiIE","../../commands/LoadProjectCommand":"53Ggr","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"hPbLI":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$6d9c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -53215,8 +53177,8 @@ class NewProjectCommand {
     }
     do() {
         (0, _state.state).clear();
-        (0, _appState.useAppState).getState().setActiveProjectTitle(this.projectInfo.title);
         (0, _state.state).projectInfo = this.projectInfo;
+        (0, _appState.useAppState).getState().setActiveProjectTitle((0, _state.state).projectInfo.title);
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
@@ -53243,213 +53205,7 @@ class DownloadProjectCommand {
     }
 }
 
-},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gSpmT":[function(require,module,exports) {
-var $parcel$ReactRefreshHelpers$b0e6 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$b0e6.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "EditProjectModal", ()=>EditProjectModal);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _react = require("react");
-var _state = require("../../../State");
-var _appState = require("../../AppState");
-var _s = $RefreshSig$();
-const EditProjectModal = ()=>{
-    _s();
-    const modal = (0, _appState.useAppState)((s)=>s.modal);
-    const hideModal = (0, _appState.useAppState)((s)=>s.hideModal);
-    const setActiveProjectTitle = (0, _appState.useAppState)((s)=>s.setActiveProjectTitle);
-    const [title, setTitle] = (0, _react.useState)("");
-    const [author, setAuthor] = (0, _react.useState)("");
-    const [type, setType] = (0, _react.useState)("Garment");
-    if (modal !== "Edit Project Info") return null;
-    const handleSubmit = ()=>{
-        const projectInfo = {
-            title,
-            author,
-            lastUpdated: new Date()
-        };
-        setActiveProjectTitle(title);
-        (0, _state.state).projectInfo = projectInfo;
-        hideModal();
-    };
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "fixed inset-0 bg-black/40 flex justify-center items-center z-50",
-        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-            className: "bg-white rounded-lg p-6 w-full max-w-md shadow-lg",
-            children: [
-                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
-                    className: "text-xl font-bold mb-4",
-                    children: "Edit Project Info"
-                }, void 0, false, {
-                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                    lineNumber: 34,
-                    columnNumber: 9
-                }, undefined),
-                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                    className: "block mb-2",
-                    children: [
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                            className: "block text-sm font-medium",
-                            children: "Project Title"
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                            lineNumber: 37,
-                            columnNumber: 11
-                        }, undefined),
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
-                            value: title,
-                            onChange: (e)=>setTitle(e.target.value)
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                            lineNumber: 38,
-                            columnNumber: 11
-                        }, undefined)
-                    ]
-                }, void 0, true, {
-                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                    lineNumber: 36,
-                    columnNumber: 9
-                }, undefined),
-                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                    className: "block mb-2",
-                    children: [
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                            className: "block text-sm font-medium",
-                            children: "Author"
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                            lineNumber: 46,
-                            columnNumber: 11
-                        }, undefined),
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
-                            value: author,
-                            onChange: (e)=>setAuthor(e.target.value)
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                            lineNumber: 47,
-                            columnNumber: 11
-                        }, undefined)
-                    ]
-                }, void 0, true, {
-                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                    lineNumber: 45,
-                    columnNumber: 9
-                }, undefined),
-                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                    className: "block mb-2",
-                    children: [
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                            className: "block text-sm font-medium",
-                            children: "Type"
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                            lineNumber: 55,
-                            columnNumber: 11
-                        }, undefined),
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("select", {
-                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
-                            value: type,
-                            onChange: (e)=>setType(e.target.value),
-                            children: [
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
-                                    value: "Garment",
-                                    children: "Garment"
-                                }, void 0, false, {
-                                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                                    lineNumber: 61,
-                                    columnNumber: 13
-                                }, undefined),
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
-                                    value: "Gear",
-                                    children: "Gear"
-                                }, void 0, false, {
-                                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                                    lineNumber: 62,
-                                    columnNumber: 13
-                                }, undefined),
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
-                                    value: "Custom",
-                                    children: "Custom"
-                                }, void 0, false, {
-                                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                                    lineNumber: 63,
-                                    columnNumber: 13
-                                }, undefined)
-                            ]
-                        }, void 0, true, {
-                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                            lineNumber: 56,
-                            columnNumber: 11
-                        }, undefined)
-                    ]
-                }, void 0, true, {
-                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                    lineNumber: 54,
-                    columnNumber: 9
-                }, undefined),
-                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                    className: "flex justify-end space-x-2",
-                    children: [
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                            className: "px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300",
-                            onClick: hideModal,
-                            children: "Cancel"
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                            lineNumber: 68,
-                            columnNumber: 11
-                        }, undefined),
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                            className: "px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700",
-                            onClick: handleSubmit,
-                            children: "Confirm"
-                        }, void 0, false, {
-                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                            lineNumber: 74,
-                            columnNumber: 11
-                        }, undefined)
-                    ]
-                }, void 0, true, {
-                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-                    lineNumber: 67,
-                    columnNumber: 9
-                }, undefined)
-            ]
-        }, void 0, true, {
-            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-            lineNumber: 33,
-            columnNumber: 7
-        }, undefined)
-    }, void 0, false, {
-        fileName: "src/UI/sections/Header/EditProjectModal.tsx",
-        lineNumber: 32,
-        columnNumber: 5
-    }, undefined);
-};
-_s(EditProjectModal, "OAC6pbUjJYdskY2uQe/jDT0q0SY=", false, function() {
-    return [
-        (0, _appState.useAppState),
-        (0, _appState.useAppState),
-        (0, _appState.useAppState)
-    ];
-});
-_c = EditProjectModal;
-var _c;
-$RefreshReg$(_c, "EditProjectModal");
-
-  $parcel$ReactRefreshHelpers$b0e6.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../State":"83rpN","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"lPxKp":[function(require,module,exports) {
+},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lPxKp":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$38e8 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -53659,273 +53415,439 @@ $RefreshReg$(_c, "SaveAsProjectModal");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../Command":"efiIE","../../commands/SaveProjectCommand":"8Akqt","../../../State":"83rpN","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"cAFqI":[function(require,module,exports) {
-var $parcel$ReactRefreshHelpers$eda7 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../Command":"efiIE","../../commands/SaveProjectCommand":"8Akqt","../../../State":"83rpN","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"gSpmT":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$b0e6 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$eda7.prelude(module);
+$parcel$ReactRefreshHelpers$b0e6.prelude(module);
 
 try {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "useViewRouting", ()=>useViewRouting);
-var _react = require("react");
-var _viewState = require("./UI/ViewState");
-function useViewRouting() {
-    const view = (0, _viewState.useViewState)((s)=>s.view);
-    const setView = (0, _viewState.useViewState)((s)=>s.setView);
-    const VIEW_BY_PATH = {
-        "/": "app",
-        "/piece-library": "piece library",
-        "/mark": "mark",
-        "/browser": "browser"
-    };
-    const PATH_BY_VIEW = {
-        "app": "/",
-        "piece library": "/piece-library",
-        "mark": "/mark",
-        "browser": "/browser"
-    };
-    // On mount: seed view from URL + listen for back/forward
-    (0, _react.useEffect)(()=>{
-        const initial = VIEW_BY_PATH[window.location.pathname] || "app";
-        setView(initial);
-        const onPop = ()=>{
-            const v = VIEW_BY_PATH[window.location.pathname] || "app";
-            setView(v);
-        };
-        window.addEventListener("popstate", onPop);
-        return ()=>window.removeEventListener("popstate", onPop);
-    }, [
-        setView
-    ]);
-    // Whenever view changes, push new URL
-    (0, _react.useEffect)(()=>{
-        const desiredPath = PATH_BY_VIEW[view] || "/";
-        if (window.location.pathname !== desiredPath) window.history.pushState({}, "", desiredPath);
-    }, [
-        view
-    ]);
-}
-
-  $parcel$ReactRefreshHelpers$eda7.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-},{"react":"21dqq","./UI/ViewState":"kfxN8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"enAMq":[function(require,module,exports) {
-var $parcel$ReactRefreshHelpers$2901 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$2901.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Editor", ()=>Editor);
+parcelHelpers.export(exports, "EditProjectModal", ()=>EditProjectModal);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _react = require("react");
-var _pieces = require("../inventory/Pieces");
-var _toolbar = require("../tools/Toolbar");
-var _cursorInfo = require("./Overlay/CursorInfo");
-var _cursorInfoDefault = parcelHelpers.interopDefault(_cursorInfo);
-var _label = require("./Overlay/Label");
-var _labelDefault = parcelHelpers.interopDefault(_label);
-var _shapeInfo = require("./Overlay/ShapeInfo");
-var _main = require("../../main");
-var _appState = require("../AppState");
+var _state = require("../../../State");
+var _appState = require("../../AppState");
 var _s = $RefreshSig$();
-const Editor = ({ canvasRef, threeRef })=>{
+const EditProjectModal = ()=>{
     _s();
-    // Set up canvas refs and create new project
-    (0, _react.useEffect)(()=>{
-        if (canvasRef.current) (0, _main.initCanvas)(canvasRef.current);
-        if (threeRef.current) (0, _main.initScene)(threeRef.current);
-        // pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
-        (0, _main.initUpdate)();
-    }, [
-        (0, _appState.useAppState)((s)=>s.activeProjectTitle)
-    ]);
+    const modal = (0, _appState.useAppState)((s)=>s.modal);
+    const hideModal = (0, _appState.useAppState)((s)=>s.hideModal);
+    const setActiveProjectTitle = (0, _appState.useAppState)((s)=>s.setActiveProjectTitle);
+    const title = (0, _appState.useAppState)((s)=>s.activeProjectTitle);
+    const setTitle = (0, _appState.useAppState)((s)=>s.setActiveProjectTitle);
+    // const [author, setAuthor] = useState("")
+    // const [type, setType] = useState("Garment")
+    if (modal !== "Edit Project Info") return null;
+    const handleSubmit = ()=>{
+        const projectInfo = {
+            title,
+            author: "",
+            lastUpdated: new Date()
+        };
+        setActiveProjectTitle(title);
+        (0, _state.state).projectInfo = projectInfo;
+        hideModal();
+    };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "grid grid-cols-4 flex-1 overflow-hidden h-[88vh]",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                className: "wrelative flex flex-col bg-white p-3 overflow-hidden col-span-3",
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
-                        fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 36,
-                        columnNumber: 11
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _cursorInfoDefault.default), {}, void 0, false, {
-                        fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 37,
-                        columnNumber: 11
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
-                        fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 38,
-                        columnNumber: 11
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
-                        fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 39,
-                        columnNumber: 11
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
-                        ref: canvasRef,
-                        id: "canvas2d",
-                        className: "flex-1 w-full h-full rounded-md"
+        className: "fixed inset-0 bg-black/40 flex justify-center items-center z-50",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "bg-white rounded-lg p-6 w-full max-w-md shadow-lg",
+            children: [
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                    className: "text-xl font-bold mb-4",
+                    children: "Edit Project Info"
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 35,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                    className: "block mb-2",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "block text-sm font-medium",
+                            children: "Project Title"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 38,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                            className: "mt-1 w-full border border-gray-300 rounded px-3 py-2",
+                            value: title,
+                            onChange: (e)=>setTitle(e.target.value)
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 39,
+                            columnNumber: 11
+                        }, undefined)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 37,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                    className: "block mb-2",
+                    children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: "block text-sm font-medium",
+                        children: "Author"
                     }, void 0, false, {
-                        fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 40,
+                        fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                        lineNumber: 47,
                         columnNumber: 11
                     }, undefined)
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/sections/Editor.tsx",
-                lineNumber: 35,
-                columnNumber: 9
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
-                className: "flex flex-col h-full overflow-hidden",
-                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
-                    fileName: "src/UI/sections/Editor.tsx",
-                    lineNumber: 49,
-                    columnNumber: 11
+                }, void 0, false, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 46,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "flex justify-end space-x-2",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                            className: "px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300",
+                            onClick: hideModal,
+                            children: "Cancel"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 69,
+                            columnNumber: 11
+                        }, undefined),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                            className: "px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700",
+                            onClick: handleSubmit,
+                            children: "Confirm"
+                        }, void 0, false, {
+                            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                            lineNumber: 75,
+                            columnNumber: 11
+                        }, undefined)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+                    lineNumber: 68,
+                    columnNumber: 9
                 }, undefined)
-            }, void 0, false, {
-                fileName: "src/UI/sections/Editor.tsx",
-                lineNumber: 48,
-                columnNumber: 9
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/sections/Editor.tsx",
+            ]
+        }, void 0, true, {
+            fileName: "src/UI/sections/Header/EditProjectModal.tsx",
+            lineNumber: 34,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "src/UI/sections/Header/EditProjectModal.tsx",
         lineNumber: 33,
-        columnNumber: 7
+        columnNumber: 5
     }, undefined);
 };
-_s(Editor, "OD7bBpZva5O2jO+Puf00hKivP7c=");
-_c = Editor;
+_s(EditProjectModal, "E68aNmq4/KqqGlushF4wAcQeBq0=", false, function() {
+    return [
+        (0, _appState.useAppState),
+        (0, _appState.useAppState),
+        (0, _appState.useAppState),
+        (0, _appState.useAppState),
+        (0, _appState.useAppState)
+    ];
+});
+_c = EditProjectModal;
 var _c;
-$RefreshReg$(_c, "Editor");
+$RefreshReg$(_c, "EditProjectModal");
 
-  $parcel$ReactRefreshHelpers$2901.postlude(module);
+  $parcel$ReactRefreshHelpers$b0e6.postlude(module);
 } finally {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../inventory/Pieces":"5aREB","../tools/Toolbar":"2W72B","./Overlay/CursorInfo":"bSDlR","./Overlay/Label":"SPMyB","./Overlay/ShapeInfo":"dkMF4","../../main":"jeorp","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"5aREB":[function(require,module,exports) {
-var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+},{"react/jsx-dev-runtime":"iTorj","../../../State":"83rpN","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"dhvAj":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$b870 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$7858.prelude(module);
+$parcel$ReactRefreshHelpers$b870.prelude(module);
 
 try {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Pieces", ()=>Pieces);
+parcelHelpers.export(exports, "Workspaces", ()=>Workspaces);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _piece = require("./Piece");
-var _appState = require("../AppState");
-var _viewState = require("../ViewState");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _viewState = require("../../ViewState");
+var _mark = require("../../mark/Mark");
+var _markDefault = parcelHelpers.interopDefault(_mark);
+var _editor = require("../Editor");
+var _pieceLibrary = require("../PieceLibrary");
+var _browse = require("../../browse/Browse");
+var _browseDefault = parcelHelpers.interopDefault(_browse);
+var _routes = require("../../../routes");
 var _s = $RefreshSig$();
-const Pieces = ()=>{
+const Workspaces = (props)=>{
     _s();
-    const pieces = (0, _appState.useAppState)((state)=>state.pieces);
-    console.log(pieces);
-    const setView = (0, _viewState.useViewState)((state)=>state.setView);
-    function handleNav(e) {
-        e.preventDefault();
-        setView("piece library");
+    const { canvasRef, threeRef } = props;
+    (0, _routes.useViewRouting)();
+    const view = (0, _viewState.useViewState)((s)=>s.view);
+    // const ViewComponentMap: Record<ViewName, React.ReactNode> = {
+    //   "app": <Editor canvasRef={canvasRef} threeRef={threeRef} />,
+    //   "piece library": <PieceLibrary />,
+    //   "mark": <Mark />,
+    //   "browser": <Browser />,
+    // };
+    switch(view){
+        case "piece library":
+            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieceLibrary.PieceLibrary), {}, void 0, false, {
+                fileName: "src/UI/sections/Workspace/Workspaces.tsx",
+                lineNumber: 29,
+                columnNumber: 14
+            }, undefined);
+        case "mark":
+            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _markDefault.default), {}, void 0, false, {
+                fileName: "src/UI/sections/Workspace/Workspaces.tsx",
+                lineNumber: 31,
+                columnNumber: 14
+            }, undefined);
+        case "browser":
+            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _browseDefault.default), {}, void 0, false, {
+                fileName: "src/UI/sections/Workspace/Workspaces.tsx",
+                lineNumber: 33,
+                columnNumber: 14
+            }, undefined);
+        default:
+            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _editor.Editor), {
+                canvasRef: canvasRef,
+                threeRef: threeRef
+            }, void 0, false, {
+                fileName: "src/UI/sections/Workspace/Workspaces.tsx",
+                lineNumber: 35,
+                columnNumber: 14
+            }, undefined);
     }
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "rounded-lg bg-stone-200 min-h-24 bg-white p-2",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
-                children: [
-                    "Pieces (",
-                    pieces.length,
-                    ")"
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 23,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
-                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
-                    href: "/piecelibrary",
-                    onClick: handleNav,
-                    children: "Piece Library"
-                }, void 0, false, {
-                    fileName: "src/UI/inventory/Pieces.tsx",
-                    lineNumber: 24,
-                    columnNumber: 11
-                }, undefined)
-            }, void 0, false, {
-                fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 24,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-                className: "flex flex-row text-xs relative gap-2 overflow-auto",
-                children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
-                        piece: piece
-                    }, piece.id, false, {
-                        fileName: "src/UI/inventory/Pieces.tsx",
-                        lineNumber: 27,
-                        columnNumber: 11
-                    }, undefined))
-            }, void 0, false, {
-                fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 25,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/inventory/Pieces.tsx",
-        lineNumber: 22,
-        columnNumber: 5
-    }, undefined);
-}; // export const Pieces = (props:PiecesProps) => {
- //   const pieces = useAppState((state) => state.pieces);
- //   const thumbnailRef = useRef<HTMLCanvasElement>(null);
- //   return (
- //     <ul style={ulStyle} className="rounded-lg bg-stone-200 min-h-24 flex flex-row">
- //       { pieces.map((piece:Piece) => {
- //         if (thumbnailRef.current) {
- //           console.log('drawing', piece.name)
- //           drawPieceThumbnail(piece, thumbnailRef.current);
- //         };
- //         return (
- //           <li className="my-auto mx-2">
- //             <canvas className="max-h-12" ref={thumbnailRef}></canvas>
- //             {piece.name}
- //           </li>)
- //       })}
- //     </ul>
- //   )
- // }
- // const ulStyle = {
- // }
-_s(Pieces, "F6TZUY1bpuC4OiB2dABaXs5y2A0=", false, function() {
+};
+_s(Workspaces, "tjjrrcF7WIL5wwANIJ/YcahokVg=", false, function() {
     return [
-        (0, _appState.useAppState),
+        (0, _routes.useViewRouting),
         (0, _viewState.useViewState)
     ];
 });
-_c = Pieces;
+_c = Workspaces;
 var _c;
-$RefreshReg$(_c, "Pieces");
+$RefreshReg$(_c, "Workspaces");
 
-  $parcel$ReactRefreshHelpers$7858.postlude(module);
+  $parcel$ReactRefreshHelpers$b870.postlude(module);
 } finally {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","./Piece":"40lLH","../AppState":"e3032","../ViewState":"kfxN8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"40lLH":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../ViewState":"kfxN8","../../mark/Mark":"7H0HC","../Editor":"enAMq","../PieceLibrary":"2JSEM","../../browse/Browse":"clocv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../routes":"cAFqI"}],"7H0HC":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$b6a0 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$b6a0.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _piece = require("../inventory/Piece");
+var _appState = require("../AppState");
+var _s = $RefreshSig$();
+const Mark = ()=>{
+    _s();
+    const pieces = (0, _appState.useAppState)((s)=>s.pieces);
+    const [fabricWidth, setFabricWidth] = (0, _react.useState)(0);
+    const [fabricHeight, setFabricHeight] = (0, _react.useState)(0);
+    const [layoutLength, setLayoutLength] = (0, _react.useState)(0);
+    const [safetyMargin, setSafetyMargin] = (0, _react.useState)(0);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "p-4 flex flex-col h-full",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                className: "text-xl font-semibold mb-4",
+                children: "Layout Fabric & Pieces"
+            }, void 0, false, {
+                fileName: "src/UI/mark/Mark.tsx",
+                lineNumber: 15,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex-1 h-1/2",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "grid grid-cols-8 gap-4",
+                    children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
+                            piece: piece,
+                            selected: false,
+                            onSelect: ()=>{}
+                        }, piece.id, false, {
+                            fileName: "src/UI/mark/Mark.tsx",
+                            lineNumber: 21,
+                            columnNumber: 15
+                        }, undefined))
+                }, void 0, false, {
+                    fileName: "src/UI/mark/Mark.tsx",
+                    lineNumber: 19,
+                    columnNumber: 11
+                }, undefined)
+            }, void 0, false, {
+                fileName: "src/UI/mark/Mark.tsx",
+                lineNumber: 18,
+                columnNumber: 9
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "mb-6 flex space-x-4 flex-col gap-8 h-1/2",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        className: "flex flex-col",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-sm font-medium",
+                                children: "Fabric Width (in)"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 34,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                type: "number",
+                                value: fabricWidth,
+                                onChange: (e)=>setFabricWidth(Number(e.target.value)),
+                                className: "mt-1 p-2 border rounded w-32"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 35,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/UI/mark/Mark.tsx",
+                        lineNumber: 33,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        className: "flex flex-col",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-sm font-medium",
+                                children: "Fabric Height (in)"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 43,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                type: "number",
+                                value: fabricHeight,
+                                onChange: (e)=>setFabricHeight(Number(e.target.value)),
+                                className: "mt-1 p-2 border rounded w-32"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 44,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/UI/mark/Mark.tsx",
+                        lineNumber: 42,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        className: "flex flex-col",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-sm font-medium",
+                                children: "Layout Length (in)"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 52,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h6", {
+                                children: "the length "
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 53,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                type: "number",
+                                value: layoutLength,
+                                onChange: (e)=>setLayoutLength(Number(e.target.value)),
+                                className: "mt-1 p-2 border rounded w-32"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 54,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/UI/mark/Mark.tsx",
+                        lineNumber: 51,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        className: "flex flex-col",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-sm font-medium",
+                                children: "Safety margin (in)"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 62,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h6", {
+                                className: "text-xs",
+                                children: "in addition to piece seam allowances"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 63,
+                                columnNumber: 11
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                type: "number",
+                                value: safetyMargin,
+                                onChange: (e)=>setSafetyMargin(Number(e.target.value)),
+                                className: "mt-1 p-2 border rounded w-32"
+                            }, void 0, false, {
+                                fileName: "src/UI/mark/Mark.tsx",
+                                lineNumber: 64,
+                                columnNumber: 11
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/UI/mark/Mark.tsx",
+                        lineNumber: 61,
+                        columnNumber: 9
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/mark/Mark.tsx",
+                lineNumber: 32,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/mark/Mark.tsx",
+        lineNumber: 14,
+        columnNumber: 5
+    }, undefined);
+};
+_s(Mark, "Exrsvn3A0jueDxZJsoVqPboAoQk=", false, function() {
+    return [
+        (0, _appState.useAppState)
+    ];
+});
+_c = Mark;
+exports.default = Mark;
+var _c;
+$RefreshReg$(_c, "Mark");
+
+  $parcel$ReactRefreshHelpers$b6a0.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../inventory/Piece":"40lLH","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"40lLH":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$0d5a = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -53950,7 +53872,7 @@ const PieceComponent = ({ piece })=>{
         setEditing(false);
     };
     (0, _react.useEffect)(()=>{
-        if (thumbnailRef.current) console.log(piece);
+        thumbnailRef.current;
     }, [
         piece
     ]);
@@ -53965,7 +53887,7 @@ const PieceComponent = ({ piece })=>{
                 ref: thumbnailRef
             }, void 0, false, {
                 fileName: "src/UI/inventory/Piece.tsx",
-                lineNumber: 32,
+                lineNumber: 31,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -53976,7 +53898,7 @@ const PieceComponent = ({ piece })=>{
                         onSave: onSave
                     }, void 0, false, {
                         fileName: "src/UI/inventory/Piece.tsx",
-                        lineNumber: 34,
+                        lineNumber: 33,
                         columnNumber: 22
                     }, undefined),
                     !editing && piece.name,
@@ -53984,19 +53906,19 @@ const PieceComponent = ({ piece })=>{
                         onClick: handleClick
                     }, void 0, false, {
                         fileName: "src/UI/inventory/Piece.tsx",
-                        lineNumber: 36,
+                        lineNumber: 35,
                         columnNumber: 23
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/inventory/Piece.tsx",
-                lineNumber: 33,
+                lineNumber: 32,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/inventory/Piece.tsx",
-        lineNumber: 31,
+        lineNumber: 30,
         columnNumber: 5
     }, undefined);
 };
@@ -54017,7 +53939,6 @@ const EditPieceNameAttr = ({ piece, onSave })=>{
         }
     }, []);
     const handleChange = (e)=>{
-        console.log(e);
         setNewName(e.target.value);
     };
     const handleKeyDown = (e)=>{
@@ -54037,7 +53958,7 @@ const EditPieceNameAttr = ({ piece, onSave })=>{
         className: "w-full"
     }, void 0, false, {
         fileName: "src/UI/inventory/Piece.tsx",
-        lineNumber: 73,
+        lineNumber: 71,
         columnNumber: 5
     }, undefined);
 };
@@ -65707,7 +65628,211 @@ var DefaultContext = {
 };
 var IconContext = (0, _reactDefault.default).createContext && /*#__PURE__*/ (0, _reactDefault.default).createContext(DefaultContext);
 
-},{"react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2W72B":[function(require,module,exports) {
+},{"react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"enAMq":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$2901 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$2901.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Editor", ()=>Editor);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _pieces = require("../inventory/Pieces");
+var _toolbar = require("../tools/Toolbar");
+var _label = require("./Overlay/Label");
+var _labelDefault = parcelHelpers.interopDefault(_label);
+var _shapeInfo = require("./Overlay/ShapeInfo");
+var _main = require("../../main");
+var _appState = require("../AppState");
+var _s = $RefreshSig$();
+const Editor = ({ canvasRef, threeRef })=>{
+    _s();
+    // Set up canvas refs and create new project
+    (0, _react.useEffect)(()=>{
+        if (canvasRef.current) (0, _main.initCanvas)(canvasRef.current);
+        if (threeRef.current) (0, _main.initScene)(threeRef.current);
+        // pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
+        (0, _main.initUpdate)();
+    }, [
+        (0, _appState.useAppState)((s)=>s.activeProjectTitle)
+    ]);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "grid grid-cols-4 flex-1 overflow-hidden h-[88vh]",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                className: "wrelative flex flex-col bg-white p-3 overflow-hidden col-span-3",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
+                        fileName: "src/UI/sections/Editor.tsx",
+                        lineNumber: 36,
+                        columnNumber: 11
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
+                        fileName: "src/UI/sections/Editor.tsx",
+                        lineNumber: 38,
+                        columnNumber: 11
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
+                        fileName: "src/UI/sections/Editor.tsx",
+                        lineNumber: 39,
+                        columnNumber: 11
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
+                        ref: canvasRef,
+                        id: "canvas2d",
+                        className: "flex-1 w-full h-full rounded-md"
+                    }, void 0, false, {
+                        fileName: "src/UI/sections/Editor.tsx",
+                        lineNumber: 40,
+                        columnNumber: 11
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/sections/Editor.tsx",
+                lineNumber: 35,
+                columnNumber: 9
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                className: "flex flex-col h-full overflow-hidden",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
+                    fileName: "src/UI/sections/Editor.tsx",
+                    lineNumber: 49,
+                    columnNumber: 11
+                }, undefined)
+            }, void 0, false, {
+                fileName: "src/UI/sections/Editor.tsx",
+                lineNumber: 48,
+                columnNumber: 9
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/sections/Editor.tsx",
+        lineNumber: 33,
+        columnNumber: 7
+    }, undefined);
+};
+_s(Editor, "OD7bBpZva5O2jO+Puf00hKivP7c=");
+_c = Editor;
+var _c;
+$RefreshReg$(_c, "Editor");
+
+  $parcel$ReactRefreshHelpers$2901.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../inventory/Pieces":"5aREB","../tools/Toolbar":"2W72B","./Overlay/Label":"SPMyB","./Overlay/ShapeInfo":"dkMF4","../../main":"jeorp","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"5aREB":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$7858 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$7858.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Pieces", ()=>Pieces);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _piece = require("./Piece");
+var _appState = require("../AppState");
+var _viewState = require("../ViewState");
+var _s = $RefreshSig$();
+const Pieces = ()=>{
+    _s();
+    const pieces = (0, _appState.useAppState)((state)=>state.pieces);
+    const setView = (0, _viewState.useViewState)((state)=>state.setView);
+    function handleNav(e) {
+        e.preventDefault();
+        setView("piece library");
+    }
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "rounded-lg bg-stone-200 min-h-24 bg-white p-2",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: [
+                    "Pieces (",
+                    pieces.length,
+                    ")"
+                ]
+            }, void 0, true, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 22,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
+                    href: "/piecelibrary",
+                    onClick: handleNav,
+                    children: "Piece Library"
+                }, void 0, false, {
+                    fileName: "src/UI/inventory/Pieces.tsx",
+                    lineNumber: 23,
+                    columnNumber: 11
+                }, undefined)
+            }, void 0, false, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 23,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
+                className: "flex flex-row text-xs relative gap-2 overflow-auto",
+                children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
+                        piece: piece
+                    }, piece.id, false, {
+                        fileName: "src/UI/inventory/Pieces.tsx",
+                        lineNumber: 26,
+                        columnNumber: 11
+                    }, undefined))
+            }, void 0, false, {
+                fileName: "src/UI/inventory/Pieces.tsx",
+                lineNumber: 24,
+                columnNumber: 7
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/UI/inventory/Pieces.tsx",
+        lineNumber: 21,
+        columnNumber: 5
+    }, undefined);
+}; // export const Pieces = (props:PiecesProps) => {
+ //   const pieces = useAppState((state) => state.pieces);
+ //   const thumbnailRef = useRef<HTMLCanvasElement>(null);
+ //   return (
+ //     <ul style={ulStyle} className="rounded-lg bg-stone-200 min-h-24 flex flex-row">
+ //       { pieces.map((piece:Piece) => {
+ //         if (thumbnailRef.current) {
+ //           console.log('drawing', piece.name)
+ //           drawPieceThumbnail(piece, thumbnailRef.current);
+ //         };
+ //         return (
+ //           <li className="my-auto mx-2">
+ //             <canvas className="max-h-12" ref={thumbnailRef}></canvas>
+ //             {piece.name}
+ //           </li>)
+ //       })}
+ //     </ul>
+ //   )
+ // }
+ // const ulStyle = {
+ // }
+_s(Pieces, "F6TZUY1bpuC4OiB2dABaXs5y2A0=", false, function() {
+    return [
+        (0, _appState.useAppState),
+        (0, _viewState.useViewState)
+    ];
+});
+_c = Pieces;
+var _c;
+$RefreshReg$(_c, "Pieces");
+
+  $parcel$ReactRefreshHelpers$7858.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","./Piece":"40lLH","../AppState":"e3032","../ViewState":"kfxN8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"2W72B":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$3517 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -65920,78 +66045,7 @@ $RefreshReg$(_c, "MeasureIcon");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"bSDlR":[function(require,module,exports) {
-var $parcel$ReactRefreshHelpers$1b5e = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$1b5e.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _appState = require("../../AppState");
-var _s = $RefreshSig$();
-const CursorInfo = ()=>{
-    _s();
-    const pointerX = (0, _appState.useAppState)((state)=>state.pointer.x);
-    const pointerY = (0, _appState.useAppState)((state)=>state.pointer.y);
-    const toolName = (0, _appState.useAppState)((state)=>state.selectedTool);
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "absolute bg-gray-800 text-white px-2 py-1 text-xs rounded shadow-md pointer-events-none bottom-3 right-3 w-2/10",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                children: toolName
-            }, void 0, false, {
-                fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 10,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                children: [
-                    "X: ",
-                    Math.round(pointerX)
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 11,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                children: [
-                    "Y: ",
-                    Math.round(pointerY)
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-                lineNumber: 12,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/sections/Overlay/CursorInfo.tsx",
-        lineNumber: 9,
-        columnNumber: 5
-    }, undefined);
-};
-_s(CursorInfo, "yfpZjXMHaCEobV+FOwQgtldRd7U=", false, function() {
-    return [
-        (0, _appState.useAppState),
-        (0, _appState.useAppState),
-        (0, _appState.useAppState)
-    ];
-});
-_c = CursorInfo;
-exports.default = CursorInfo;
-var _c;
-$RefreshReg$(_c, "CursorInfo");
-
-  $parcel$ReactRefreshHelpers$1b5e.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
-}
-},{"react/jsx-dev-runtime":"iTorj","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"SPMyB":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react-icons/ci":"7bNnY","../../../2D/commands/ChangeToolCommand":"i5Ou7","../../../Command":"efiIE","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"SPMyB":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$cd8f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -66308,7 +66362,6 @@ function initCanvas(ref) {
     // Get a reference to the canvas element and its rendering context
     const canvas = ref;
     (0, _state.state).canvas = canvas;
-    console.log("canvas init");
     const context = canvas.getContext("2d");
     if (!context) throw new Error("No such 2D context when initializing page elements");
     (0, _state.state).context = context;
@@ -66330,10 +66383,7 @@ function initCanvas(ref) {
 }
 function initScene(canvas) {
     // Bail if no canvas has been passed
-    if (!canvas) {
-        console.log("no canvas");
-        return false;
-    }
+    if (!canvas) return false;
     (0, _state.state).renderer = new _three.WebGLRenderer({
         canvas
     });
@@ -67458,7 +67508,6 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cOnMouseEnter", ()=>cOnMouseEnter);
 var _state = require("../../State");
 const cOnMouseEnter = (e)=>{
-    console.log("active");
     (0, _state.state).cActive = true;
 };
 
@@ -68020,215 +68069,60 @@ function formatDate(date) {
     });
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7H0HC":[function(require,module,exports) {
-var $parcel$ReactRefreshHelpers$b6a0 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cAFqI":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$eda7 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$b6a0.prelude(module);
+$parcel$ReactRefreshHelpers$eda7.prelude(module);
 
 try {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
+parcelHelpers.export(exports, "useViewRouting", ()=>useViewRouting);
 var _react = require("react");
-var _piece = require("../inventory/Piece");
-var _appState = require("../AppState");
-var _s = $RefreshSig$();
-const Mark = ()=>{
-    _s();
-    const pieces = (0, _appState.useAppState)((s)=>s.pieces);
-    const [fabricWidth, setFabricWidth] = (0, _react.useState)(0);
-    const [fabricHeight, setFabricHeight] = (0, _react.useState)(0);
-    const [layoutLength, setLayoutLength] = (0, _react.useState)(0);
-    const [safetyMargin, setSafetyMargin] = (0, _react.useState)(0);
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "p-4 flex flex-col h-full",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
-                className: "text-xl font-semibold mb-4",
-                children: "Layout Fabric & Pieces"
-            }, void 0, false, {
-                fileName: "src/UI/mark/Mark.tsx",
-                lineNumber: 15,
-                columnNumber: 7
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "flex-1 h-1/2",
-                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                    className: "grid grid-cols-8 gap-4",
-                    children: pieces.map((piece)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _piece.PieceComponent), {
-                            piece: piece,
-                            selected: false,
-                            onSelect: ()=>{}
-                        }, piece.id, false, {
-                            fileName: "src/UI/mark/Mark.tsx",
-                            lineNumber: 21,
-                            columnNumber: 15
-                        }, undefined))
-                }, void 0, false, {
-                    fileName: "src/UI/mark/Mark.tsx",
-                    lineNumber: 19,
-                    columnNumber: 11
-                }, undefined)
-            }, void 0, false, {
-                fileName: "src/UI/mark/Mark.tsx",
-                lineNumber: 18,
-                columnNumber: 9
-            }, undefined),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "mb-6 flex space-x-4 flex-col gap-8 h-1/2",
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        className: "flex flex-col",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                className: "text-sm font-medium",
-                                children: "Fabric Width (in)"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 34,
-                                columnNumber: 11
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                type: "number",
-                                value: fabricWidth,
-                                onChange: (e)=>setFabricWidth(Number(e.target.value)),
-                                className: "mt-1 p-2 border rounded w-32"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 35,
-                                columnNumber: 11
-                            }, undefined)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/UI/mark/Mark.tsx",
-                        lineNumber: 33,
-                        columnNumber: 9
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        className: "flex flex-col",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                className: "text-sm font-medium",
-                                children: "Fabric Height (in)"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 43,
-                                columnNumber: 11
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                type: "number",
-                                value: fabricHeight,
-                                onChange: (e)=>setFabricHeight(Number(e.target.value)),
-                                className: "mt-1 p-2 border rounded w-32"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 44,
-                                columnNumber: 11
-                            }, undefined)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/UI/mark/Mark.tsx",
-                        lineNumber: 42,
-                        columnNumber: 9
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        className: "flex flex-col",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                className: "text-sm font-medium",
-                                children: "Layout Length (in)"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 52,
-                                columnNumber: 11
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h6", {
-                                children: "the length "
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 53,
-                                columnNumber: 11
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                type: "number",
-                                value: layoutLength,
-                                onChange: (e)=>setLayoutLength(Number(e.target.value)),
-                                className: "mt-1 p-2 border rounded w-32"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 54,
-                                columnNumber: 11
-                            }, undefined)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/UI/mark/Mark.tsx",
-                        lineNumber: 51,
-                        columnNumber: 9
-                    }, undefined),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        className: "flex flex-col",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                className: "text-sm font-medium",
-                                children: "Safety margin (in)"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 62,
-                                columnNumber: 11
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h6", {
-                                className: "text-xs",
-                                children: "in addition to piece seam allowances"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 63,
-                                columnNumber: 11
-                            }, undefined),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                type: "number",
-                                value: safetyMargin,
-                                onChange: (e)=>setSafetyMargin(Number(e.target.value)),
-                                className: "mt-1 p-2 border rounded w-32"
-                            }, void 0, false, {
-                                fileName: "src/UI/mark/Mark.tsx",
-                                lineNumber: 64,
-                                columnNumber: 11
-                            }, undefined)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/UI/mark/Mark.tsx",
-                        lineNumber: 61,
-                        columnNumber: 9
-                    }, undefined)
-                ]
-            }, void 0, true, {
-                fileName: "src/UI/mark/Mark.tsx",
-                lineNumber: 32,
-                columnNumber: 7
-            }, undefined)
-        ]
-    }, void 0, true, {
-        fileName: "src/UI/mark/Mark.tsx",
-        lineNumber: 14,
-        columnNumber: 5
-    }, undefined);
-};
-_s(Mark, "Exrsvn3A0jueDxZJsoVqPboAoQk=", false, function() {
-    return [
-        (0, _appState.useAppState)
-    ];
-});
-_c = Mark;
-exports.default = Mark;
-var _c;
-$RefreshReg$(_c, "Mark");
+var _viewState = require("./UI/ViewState");
+function useViewRouting() {
+    const view = (0, _viewState.useViewState)((s)=>s.view);
+    const setView = (0, _viewState.useViewState)((s)=>s.setView);
+    const VIEW_BY_PATH = {
+        "/": "app",
+        "/piece-library": "piece library",
+        "/mark": "mark",
+        "/browser": "browser"
+    };
+    const PATH_BY_VIEW = {
+        "app": "/",
+        "piece library": "/piece-library",
+        "mark": "/mark",
+        "browser": "/browser"
+    };
+    // On mount: seed view from URL + listen for back/forward
+    (0, _react.useEffect)(()=>{
+        const initial = VIEW_BY_PATH[window.location.pathname] || "app";
+        setView(initial);
+        const onPop = ()=>{
+            const v = VIEW_BY_PATH[window.location.pathname] || "app";
+            setView(v);
+        };
+        window.addEventListener("popstate", onPop);
+        return ()=>window.removeEventListener("popstate", onPop);
+    }, [
+        setView
+    ]);
+    // Whenever view changes, push new URL
+    (0, _react.useEffect)(()=>{
+        const desiredPath = PATH_BY_VIEW[view] || "/";
+        if (window.location.pathname !== desiredPath) window.history.pushState({}, "", desiredPath);
+    }, [
+        view
+    ]);
+}
 
-  $parcel$ReactRefreshHelpers$b6a0.postlude(module);
+  $parcel$ReactRefreshHelpers$eda7.postlude(module);
 } finally {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../inventory/Piece":"40lLH","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["94b1M","1xC6H","4aBH6"], "4aBH6", "parcelRequire85b5")
+},{"react":"21dqq","./UI/ViewState":"kfxN8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}]},["94b1M","1xC6H","4aBH6"], "4aBH6", "parcelRequire85b5")
 
 //# sourceMappingURL=index.2d3ace14.js.map

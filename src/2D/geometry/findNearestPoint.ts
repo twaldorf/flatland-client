@@ -68,6 +68,5 @@ export function findNearestAnyPoint( pos: Vector2 ): string | undefined {
     }
   }
 
-  console.log(nearestId)
   return nearestId;
 }

@@ -9,9 +9,10 @@ export const EditProjectModal = () => {
   const hideModal = useAppState((s) => s.hideModal)
   const setActiveProjectTitle = useAppState((s) => s.setActiveProjectTitle)
 
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [type, setType] = useState("Garment")
+  const title = useAppState(s => s.activeProjectTitle);
+  const setTitle = useAppState(s => s.setActiveProjectTitle);
+  // const [author, setAuthor] = useState("")
+  // const [type, setType] = useState("Garment")
 
   if (modal !== "Edit Project Info") return null
 
@@ -19,7 +20,7 @@ export const EditProjectModal = () => {
 
     const projectInfo = {
       title,
-      author,
+      author: "",
       lastUpdated: new Date()
     }
 
@@ -44,14 +45,14 @@ export const EditProjectModal = () => {
 
         <label className="block mb-2">
           <span className="block text-sm font-medium">Author</span>
-          <input
+          {/* <input
             className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
-          />
+          /> */}
         </label>
 
-        <label className="block mb-2">
+        {/* <label className="block mb-2">
           <span className="block text-sm font-medium">Type</span>
           <select
             className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
@@ -62,7 +63,7 @@ export const EditProjectModal = () => {
             <option value="Gear">Gear</option>
             <option value="Custom">Custom</option>
           </select>
-        </label>
+        </label> */}
 
         <div className="flex justify-end space-x-2">
           <button

@@ -16,7 +16,7 @@ export class LoadProjectCommand implements Command {
     if (!json) return;
     const data = json;
     state.deserialize(data);
-    useAppState.getState().setPieces(state.pieces);
+    useAppState.getState().setPieces([]);
     drawCanvasFromState(state);
   }
 

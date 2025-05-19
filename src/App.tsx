@@ -1,18 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 // import "./styles.css";
-import { initScene, initCanvas, initUpdate } from "./main";
-import { Toolbar } from "./UI/tools/Toolbar";
 import { Header } from "./UI/sections/Header";
 import { Tabs } from "./UI/sections/Workspace/Tabs";
-import { Pieces } from "./UI/inventory/Pieces";
-import Label from "./UI/sections/Overlay/Label";
-import CursorInfo from "./UI/sections/Overlay/CursorInfo";
-import { ShapeInfo } from "./UI/sections/Overlay/ShapeInfo";
 import { OpenProjectOverlay } from "./UI/sections/Header/OpenOverlay";
 import { NewProjectModal } from "./UI/sections/Header/NewProjectModal";
 import { pushCommand } from "./Command";
-import { NewProjectCommand } from "./UI/commands/NewProjectCommand";
-import { EditProjectModal } from "./UI/sections/Header/EditProjectModal";
 import { SaveAsProjectModal } from "./UI/sections/Header/SaveAsProjectModal";
 import { useViewState, ViewName } from "./UI/ViewState";
 import { useAppState } from './UI/AppState';
@@ -22,21 +14,22 @@ import { PieceLibrary } from "./UI/sections/PieceLibrary";
 import Browser from "./UI/browse/Browse";
 import Mark from "./UI/mark/Mark";
 import { SaveProjectCommand } from "./UI/commands/SaveProjectCommand";
-import { state } from "./State";
+// import { state } from "./State";
 import { LoadProjectCommand } from "./UI/commands/LoadProjectCommand";
 import { BASE_PROJECT_TITLE } from "./constants";
+import { EditProjectModal } from "./UI/sections/Header/EditProjectModal";
+import { Workspaces } from "./UI/sections/Workspace/Workspaces";
 
 const App: React.FC = () => {
   useEffect(() => {
-    autoSave();
+    // autoSave();
   }, []);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const threeRef = useRef<HTMLCanvasElement>(null);
-  const view = useViewState((vs) => vs.view);
+  console.log('RENDER ROOT')
 
-  useViewRouting();
-  state.clear();
-  loadAutosave();
+  // state.clear();
+  // loadAutosave();
 
   function loadAutosave() {
     if (state.projectInfo.title == BASE_PROJECT_TITLE) {
@@ -44,7 +37,6 @@ const App: React.FC = () => {
       if (projectString) {
         const project = JSON.parse(projectString);
         if (project.version === state.version) {
-          console.log('LOADING PROJECT FROM AUTOSAVE')
           pushCommand(new LoadProjectCommand('flatland-project-autosave'));
         }
       }
@@ -52,24 +44,13 @@ const App: React.FC = () => {
   }
 
   function autoSave() {
-    let title = state.projectInfo.title;
-    if (state.projectInfo.title === BASE_PROJECT_TITLE) {
-      title = 'autosave';
-    }
+    const title = state.projectInfo.title;
     setInterval(() => {
       if (state.autosave) {
         pushCommand(new SaveProjectCommand(title));
-        console.log('Submitted save command for ', title)
       }
     }, 1000 * 5);
   }
-
-  const ViewComponentMap: Record<ViewName, React.ReactNode> = {
-    "app": <Editor canvasRef={canvasRef} threeRef={threeRef} />,
-    "piece library": <PieceLibrary />,
-    "mark": <Mark />,
-    "browser": <Browser />,
-  };
 
   return (
     <main className="app-container font-mono w-full h-screen overflow-hidden bg-stone-100 pb-2">
@@ -81,9 +62,7 @@ const App: React.FC = () => {
         <Header />
         <Tabs />
       </div>
-      {ViewComponentMap[view] ?? (
-        <Editor canvasRef={canvasRef} threeRef={threeRef} />
-      )}
+      <Workspaces canvasRef={canvasRef} threeRef={threeRef} />
     </main>
   )
 };

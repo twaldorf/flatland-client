@@ -34,7 +34,7 @@ export const Editor = ({ canvasRef, threeRef }) => {
         {/* Left column */}
         <section className="wrelative flex flex-col bg-white p-3 overflow-hidden col-span-3">
           <Toolbar />
-          <CursorInfo />
+          {/* <CursorInfo /> */}
           <ShapeInfo />
           <Label />
           <canvas
