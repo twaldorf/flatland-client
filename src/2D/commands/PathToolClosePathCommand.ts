@@ -1,11 +1,12 @@
 import { generateUUID } from "three/src/math/MathUtils";
 import { createPolygonPlane } from "../../3D/geometry/polygon";
-import { Command } from "../../Command";
+import { Command, pushCommand } from "../../Command";
 import { state } from "../../State";
 import { Geometry2D, Piece } from "../../types";
 import { drawCanvasFromState } from "../rendering/canvas";
 import { generatePieceThumbnail } from "../rendering/drawPieceThumbnail";
 import { useAppState } from "../../UI/AppState";
+import { GenericLoadPieceCommand } from "./Generic/GenericLoadPieceCommand";
 
 
 export class PathToolClosePathCommand implements Command {
@@ -31,7 +32,7 @@ export class PathToolClosePathCommand implements Command {
     // Register Piece
     const piece: Piece = {
       id: generateUUID(),
-      name: `piece${useAppState.getState().pieces.length}`,
+      name: `piece${state.pieces.length + 1}`,
       geometryId: this.geomId,
       canvas: null!,
       thumb: null!,
@@ -40,9 +41,8 @@ export class PathToolClosePathCommand implements Command {
 
     // generate thumbnail (mutation) & register with UI store
     piece.canvas = generatePieceThumbnail(piece);
-    useAppState.getState().addPiece(piece);
     this.pieceId = piece.id;
-    state.pieces.push(piece);
+    pushCommand(new GenericLoadPieceCommand(piece));
 
     drawCanvasFromState(state);
   }
@@ -51,21 +51,17 @@ export class PathToolClosePathCommand implements Command {
     const geom = state.c_geometryMap.get(this.geomId);
     if (!geom) return;
 
-    // 1) Re-open the path
     geom.pointIds.pop();
     geom.type = "path";
     state.c_geometryMap.set(this.geomId, geom);
 
-    // 2) Un-select
-    state.c_selected_geometries = [];
+    state.c_selectedGeometries = [];
 
-    // 3) Remove the piece we added
     if (this.pieceId) {
       // useAppState.getState().removePiece(this.pieceId);
       this.pieceId = null;
     }
 
-    // 4) Redraw
     drawCanvasFromState(state);
   }
 }

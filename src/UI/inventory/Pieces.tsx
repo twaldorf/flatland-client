@@ -11,6 +11,7 @@ interface PiecesProps {
 
 export const Pieces = () => {
   const pieces = useAppState((state) => state.pieces);
+  console.log(pieces)
   const setView = useViewState((state) => state.setView);
   function handleNav(e:unknown): void {
     e.preventDefault();

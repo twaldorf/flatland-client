@@ -18542,7 +18542,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./Command":"efiIE","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Header/SaveAsProjectModal":"lPxKp","./UI/ViewState":"kfxN8","./routes":"cAFqI","./UI/sections/Editor":"enAMq","./UI/sections/PieceLibrary":"2JSEM","./UI/browse/Browse":"clocv","./UI/mark/Mark":"7H0HC","./State":"83rpN","./UI/commands/LoadProjectCommand":"53Ggr","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./constants":"45DZp","./UI/commands/SaveProjectCommand":"8Akqt"}],"6ni0Q":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./Command":"efiIE","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Header/SaveAsProjectModal":"lPxKp","./UI/ViewState":"kfxN8","./routes":"cAFqI","./UI/sections/Editor":"enAMq","./UI/sections/PieceLibrary":"2JSEM","./UI/browse/Browse":"clocv","./UI/mark/Mark":"7H0HC","./UI/commands/SaveProjectCommand":"8Akqt","./State":"83rpN","./UI/commands/LoadProjectCommand":"53Ggr","./constants":"45DZp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6ni0Q":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$d584 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -18926,7 +18926,7 @@ const state = {
     }
 };
 
-},{"three":"ktPTu","three/src/math/MathUtils":"cuzU2","./utils/saveutils":"4Ifxv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./2D/tools/SelectTool":"jISwe","./constants":"45DZp"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","three/src/math/MathUtils":"cuzU2","./utils/saveutils":"4Ifxv","./2D/tools/SelectTool":"jISwe","./constants":"45DZp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -49698,7 +49698,7 @@ class SelectTool {
     }
 }
 
-},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/Rendering/DrawPreviewsCommand":"4QHCH","../geometry/findNearestPoint":"8deBQ","../geometry/bezierIntersection":"fUwbC","../settings/interface":"dci9b","../commands/SelectToolDeselectPointCommand":"DbYrq","../commands/SelectToolMovePointsCommand":"bIGVa","../commands/ChangeToolCommand":"i5Ou7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../commands/DeleteGeometriesCommand":"2FyOs"}],"3rhkZ":[function(require,module,exports) {
+},{"../../Command":"efiIE","../../State":"83rpN","../pointer/cLocalizePoint":"3rhkZ","../commands/SelectToolShapeCommand":"aHJgT","../geometry/isPointInPolygon":"aOEKs","../commands/SelectToolMoveShapeCommand":"2adoe","../commands/SelectToolPointCommand":"97SwH","../commands/SelectToolDeselectAllCommand":"35eIL","../rendering/canvas":"fjxS8","../commands/DeleteGeometriesCommand":"2FyOs","../commands/Rendering/DrawPreviewsCommand":"4QHCH","../geometry/findNearestPoint":"8deBQ","../geometry/bezierIntersection":"fUwbC","../settings/interface":"dci9b","../commands/SelectToolDeselectPointCommand":"DbYrq","../commands/SelectToolMovePointsCommand":"bIGVa","../commands/ChangeToolCommand":"i5Ou7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3rhkZ":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cLocalizePoint", ()=>cLocalizePoint);
@@ -51121,7 +51121,42 @@ class SelectToolDeselectAllCommand {
     }
 }
 
-},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4QHCH":[function(require,module,exports) {
+},{"../../State":"83rpN","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2FyOs":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DeleteGeometriesCommand", ()=>DeleteGeometriesCommand);
+var _state = require("../../State");
+var _appState = require("../../UI/AppState");
+var _canvas = require("../rendering/canvas");
+class DeleteGeometriesCommand {
+    constructor(geometries){
+        this.geometryIds = geometries;
+        this.geometries = new Map((0, _state.state).c_geometryMap);
+        this.pieces = [];
+    }
+    do() {
+        this.geometryIds.forEach((geomId)=>{
+            (0, _state.state).c_geometryMap.delete(geomId);
+            const pieceIndex = (0, _state.state).pieces.findIndex((piece)=>piece.geometryId === geomId);
+            this.pieces = [
+                ...this.pieces,
+                ...(0, _state.state).pieces.splice(pieceIndex, 1)
+            ];
+            const pieceId = this.pieces[this.pieces.length - 1].id;
+            (0, _appState.useAppState).getState().removePiece(pieceId);
+        });
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+        (0, _state.state).c_geometryMap = this.geometries;
+        (0, _state.state).pieces = [
+            ...(0, _state.state).pieces,
+            ...this.pieces
+        ];
+    }
+}
+
+},{"../../State":"83rpN","../../UI/AppState":"e3032","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4QHCH":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "DrawPreviewsCommand", ()=>DrawPreviewsCommand);
@@ -51965,6 +52000,7 @@ class PathTool {
                 }
                 break;
             case "selecting":
+                // TODO: Repair and adapt for new Geometry system
                 if ((0, _state.state).c_selected.length == 0) // Case: no points are selected
                 (0, _command.pushCommand)(new (0, _pathToolSelectCommand.PathToolSelectCommand)(this.__state.hitIndex));
                 else if ((0, _state.state).c_selected.length > 0 && (0, _state.state).shiftDown) // Case: Points are selected, the user selects additional points
@@ -52165,10 +52201,11 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolClosePathCommand", ()=>PathToolClosePathCommand);
 var _mathUtils = require("three/src/math/MathUtils");
+var _command = require("../../Command");
 var _state = require("../../State");
 var _canvas = require("../rendering/canvas");
 var _drawPieceThumbnail = require("../rendering/drawPieceThumbnail");
-var _appState = require("../../UI/AppState");
+var _genericLoadPieceCommand = require("./Generic/GenericLoadPieceCommand");
 class PathToolClosePathCommand {
     constructor(geomId){
         this.pieceId = null;
@@ -52188,7 +52225,7 @@ class PathToolClosePathCommand {
         // Register Piece
         const piece = {
             id: (0, _mathUtils.generateUUID)(),
-            name: `piece${(0, _appState.useAppState).getState().pieces.length}`,
+            name: `piece${(0, _state.state).pieces.length + 1}`,
             geometryId: this.geomId,
             canvas: null,
             thumb: null,
@@ -52196,29 +52233,24 @@ class PathToolClosePathCommand {
         };
         // generate thumbnail (mutation) & register with UI store
         piece.canvas = (0, _drawPieceThumbnail.generatePieceThumbnail)(piece);
-        (0, _appState.useAppState).getState().addPiece(piece);
         this.pieceId = piece.id;
-        (0, _state.state).pieces.push(piece);
+        (0, _command.pushCommand)(new (0, _genericLoadPieceCommand.GenericLoadPieceCommand)(piece));
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
     undo() {
         const geom = (0, _state.state).c_geometryMap.get(this.geomId);
         if (!geom) return;
-        // 1) Re-open the path
         geom.pointIds.pop();
         geom.type = "path";
         (0, _state.state).c_geometryMap.set(this.geomId, geom);
-        // 2) Un-select
-        (0, _state.state).c_selected_geometries = [];
-        // 3) Remove the piece we added
+        (0, _state.state).c_selectedGeometries = [];
         if (this.pieceId) // useAppState.getState().removePiece(this.pieceId);
         this.pieceId = null;
-        // 4) Redraw
         (0, _canvas.drawCanvasFromState)((0, _state.state));
     }
 }
 
-},{"three/src/math/MathUtils":"cuzU2","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawPieceThumbnail":"1Jt5c","../../UI/AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1Jt5c":[function(require,module,exports) {
+},{"three/src/math/MathUtils":"cuzU2","../../State":"83rpN","../rendering/canvas":"fjxS8","../rendering/drawPieceThumbnail":"1Jt5c","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../Command":"efiIE","./Generic/GenericLoadPieceCommand":"bwTU6"}],"1Jt5c":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // Apply the thumbnail to the canvas
@@ -52242,7 +52274,27 @@ function generatePieceThumbnail(piece) {
     return canvas;
 }
 
-},{"../geometry/boundingBox":"3SCvR","./drawPaths":"lgYVM","./getBuffer":"7bBl8","../geometry/getPointArrayFromGeometry2D":"12og0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports) {
+},{"../geometry/boundingBox":"3SCvR","./drawPaths":"lgYVM","./getBuffer":"7bBl8","../geometry/getPointArrayFromGeometry2D":"12og0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bwTU6":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GenericLoadPieceCommand", ()=>GenericLoadPieceCommand);
+var _state = require("../../../State");
+var _appState = require("../../../UI/AppState");
+class GenericLoadPieceCommand {
+    constructor(piece){
+        this.piece = piece;
+    }
+    do() {
+        (0, _state.state).pieces.push(this.piece);
+        (0, _appState.useAppState).getState().addPiece(this.piece);
+    }
+    undo() {
+        (0, _state.state).pieces = (0, _state.state).pieces.filter((piece)=>piece.id != this.piece.id);
+        (0, _appState.useAppState).getState().removePiece(this.piece.id);
+    }
+}
+
+},{"../../../State":"83rpN","../../../UI/AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8Yd53":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PathToolRemovePointCommand", ()=>PathToolRemovePointCommand);
@@ -52366,42 +52418,7 @@ function drawBezierHandlePreview(c1, anchor, lastPoint, lastC1) {
     (0, _state.state).context.drawImage(canvas, 0, 0);
 }
 
-},{"./getBuffer":"7bBl8","../settings/interface":"dci9b","../../State":"83rpN","./utils/styleUtils":"dht7T","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2FyOs":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "DeleteGeometriesCommand", ()=>DeleteGeometriesCommand);
-var _state = require("../../State");
-var _appState = require("../../UI/AppState");
-var _canvas = require("../rendering/canvas");
-class DeleteGeometriesCommand {
-    constructor(geometries){
-        this.geometryIds = geometries;
-        this.geometries = new Map((0, _state.state).c_geometryMap);
-        this.pieces = [];
-    }
-    do() {
-        this.geometryIds.forEach((geomId)=>{
-            (0, _state.state).c_geometryMap.delete(geomId);
-            const pieceIndex = (0, _state.state).pieces.findIndex((piece)=>piece.geometryId === geomId);
-            this.pieces = [
-                ...this.pieces,
-                ...(0, _state.state).pieces.splice(pieceIndex, 1)
-            ];
-            const pieceId = this.pieces[this.pieces.length - 1].id;
-            (0, _appState.useAppState).getState().removePiece(pieceId);
-        });
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-        (0, _state.state).c_geometryMap = this.geometries;
-        (0, _state.state).pieces = [
-            ...(0, _state.state).pieces,
-            ...this.pieces
-        ];
-    }
-}
-
-},{"../../State":"83rpN","../../UI/AppState":"e3032","../rendering/canvas":"fjxS8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"45DZp":[function(require,module,exports) {
+},{"./getBuffer":"7bBl8","../settings/interface":"dci9b","../../State":"83rpN","./utils/styleUtils":"dht7T","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"45DZp":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "BASE_PROJECT_TITLE", ()=>BASE_PROJECT_TITLE);
@@ -52804,7 +52821,7 @@ const useViewState = (0, _zustand.create)((set, get)=>({
         }
     }));
 
-},{"zustand":"cPNyt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../Command":"efiIE","./commands/SaveProjectCommand":"8Akqt"}],"bNtGY":[function(require,module,exports) {
+},{"zustand":"cPNyt","../Command":"efiIE","./commands/SaveProjectCommand":"8Akqt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bNtGY":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$6951 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -52967,7 +52984,7 @@ class LoadProjectCommand {
     }
 }
 
-},{"../../State":"83rpN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../AppState":"e3032","../../2D/rendering/canvas":"fjxS8"}],"hPbLI":[function(require,module,exports) {
+},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hPbLI":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$6d9c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -53817,6 +53834,7 @@ var _s = $RefreshSig$();
 const Pieces = ()=>{
     _s();
     const pieces = (0, _appState.useAppState)((state)=>state.pieces);
+    console.log(pieces);
     const setView = (0, _viewState.useViewState)((state)=>state.setView);
     function handleNav(e) {
         e.preventDefault();
@@ -53833,7 +53851,7 @@ const Pieces = ()=>{
                 ]
             }, void 0, true, {
                 fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 22,
+                lineNumber: 23,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
@@ -53843,12 +53861,12 @@ const Pieces = ()=>{
                     children: "Piece Library"
                 }, void 0, false, {
                     fileName: "src/UI/inventory/Pieces.tsx",
-                    lineNumber: 23,
+                    lineNumber: 24,
                     columnNumber: 11
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 23,
+                lineNumber: 24,
                 columnNumber: 7
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
@@ -53857,18 +53875,18 @@ const Pieces = ()=>{
                         piece: piece
                     }, piece.id, false, {
                         fileName: "src/UI/inventory/Pieces.tsx",
-                        lineNumber: 26,
+                        lineNumber: 27,
                         columnNumber: 11
                     }, undefined))
             }, void 0, false, {
                 fileName: "src/UI/inventory/Pieces.tsx",
-                lineNumber: 24,
+                lineNumber: 25,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/inventory/Pieces.tsx",
-        lineNumber: 21,
+        lineNumber: 22,
         columnNumber: 5
     }, undefined);
 }; // export const Pieces = (props:PiecesProps) => {

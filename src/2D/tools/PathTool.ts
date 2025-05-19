@@ -193,6 +193,7 @@ export class PathTool implements ToolBase {
         break;
 
       case "selecting":
+        // TODO: Repair and adapt for new Geometry system
         if (state.c_selected.length == 0) {
           // Case: no points are selected
           pushCommand( new PathToolSelectCommand( this.__state.hitIndex ) );
