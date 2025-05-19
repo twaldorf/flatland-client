@@ -124,16 +124,19 @@ export const state:State = {
     return serializedObj;
   },
 
-  deserialize(stringObj:string):void {
+  deserialize(stringObj:string):Partial<State> {
     const serializedObj = JSON.parse(stringObj);
-    console.log(serializedObj)
+
+    const contents:Partial<State> = {};
+
     if (serializedObj.version == this.version) {
-      this.c_pointsMap = restorePointsMap(serializedObj.c_pointsMap);
-      this.c_geometryMap = restoreGeometryMap(serializedObj.c_geometryMap);
-      this.projectInfo = serializedObj.projectInfo;
-      this.pieces = serializedObj.pieces;
+      contents.c_pointsMap = restorePointsMap(serializedObj.c_pointsMap);
+      contents.c_geometryMap = restoreGeometryMap(serializedObj.c_geometryMap);
+      contents.projectInfo = serializedObj.projectInfo;
+      contents.pieces = serializedObj.pieces;
     }
-    console.log(this.pieces, serializedObj.pieces)
+
+    return contents;
   },
 
   clear():void {

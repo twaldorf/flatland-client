@@ -18498,7 +18498,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./Command":"efiIE","./UI/commands/SaveProjectCommand":"8Akqt","./UI/commands/LoadProjectCommand":"53Ggr","./constants":"45DZp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./UI/sections/Header/SaveAsProjectModal":"lPxKp","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Workspace/Workspaces":"dhvAj"}],"6ni0Q":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","./UI/sections/Header":"6ni0Q","./UI/sections/Workspace/Tabs":"kzo4h","./UI/sections/Header/OpenOverlay":"bNtGY","./UI/sections/Header/NewProjectModal":"hPbLI","./Command":"efiIE","./UI/sections/Header/SaveAsProjectModal":"lPxKp","./UI/commands/SaveProjectCommand":"8Akqt","./UI/commands/LoadProjectCommand":"53Ggr","./constants":"45DZp","./UI/sections/Header/EditProjectModal":"gSpmT","./UI/sections/Workspace/Workspaces":"dhvAj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"6ni0Q":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$d584 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -18866,14 +18866,14 @@ const state = {
     },
     deserialize (stringObj) {
         const serializedObj = JSON.parse(stringObj);
-        console.log(serializedObj);
+        const contents = {};
         if (serializedObj.version == this.version) {
-            this.c_pointsMap = (0, _saveutils.restorePointsMap)(serializedObj.c_pointsMap);
-            this.c_geometryMap = (0, _saveutils.restoreGeometryMap)(serializedObj.c_geometryMap);
-            this.projectInfo = serializedObj.projectInfo;
-            this.pieces = serializedObj.pieces;
+            contents.c_pointsMap = (0, _saveutils.restorePointsMap)(serializedObj.c_pointsMap);
+            contents.c_geometryMap = (0, _saveutils.restoreGeometryMap)(serializedObj.c_geometryMap);
+            contents.projectInfo = serializedObj.projectInfo;
+            contents.pieces = serializedObj.pieces;
         }
-        console.log(this.pieces, serializedObj.pieces);
+        return contents;
     },
     clear () {
         console.log("clear");
@@ -52783,31 +52783,7 @@ const useViewState = (0, _zustand.create)((set, get)=>({
         }
     }));
 
-},{"zustand":"cPNyt","../Command":"efiIE","./commands/SaveProjectCommand":"8Akqt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"53Ggr":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "LoadProjectCommand", ()=>LoadProjectCommand);
-var _canvas = require("../../2D/rendering/canvas");
-var _state = require("../../State");
-var _appState = require("../AppState");
-class LoadProjectCommand {
-    constructor(key){
-        this.key = key;
-    }
-    do() {
-        const json = localStorage.getItem(this.key);
-        if (!json) return;
-        const data = json;
-        (0, _state.state).deserialize(data);
-        (0, _appState.useAppState).getState().setPieces([]);
-        (0, _canvas.drawCanvasFromState)((0, _state.state));
-    }
-    undo() {
-    // No undo for load
-    }
-}
-
-},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bNtGY":[function(require,module,exports) {
+},{"zustand":"cPNyt","../Command":"efiIE","./commands/SaveProjectCommand":"8Akqt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bNtGY":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$6951 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -52946,7 +52922,38 @@ $RefreshReg$(_c, "OpenProjectOverlay");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../Command":"efiIE","../../commands/LoadProjectCommand":"53Ggr","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"hPbLI":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../../Command":"efiIE","../../commands/LoadProjectCommand":"53Ggr","../../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"53Ggr":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "LoadProjectCommand", ()=>LoadProjectCommand);
+var _canvas = require("../../2D/rendering/canvas");
+var _state = require("../../State");
+var _appState = require("../AppState");
+class LoadProjectCommand {
+    constructor(key){
+        this.key = key.replace("flatland-project-", "");
+        console.log("KEY", key);
+    }
+    do() {
+        const json = localStorage.getItem(`flatland-project-${this.key}`);
+        console.log(json);
+        if (!json) return;
+        const data = json;
+        const { c_pointsMap, c_geometryMap, projectInfo, pieces } = (0, _state.state).deserialize(data);
+        console.log(c_pointsMap);
+        (0, _state.state).c_pointsMap = c_pointsMap;
+        (0, _state.state).c_geometryMap = c_geometryMap;
+        (0, _state.state).projectInfo = projectInfo;
+        (0, _state.state).pieces = pieces;
+        (0, _appState.useAppState).getState().setPieces([]);
+        (0, _canvas.drawCanvasFromState)((0, _state.state));
+    }
+    undo() {
+    // No undo for load
+    }
+}
+
+},{"../../2D/rendering/canvas":"fjxS8","../../State":"83rpN","../AppState":"e3032","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hPbLI":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$6d9c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -53573,7 +53580,6 @@ parcelHelpers.export(exports, "Workspaces", ()=>Workspaces);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
-var _viewState = require("../../ViewState");
 var _mark = require("../../mark/Mark");
 var _markDefault = parcelHelpers.interopDefault(_mark);
 var _editor = require("../Editor");
@@ -53585,31 +53591,24 @@ var _s = $RefreshSig$();
 const Workspaces = (props)=>{
     _s();
     const { canvasRef, threeRef } = props;
-    (0, _routes.useViewRouting)();
-    const view = (0, _viewState.useViewState)((s)=>s.view);
-    // const ViewComponentMap: Record<ViewName, React.ReactNode> = {
-    //   "app": <Editor canvasRef={canvasRef} threeRef={threeRef} />,
-    //   "piece library": <PieceLibrary />,
-    //   "mark": <Mark />,
-    //   "browser": <Browser />,
-    // };
+    const view = (0, _routes.useViewRouting)();
     switch(view){
         case "piece library":
             return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieceLibrary.PieceLibrary), {}, void 0, false, {
                 fileName: "src/UI/sections/Workspace/Workspaces.tsx",
-                lineNumber: 29,
+                lineNumber: 20,
                 columnNumber: 14
             }, undefined);
         case "mark":
             return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _markDefault.default), {}, void 0, false, {
                 fileName: "src/UI/sections/Workspace/Workspaces.tsx",
-                lineNumber: 31,
+                lineNumber: 22,
                 columnNumber: 14
             }, undefined);
         case "browser":
             return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _browseDefault.default), {}, void 0, false, {
                 fileName: "src/UI/sections/Workspace/Workspaces.tsx",
-                lineNumber: 33,
+                lineNumber: 24,
                 columnNumber: 14
             }, undefined);
         default:
@@ -53618,15 +53617,14 @@ const Workspaces = (props)=>{
                 threeRef: threeRef
             }, void 0, false, {
                 fileName: "src/UI/sections/Workspace/Workspaces.tsx",
-                lineNumber: 35,
+                lineNumber: 26,
                 columnNumber: 14
             }, undefined);
     }
 };
-_s(Workspaces, "tjjrrcF7WIL5wwANIJ/YcahokVg=", false, function() {
+_s(Workspaces, "CTHa4koeFIMAT5xacYBZxZtehYg=", false, function() {
     return [
-        (0, _routes.useViewRouting),
-        (0, _viewState.useViewState)
+        (0, _routes.useViewRouting)
     ];
 });
 _c = Workspaces;
@@ -53638,7 +53636,7 @@ $RefreshReg$(_c, "Workspaces");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../ViewState":"kfxN8","../../mark/Mark":"7H0HC","../Editor":"enAMq","../PieceLibrary":"2JSEM","../../browse/Browse":"clocv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru","../../../routes":"cAFqI"}],"7H0HC":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../../mark/Mark":"7H0HC","../Editor":"enAMq","../PieceLibrary":"2JSEM","../../browse/Browse":"clocv","../../../routes":"cAFqI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"km3Ru"}],"7H0HC":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$b6a0 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -65648,8 +65646,9 @@ var _shapeInfo = require("./Overlay/ShapeInfo");
 var _main = require("../../main");
 var _appState = require("../AppState");
 var _s = $RefreshSig$();
-const Editor = ({ canvasRef, threeRef })=>{
+const Editor = (props)=>{
     _s();
+    const { canvasRef, threeRef } = props;
     // Set up canvas refs and create new project
     (0, _react.useEffect)(()=>{
         if (canvasRef.current) (0, _main.initCanvas)(canvasRef.current);
@@ -65667,17 +65666,17 @@ const Editor = ({ canvasRef, threeRef })=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _toolbar.Toolbar), {}, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 36,
+                        lineNumber: 43,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _shapeInfo.ShapeInfo), {}, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 38,
+                        lineNumber: 45,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _labelDefault.default), {}, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 39,
+                        lineNumber: 46,
                         columnNumber: 11
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("canvas", {
@@ -65686,31 +65685,31 @@ const Editor = ({ canvasRef, threeRef })=>{
                         className: "flex-1 w-full h-full rounded-md"
                     }, void 0, false, {
                         fileName: "src/UI/sections/Editor.tsx",
-                        lineNumber: 40,
+                        lineNumber: 47,
                         columnNumber: 11
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/UI/sections/Editor.tsx",
-                lineNumber: 35,
+                lineNumber: 42,
                 columnNumber: 9
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
                 className: "flex flex-col h-full overflow-hidden",
                 children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _pieces.Pieces), {}, void 0, false, {
                     fileName: "src/UI/sections/Editor.tsx",
-                    lineNumber: 49,
+                    lineNumber: 56,
                     columnNumber: 11
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/UI/sections/Editor.tsx",
-                lineNumber: 48,
+                lineNumber: 55,
                 columnNumber: 9
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/UI/sections/Editor.tsx",
-        lineNumber: 33,
+        lineNumber: 40,
         columnNumber: 7
     }, undefined);
 };
@@ -68084,6 +68083,7 @@ var _viewState = require("./UI/ViewState");
 function useViewRouting() {
     const view = (0, _viewState.useViewState)((s)=>s.view);
     const setView = (0, _viewState.useViewState)((s)=>s.setView);
+    // ! === LLM generated ===
     const VIEW_BY_PATH = {
         "/": "app",
         "/piece-library": "piece library",
@@ -68116,6 +68116,7 @@ function useViewRouting() {
     }, [
         view
     ]);
+    return view;
 }
 
   $parcel$ReactRefreshHelpers$eda7.postlude(module);

@@ -143,7 +143,7 @@ export interface State {
 
   // Load, save functionality
   serialize(): string;
-  deserialize(s:string): void;
+  deserialize(s:string): Partial<State>;
   clear(): void;
 
 }

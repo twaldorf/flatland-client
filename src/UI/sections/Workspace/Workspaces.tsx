@@ -13,16 +13,7 @@ interface WorkspaceProps {
 
 export const Workspaces = (props:WorkspaceProps) => {
   const { canvasRef, threeRef } = props;
-  useViewRouting();
-
-  const view = useViewState((s) => s.view);
-
-  // const ViewComponentMap: Record<ViewName, React.ReactNode> = {
-  //   "app": <Editor canvasRef={canvasRef} threeRef={threeRef} />,
-  //   "piece library": <PieceLibrary />,
-  //   "mark": <Mark />,
-  //   "browser": <Browser />,
-  // };
+  const view = useViewRouting();
 
   switch (view) {
     case 'piece library':

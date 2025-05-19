@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useViewState, ViewName } from "./UI/ViewState";
 
-export function useViewRouting() {
+export function useViewRouting():ViewName {
   const view    = useViewState((s) => s.view);
   const setView = useViewState((s) => s.setView);
+
+  // ! === LLM generated ===
 
   const VIEW_BY_PATH: Record<string, ViewName> = {
     "/":                "app",
@@ -39,4 +41,6 @@ export function useViewRouting() {
       window.history.pushState({}, "", desiredPath);
     }
   }, [view]);
+
+  return view;
 }

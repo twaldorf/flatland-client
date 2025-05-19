@@ -15,7 +15,14 @@ import { initCanvas, initScene, initUpdate } from "../../main";
 import { NewProjectCommand } from "../commands/NewProjectCommand";
 import { useAppState } from "../AppState";
 
-export const Editor = ({ canvasRef, threeRef }) => {
+interface EditorRefs {
+  canvasRef: RefObject<HTMLCanvasElement | null>;
+  threeRef: RefObject<HTMLCanvasElement | null>;
+}
+
+export const Editor = (props:EditorRefs) => {
+  
+  const { canvasRef, threeRef } = props;
 
   // Set up canvas refs and create new project
   useEffect(() => {
