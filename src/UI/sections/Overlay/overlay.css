@@ -16,3 +16,41 @@
   background-color: #569;
   cursor: pointer;
 }
+
+.expanded label {
+  font-size: small;
+  color: #aaa;
+}
+
+.expanded li {
+  font-size: small;
+  margin: 1rem 0;
+}
+
+.expanded li:first-of-type {
+  margin: .6rem 0;
+}
+
+.bubbled {
+  padding: .4rem;
+  margin: .4rem 0;
+  background-color: #569;
+  border-radius: .4rem;
+}
+
+.blister-button {
+  background-color: var(--label-bg);
+  transform: translate(0, 1rem);
+  padding: .3rem;
+  width: 2rem;
+  height: 2rem;
+  color: white;
+  border-radius: 50%;
+  margin-top: -1rem;
+}
+
+.bubbled input[type=number]::-webkit-inner-spin-button, .bubbled input[type=number]::-webkit-outer-spin-button 
+{
+   /* -webkit-appearance: none; */
+    background: #5a6a9a;
+}

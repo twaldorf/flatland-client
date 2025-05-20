@@ -2,6 +2,7 @@ import { Command } from "../../../Command";
 import { state } from "../../../State";
 import { Piece } from "../../../types";
 import { useAppState } from "../../../UI/AppState";
+import { usePiecesStore } from "../../../UI/PiecesStore";
 
 export class GenericLoadPieceCommand implements Command {
   private piece: Piece;
@@ -11,12 +12,12 @@ export class GenericLoadPieceCommand implements Command {
 
   do() {
     state.pieces.push(this.piece);
-    useAppState.getState().addPiece(this.piece);
+    usePiecesStore.getState().addPiece(this.piece);
   }
 
   undo() {
     state.pieces = state.pieces.filter((piece:Piece) => piece.id != this.piece.id);
-    useAppState.getState().removePiece(this.piece.id);
+    usePiecesStore.getState().removePiece(this.piece.id);
   }
 
 }

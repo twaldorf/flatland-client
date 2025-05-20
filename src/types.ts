@@ -210,6 +210,7 @@ export interface Piece {
   angle?: number; // Shown as Set or Unset, not the number
   description?: string; // Shown as a preview
   quantity?:number; // Shown
+  seamAllowance?:number; // Shown if not overriden by geometry
   seamAllowanceGeometryId?: string; // Hidden
   uiColor: "#134ecc"; // hidden
   interfaced: 0; // hidden

@@ -37,15 +37,6 @@ interface AppState {
   modal: ModalName;
   showModal: (modal: ModalName) => void;
   hideModal: () => void;
-
-  // Store all pieces associated with the project
-  // v1: Only pieces associated with the project are available
-  // v1.1: Pieces associated with other projects are also available
-  pieces: Piece[];
-  addPiece: (piece: Piece) => void;
-  removePiece: (pieceId: string) => void;
-  setPieces: (pieces: Piece[]) => void;
-  setPieceName: (pieceId: Piece["id"], newName: Piece["name"]) => void;
   
   // Manage the control panel (label) associated with a piece
   labelPiece: (labelPoint: Vector2, piece: Piece) => void;
@@ -92,32 +83,6 @@ export const useAppState = create<AppState>((set, get) => ({
   modal: null,
   showModal: (modal: ModalName) => set({ modal }),
   hideModal: () => set({ modal: null }),
-  
-  pieces: [],
-  addPiece: (piece:Piece) => {
-    set((state) => ({
-      pieces: [...state.pieces, piece],
-    }));
-  },
-  setPieces: (pieces:Piece[]) => {
-    set(() => ({
-      pieces: pieces,
-    }));
-  },
-  removePiece: (pieceId:string) => {
-    set((state) => {
-      state.pieces.splice(state.pieces.findIndex((p) => p.id === pieceId))[0];
-      return state
-    });
-  },
-
-  setPieceName: (pieceId: Piece["id"], newName: Piece["name"]) => {
-    set((state) => ({
-      pieces: state.pieces.map((piece) =>
-        piece.id === pieceId ? { ...piece, name: newName } : piece
-      ),
-    }));
-  },
 
   label: undefined,
 

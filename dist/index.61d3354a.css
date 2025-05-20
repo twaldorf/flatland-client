@@ -46,7 +46,6 @@
     --color-blue-700: oklch(48.8% .243 264.376);
     --color-gray-200: oklch(92.8% .006 264.531);
     --color-gray-300: oklch(87.2% .01 258.338);
-    --color-gray-400: oklch(70.7% .022 261.325);
     --color-gray-500: oklch(55.1% .027 264.364);
     --color-gray-600: oklch(44.6% .03 256.802);
     --color-gray-700: oklch(37.3% .034 259.733);
@@ -381,6 +380,14 @@
     z-index: 50;
   }
 
+  .col-span-1 {
+    grid-column: span 1 / span 1;
+  }
+
+  .col-span-2 {
+    grid-column: span 2 / span 2;
+  }
+
   .col-span-3 {
     grid-column: span 3 / span 3;
   }
@@ -417,6 +424,10 @@
         max-width: 96rem;
       }
     }
+  }
+
+  .m-2 {
+    margin: calc(var(--spacing) * 2);
   }
 
   .m-auto {
@@ -467,6 +478,10 @@
     margin-bottom: calc(var(--spacing) * 6);
   }
 
+  .ml-0 {
+    margin-left: calc(var(--spacing) * 0);
+  }
+
   .box-border {
     box-sizing: border-box;
   }
@@ -485,10 +500,6 @@
 
   .hidden {
     display: none;
-  }
-
-  .inline {
-    display: inline;
   }
 
   .inline-block {
@@ -543,6 +554,10 @@
     width: 25%;
   }
 
+  .w-2 {
+    width: calc(var(--spacing) * 2);
+  }
+
   .w-2\/10 {
     width: 20%;
   }
@@ -551,12 +566,20 @@
     width: 75%;
   }
 
+  .w-4 {
+    width: calc(var(--spacing) * 4);
+  }
+
   .w-8 {
     width: calc(var(--spacing) * 8);
   }
 
   .w-12 {
     width: calc(var(--spacing) * 12);
+  }
+
+  .w-24 {
+    width: calc(var(--spacing) * 24);
   }
 
   .w-32 {
@@ -603,6 +626,10 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
   .grid-cols-8 {
     grid-template-columns: repeat(8, minmax(0, 1fr));
   }
@@ -617,6 +644,10 @@
 
   .flex-nowrap {
     flex-wrap: nowrap;
+  }
+
+  .content-start {
+    align-content: flex-start;
   }
 
   .items-center {
@@ -971,10 +1002,6 @@
     color: var(--color-blue-500);
   }
 
-  .text-gray-400 {
-    color: var(--color-gray-400);
-  }
-
   .text-gray-500 {
     color: var(--color-gray-500);
   }
@@ -1171,6 +1198,10 @@
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
+}
+
+:root {
+  --label-bg: #1e2939;
 }
 
 @property --tw-rotate-x {
