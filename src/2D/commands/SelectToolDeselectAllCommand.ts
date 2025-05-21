@@ -1,5 +1,7 @@
 import { Command } from "../../Command";
 import { state } from "../../State";
+import { useAppState } from "../../UI/AppState";
+import { usePiecesStore } from "../../UI/PiecesStore";
 import { LineHit } from "../geometry/lineIntersection";
 import { drawCanvasFromState } from "../rendering/canvas";
 
@@ -18,6 +20,8 @@ export class SelectToolDeselectAllCommand implements Command {
     state.c_selectedPoints = [];
     state.c_selected_lines = [];
     state.c_selectedGeometries = [];
+    usePiecesStore.getState().setSelectedPiece('');
+    useAppState.getState().clearLabel();
     drawCanvasFromState(state);
   }
   

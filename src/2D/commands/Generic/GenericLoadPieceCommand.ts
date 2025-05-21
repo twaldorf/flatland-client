@@ -3,6 +3,7 @@ import { state } from "../../../State";
 import { Piece } from "../../../types";
 import { useAppState } from "../../../UI/AppState";
 import { usePiecesStore } from "../../../UI/PiecesStore";
+import { drawCanvasFromState } from "../../rendering/canvas";
 
 export class GenericLoadPieceCommand implements Command {
   private piece: Piece;
@@ -11,8 +12,9 @@ export class GenericLoadPieceCommand implements Command {
   }
 
   do() {
-    state.pieces.push(this.piece);
+    // state.pieces.push(this.piece);
     usePiecesStore.getState().addPiece(this.piece);
+    drawCanvasFromState(state);
   }
 
   undo() {

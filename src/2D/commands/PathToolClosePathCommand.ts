@@ -7,6 +7,8 @@ import { drawCanvasFromState } from "../rendering/canvas";
 import { generatePieceThumbnail } from "../rendering/drawPieceThumbnail";
 import { useAppState } from "../../UI/AppState";
 import { GenericLoadPieceCommand } from "./Generic/GenericLoadPieceCommand";
+import { DEFAULT_SEAM_ALLOWANCE } from "../../constants";
+import { usePiecesStore } from "../../UI/PiecesStore";
 
 
 export class PathToolClosePathCommand implements Command {
@@ -24,27 +26,29 @@ export class PathToolClosePathCommand implements Command {
     // Close the loop by repeating the first point
     geom.pointIds.push(geom.pointIds[0]);
     geom.type = "shape";
+    geom.id = this.geomId;
     state.c_geometryMap.set(this.geomId, geom);
 
     // Select the geometry
     state.c_selectedGeometries = [this.geomId];
-
+    
     // Register Piece
     const piece: Piece = {
       id: generateUUID(),
       name: `piece${state.pieces.length + 1}`,
-      geometryId: this.geomId,
+      geometryId: this.geomId.toString(),
       canvas: null!,
       thumb: null!,
       angle: 0,
+      seamAllowance: DEFAULT_SEAM_ALLOWANCE,
+      uiColor: '#fef9ef'
     };
-
+    
     // generate thumbnail (mutation) & register with UI store
     piece.canvas = generatePieceThumbnail(piece);
     this.pieceId = piece.id;
     pushCommand(new GenericLoadPieceCommand(piece));
 
-    drawCanvasFromState(state);
   }
 
   undo() {

@@ -1,16 +1,17 @@
 import { Vector2 } from "three";
 import { state } from "../../State";
+import { BezierPoint } from "../../types";
 
-export function computeCentroid(indices: number[]): Vector2 {
-  if (indices.length === 0) return new Vector2();
+export function computeCentroid(pointIds: string[]): Vector2 {
+  if (pointIds.length === 0) return new Vector2(0,0); // this should fail
 
   const centroid = new Vector2();
 
-  for (const index of indices) {
-    const point = state.c_points[index];
-    centroid.add(point);
+  for (const pointId of pointIds) {
+    const point = state.c_pointsMap.get(pointId) as BezierPoint;
+    centroid.add(point.to);
   }
 
-  centroid.divideScalar(indices.length);
+  centroid.divideScalar(pointIds.length);
   return centroid;
 }

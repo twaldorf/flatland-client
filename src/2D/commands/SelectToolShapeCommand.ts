@@ -6,6 +6,7 @@ import { Piece } from "../../types";
 import { useAppState } from "../../UI/AppState";
 import { getShapeBoundingRect, getShapeDimensions } from "../geometry/boundingBox";
 import { generateFloatingLabel } from "../hooks/generateFloatingLabel";
+import { usePiecesStore } from "../../UI/PiecesStore";
 
 export class SelectToolShapeCommand implements Command {
   private geomId: string;
@@ -17,10 +18,19 @@ export class SelectToolShapeCommand implements Command {
   }
 
   do() {
-    if (!state.c_selectedGeometries.some(id => id === this.geomId)) {
-      state.c_selectedGeometries.push(this.geomId);
-    }
-    generateFloatingLabel(this.geomId);
+    console.log(
+  "Store instance:", usePiecesStore, 
+  "State snapshot:", usePiecesStore.getState()
+);
+
+    state.c_selectedGeometries = [ this.geomId ];
+
+    console.log(Array.from(usePiecesStore.getState().pieces.values()))
+
+    const pieceId = Array.from(usePiecesStore.getState().pieces.values()).filter((piece) => piece.geometryId == this.geomId)[0].id;
+
+    usePiecesStore.getState().setSelectedPiece(pieceId);
+    useAppState.getState().labelPiece(pieceId);
   }
 
   undo() {

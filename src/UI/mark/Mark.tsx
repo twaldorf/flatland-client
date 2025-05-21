@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { PieceComponent } from "../inventory/Piece";
 import { useAppState } from "../AppState";
+import { usePiecesStore } from "../PiecesStore";
 
 const Mark: React.FC = () => {
-  const pieces = useAppState((s) => s.pieces);
+  const pieces = usePiecesStore((s) => s.pieces);
 
   const [fabricWidth, setFabricWidth] = useState<number>(0);
   const [fabricHeight, setFabricHeight] = useState<number>(0);
@@ -17,7 +18,7 @@ const Mark: React.FC = () => {
       {/* Pieces grid */}
         <div className="flex-1 h-1/2">
           <div className="grid grid-cols-8 gap-4">
-            {pieces.map((piece) => (
+            {Array.from(pieces.values()).map((piece) => (
               <PieceComponent
                 key={piece.id}
                 piece={piece}

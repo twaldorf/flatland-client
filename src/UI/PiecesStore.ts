@@ -5,27 +5,41 @@ import { Piece } from '../types';
 interface PiecesStore {
 
   pieces: Map<string, Piece>;
+  selectedPiece: string | undefined;
 
   addPiece: (piece: Piece) => void;
+  // getPiece: (pieceId: string) => Piece;
   setPieces: (pieces: Map<string, Piece>) => void;
   removePiece: (pieceId: string) => void;
   setPieceName: (pieceId: Piece["id"], newName: Piece["name"]) => void;
+  setSelectedPiece: (pieceId:string) => void;
+
+  updatePieceField: <K extends keyof Piece>(
+    pieceId: string,
+    field: K,
+    value: Piece[K]
+  ) => void
+
+  setPieceSeamAllowance: (pieceId: string, value:number) => void;
 
 }
 
 export const usePiecesStore = create<PiecesStore>((set, get) => ({
   
   pieces: new Map(),
+  selectedPiece: undefined,
 
   addPiece: (piece:Piece) => {
+    console.log(piece.geometryId);
       set((state) => ({
-        pieces: new Map(state.pieces).set(piece.id, piece),
+        pieces: new Map(state.pieces).set(piece.id, {...piece}),
       }));
     },
 
+    // Not used
     setPieces: (pieces:Map<string, Piece>) => {
       set(() => ({
-        pieces: pieces,
+        pieces: new Map(pieces),
       }));
     },
 
@@ -38,12 +52,38 @@ export const usePiecesStore = create<PiecesStore>((set, get) => ({
   
     setPieceName: (pieceId: string, newName: string) => {
       set((state) => {
-        const newPiece = state.pieces.get(pieceId);
-        
+        let newPiece = state.pieces.get(pieceId);
+
         if (!newPiece) return state;
 
-        newPiece.name = newName;
+        newPiece = {...newPiece, name: newName};
         return { pieces: new Map(state.pieces).set(pieceId, newPiece) };
       });
     },
+
+    setPieceSeamAllowance: (pieceId: string, value: number) => {
+      set((store) => {
+        console.log(pieceId, value)
+        const piece = store.pieces.get(pieceId);
+        if (piece) { piece.seamAllowance = value } else { return store };
+        return { pieces: new Map(store.pieces).set(pieceId, piece) };
+      })
+    },
+
+    setSelectedPiece: (pieceId: string) => {
+      set(() => ({
+        selectedPiece: pieceId
+      }))
+    },
+
+    updatePieceField: (pieceId, field, value) => {
+    set(state => {
+      const piece = state.pieces.get(pieceId)
+      if (!piece) return {}
+
+      const updated = { ...piece, [field]: value }
+      return { pieces: new Map(state.pieces).set(pieceId, updated) }
+    })
+  },
+
 }));

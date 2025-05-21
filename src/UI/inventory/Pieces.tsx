@@ -6,9 +6,11 @@ import { useAppState } from "../AppState";
 import { useViewState } from "../ViewState";
 import { usePiecesStore } from "../PiecesStore";
 
+// Pieces Tray fo ruse in editor
 export const Pieces = () => {
   const pieces = usePiecesStore((state) => state.pieces);
   const setView = useViewState((state) => state.setView);
+  
   function handleNav(e:unknown): void {
     e.preventDefault();
     setView('piece library');
@@ -16,13 +18,13 @@ export const Pieces = () => {
 
   return (
     <div className="rounded-lg bg-stone-200 min-h-24 bg-white p-2">
-      <h4>Pieces ({pieces.size})</h4>
-      <h4><a href="/piecelibrary" onClick={handleNav}>Piece Library</a></h4>
+      <h4>Pieces Tray ({pieces.size})</h4>
       <ul className="flex flex-row text-xs relative gap-2 overflow-auto">
         {Array.from(pieces.values()).map((piece) => (
           <PieceComponent key={piece.id} piece={piece} />
         ))}
       </ul>
+      <h4><a href="/piecelibrary" onClick={handleNav}>Go to pieces library</a></h4>
     </div>
   );
 };

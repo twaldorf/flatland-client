@@ -14,6 +14,7 @@ import { pushCommand } from "../../Command";
 import { initCanvas, initScene, initUpdate } from "../../main";
 import { NewProjectCommand } from "../commands/NewProjectCommand";
 import { useAppState } from "../AppState";
+import { usePiecesStore } from "../PiecesStore";
 
 interface EditorRefs {
   canvasRef: RefObject<HTMLCanvasElement | null>;
@@ -34,21 +35,25 @@ export const Editor = (props:EditorRefs) => {
     }
     // pushCommand(new NewProjectCommand({title: 'untitled', author: 'unknown'}));
     initUpdate();
-  }, [ useAppState(s => s.activeProjectTitle)] );
+  }, [ useAppState(s => s.activeProjectTitle) ] );
+
+  const label = useAppState(s => s.label);
 
   return (
       <div className="grid grid-cols-4 flex-1 overflow-hidden h-[88vh]">
         {/* Left column */}
         <section className="wrelative flex flex-col bg-white p-3 overflow-hidden col-span-3">
           <Toolbar />
+          { label && label != '' &&
+            <Label pieceId={label}/>
+          }
           {/* <CursorInfo /> */}
           <ShapeInfo />
-          <Label />
           <canvas
             ref={canvasRef}
             id="canvas2d"
             className="flex-1 w-full h-full rounded-md"
-          ></canvas>
+            ></canvas>
         </section>
 
         {/* Right column */}

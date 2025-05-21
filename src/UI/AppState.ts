@@ -8,7 +8,7 @@ import { GenericUpdatePointCommand } from '../2D/commands/Generic/GenericUpdateP
 
 interface Label {
   point: Vector2;
-  piece: Piece;
+  pieceId: string;
 }
 
 type ModalName = null | "Edit Project Info" | "New Project" | "Open Project" | "Save As Project";
@@ -39,11 +39,11 @@ interface AppState {
   hideModal: () => void;
   
   // Manage the control panel (label) associated with a piece
-  labelPiece: (labelPoint: Vector2, piece: Piece) => void;
+  labelPiece: (pieceId: string) => void;
   clearLabel: () => void;
   expandLabel: () => void;
   minimizeLabel: () => void;
-  label: Label | undefined;
+  label: string; // PieceID
   expandedLabel: boolean;
   
   // Store the current pointer position within the 2D canvas
@@ -84,11 +84,18 @@ export const useAppState = create<AppState>((set, get) => ({
   showModal: (modal: ModalName) => set({ modal }),
   hideModal: () => set({ modal: null }),
 
-  label: undefined,
+  // label: { point: new Vector2(0,0), pieceId: '' },
+  label: '',
 
-  labelPiece: (labelPoint: Vector2, piece: Piece) => {
+  // labelPiece: (labelPoint: Vector2, pieceId: string) => {
+  //   set((state) => ({
+  //     label: { point: labelPoint, pieceId: pieceId }
+  //   }))
+  // },
+
+  labelPiece: (pieceId: string) => {
     set((state) => ({
-      label: { point: labelPoint, piece: piece }
+      label: pieceId
     }))
   },
 

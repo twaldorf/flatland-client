@@ -47,10 +47,8 @@
     --color-gray-200: oklch(92.8% .006 264.531);
     --color-gray-300: oklch(87.2% .01 258.338);
     --color-gray-500: oklch(55.1% .027 264.364);
-    --color-gray-600: oklch(44.6% .03 256.802);
     --color-gray-700: oklch(37.3% .034 259.733);
     --color-gray-800: oklch(27.8% .033 256.848);
-    --color-gray-900: oklch(21% .034 264.665);
     --color-stone-100: oklch(97% .001 106.424);
     --color-stone-200: oklch(92.3% .003 48.717);
     --color-stone-300: oklch(86.9% .005 56.366);
@@ -352,6 +350,26 @@
     inset: calc(var(--spacing) * 0);
   }
 
+  .top-12 {
+    top: calc(var(--spacing) * 12);
+  }
+
+  .top-24 {
+    top: calc(var(--spacing) * 24);
+  }
+
+  .top-36 {
+    top: calc(var(--spacing) * 36);
+  }
+
+  .top-47 {
+    top: calc(var(--spacing) * 47);
+  }
+
+  .top-48 {
+    top: calc(var(--spacing) * 48);
+  }
+
   .top-full {
     top: 100%;
   }
@@ -522,10 +540,6 @@
     height: 88vh;
   }
 
-  .h-auto {
-    height: auto;
-  }
-
   .h-full {
     height: 100%;
   }
@@ -554,20 +568,12 @@
     width: 25%;
   }
 
-  .w-2 {
-    width: calc(var(--spacing) * 2);
-  }
-
   .w-2\/10 {
     width: 20%;
   }
 
   .w-3\/4 {
     width: 75%;
-  }
-
-  .w-4 {
-    width: calc(var(--spacing) * 4);
   }
 
   .w-8 {
@@ -588,6 +594,14 @@
 
   .w-40 {
     width: calc(var(--spacing) * 40);
+  }
+
+  .w-72 {
+    width: calc(var(--spacing) * 72);
+  }
+
+  .w-128 {
+    width: calc(var(--spacing) * 128);
   }
 
   .w-full {
@@ -708,12 +722,6 @@
       margin-inline-start: calc(calc(var(--spacing) * 4) * var(--tw-space-x-reverse));
       margin-inline-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-x-reverse)));
     }
-  }
-
-  .truncate {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
   }
 
   .overflow-auto {
@@ -841,10 +849,6 @@
     background-color: var(--color-blue-400);
   }
 
-  .bg-blue-500 {
-    background-color: var(--color-blue-500);
-  }
-
   .bg-blue-600 {
     background-color: var(--color-blue-600);
   }
@@ -879,10 +883,6 @@
 
   .bg-white {
     background-color: var(--color-white);
-  }
-
-  .object-cover {
-    object-fit: cover;
   }
 
   .p-1 {
@@ -1004,18 +1004,6 @@
 
   .text-gray-500 {
     color: var(--color-gray-500);
-  }
-
-  .text-gray-600 {
-    color: var(--color-gray-600);
-  }
-
-  .text-gray-700 {
-    color: var(--color-gray-700);
-  }
-
-  .text-gray-900 {
-    color: var(--color-gray-900);
   }
 
   .text-stone-800 {

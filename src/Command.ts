@@ -25,7 +25,6 @@ export function executeCommands() {
 export function undoCommands() {
   const cmd = queue.popHistory();
   if (cmd) {
-    console.log(cmd)
     cmd.undo();
   }
 }

@@ -3,12 +3,13 @@ import { drawPieceThumbnail } from "../../2D/rendering/drawPieceThumbnail";
 import { Piece } from "../../types";
 import { CiEdit } from "react-icons/ci";
 import { useAppState } from "../AppState";
+import { usePiecesStore } from "../PiecesStore";
 
 
 export const PieceComponent = ({ piece }: { piece: Piece }) => {
   const thumbnailRef = useRef<HTMLCanvasElement>(null);
   const [ editing, setEditing ] = useState(false);
-  const setPieceName = useAppState((state) => state.setPieceName);
+  const setPieceName = usePiecesStore((state) => state.setPieceName);
 
   const onSave = (newName: string) => {
     setPieceName(piece.id, newName);
@@ -57,14 +58,11 @@ const EditPieceNameAttr = ({ piece, onSave }) => {
     if (e.key === "Enter") {
       onSave(newName);
     }
+
+    // this looks stupid to me
     if (e.key === "Backspace" || e.key === "Delete") {
       setNewName(e.target.value.slice(0, -1));
-      // e.target.value = e.
     }
-  };
-
-  const handleBlur = () => {
-    onSave(newName);
   };
   
   return (
@@ -74,7 +72,7 @@ const EditPieceNameAttr = ({ piece, onSave }) => {
       value={newName}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
-      onBlur={handleBlur}
+      onBlur={() => onSave(newName)}
       className="w-full"
     />
   )

@@ -8,6 +8,7 @@ import { drawPolygonFromOffsetPointIndices, drawPolygonFromPointIndices } from "
 import { getBuffer } from "./getBuffer";
 import { getPointArray } from "../geometry/getPointArrayFromGeometry2D";
 import { setGrayFill } from "./utils/styleUtils";
+import { usePiecesStore } from "../../UI/PiecesStore";
 
 
 //— helpers —//
@@ -87,8 +88,6 @@ export function drawPolygonFromPointIds(
       ctx.lineTo(p.x, p.y);
     }
   }
-
-  setGrayFill(ctx);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
@@ -131,10 +130,22 @@ export const drawPaths = (st: State) => {
   }
 
   // 2) draw all closed shapes (and their grainlines)
+  // Get pieces for colored paper fills
+  const pieces = Array.from(usePiecesStore.getState().pieces.values());
+
   for (const geom of st.c_geometryMap.values()) {
     if (geom.type === "shape") {
+
       // outline + fill
+      const color = pieces.filter((piece) => piece.geometryId == geom.id)[0]?.uiColor;
+      console.log(pieces.filter((piece) => console.log(piece.geometryId, geom.id)))
+      if (color) {
+        bufferCtx.fillStyle = color;
+      } else {
+        setGrayFill(bufferCtx);
+      }
       drawPolygonFromPointIds(geom.pointIds, bufferCtx);
+
       // grain overlay
       drawGrainOnShape(geom.id, bufferCtx);
     }

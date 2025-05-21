@@ -22,5 +22,6 @@ export const generateFloatingLabel = (geomId:string):void => {
 
   if (!piece) return;
   
-  useAppState.getState().labelPiece(labelPoint, piece);
+  useAppState.getState().labelPiece(pieceId);
+  
 }

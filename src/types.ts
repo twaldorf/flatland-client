@@ -212,7 +212,7 @@ export interface Piece {
   quantity?:number; // Shown
   seamAllowance?:number; // Shown if not overriden by geometry
   seamAllowanceGeometryId?: string; // Hidden
-  uiColor: "#134ecc"; // hidden
+  uiColor?: string; // hidden
   interfaced: 0; // hidden
   area?: number; // Shown only if present
 }

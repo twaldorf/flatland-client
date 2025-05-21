@@ -6,18 +6,12 @@ import { cLocalizePoint } from "../pointer/cLocalizePoint";
 import { SelectToolShapeCommand } from "../commands/SelectToolShapeCommand";
 import { isPointInPolygon } from "../geometry/isPointInPolygon";
 import { SelectToolMoveShapeCommand } from "../commands/SelectToolMoveShapeCommand"
-import { checkPointOverlap } from "./common";
 import { SelectToolPointCommand } from "../commands/SelectToolPointCommand";
 import { SelectToolDeselectAllCommand } from "../commands/SelectToolDeselectAllCommand";
 import { drawCanvasFromState, point, redrawCanvas } from "../rendering/canvas";
-import { drawShapeSelectionMovePreview } from "../rendering/drawSelectionMovePreview";
 
 import { KeyboardEvent } from "react";
-import { DeleteGeometriesCommand, DeleteShapeCommand } from "../commands/DeleteGeometriesCommand";
-import { checkLineIntersection, LineHit } from "../geometry/lineIntersection";
-import { SelectToolSelectLineCommand } from "../commands/SelectToolSelectLineCommand";
-import { SelectToolAddShapeCommand } from "../commands/SelectToolAddShapeCommand";
-import { SelectToolDeselectLinesCommand } from "../commands/SelectToolDeselectLinesCommand";
+import { DeleteGeometriesCommand } from "../commands/DeleteGeometriesCommand";
 import { DrawPreviewsCommand } from "../commands/Rendering/DrawPreviewsCommand";
 import { findNearestAnyPoint, findNearestGeometryPoint } from "../geometry/findNearestPoint";
 import { isPointNearBezierGeometry } from "../geometry/bezierIntersection";

@@ -2,25 +2,55 @@ import { CiCircleChevDown, CiCircleChevUp, CiCircleRemove, CiCompass1, CiEdit, C
 import { useAppState } from "../../AppState";
 import { ChangeToolCommand } from "../../../2D/commands/ChangeToolCommand";
 import { pushCommand } from "../../../Command";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import "./overlay.css";
-import { CirclePicker } from 'react-color';
+import { CirclePicker, Color } from 'react-color';
 import { DEFAULT_SEAM_ALLOWANCE } from "../../../constants";
 import { NumericAdjuster } from "../../modulators/NumericAdjuster";
 import { PieceTitle } from "./Label/PieceTitle";
+import { usePiecesStore } from "../../PiecesStore";
+import { BezierPoint, Piece } from "../../../types";
+import { state } from "../../../State";
+import { computeCentroid } from "../../../2D/geometry/centroid";
+import { Vector2 } from "three";
+import { drawCanvasFromState } from "../../../2D/rendering/canvas";
 
+interface LabelProps {
+  pieceId:string;
+}
 
 // Individual piece properties detail view
-const Label = () => {
-  const label = useAppState((state) => state.label);
+const Label = ( { pieceId }:LabelProps ) => {
   const clearLabel = useAppState((state) => state.clearLabel);
   const expanded = useAppState((state) => state.expandedLabel);
   const expandLabel = useAppState((state) => state.expandLabel);
   const minimizeLabel = useAppState((state) => state.minimizeLabel);
+  
+  const piece = usePiecesStore(s => s.pieces).get(pieceId);
 
+  const setPieceSeamAllowance = (value:number) => {
+    if (piece) {
+      piece.seamAllowance = value;
+      usePiecesStore.setState((prev) => ({
+        pieces: new Map(prev.pieces).set(pieceId, piece)
+      }))
+    }
+  }
+  
   const grainlineRef = useRef(null);
   const labelRef = useRef(null);
 
+  let point = new Vector2(0,0)// computeCentroid(state.c_geometryMap.get(piece.geometryId).pointIds).sub(new Vector2(500, 0)); // Todo make this change
+  
+  if (!piece) {
+    return null;
+  }
+
+  const pickColor = (color) => {
+    usePiecesStore.getState().updatePieceField(piece.id, "uiColor", color.hex);
+    drawCanvasFromState(state);
+  }
+  
   const handleGrainlineClick = () => {
     pushCommand(new ChangeToolCommand('grainline'));
   }
@@ -29,18 +59,14 @@ const Label = () => {
     pushCommand(new ChangeToolCommand('seam allowance'));
   }
 
-  if (!label) return null; // Don't render if there's no label
-
-  const { point, piece } = label;
-
   return (
     <div
-      className="absolute gap-2 bg-gray-800 text-white px-3 py-2 rounded-xl shadow-md"
+      className="absolute top-47 w-128 gap-2 bg-gray-800 text-white px-3 py-2 rounded-md shadow-md"
       ref={labelRef}
       style={{
-        left: `${Math.max(12, point.x / 2)}px`,
-        top: `${Math.max(0, point.y / 2)}px`,
-        transform: "translate(0, -70%)", // Centers above the point
+        // left: `${Math.max(12, point.x / 2)}px`,
+        // top: `${Math.max(0, point.y / 2)}px`,
+        // transform: "translate(0, -70%)", // Centers above the point
       }}
     >
       <div className="flex flex-row content-start items-center justify-between text-sm gap-2">
@@ -50,10 +76,12 @@ const Label = () => {
           <PieceTitle piece={piece} />
 
         </div>
-          <h4 className="h-min mx-2">Cut <span className="bubbled">x <NumericAdjuster dir={"ltr"} default={piece.quantity ? piece.quantity : 1} step={1} width={2}/></span></h4>
+          <h4 className="h-min mx-2">Cut <span className="bubbled">x <NumericAdjuster dir={"ltr"} value={piece.quantity ? piece.quantity : 1} step={1} width={2}/></span></h4>
         
 
         <ul className="actionButtons">
+          {// TODO: implement commands for all of these
+          }
           <button>Stash</button>
           <button>Clone</button>
           <button>Copy</button>
@@ -69,7 +97,7 @@ const Label = () => {
 
       </div>
 
-      { expanded &&
+      { expanded && 
       <div className="grid grid-cols-5 mt-4 expanded gap-2">
 
         <div className="properties col-span-2">
@@ -79,15 +107,16 @@ const Label = () => {
             <li>
               <span className="bubbled">
                 <NumericAdjuster 
-                  default={ piece.seamAllowance ? piece.seamAllowance : DEFAULT_SEAM_ALLOWANCE } 
-                  step={.05}/>
+                  value={ piece.seamAllowance ? piece.seamAllowance : DEFAULT_SEAM_ALLOWANCE } 
+                  step={ .05 }
+                  onChange={ (value:number) => setPieceSeamAllowance(value) }/>
                 "</span> seam allowance
             </li>
 
             <li>
               <span className="bubbled">
               <NumericAdjuster 
-                default={piece.interfaced ? piece.interfaced : 0} 
+                value={piece.interfaced ? piece.interfaced : 0} 
                 step={1}/>
               x</span> interfaced
             </li>
@@ -123,9 +152,13 @@ const Label = () => {
           <label htmlFor="uiprefs">Paper color</label>
           <ul id="uiprefs">
             <li>
-              <CirclePicker colors={[
-                "#fe6d73", "#fef9ef", "#ffcb77", "#17c3b2"
-              ]} width={"86px"}/>
+              <CirclePicker 
+                colors={[
+                  "#fe6d73", "#fef9ef", "#ffcb77", "#17c3b2"
+                ]} 
+                width={"86px"}
+                onChangeComplete={pickColor}
+                />
             </li>
           </ul>
         </div>
