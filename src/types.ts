@@ -236,3 +236,17 @@ export interface BezierPoint {
   c1: Vector2;
   c2: Vector2;
 }
+
+export interface Layout {
+  id: string;
+  fabric: string;
+  width: number;
+  length: number;
+  selvedgeEdge: 0 | 1 | 2 | 3 | 4;
+}
+
+export interface Marker {
+  id: string;
+  layoutId: string;
+  pieceIds: string[];
+}

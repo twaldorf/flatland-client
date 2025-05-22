@@ -53,7 +53,9 @@ function drawArrayOfPointIds(
 
 export function drawPolygonFromPointIds(
   ids: string[],
-  ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D,
+  dx:number=0,
+  dy:number=0
 ) {
   if (ids.length < 2) return;
 
@@ -68,24 +70,24 @@ export function drawPolygonFromPointIds(
     ids.forEach((pid, i) => {
       const bp = state.c_pointsMap.get(pid) as BezierPoint;
       if (i === 0) {
-        ctx.moveTo(bp.from.x, bp.from.y);
+        ctx.moveTo(bp.from.x + dx, bp.from.y + dy);
       } else {
         const prev = state.c_pointsMap.get(ids[i - 1]) as BezierPoint;
         ctx.bezierCurveTo(
-          prev.c1.x, prev.c1.y,
-          bp.c2.x,   bp.c2.y,
-          bp.to.x,   bp.to.y
+          prev.c1.x + dx, prev.c1.y + dy,
+          bp.c2.x + dx,   bp.c2.y + dy,
+          bp.to.x + dx,   bp.to.y + dy
         );
       }
     });
   } else {
     // ─────── Straight‐line loop ───────
     const p0 = first as Vector2;
-    ctx.moveTo(p0.x, p0.y);
+    ctx.moveTo(p0.x + dx, p0.y + dy);
     for (let i = 1; i < ids.length; i++) {
       const p = state.c_pointsMap.get(ids[i]) as Vector2;
       if (!p) throw new Error(`Unknown point ID ${ids[i]}`);
-      ctx.lineTo(p.x, p.y);
+      ctx.lineTo(p.x + dx, p.y + dy);
     }
   }
   ctx.closePath();
@@ -95,22 +97,13 @@ export function drawPolygonFromPointIds(
 
 /** same as above but offset all points by (dx,dy) */
 function drawPolygonFromOffsetPointIds(
-  ids: string[],
+  pointIds: string[],
   dx: number,
   dy: number,
   ctx: CanvasRenderingContext2D
 ) {
-  if (ids.length < 2) return;
-  const first = getCoord(ids[0]);
-  ctx.beginPath();
-  ctx.moveTo(first.x + dx, first.y + dy);
-  for (let i = 1; i < ids.length; i++) {
-    const p = getCoord(ids[i]);
-    ctx.lineTo(p.x + dx, p.y + dy);
-  }
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  if (pointIds.length < 2) return;
+  drawPolygonFromPointIds(pointIds, ctx, dx, dy);
 }
 
 //— refactored drawing —//
@@ -173,12 +166,13 @@ export function drawShape(
 /** draw a shape—but normalized so its top‐left is at (0,0) */
 export function drawShapeNormalized(
   geomId:string,
-  ctx: CanvasRenderingContext2D
+  ctx: OffscreenCanvasRenderingContext2D
 ) {
   const pointArray = getPointArray(geomId);
   if (pointArray) {
     const { x0, y0 } = getGeometryBoundingRect(  pointArray );
-    // drawPolygonFromOffsetPointIds( pointArray, -x0, -y0, ctx);
+    ctx.fillStyle = '#000000'
+    drawPolygonFromOffsetPointIds( state.c_geometryMap.get(geomId)!.pointIds, -x0, -y0 + 50, ctx);
   }
 }
 

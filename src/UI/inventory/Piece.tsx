@@ -18,7 +18,7 @@ export const PieceComponent = ({ piece }: { piece: Piece }) => {
 
   useEffect(() => {
     if (thumbnailRef.current) {
-      // drawPieceThumbnail(piece, thumbnailRef.current);
+      drawPieceThumbnail(piece, thumbnailRef.current);
     }
   }, [ piece ]);
 
@@ -29,7 +29,7 @@ export const PieceComponent = ({ piece }: { piece: Piece }) => {
 
   return (
     <li className="my-auto w-full">
-      <canvas className="max-h-18 border border-stone-400 w-full" ref={thumbnailRef}></canvas>
+      <canvas className="max-h-18 w-full" ref={thumbnailRef}></canvas>
       <div className="flex-row flex justify-center items-center">
         <span className="mr-1">{ piece.quantity ? `${piece.quantity}x` : ''} </span>
         <span>
