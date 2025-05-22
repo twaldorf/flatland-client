@@ -35,7 +35,7 @@ export class PathToolClosePathCommand implements Command {
     // Register Piece
     const piece: Piece = {
       id: generateUUID(),
-      name: `piece${state.pieces.length + 1}`,
+      name: `piece${usePiecesStore.getState().pieces.size + 1}`,
       geometryId: this.geomId.toString(),
       canvas: null!,
       thumb: null!,

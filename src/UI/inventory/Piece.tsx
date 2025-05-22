@@ -31,9 +31,12 @@ export const PieceComponent = ({ piece }: { piece: Piece }) => {
     <li className="my-auto max-w-24">
       <canvas className="max-h-12 border border-stone-400" ref={thumbnailRef}></canvas>
       <div className="flex-row flex justify-center items-center">
+        <span className="mr-1">{ piece.quantity ? `${piece.quantity}x` : ''} </span>
+        <span>
         { editing && <EditPieceNameAttr piece={ piece } onSave={onSave} />}
         { !editing && piece.name}
         { !editing && <CiEdit onClick={handleClick} /> }
+        </span>
       </div>
     </li>
   );
@@ -59,7 +62,7 @@ const EditPieceNameAttr = ({ piece, onSave }) => {
       onSave(newName);
     }
 
-    // this looks stupid to me
+    // this looks stupid in retrospect
     if (e.key === "Backspace" || e.key === "Delete") {
       setNewName(e.target.value.slice(0, -1));
     }

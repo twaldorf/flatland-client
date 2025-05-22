@@ -134,7 +134,7 @@ export const drawPaths = (st: State) => {
   const pieces = Array.from(usePiecesStore.getState().pieces.values());
 
   for (const geom of st.c_geometryMap.values()) {
-    if (geom.type === "shape") {
+    if (geom.type === "shape" && !geom.hidden) {
 
       // outline + fill
       const color = pieces.filter((piece) => piece.geometryId == geom.id)[0]?.uiColor;

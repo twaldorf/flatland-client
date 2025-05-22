@@ -77,13 +77,13 @@ export const usePiecesStore = create<PiecesStore>((set, get) => ({
     },
 
     updatePieceField: (pieceId, field, value) => {
-    set(state => {
-      const piece = state.pieces.get(pieceId)
-      if (!piece) return {}
+      set(state => {
+        const piece = state.pieces.get(pieceId)
+        if (!piece) return {}
 
-      const updated = { ...piece, [field]: value }
-      return { pieces: new Map(state.pieces).set(pieceId, updated) }
-    })
-  },
+        const updated = { ...piece, [field]: value }
+        return { pieces: new Map(state.pieces).set(pieceId, updated) }
+      })
+    },
 
 }));

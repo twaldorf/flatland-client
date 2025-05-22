@@ -61,7 +61,7 @@ const Label = ( { pieceId }:LabelProps ) => {
 
   return (
     <div
-      className="absolute top-47 w-128 gap-2 bg-gray-800 text-white px-3 py-2 rounded-md shadow-md"
+      className="absolute top-50 left-60 w-160 gap-2 bg-gray-800 text-white px-3 py-2 rounded-md shadow-md"
       ref={labelRef}
       style={{
         // left: `${Math.max(12, point.x / 2)}px`,
@@ -76,13 +76,18 @@ const Label = ( { pieceId }:LabelProps ) => {
           <PieceTitle piece={piece} />
 
         </div>
-          <h4 className="h-min mx-2">Cut <span className="bubbled">x <NumericAdjuster dir={"ltr"} value={piece.quantity ? piece.quantity : 1} step={1} width={2}/></span></h4>
+          <h4 className="h-min mx-2">Cut <span className="bubbled">x <NumericAdjuster dir={"ltr"} value={piece.quantity ? piece.quantity : 0} step={1} width={2} onChange={(v:number) => usePiecesStore.getState().updatePieceField(piece.id, "quantity", v)}/></span></h4>
         
 
         <ul className="actionButtons">
           {// TODO: implement commands for all of these
           }
-          <button>Stash</button>
+          <button 
+          onClick={() => {
+            state.geometryMap.set(piece.geometryId, state.c_geometryMap.get(piece.geometryId)! );
+            state.c_geometryMap.delete(piece.geometryId); // TODO commandify
+            }}>
+            Stash</button>
           <button>Clone</button>
           <button>Copy</button>
           <button>Trash</button>
@@ -117,7 +122,9 @@ const Label = ( { pieceId }:LabelProps ) => {
               <span className="bubbled">
               <NumericAdjuster 
                 value={piece.interfaced ? piece.interfaced : 0} 
-                step={1}/>
+                step={1}
+                onChange={(v:number) => usePiecesStore.getState().updatePieceField(piece.id, "interfaced", v)}
+                />
               x</span> interfaced
             </li>
 

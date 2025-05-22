@@ -67,6 +67,7 @@ export const state:State = {
 
   c_pointsMap: new Map(),
   c_geometryMap: new Map(),
+  geometryMap: new Map(),
 
   c_paths: [],
   c_selectedPoints: [],

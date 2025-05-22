@@ -89,8 +89,10 @@ export interface State {
   c_pointsMap: Map<string, Point>;
   addGeometryPoint: (v: Vector2 | BezierPoint) => string;
 
-  // Map of all geometries
+  // Map of all geometries active on the canvas
   c_geometryMap: Map<string, Geometry2D>,
+  // Map of inactive geometries
+  geometryMap: Map<string, Geometry2D>,
 
   // 2D Array of all paths composed by the indices of each path member vertices
   // DEPRECATED
@@ -152,6 +154,7 @@ export interface Geometry2D {
   type: string,
   id: string,
   pointIds: string[],
+  hidden?: boolean,
 }
 
 export type Point = BezierPoint | Vector2;
@@ -213,7 +216,7 @@ export interface Piece {
   seamAllowance?:number; // Shown if not overriden by geometry
   seamAllowanceGeometryId?: string; // Hidden
   uiColor?: string; // hidden
-  interfaced: 0; // hidden
+  interfaced?: number; // hidden
   area?: number; // Shown only if present
 }
 
