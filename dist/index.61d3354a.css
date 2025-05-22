@@ -608,6 +608,10 @@
     max-height: calc(var(--spacing) * 12);
   }
 
+  .max-h-18 {
+    max-height: calc(var(--spacing) * 18);
+  }
+
   .max-h-62 {
     max-height: calc(var(--spacing) * 62);
   }
@@ -696,6 +700,10 @@
     list-style-type: none;
   }
 
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -718,6 +726,10 @@
 
   .flex-nowrap {
     flex-wrap: nowrap;
+  }
+
+  .flex-wrap {
+    flex-wrap: wrap;
   }
 
   .content-start {

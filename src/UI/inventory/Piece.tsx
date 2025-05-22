@@ -28,8 +28,8 @@ export const PieceComponent = ({ piece }: { piece: Piece }) => {
   }
 
   return (
-    <li className="my-auto max-w-24">
-      <canvas className="max-h-12 border border-stone-400" ref={thumbnailRef}></canvas>
+    <li className="my-auto w-full">
+      <canvas className="max-h-18 border border-stone-400 w-full" ref={thumbnailRef}></canvas>
       <div className="flex-row flex justify-center items-center">
         <span className="mr-1">{ piece.quantity ? `${piece.quantity}x` : ''} </span>
         <span>

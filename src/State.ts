@@ -15,7 +15,7 @@ export function genGeoId() {
 }
 
 export const state:State = {
-  version: 0.12,
+  version: 0.13,
   pointer: new Vector2,
   shiftDown: false,
   altDown: false,
