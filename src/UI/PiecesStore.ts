@@ -30,16 +30,14 @@ export const usePiecesStore = create<PiecesStore>((set, get) => ({
   selectedPiece: undefined,
 
   addPiece: (piece:Piece) => {
-    console.log(piece.geometryId);
       set((state) => ({
         pieces: new Map(state.pieces).set(piece.id, {...piece}),
       }));
     },
 
-    // Not used
-    setPieces: (pieces:Map<string, Piece>) => {
+    setPieces: (pieces: Map<string, Piece>) => {
       set(() => ({
-        pieces: new Map(pieces),
+        pieces: new Map(pieces)
       }));
     },
 

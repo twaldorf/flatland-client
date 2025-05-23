@@ -11,6 +11,8 @@ const Mark: React.FC = () => {
   const [layoutLength, setLayoutLength] = useState<number>(0);
   const [safetyMargin, setSafetyMargin] = useState<number>(0);
 
+  
+
   return (
     <div className="p-4 flex flex-col h-full">
       <h2 className="text-xl font-semibold mb-4">Layout Fabric & Pieces</h2>

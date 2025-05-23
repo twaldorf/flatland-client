@@ -42,8 +42,22 @@ export const restoreGeometryMap = (arr:Array<[string, { type: string; pointIds: 
   return map;
 }
 
-// export function
+type FlatPiece = Omit<Piece, "thumb" | "canvas">;
 
-// export function restorePieceMap(arr:[ string, object:Piece ]):Map<string, Piece> {
+export const flattenPiecesMap = (map: Map<string, Piece>): Record<string, FlatPiece> => {
+  const flat: Record<string, FlatPiece> = {};
+  map.forEach((piece, id) => {
+    const { thumb, canvas, ...serializable } = piece;
+    flat[id] = serializable;
+  });
+  return flat;
+};
 
-// }
+export const restorePiecesMap = (flat: Record<string, FlatPiece>): Map<string, Piece> => {
+  const map = new Map<string, Piece>();
+  for (const [id, piece] of Object.entries(flat)) {
+    map.set(id, { ...piece, id }); // thumb and canvas are undefined by default
+  }
+  console.log(map)
+  return map;
+};

@@ -131,7 +131,6 @@ export const drawPaths = (st: State) => {
 
       // outline + fill
       const color = pieces.filter((piece) => piece.geometryId == geom.id)[0]?.uiColor;
-      console.log(pieces.filter((piece) => console.log(piece.geometryId, geom.id)))
       if (color) {
         bufferCtx.fillStyle = color;
       } else {

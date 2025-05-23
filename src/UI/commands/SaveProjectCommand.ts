@@ -1,5 +1,6 @@
 import { Command } from "../../Command"
 import { state } from "../../State"
+import { usePiecesStore } from "../PiecesStore";
 
 export class SaveProjectCommand implements Command {
   private readonly key: string;
@@ -10,6 +11,7 @@ export class SaveProjectCommand implements Command {
   }
 
   do() {
+    state.pieces = usePiecesStore.getState().pieces;
     const json = state.serialize();
     localStorage.setItem(this.key, json);
     const projects = localStorage.getItem('flatland-projects');
@@ -22,7 +24,6 @@ export class SaveProjectCommand implements Command {
     } else {
       localStorage.setItem('flatland-projects', JSON.stringify([this.key]));
     }
-    console.log('saved item to ', this.key);
   }
 
   undo() {

@@ -15,9 +15,10 @@ export const PieceLibrary = () => {
   const storedPieces = storage.loadPiecesFromLibrary();
   const pieces = usePiecesStore((s) => s.pieces);
   const addPieceToMarker = useMarkerStore((s) => s.addPieceToMarker);
+  const removePieceFromMarker = useMarkerStore(s => s.removePieceFromMarker);
 
-  const onSelected = (pieceId:string) => {
-    addPieceToMarker(pieceId);
+  const onSelected = (v:boolean, pieceId:string) => {
+    v ? addPieceToMarker(pieceId) : removePieceFromMarker(pieceId);
   }
   
   return (
@@ -27,9 +28,9 @@ export const PieceLibrary = () => {
       <div className="grid grid-cols-8 flex-1 overflow-hidden">
         {pieces.size > 0 && Array.from(pieces.values()).map((piece:Piece) => {
           return <LibraryPieceComponent
-            piece={piece} 
-            selected={false} 
-            onSelect={() => onSelected(piece.id)}
+            piece={piece}
+            key={piece.id}
+            onSelect={(v:boolean) => onSelected(v, piece.id)}
           />
           })}
 

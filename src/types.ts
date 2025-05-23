@@ -23,7 +23,7 @@ export interface State {
   projectInfo: ProjectInfo;
 
   // Collection of pieces
-  pieces: Piece[];
+  pieces: Map<string, Piece>;
 
   // ## State shared between editor and canvas
   pointerDown: boolean;
@@ -237,16 +237,11 @@ export interface BezierPoint {
   c2: Vector2;
 }
 
-export interface Layout {
+export interface Marker {
   id: string;
+  pieceIds: string[];
   fabric: string;
   width: number;
   length: number;
-  selvedgeEdge: 0 | 1 | 2 | 3 | 4;
-}
-
-export interface Marker {
-  id: string;
-  layoutId: string;
-  pieceIds: string[];
+  selvedge: 0 | 1 | 2 | 3 | 4;
 }

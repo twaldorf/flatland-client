@@ -3,7 +3,7 @@ import { BezierPoint, BufferBundle, BufferType, State } from "./types";
 import { PathTool } from "./2D/tools/PathTool";
 import { Command } from "./Command";
 import { generateUUID } from "three/src/math/MathUtils";
-import { flattenGeometryMap, flattenPointsMap, restoreGeometryMap, restorePointsMap } from "./utils/saveutils";
+import { flattenGeometryMap, flattenPiecesMap, flattenPointsMap, restoreGeometryMap, restorePiecesMap, restorePointsMap } from "./utils/saveutils";
 import { SelectTool } from "./2D/tools/SelectTool";
 import { BASE_PROJECT_TITLE } from "./constants";
 
@@ -88,7 +88,7 @@ export const state:State = {
 
   c_zoomfactor: 1,
 
-  pieces: [],
+  pieces: new Map(),
 
   projectInfo: {
     title: BASE_PROJECT_TITLE,
@@ -117,7 +117,7 @@ export const state:State = {
       c_pointsMap: flattenPointsMap(c_pointsMap),
       c_geometryMap: flattenGeometryMap(c_geometryMap),
       projectInfo,
-      pieces,
+      pieces: flattenPiecesMap(pieces),
     }
 
     const serializedObj = JSON.stringify(coreInfo);
@@ -134,7 +134,7 @@ export const state:State = {
       contents.c_pointsMap = restorePointsMap(serializedObj.c_pointsMap);
       contents.c_geometryMap = restoreGeometryMap(serializedObj.c_geometryMap);
       contents.projectInfo = serializedObj.projectInfo;
-      contents.pieces = serializedObj.pieces;
+      contents.pieces = restorePiecesMap(serializedObj.pieces);
     }
 
     return contents;
@@ -144,13 +144,12 @@ export const state:State = {
     console.log('clear');
     this.c_pointsMap = new Map();
     this.c_geometryMap = new Map();
-    this.pieces = [];
+    this.pieces = new Map();
     this.projectInfo = {
       title: BASE_PROJECT_TITLE,
       author: '',
       lastUpdated: new Date()
     };
-    console.log(this.projectInfo)
   }
 
 };

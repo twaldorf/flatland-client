@@ -7,11 +7,10 @@ import { useMarkerStore } from '../sections/MarkerStore';
 
 interface LibraryPieceProps {
   piece:Piece;
-  selected:boolean;
-  onSelect:() => void;
+  onSelect:(v:boolean) => void;
 }
 
-export const LibraryPieceComponent = ({piece}:LibraryPieceProps) => {
+export const LibraryPieceComponent = ({piece, onSelect }:LibraryPieceProps) => {
   const thumbnailRef = useRef(null);
 
   useEffect(() => {
@@ -26,15 +25,16 @@ export const LibraryPieceComponent = ({piece}:LibraryPieceProps) => {
     usePiecesStore.getState().updatePieceField(piece.id, "quantity", value);
   }
 
-  const [checked, setChecked] = useState(false);
+  let selected = useMarkerStore.getState().trueIfPieceInMarker(piece.id);
 
   const handleCheckbox = () => {
-    if (checked) useMarkerStore.getState().addPieceToMarker();
+    selected = selected === true ? false : true;
+    onSelect(selected);
   }
   
   return (
     <li>
-      <span>Collect for marker: </span><input type="checkbox" value={checked} onChange={handleCheckbox}/>
+      <span>Collect for marker: </span><input type="checkbox" defaultChecked={selected} onChange={handleCheckbox}/>
       <canvas ref={thumbnailRef} >
 
       </canvas>

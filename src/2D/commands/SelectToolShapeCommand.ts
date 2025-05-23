@@ -18,14 +18,7 @@ export class SelectToolShapeCommand implements Command {
   }
 
   do() {
-    console.log(
-  "Store instance:", usePiecesStore, 
-  "State snapshot:", usePiecesStore.getState()
-);
-
     state.c_selectedGeometries = [ this.geomId ];
-
-    console.log(Array.from(usePiecesStore.getState().pieces.values()))
 
     const pieceId = Array.from(usePiecesStore.getState().pieces.values()).filter((piece) => piece.geometryId == this.geomId)[0].id;
 
